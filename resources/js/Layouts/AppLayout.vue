@@ -22,6 +22,7 @@ import {
     Layers,
     LogOut,
     Menu,
+    Monitor,
     Moon,
     PenTool,
     Printer,
@@ -51,8 +52,37 @@ const sidebarCollapsed = ref(false);
 const pengajuanDropdownOpen = ref(true);
 const { isDarkMode, toggleDarkMode, initializeTheme } = useTheme();
 
+// Mobile Screen Advisory Modal
+const showMobileDeviceModal = ref(false);
+const dontShowMobileDeviceModalAgain = ref(false);
+
+const checkMobileDeviceNotice = () => {
+    if (typeof window === "undefined") return;
+    const dismissed = localStorage.getItem("sipta_mobile_notice_dismissed");
+    if (dismissed === "true") return;
+
+    // Deteksi layar kecil atau user agent mobile
+    const isSmallScreen = window.innerWidth < 1024;
+    const isMobileUA =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent,
+        );
+
+    if (isSmallScreen || isMobileUA) {
+        showMobileDeviceModal.value = true;
+    }
+};
+
+const closeMobileDeviceModal = () => {
+    if (dontShowMobileDeviceModalAgain.value && typeof window !== "undefined") {
+        localStorage.setItem("sipta_mobile_notice_dismissed", "true");
+    }
+    showMobileDeviceModal.value = false;
+};
+
 onMounted(() => {
     initializeTheme();
+    checkMobileDeviceNotice();
 });
 
 const currentUrl = computed(() => page.url);
@@ -1418,5 +1448,62 @@ const handleLogout = () => {
 
         <!-- 3. FLOATING ACADEMIC AI CHATBOT WIDGET -->
         <AcademicChatbot />
+
+        <!-- Mobile Device Notice Modal -->
+        <div
+            v-if="showMobileDeviceModal"
+            class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"
+            @click="closeMobileDeviceModal"
+        >
+            <div
+                class="relative w-full max-w-md rounded-2xl border border-slate-700 bg-slate-800 p-6 shadow-2xl"
+                @click.stop
+            >
+                <div class="flex items-start gap-4">
+                    <div
+                        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400"
+                    >
+                        <Monitor class="h-6 w-6" />
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-white">
+                            Rekomendasi: Buka di Laptop/Desktop
+                        </h3>
+                        <p class="mt-2 text-sm leading-relaxed text-slate-300">
+                            Portal SIPTA IF menampilkan banyak data dan tabel
+                            yang lebih nyaman diakses melalui layar yang lebih
+                            besar. Untuk pengalaman terbaik, kami sarankan
+                            membuka portal ini di laptop atau komputer Anda.
+                        </p>
+                        <label
+                            class="mt-4 flex cursor-pointer items-center gap-2 text-xs text-slate-400"
+                        >
+                            <input
+                                v-model="dontShowMobileDeviceModalAgain"
+                                type="checkbox"
+                                class="rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            />
+                            <span>Jangan tampilkan lagi</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button
+                        type="button"
+                        class="rounded-xl border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-300 transition-colors hover:bg-slate-700"
+                        @click="closeMobileDeviceModal"
+                    >
+                        Tutup
+                    </button>
+                    <button
+                        type="button"
+                        class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-blue-600/30 transition-colors hover:bg-blue-700"
+                        @click="closeMobileDeviceModal"
+                    >
+                        Mengerti
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
