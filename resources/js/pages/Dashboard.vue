@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed, ref } from "vue";
+import { Head, Link, usePage } from "@inertiajs/vue3";
 import {
     AlertCircle,
     Calendar as CalendarIcon,
@@ -19,27 +19,46 @@ import {
     Sparkles,
     User,
     X,
-} from 'lucide-vue-next';
+} from "lucide-vue-next";
 
-import AppLayout from '@/Layouts/AppLayout.vue';
-import Modal from '@/Components/Modal.vue';
+import AppLayout from "@/Layouts/AppLayout.vue";
+import Modal from "@/Components/Modal.vue";
+import ReminderList, { type ReminderItem } from "@/Components/ReminderList.vue";
 
 const page = usePage();
 const authUser = computed(() => (page.props.auth as any)?.user);
 const studentName = computed(
-    () => authUser.value?.name || 'Akmal Falah Maulana',
+    () => authUser.value?.name || "Akmal Falah Maulana",
 );
-const studentNim = computed(() => authUser.value?.nim_nip || 'NIM: 11231006');
-const studentProdi = computed(() => authUser.value?.prodi || 'S1 Informatika');
+const studentNim = computed(() => authUser.value?.nim_nip || "NIM: 11231006");
+const studentProdi = computed(() => authUser.value?.prodi || "S1 Informatika");
+const reminders: ReminderItem[] = [
+    {
+        id: "dashboard-sempro",
+        title: "Seminar Proposal semakin dekat",
+        detail: "Siapkan presentasi dan berkas untuk jadwal 02 Oktober 2026.",
+        due: "H-2",
+        priority: "urgent",
+        href: "/pendaftaran/jadwal",
+    },
+    {
+        id: "dashboard-sidang",
+        title: "Pendaftaran Sidang Gelombang 1 segera ditutup",
+        detail: "Pastikan syarat bimbingan dan Turnitin sudah terpenuhi.",
+        due: "H-6",
+        priority: "soon",
+        href: "/pendaftaran/sidang",
+    },
+];
 
 // ==========================================
 // 1. STATUS PERIODE (Dinamis per event & semester)
 // ==========================================
 interface ActivePeriod {
     id: string;
-    type: 'sempro' | 'sidang';
+    type: "sempro" | "sidang";
     title: string;
-    semester: 'Gasal' | 'Genap';
+    semester: "Gasal" | "Genap";
     academicYear: string;
     gelombang: string;
     startDate: string;
@@ -55,37 +74,37 @@ interface ActivePeriod {
 
 const activePeriods = ref<ActivePeriod[]>([
     {
-        id: 'p-sempro',
-        type: 'sempro',
-        title: 'SEMINAR PROPOSAL',
-        semester: 'Gasal',
-        academicYear: '2026/2027',
-        gelombang: '2 (Dua)',
-        startDate: '01 Okt 2026',
-        endDate: '15 Okt 2026',
+        id: "p-sempro",
+        type: "sempro",
+        title: "SEMINAR PROPOSAL",
+        semester: "Gasal",
+        academicYear: "2026/2027",
+        gelombang: "2 (Dua)",
+        startDate: "01 Okt 2026",
+        endDate: "15 Okt 2026",
         colorTheme: {
-            bg: 'bg-lime-100 dark:bg-lime-950/40',
-            badgeBg: 'bg-lime-200 dark:bg-lime-900/60',
-            text: 'text-slate-900 dark:text-lime-200',
-            accentText: 'text-lime-800 dark:text-lime-300',
-            border: 'border-lime-300/80 dark:border-lime-700/50',
+            bg: "bg-lime-100 dark:bg-lime-950/40",
+            badgeBg: "bg-lime-200 dark:bg-lime-900/60",
+            text: "text-slate-900 dark:text-lime-200",
+            accentText: "text-lime-800 dark:text-lime-300",
+            border: "border-lime-300/80 dark:border-lime-700/50",
         },
     },
     {
-        id: 'p-sidang',
-        type: 'sidang',
-        title: 'SIDANG TUGAS AKHIR',
-        semester: 'Gasal',
-        academicYear: '2026/2027',
-        gelombang: '1 (Satu)',
-        startDate: '08 Okt 2026',
-        endDate: '24 Okt 2026',
+        id: "p-sidang",
+        type: "sidang",
+        title: "SIDANG TUGAS AKHIR",
+        semester: "Gasal",
+        academicYear: "2026/2027",
+        gelombang: "1 (Satu)",
+        startDate: "08 Okt 2026",
+        endDate: "24 Okt 2026",
         colorTheme: {
-            bg: 'bg-indigo-100 dark:bg-indigo-950/40',
-            badgeBg: 'bg-indigo-200 dark:bg-indigo-900/60',
-            text: 'text-slate-900 dark:text-indigo-200',
-            accentText: 'text-indigo-800 dark:text-indigo-300',
-            border: 'border-indigo-300/80 dark:border-indigo-700/50',
+            bg: "bg-indigo-100 dark:bg-indigo-950/40",
+            badgeBg: "bg-indigo-200 dark:bg-indigo-900/60",
+            text: "text-slate-900 dark:text-indigo-200",
+            accentText: "text-indigo-800 dark:text-indigo-300",
+            border: "border-indigo-300/80 dark:border-indigo-700/50",
         },
     },
 ]);
@@ -94,7 +113,7 @@ const activePeriods = ref<ActivePeriod[]>([
 // 2. ROADMAP & STATUS TUGAS AKHIR (Status Dinamis)
 // Selesai = Blue, Berlangsung = Amber (Kuning), Belum = Slate
 // ==========================================
-type StepStatus = 'completed' | 'in_progress' | 'pending';
+type StepStatus = "completed" | "in_progress" | "pending";
 
 interface RoadmapStep {
     name: string;
@@ -103,43 +122,34 @@ interface RoadmapStep {
 }
 
 const semproSteps = ref<RoadmapStep[]>([
-    { name: 'Pengajuan', status: 'completed', date: '10 Sep 2026' },
-    { name: 'Verifikasi', status: 'completed', date: '14 Sep 2026' },
-    { name: 'Penilaian', status: 'in_progress', date: 'Sedang Berjalan' },
-    { name: 'Hasil Seminar', status: 'pending' },
+    { name: "Pengajuan", status: "completed", date: "10 Sep 2026" },
+    { name: "Verifikasi", status: "completed", date: "14 Sep 2026" },
+    { name: "Penilaian", status: "in_progress", date: "Sedang Berjalan" },
+    { name: "Hasil Seminar", status: "pending" },
 ]);
 
 const sidangSteps = ref<RoadmapStep[]>([
-    { name: 'Pengajuan', status: 'completed', date: '20 Sep 2026' },
-    { name: 'Verifikasi', status: 'in_progress', date: 'Dalam Review' },
-    { name: 'Penilaian', status: 'pending' },
-    { name: 'Hasil Sidang', status: 'pending' },
-]);
-
-const generalThesisStatuses = ref<
-    { title: string; desc: string; status: StepStatus }[]
->([
-    { title: 'Pengajuan', desc: 'Selesai', status: 'completed' },
-    { title: 'Verifikasi', desc: 'Selesai', status: 'completed' },
-    { title: 'Approval', desc: 'Dalam Proses', status: 'in_progress' },
-    { title: 'Disetujui', desc: 'Menunggu Hasil', status: 'pending' },
+    { name: "Pengajuan", status: "completed", date: "20 Sep 2026" },
+    { name: "Verifikasi", status: "in_progress", date: "Dalam Review" },
+    { name: "Penilaian", status: "pending" },
+    { name: "Hasil Sidang", status: "pending" },
 ]);
 
 const getStepNodeClasses = (status: StepStatus) => {
     switch (status) {
-        case 'completed':
-            return 'bg-blue-600 text-white ring-4 ring-blue-100 dark:ring-blue-950';
-        case 'in_progress':
-            return 'bg-amber-400 text-slate-950 ring-4 ring-amber-200 dark:ring-amber-900/60 animate-pulse';
-        case 'pending':
+        case "completed":
+            return "bg-blue-600 text-white ring-4 ring-blue-100 dark:ring-blue-950";
+        case "in_progress":
+            return "bg-amber-400 text-slate-950 ring-4 ring-amber-200 dark:ring-amber-900/60 animate-pulse";
+        case "pending":
         default:
-            return 'bg-slate-300 text-slate-600 ring-4 ring-white dark:bg-slate-700 dark:text-slate-400 dark:ring-slate-900';
+            return "bg-slate-300 text-slate-600 ring-4 ring-white dark:bg-slate-700 dark:text-slate-400 dark:ring-slate-900";
     }
 };
 
 const getStepProgressWidth = (steps: RoadmapStep[]) => {
     const lastActiveIdx = steps.reduce(
-        (acc, cur, idx) => (cur.status !== 'pending' ? idx : acc),
+        (acc, cur, idx) => (cur.status !== "pending" ? idx : acc),
         0,
     );
     const totalSegments = steps.length - 1;
@@ -155,10 +165,7 @@ interface CurrentStatusCard {
     stage: string;
     description: string;
     type:
-        | 'progress-sempro'
-        | 'progress-sidang'
-        | 'alert-sempro'
-        | 'alert-sidang';
+        "progress-sempro" | "progress-sidang" | "alert-sempro" | "alert-sidang";
     daysLeft?: number;
     linkUrl: string;
     badgeText: string;
@@ -166,46 +173,46 @@ interface CurrentStatusCard {
 
 const currentStatusCards = ref<CurrentStatusCard[]>([
     {
-        id: 'cs-1',
-        title: 'Progress Proposal TA',
-        stage: 'Tahap Penilaian & Revisi',
+        id: "cs-1",
+        title: "Progress Proposal TA",
+        stage: "Tahap Penilaian & Revisi",
         description:
-            'Telah melaksanakan seminar, menunggu input revisi tim dosen.',
-        type: 'progress-sempro',
-        linkUrl: '/pendaftaran/sempro',
-        badgeText: 'Bab 1 - 3 Disetujui',
+            "Telah melaksanakan seminar, menunggu input revisi tim dosen.",
+        type: "progress-sempro",
+        linkUrl: "/pendaftaran/sempro",
+        badgeText: "Bab 1 - 3 Disetujui",
     },
     {
-        id: 'cs-2',
-        title: 'Progress Sidang TA',
-        stage: 'Verifikasi Berkas Akhir',
+        id: "cs-2",
+        title: "Progress Sidang TA",
+        stage: "Verifikasi Berkas Akhir",
         description:
-            'Berkas dan naskah lengkap sedang dalam antrean verifikasi Tendik.',
-        type: 'progress-sidang',
-        linkUrl: '/pendaftaran/sidang',
-        badgeText: 'Menunggu ACC',
+            "Berkas dan naskah lengkap sedang dalam antrean verifikasi Tendik.",
+        type: "progress-sidang",
+        linkUrl: "/pendaftaran/sidang",
+        badgeText: "Menunggu ACC",
     },
     {
-        id: 'cs-3',
-        title: 'Mendekati Seminar Proposal',
-        stage: 'Jadwal: 02 Oktober 2026',
+        id: "cs-3",
+        title: "Mendekati Seminar Proposal",
+        stage: "Jadwal: 02 Oktober 2026",
         description:
-            'Waktu tersisa 2 hari lagi. Siapkan slide presentasi dan berkas cetak.',
-        type: 'alert-sempro',
+            "Waktu tersisa 2 hari lagi. Siapkan slide presentasi dan berkas cetak.",
+        type: "alert-sempro",
         daysLeft: 2,
-        linkUrl: '/pendaftaran/sempro',
-        badgeText: 'H-2 Seminar',
+        linkUrl: "/pendaftaran/sempro",
+        badgeText: "H-2 Seminar",
     },
     {
-        id: 'cs-4',
-        title: 'Mendekati Sidang TA',
-        stage: 'Estimasi: 09 Oktober 2026',
+        id: "cs-4",
+        title: "Mendekati Sidang TA",
+        stage: "Estimasi: 09 Oktober 2026",
         description:
-            'Batas pendaftaran berkas dan penutupan slot tinggal 6 hari lagi.',
-        type: 'alert-sidang',
+            "Batas pendaftaran berkas dan penutupan slot tinggal 6 hari lagi.",
+        type: "alert-sidang",
         daysLeft: 6,
-        linkUrl: '/pendaftaran/sidang',
-        badgeText: 'H-6 Sidang',
+        linkUrl: "/pendaftaran/sidang",
+        badgeText: "H-6 Sidang",
     },
 ]);
 
@@ -217,7 +224,7 @@ interface StudentCalendarAgenda {
     date: number;
     fullDateString: string;
     title: string;
-    type: 'sempro' | 'sidang' | 'bimbingan' | 'pendaftaran';
+    type: "sempro" | "sidang" | "bimbingan" | "pendaftaran";
     time: string;
     location?: string;
     pembimbingPenguji?: string[];
@@ -225,63 +232,63 @@ interface StudentCalendarAgenda {
     badgeColor: string;
 }
 
-const currentMonth = ref('Oktober 2026');
+const currentMonth = ref("Oktober 2026");
 
 const studentAgendas = ref<StudentCalendarAgenda[]>([
     {
-        id: 'ag-1',
+        id: "ag-1",
         date: 2,
-        fullDateString: 'Jumat, 02 Oktober 2026',
-        title: 'Seminar Proposal TA (Saya)',
-        type: 'sempro',
-        time: '13.30 - 15.00 WITA',
-        location: 'Ruang Lab JSTI 2 / Gedung A',
+        fullDateString: "Jumat, 02 Oktober 2026",
+        title: "Seminar Proposal TA (Saya)",
+        type: "sempro",
+        time: "13.30 - 15.00 WITA",
+        location: "Ruang Lab JSTI 2 / Gedung A",
         pembimbingPenguji: [
-            'Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.',
-            'Penguji 1: Prof. Dr. Agus Susanto, M.T.',
-            'Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.',
+            "Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.",
+            "Penguji 1: Prof. Dr. Agus Susanto, M.T.",
+            "Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.",
         ],
-        notes: 'Wajib membawa jas almamater, lembar berita acara, dan presentasi 15 menit.',
-        badgeColor: 'bg-lime-500',
+        notes: "Wajib membawa jas almamater, lembar berita acara, dan presentasi 15 menit.",
+        badgeColor: "bg-lime-500",
     },
     {
-        id: 'ag-2',
+        id: "ag-2",
         date: 7,
-        fullDateString: 'Rabu, 07 Oktober 2026',
-        title: 'Bimbingan Pasca Sempro',
-        type: 'bimbingan',
-        time: '10.00 - 11.30 WITA',
-        location: 'Ruang Dosen Gedung B / Lab Riset',
-        pembimbingPenguji: ['Dr. Ir. Hendra Wijaya, M.Kom.'],
-        notes: 'Membahas catatan revisi dewan penguji terkait perbaikan dataset pengujian.',
-        badgeColor: 'bg-blue-500',
+        fullDateString: "Rabu, 07 Oktober 2026",
+        title: "Bimbingan Pasca Sempro",
+        type: "bimbingan",
+        time: "10.00 - 11.30 WITA",
+        location: "Ruang Dosen Gedung B / Lab Riset",
+        pembimbingPenguji: ["Dr. Ir. Hendra Wijaya, M.Kom."],
+        notes: "Membahas catatan revisi dewan penguji terkait perbaikan dataset pengujian.",
+        badgeColor: "bg-blue-500",
     },
     {
-        id: 'ag-3',
+        id: "ag-3",
         date: 9,
-        fullDateString: 'Jumat, 09 Oktober 2026',
-        title: 'Batas Pendaftaran Sidang Gelombang 1',
-        type: 'pendaftaran',
-        time: 'Tutup 23.59 WITA',
-        location: 'Portal Daring SIPTA IF',
-        notes: 'Pastikan minimal 8 kali bimbingan dan skor Turnitin di bawah 20%.',
-        badgeColor: 'bg-amber-500',
+        fullDateString: "Jumat, 09 Oktober 2026",
+        title: "Batas Pendaftaran Sidang Gelombang 1",
+        type: "pendaftaran",
+        time: "Tutup 23.59 WITA",
+        location: "Portal Daring SIPTA IF",
+        notes: "Pastikan minimal 8 kali bimbingan dan skor Turnitin di bawah 20%.",
+        badgeColor: "bg-amber-500",
     },
     {
-        id: 'ag-4',
+        id: "ag-4",
         date: 20,
-        fullDateString: 'Selasa, 20 Oktober 2026',
-        title: 'Sidang Tugas Akhir (Terjadwal)',
-        type: 'sidang',
-        time: '09.00 - 11.00 WITA',
-        location: 'Ruang Sidang Utama Informatika Lt. 3',
+        fullDateString: "Selasa, 20 Oktober 2026",
+        title: "Sidang Tugas Akhir (Terjadwal)",
+        type: "sidang",
+        time: "09.00 - 11.00 WITA",
+        location: "Ruang Sidang Utama Informatika Lt. 3",
         pembimbingPenguji: [
-            'Ketua Penguji: Ir. Budi Santoso, M.Eng.',
-            'Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.',
-            'Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.',
+            "Ketua Penguji: Ir. Budi Santoso, M.Eng.",
+            "Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.",
+            "Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.",
         ],
-        notes: 'Ujian komprehensif tertutup. Menyiapkan prototipe software/alat.',
-        badgeColor: 'bg-indigo-500',
+        notes: "Ujian komprehensif tertutup. Menyiapkan prototipe software/alat.",
+        badgeColor: "bg-indigo-500",
     },
 ]);
 
@@ -354,8 +361,8 @@ interface AssessmentDetail {
     period: string;
     pembimbing: string;
     penguji: string[];
-    status: 'Lulus dengan Revisi' | 'Lulus Murni' | 'Tidak Lulus';
-    variant: 'neutral' | 'success' | 'danger';
+    status: "Lulus dengan Revisi" | "Lulus Murni" | "Tidak Lulus";
+    variant: "neutral" | "success" | "danger";
     finalScore: number;
     grade: string;
     revisionDeadline: string;
@@ -364,74 +371,74 @@ interface AssessmentDetail {
 
 const assessments = ref<AssessmentDetail[]>([
     {
-        id: 'ass-1',
-        title: 'Sidang Tugas Akhir',
-        period: 'Gasal 2026/2027 • Gelombang 1',
-        pembimbing: 'Dr. Ir. Hendra Wijaya, M.Kom.',
+        id: "ass-1",
+        title: "Sidang Tugas Akhir",
+        period: "Gasal 2026/2027 • Gelombang 1",
+        pembimbing: "Dr. Ir. Hendra Wijaya, M.Kom.",
         penguji: [
-            'Ir. Budi Santoso, M.Eng. (Ketua)',
-            'Siti Nurhaliza, S.Kom., M.Cs. (Anggota)',
+            "Ir. Budi Santoso, M.Eng. (Ketua)",
+            "Siti Nurhaliza, S.Kom., M.Cs. (Anggota)",
         ],
-        status: 'Lulus dengan Revisi',
-        variant: 'neutral',
+        status: "Lulus dengan Revisi",
+        variant: "neutral",
         finalScore: 84.5,
-        grade: 'A-',
-        revisionDeadline: '14 Hari (s.d. 16 Oktober 2026)',
+        grade: "A-",
+        revisionDeadline: "14 Hari (s.d. 16 Oktober 2026)",
         examinerNotes: [
             {
-                by: 'Ketua Penguji - Ir. Budi Santoso, M.Eng.',
-                note: 'Perbaiki penjelasan arsitektur Genetic Algorithm pada bab 3 dan tambahkan perbandingan fitness value awal vs akhir.',
+                by: "Ketua Penguji - Ir. Budi Santoso, M.Eng.",
+                note: "Perbaiki penjelasan arsitektur Genetic Algorithm pada bab 3 dan tambahkan perbandingan fitness value awal vs akhir.",
             },
             {
-                by: 'Penguji 2 - Siti Nurhaliza, S.Kom., M.Cs.',
-                note: 'Format sitasi IEEE harus dicek kembali pada daftar pustaka. Lampirkan hasil uji usability pengujian user.',
+                by: "Penguji 2 - Siti Nurhaliza, S.Kom., M.Cs.",
+                note: "Format sitasi IEEE harus dicek kembali pada daftar pustaka. Lampirkan hasil uji usability pengujian user.",
             },
             {
-                by: 'Pembimbing - Dr. Ir. Hendra Wijaya, M.Kom.',
-                note: 'Sudah cukup baik secara konsep, selesaikan revisi sebelum deadline agar lembar pengesahan bisa ditandatangani.',
+                by: "Pembimbing - Dr. Ir. Hendra Wijaya, M.Kom.",
+                note: "Sudah cukup baik secara konsep, selesaikan revisi sebelum deadline agar lembar pengesahan bisa ditandatangani.",
             },
         ],
     },
     {
-        id: 'ass-2',
-        title: 'Seminar Proposal Tugas Akhir',
-        period: 'Gasal 2026/2027 • Gelombang 2',
-        pembimbing: 'Dr. Ir. Hendra Wijaya, M.Kom.',
+        id: "ass-2",
+        title: "Seminar Proposal Tugas Akhir",
+        period: "Gasal 2026/2027 • Gelombang 2",
+        pembimbing: "Dr. Ir. Hendra Wijaya, M.Kom.",
         penguji: [
-            'Prof. Dr. Agus Susanto, M.T.',
-            'Siti Nurhaliza, S.Kom., M.Cs.',
+            "Prof. Dr. Agus Susanto, M.T.",
+            "Siti Nurhaliza, S.Kom., M.Cs.",
         ],
-        status: 'Lulus dengan Revisi',
-        variant: 'neutral',
+        status: "Lulus dengan Revisi",
+        variant: "neutral",
         finalScore: 81.0,
-        grade: 'A-',
-        revisionDeadline: '7 Hari (s.d. 09 Oktober 2026)',
+        grade: "A-",
+        revisionDeadline: "7 Hari (s.d. 09 Oktober 2026)",
         examinerNotes: [
             {
-                by: 'Prof. Dr. Agus Susanto, M.T.',
-                note: 'Fokuskan batasan masalah hanya pada penjadwalan seminar informatika ITK.',
+                by: "Prof. Dr. Agus Susanto, M.T.",
+                note: "Fokuskan batasan masalah hanya pada penjadwalan seminar informatika ITK.",
             },
             {
-                by: 'Siti Nurhaliza, S.Kom., M.Cs.',
-                note: 'Perjelas parameter mutasi dan crossover yang digunakan pada rancangan algoritma.',
+                by: "Siti Nurhaliza, S.Kom., M.Cs.",
+                note: "Perjelas parameter mutasi dan crossover yang digunakan pada rancangan algoritma.",
             },
         ],
     },
     {
-        id: 'ass-3',
-        title: 'Seminar Proposal Tugas Akhir (Gelombang 1)',
-        period: 'Genap 2025/2026 • Gelombang 1',
-        pembimbing: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        penguji: ['Prof. Dr. Agus Susanto, M.T.', 'Ir. Budi Santoso, M.Eng.'],
-        status: 'Tidak Lulus',
-        variant: 'danger',
+        id: "ass-3",
+        title: "Seminar Proposal Tugas Akhir (Gelombang 1)",
+        period: "Genap 2025/2026 • Gelombang 1",
+        pembimbing: "Dr. Ir. Hendra Wijaya, M.Kom.",
+        penguji: ["Prof. Dr. Agus Susanto, M.T.", "Ir. Budi Santoso, M.Eng."],
+        status: "Tidak Lulus",
+        variant: "danger",
         finalScore: 54.0,
-        grade: 'D',
-        revisionDeadline: 'Silakan daftar ulang pada Gelombang berikutnya',
+        grade: "D",
+        revisionDeadline: "Silakan daftar ulang pada Gelombang berikutnya",
         examinerNotes: [
             {
-                by: 'Dewan Penguji',
-                note: 'Metodologi belum matang dan rumusan masalah belum menunjukkan urgensi penelitian yang kuat.',
+                by: "Dewan Penguji",
+                note: "Metodologi belum matang dan rumusan masalah belum menunjukkan urgensi penelitian yang kuat.",
             },
         ],
     },
@@ -836,73 +843,71 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                 </div>
             </div>
 
-            <!-- 4. 3-KOLOM WIDGET (STATUS TUGAS AKHIR, BIMBINGAN, KALENDER PERSONAL MAHASISWA) -->
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <!-- Kolom 1: Status Tugas Akhir (Sinkron dengan Kuning Berlangsung) -->
-                <div
-                    class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900/60"
-                >
+            <div
+                class="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]"
+            >
+                <div class="space-y-3">
                     <div class="flex items-center justify-between">
                         <h3
                             class="text-sm font-bold text-slate-900 dark:text-white"
                         >
-                            Status Tugas Akhir
+                            Reminder
                         </h3>
-                        <span
-                            class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                        <span class="text-xs text-slate-500"
+                            >Tenggat terdekat</span
                         >
-                            Dalam Proses
-                        </span>
                     </div>
-
-                    <div
-                        class="relative mt-6 space-y-7 pl-6 before:absolute before:top-2 before:bottom-2 before:left-[11px] before:w-0.5 before:bg-slate-300 dark:before:bg-slate-700"
-                    >
-                        <div
-                            v-for="(item, idx) in generalThesisStatuses"
-                            :key="idx"
-                            class="relative"
+                    <ReminderList :items="reminders" />
+                </div>
+                <Link
+                    href="/pendaftaran/jadwal"
+                    class="flex items-center justify-between rounded-2xl border border-blue-200 bg-blue-50 p-4 transition-colors hover:border-blue-400 dark:border-blue-900/60 dark:bg-blue-950/20"
+                >
+                    <div>
+                        <p
+                            class="text-xs font-bold text-blue-900 dark:text-blue-200"
                         >
-                            <span
-                                class="absolute top-1 -left-6 h-3.5 w-3.5 rounded-full transition-all"
-                                :class="[
-                                    item.status === 'completed'
-                                        ? 'bg-blue-600 ring-4 ring-blue-100 dark:ring-blue-950'
-                                        : item.status === 'in_progress'
-                                          ? 'animate-pulse bg-amber-400 ring-4 ring-amber-200 dark:ring-amber-900/60'
-                                          : 'bg-slate-400 ring-4 ring-slate-100 dark:ring-slate-900',
-                                ]"
-                            />
-                            <p
-                                class="text-xs font-bold"
-                                :class="[
-                                    item.status === 'in_progress'
-                                        ? 'text-amber-600 dark:text-amber-400'
-                                        : 'text-slate-800 dark:text-slate-200',
-                                ]"
+                            Pendaftar & Jadwal
+                        </p>
+                        <p
+                            class="mt-1 text-[11px] text-blue-700 dark:text-blue-300"
+                        >
+                            Lihat daftar peserta dan jadwal Sempro/Sidang.
+                        </p>
+                    </div>
+                    <span class="text-sm font-bold text-blue-600"
+                        >Lihat &gt;</span
+                    >
+                </Link>
+            </div>
+
+            <!-- 4. Statistik Bimbingan & Kalender Personal -->
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                <!-- Statistik Bimbingan diperlebar setelah Status TA dihapus -->
+                <div
+                    class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 shadow-xs lg:col-span-2 dark:border-slate-800 dark:bg-slate-900/60"
+                >
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3
+                                class="text-sm font-bold text-slate-900 dark:text-white"
                             >
-                                {{ item.title }}
-                            </p>
+                                Statistik Bimbingan
+                            </h3>
                             <p
-                                class="text-[11px] text-slate-500 dark:text-slate-400"
+                                class="mt-1 text-xs text-slate-500 dark:text-slate-400"
                             >
-                                {{ item.desc }}
+                                Ringkasan pembimbing, sesi selesai, dan tindak
+                                lanjut terbaru.
                             </p>
                         </div>
+                        <span
+                            class="rounded-lg bg-blue-100 px-2.5 py-1 text-[10px] font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                        >
+                            10 Sesi
+                        </span>
                     </div>
-                </div>
-
-                <!-- Kolom 2: Statistik Bimbingan & Riwayat Bimbingan -->
-                <div
-                    class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900/60"
-                >
-                    <h3
-                        class="text-sm font-bold text-slate-900 dark:text-white"
-                    >
-                        Statistik Bimbingan
-                    </h3>
-
-                    <div class="mt-4 space-y-3">
+                    <div class="mt-4 grid gap-3 sm:grid-cols-2">
                         <div
                             class="flex items-center gap-3 rounded-xl border border-slate-200/90 bg-white p-3 shadow-2xs dark:border-slate-800 dark:bg-slate-900"
                         >
@@ -920,11 +925,15 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                                 <p
                                     class="text-[11px] text-slate-500 dark:text-slate-400"
                                 >
-                                    Pembimbing 1 • 6 Sesi Selesai
+                                    Pembimbing 1 · 6 sesi selesai
+                                </p>
+                                <p
+                                    class="mt-1 text-[10px] font-semibold text-emerald-600"
+                                >
+                                    Bimbingan terakhir: 15 Sep 2026
                                 </p>
                             </div>
                         </div>
-
                         <div
                             class="flex items-center gap-3 rounded-xl border border-slate-200/90 bg-white p-3 shadow-2xs dark:border-slate-800 dark:bg-slate-900"
                         >
@@ -942,32 +951,33 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                                 <p
                                     class="text-[11px] text-slate-500 dark:text-slate-400"
                                 >
-                                    Pembimbing 2 • 4 Sesi Selesai
+                                    Pembimbing 2 · 4 sesi selesai
+                                </p>
+                                <p
+                                    class="mt-1 text-[10px] font-semibold text-amber-600"
+                                >
+                                    Tindak lanjut revisi Bab 3
                                 </p>
                             </div>
                         </div>
                     </div>
-
                     <div
                         class="mt-6 border-t border-slate-200/80 pt-4 dark:border-slate-800"
                     >
                         <div class="mb-3 flex items-center justify-between">
                             <span
                                 class="text-xs font-bold text-slate-800 dark:text-slate-200"
+                                >Riwayat Bimbingan Terakhir</span
                             >
-                                Riwayat Bimbingan Terakhir
-                            </span>
                             <Link
                                 href="/pendaftaran/bimbingan"
                                 class="text-[11px] font-semibold text-blue-600 hover:underline dark:text-blue-400"
+                                >Lihat Semua &gt;</Link
                             >
-                                Lihat Semua &gt;
-                            </Link>
                         </div>
-
-                        <div class="space-y-2">
+                        <div class="grid gap-2">
                             <div
-                                class="rounded-xl border border-slate-200/80 bg-white p-2.5 text-xs text-slate-700 shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+                                class="rounded-xl border border-slate-200/80 bg-white p-2.5 text-xs dark:border-slate-800 dark:bg-slate-900"
                             >
                                 <p
                                     class="font-semibold text-slate-900 dark:text-white"
@@ -975,11 +985,11 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                                     Diskusi arsitektur sistem & algoritma
                                 </p>
                                 <p class="mt-0.5 text-[10px] text-slate-400">
-                                    15 Sep 2026 • Bersama Pembimbing 1
+                                    15 Sep 2026 · Pembimbing 1
                                 </p>
                             </div>
                             <div
-                                class="rounded-xl border border-slate-200/80 bg-white p-2.5 text-xs text-slate-700 shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+                                class="rounded-xl border border-slate-200/80 bg-white p-2.5 text-xs dark:border-slate-800 dark:bg-slate-900"
                             >
                                 <p
                                     class="font-semibold text-slate-900 dark:text-white"
@@ -987,16 +997,15 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                                     Revisi metodologi penelitian BAB 3
                                 </p>
                                 <p class="mt-0.5 text-[10px] text-slate-400">
-                                    08 Sep 2026 • Bersama Pembimbing 2
+                                    08 Sep 2026 · Pembimbing 2
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Kolom 3: Kalender Khusus Mahasiswa & Interaksi Klik Tanggal -->
+                <!-- Kalender personal -->
                 <div
-                    class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900/60"
+                    class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 dark:border-slate-800 dark:bg-slate-900/60"
                 >
                     <div class="flex items-center justify-between">
                         <h3
@@ -1134,7 +1143,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                                 <span
                                     class="text-[11px] font-bold text-blue-600 dark:text-blue-400"
                                 >
-                                    {{ agenda.time.split(' ')[0] }}
+                                    {{ agenda.time.split(" ")[0] }}
                                 </span>
                             </div>
                         </div>

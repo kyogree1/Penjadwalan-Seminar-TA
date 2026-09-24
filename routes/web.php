@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
             Route::inertia('/judul', 'Pendaftaran/Judul')->name('judul');
             Route::inertia('/bimbingan', 'Pendaftaran/Bimbingan')->name('bimbingan');
+            Route::inertia('/jadwal', 'Mahasiswa/PendaftaranJadwal')->name('jadwal');
             Route::inertia('/sempro', 'Pendaftaran/Sempro')->name('sempro');
             Route::inertia('/sidang', 'Pendaftaran/Sidang')->name('sidang');
         });
