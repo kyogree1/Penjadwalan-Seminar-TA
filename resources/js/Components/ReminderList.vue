@@ -11,7 +11,7 @@ export interface ReminderItem {
     href?: string;
 }
 
-const props = defineProps<{ items: ReminderItem[] }>();
+const props = defineProps<{ items: ReminderItem[]; compact?: boolean }>();
 const visibleItems = computed(() => props.items.filter((item) => item.title));
 const priorityClasses = {
     urgent: "border-rose-200 bg-rose-50 dark:border-rose-900/60 dark:bg-rose-950/20",
@@ -28,7 +28,10 @@ const priorityClasses = {
             :key="item.id"
             :href="item.href"
             class="flex items-center gap-3 rounded-xl border p-3 transition-colors hover:border-blue-400 dark:hover:border-blue-500"
-            :class="priorityClasses[item.priority]"
+            :class="[
+                priorityClasses[item.priority],
+                compact && 'min-h-16 py-2.5',
+            ]"
         >
             <AlertCircle
                 v-if="item.priority === 'urgent'"
@@ -39,12 +42,21 @@ const priorityClasses = {
                 class="h-4 w-4 shrink-0 text-amber-600"
             />
             <Info v-else class="h-4 w-4 shrink-0 text-blue-600" />
-            <div class="min-w-0 flex-1">
+            <div
+                class="min-w-0 flex-1"
+                :class="
+                    compact &&
+                    'xl:flex xl:flex-wrap xl:items-baseline xl:gap-x-2'
+                "
+            >
                 <p class="text-xs font-bold text-slate-900 dark:text-white">
-                    {{ item.title }}
+                    <span v-if="compact" class="mr-1 font-medium text-slate-500"
+                        >Reminder:</span
+                    >{{ item.title }}
                 </p>
                 <p
-                    class="truncate text-[10px] text-slate-500 dark:text-slate-400"
+                    class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400"
+                    :class="compact ? 'break-words' : 'truncate'"
                 >
                     {{ item.detail }}
                 </p>
@@ -53,6 +65,11 @@ const priorityClasses = {
                 v-if="item.due"
                 class="shrink-0 text-[10px] font-bold text-slate-500"
                 >{{ item.due }}</span
+            >
+            <span
+                v-if="compact && item.href"
+                class="shrink-0 text-xs font-semibold text-blue-600 dark:text-blue-400"
+                >Detail ›</span
             >
         </component>
     </div>

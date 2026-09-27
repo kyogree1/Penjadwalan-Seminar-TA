@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { computed, ref } from "vue";
+import { Head } from "@inertiajs/vue3";
 import {
     Bookmark,
     BookOpen,
@@ -12,9 +12,9 @@ import {
     Share2,
     SlidersHorizontal,
     X,
-} from 'lucide-vue-next';
+} from "lucide-vue-next";
 
-import AppLayout from '@/Layouts/AppLayout.vue';
+import AppLayout from "@/Layouts/AppLayout.vue";
 
 interface SkripsiItem {
     id: number;
@@ -37,91 +37,124 @@ interface SkripsiItem {
 }
 
 const selectedItem = ref<SkripsiItem | null>(null);
-const activeTab = ref<'id' | 'en'>('id');
-const searchQuery = ref('');
-const filterTahun = ref('');
-const filterBidang = ref('');
+const activeTab = ref<"id" | "en">("id");
+const searchQuery = ref("");
+const filterTahun = ref("");
+const filterBidang = ref("");
+const filterProdi = ref("");
+const filterMetode = ref("");
+const sortBy = ref("terbaru");
+
+const filteredSkripsiList = computed(() => {
+    const query = searchQuery.value.trim().toLowerCase();
+    return [...skripsiList.value]
+        .filter((item) => {
+            const searchable = [
+                item.judul,
+                item.penulis,
+                item.bidang,
+                item.metode,
+                item.abstrak_id,
+                ...item.tags,
+            ]
+                .join(" ")
+                .toLowerCase();
+            return (
+                (!query || searchable.includes(query)) &&
+                (!filterTahun.value || item.tahun === filterTahun.value) &&
+                (!filterBidang.value || item.bidang === filterBidang.value) &&
+                (!filterProdi.value || item.prodi === filterProdi.value) &&
+                (!filterMetode.value || item.metode === filterMetode.value)
+            );
+        })
+        .sort((a, b) => {
+            if (sortBy.value === "judul") return a.judul.localeCompare(b.judul);
+            if (sortBy.value === "terlama")
+                return a.tahun.localeCompare(b.tahun);
+            return b.tahun.localeCompare(a.tahun);
+        });
+});
 
 const skripsiList = ref<SkripsiItem[]>([
     {
         id: 1,
-        tahun: '2024',
-        prodi: 'Teknik Informatika',
-        bidang: 'UI/UX & Human-Computer Interaction',
-        judul: 'Implementasi Augmented Reality (AR) Berbasis Web untuk Pembelajaran Interaktif Anatomi Organ Tubuh Manusia',
-        penulis: 'Claudia Stephanie Tan',
-        nim: '200411100233',
-        pembimbing_1: 'Dr. Dian Indah Permatasari, M.Kom.',
-        nip_pembimbing_1: '198402122010122004',
-        pembimbing_2: 'Rina Agustina, S.T., M.Kom.',
-        nip_pembimbing_2: '198607142012122001',
+        tahun: "2024",
+        prodi: "Teknik Informatika",
+        bidang: "UI/UX & Human-Computer Interaction",
+        judul: "Implementasi Augmented Reality (AR) Berbasis Web untuk Pembelajaran Interaktif Anatomi Organ Tubuh Manusia",
+        penulis: "Claudia Stephanie Tan",
+        nim: "200411100233",
+        pembimbing_1: "Dr. Dian Indah Permatasari, M.Kom.",
+        nip_pembimbing_1: "198402122010122004",
+        pembimbing_2: "Rina Agustina, S.T., M.Kom.",
+        nip_pembimbing_2: "198607142012122001",
         abstrak_id:
-            'Model anatomi fisik di laboratorium seringkali terbatas jumlahnya. Penelitian ini mengembangkan media WebAR markerless menggunakan WebXR API dan Three.js. Hasil pre-test dan post-test pada 45 siswa menunjukkan peningkatan pemahaman materi organ kardiovaskular sebesar 38.6%.',
+            "Model anatomi fisik di laboratorium seringkali terbatas jumlahnya. Penelitian ini mengembangkan media WebAR markerless menggunakan WebXR API dan Three.js. Hasil pre-test dan post-test pada 45 siswa menunjukkan peningkatan pemahaman materi organ kardiovaskular sebesar 38.6%.",
         abstrak_en:
-            'Physical anatomical models in laboratories are often limited in number. This study developed markerless WebAR media using WebXR API and Three.js. Pre-test and post-test results on 45 students showed an increase in understanding of cardiovascular organs by 38.6%.',
+            "Physical anatomical models in laboratories are often limited in number. This study developed markerless WebAR media using WebXR API and Three.js. Pre-test and post-test results on 45 students showed an increase in understanding of cardiovascular organs by 38.6%.",
         tags: [
-            '#WebAR',
-            '#Augmented Reality',
-            '#Three.js',
-            '#Media Pembelajaran',
-            '#Anatomi Manusia',
+            "#WebAR",
+            "#Augmented Reality",
+            "#Three.js",
+            "#Media Pembelajaran",
+            "#Anatomi Manusia",
         ],
-        metode: 'Prototyping & Field Testing',
-        tanggal_sidang: '22 Mei 2024',
-        doi: 'https://doi.org/10.14710/webar.2024.310',
+        metode: "Prototyping & Field Testing",
+        tanggal_sidang: "22 Mei 2024",
+        doi: "https://doi.org/10.14710/webar.2024.310",
     },
     {
         id: 2,
-        tahun: '2024',
-        prodi: 'Teknik Informatika',
-        bidang: 'Kecerdasan Buatan (AI) & NLP',
-        judul: 'Rancang Bangun Chatbot Layanan Akademik Kampus Berbasis Fine-Tuned LLaMA-3 dan Retrieval-Augmented Generation (RAG)',
-        penulis: 'Muhammad Fadhil Ramadhan',
-        nim: '200411100189',
-        pembimbing_1: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        nip_pembimbing_1: '197903152005011002',
-        pembimbing_2: 'Ahmad Fauzi, S.Kom., M.T.',
-        nip_pembimbing_2: '198811052015041003',
+        tahun: "2024",
+        prodi: "Teknik Informatika",
+        bidang: "Kecerdasan Buatan (AI) & NLP",
+        judul: "Rancang Bangun Chatbot Layanan Akademik Kampus Berbasis Fine-Tuned LLaMA-3 dan Retrieval-Augmented Generation (RAG)",
+        penulis: "Muhammad Fadhil Ramadhan",
+        nim: "200411100189",
+        pembimbing_1: "Dr. Ir. Hendra Wijaya, M.Kom.",
+        nip_pembimbing_1: "197903152005011002",
+        pembimbing_2: "Ahmad Fauzi, S.Kom., M.T.",
+        nip_pembimbing_2: "198811052015041003",
         abstrak_id:
-            'Layanan informasi akademik konvensional sering mengalami antrean respon yang lambat. Penelitian ini membangun sistem tanya jawab cerdas menggunakan model bahasa besar LLaMA-3 dengan teknik RAG untuk memitigasi halusinasi dan meningkatkan akurasi jawaban dokumen panduan akademik ITK.',
+            "Layanan informasi akademik konvensional sering mengalami antrean respon yang lambat. Penelitian ini membangun sistem tanya jawab cerdas menggunakan model bahasa besar LLaMA-3 dengan teknik RAG untuk memitigasi halusinasi dan meningkatkan akurasi jawaban dokumen panduan akademik ITK.",
         abstrak_en:
-            'Conventional academic information services often face slow response queues. This research develops an intelligent question-answering system using LLaMA-3 LLM with RAG techniques to mitigate hallucination and improve answer accuracy based on ITK academic guideline documents.',
-        tags: ['#LLM', '#RAG', '#LangChain', '#Academic Chatbot', '#VectorDB'],
-        metode: 'Experimental Research & Evaluation',
-        tanggal_sidang: '18 Juni 2024',
-        doi: 'https://doi.org/10.14710/rag.2024.412',
+            "Conventional academic information services often face slow response queues. This research develops an intelligent question-answering system using LLaMA-3 LLM with RAG techniques to mitigate hallucination and improve answer accuracy based on ITK academic guideline documents.",
+        tags: ["#LLM", "#RAG", "#LangChain", "#Academic Chatbot", "#VectorDB"],
+        metode: "Experimental Research & Evaluation",
+        tanggal_sidang: "18 Juni 2024",
+        doi: "https://doi.org/10.14710/rag.2024.412",
     },
     {
         id: 3,
-        tahun: '2024',
-        prodi: 'Teknik Informatika',
-        bidang: 'Sistem Informasi & Optimasi',
-        judul: 'Optimasi Penjadwalan Sidang Tugas Akhir Multi-Ruangan Menggunakan Algoritma Genetika Hibrida (Studi Kasus: FSTI ITK)',
-        penulis: 'Akmal Falah Maulana',
-        nim: '11231006',
-        pembimbing_1: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        nip_pembimbing_1: '197903152005011002',
-        pembimbing_2: 'Rina Agustina, S.T., M.Kom.',
-        nip_pembimbing_2: '198607142012122001',
+        tahun: "2024",
+        prodi: "Teknik Informatika",
+        bidang: "Sistem Informasi & Optimasi",
+        judul: "Optimasi Penjadwalan Sidang Tugas Akhir Multi-Ruangan Menggunakan Algoritma Genetika Hibrida (Studi Kasus: FSTI ITK)",
+        penulis: "Akmal Falah Maulana",
+        nim: "11231006",
+        pembimbing_1: "Dr. Ir. Hendra Wijaya, M.Kom.",
+        nip_pembimbing_1: "197903152005011002",
+        pembimbing_2: "Rina Agustina, S.T., M.Kom.",
+        nip_pembimbing_2: "198607142012122001",
         abstrak_id:
-            'Penyusunan jadwal seminar dan sidang yang melibatkan puluhan dosen dan ratusan mahasiswa merupakan masalah NP-hard. Penelitian ini mengimplementasikan algoritma genetika dengan penyesuaian penalti dinamis untuk menghasilkan jadwal bebas bentrok dan beban menguji yang proporsional.',
+            "Penyusunan jadwal seminar dan sidang yang melibatkan puluhan dosen dan ratusan mahasiswa merupakan masalah NP-hard. Penelitian ini mengimplementasikan algoritma genetika dengan penyesuaian penalti dinamis untuk menghasilkan jadwal bebas bentrok dan beban menguji yang proporsional.",
         abstrak_en:
-            'Scheduling seminars and defenses involving dozens of lecturers and hundreds of students is an NP-hard problem. This study implements a hybrid genetic algorithm with dynamic penalty adjustment to generate conflict-free schedules with balanced examination workloads.',
+            "Scheduling seminars and defenses involving dozens of lecturers and hundreds of students is an NP-hard problem. This study implements a hybrid genetic algorithm with dynamic penalty adjustment to generate conflict-free schedules with balanced examination workloads.",
         tags: [
-            '#Algoritma Genetika',
-            '#Penjadwalan Otomatis',
-            '#Optimization',
-            '#Constraint Satisfaction',
+            "#Algoritma Genetika",
+            "#Penjadwalan Otomatis",
+            "#Optimization",
+            "#Constraint Satisfaction",
         ],
-        metode: 'Design Science Research (DSR)',
-        tanggal_sidang: '10 Juli 2024',
-        doi: 'https://doi.org/10.14710/ga.2024.509',
+        metode: "Design Science Research (DSR)",
+        tanggal_sidang: "10 Juli 2024",
+        doi: "https://doi.org/10.14710/ga.2024.509",
     },
 ]);
 
 const openDetail = (item: SkripsiItem) => {
     selectedItem.value = item;
-    activeTab.value = 'id';
+    activeTab.value = "id";
 };
 
 const closeDetail = () => {
@@ -186,51 +219,49 @@ const closeDetail = () => {
                                 class="w-full rounded-xl border border-slate-300 bg-slate-50/50 py-2 pr-4 pl-10 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                             />
                         </div>
-                        <button
-                            type="button"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#6147F8] px-5 py-2 text-xs font-bold text-white shadow-xs hover:bg-indigo-600"
-                        >
-                            <Filter class="h-3.5 w-3.5" />
-                            <span>Filter</span>
-                        </button>
                     </div>
 
                     <!-- Dropdowns Row -->
                     <div class="grid grid-cols-2 gap-3 text-xs sm:grid-cols-5">
                         <select
+                            v-model="filterTahun"
                             class="rounded-xl border border-slate-300 bg-white p-2 dark:border-slate-700 dark:bg-slate-900"
                         >
-                            <option>Semua Tahun</option>
+                            <option value="">Semua Tahun</option>
                             <option>2024</option>
                             <option>2023</option>
                         </select>
                         <select
+                            v-model="filterProdi"
                             class="rounded-xl border border-slate-300 bg-white p-2 dark:border-slate-700 dark:bg-slate-900"
                         >
-                            <option>Semua Program Studi</option>
+                            <option value="">Semua Program Studi</option>
                             <option>Teknik Informatika</option>
                             <option>Sistem Informasi</option>
                         </select>
                         <select
+                            v-model="filterBidang"
                             class="rounded-xl border border-slate-300 bg-white p-2 dark:border-slate-700 dark:bg-slate-900"
                         >
-                            <option>Semua Bidang Kajian</option>
+                            <option value="">Semua Bidang Kajian</option>
                             <option>AI & Machine Learning</option>
                             <option>Human-Computer Interaction</option>
                         </select>
                         <select
+                            v-model="filterMetode"
                             class="rounded-xl border border-slate-300 bg-white p-2 dark:border-slate-700 dark:bg-slate-900"
                         >
-                            <option>Semua Metode Penelitian</option>
+                            <option value="">Semua Metode Penelitian</option>
                             <option>Prototyping</option>
                             <option>Experimental</option>
                         </select>
                         <select
+                            v-model="sortBy"
                             class="rounded-xl border border-slate-300 bg-white p-2 dark:border-slate-700 dark:bg-slate-900"
                         >
-                            <option>Urutkan: Terbaru</option>
-                            <option>Urutkan: Terlama</option>
-                            <option>Urutkan: Judul (A-Z)</option>
+                            <option value="terbaru">Urutkan: Terbaru</option>
+                            <option value="terlama">Urutkan: Terlama</option>
+                            <option value="judul">Urutkan: Judul (A-Z)</option>
                         </select>
                     </div>
 
@@ -238,16 +269,20 @@ const closeDetail = () => {
                         class="flex items-center justify-between pt-1 text-[11px] text-slate-500"
                     >
                         <span>Menampilkan seluruh katalog publik</span>
-                        <span>Menampilkan 3 dari 3 tugas akhir</span>
+                        <span
+                            >Menampilkan {{ filteredSkripsiList.length }} dari
+                            {{ skripsiList.length }} tugas akhir</span
+                        >
                     </div>
                 </div>
 
                 <!-- Grid Kartu Skripsi (Sesuai Mockup) -->
                 <div
+                    v-if="filteredSkripsiList.length"
                     class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
                 >
                     <div
-                        v-for="item in skripsiList"
+                        v-for="item in filteredSkripsiList"
                         :key="item.id"
                         class="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
                     >
@@ -337,6 +372,29 @@ const closeDetail = () => {
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div
+                    v-else
+                    class="mt-6 rounded-2xl border border-slate-200/80 bg-white p-12 text-center shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+                >
+                    <div class="mx-auto max-w-md space-y-3">
+                        <div
+                            class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+                        >
+                            <Search class="h-8 w-8 text-slate-400" />
+                        </div>
+                        <h3
+                            class="text-sm font-bold text-slate-900 dark:text-white"
+                        >
+                            Tidak ada katalog yang sesuai
+                        </h3>
+                        <p
+                            class="text-xs leading-relaxed text-slate-500 dark:text-slate-400"
+                        >
+                            Coba ubah kata kunci pencarian atau reset filter
+                            untuk melihat seluruh katalog.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -568,7 +626,7 @@ const closeDetail = () => {
                                         class="mt-3 text-xs leading-relaxed text-slate-700 dark:text-slate-300"
                                     >
                                         {{
-                                            activeTab === 'id'
+                                            activeTab === "id"
                                                 ? selectedItem.abstrak_id
                                                 : selectedItem.abstrak_en
                                         }}

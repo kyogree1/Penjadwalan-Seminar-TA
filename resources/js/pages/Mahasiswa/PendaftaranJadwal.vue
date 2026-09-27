@@ -6,7 +6,6 @@ import { Search } from "lucide-vue-next";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import PageHeaderBox from "@/Components/PageHeaderBox.vue";
 import PageTabs from "@/Components/PageTabs.vue";
-import ReminderList, { type ReminderItem } from "@/Components/ReminderList.vue";
 import ScheduleDetailModal, {
     type ScheduleDetail,
 } from "@/Components/ScheduleDetailModal.vue";
@@ -22,24 +21,6 @@ const tabs = [
     { id: "registrants", label: "Pendaftar Sempro" },
     { id: "sempro", label: "Jadwal Sempro" },
     { id: "sidang", label: "Jadwal Sidang TA" },
-];
-
-const reminders: ReminderItem[] = [
-    {
-        id: "r1",
-        title: "Pendaftaran Sidang Gelombang 1 segera ditutup",
-        detail: "Lengkapi berkas sebelum periode berakhir.",
-        due: "H-6",
-        priority: "soon",
-        href: "/pendaftaran/sidang",
-    },
-    {
-        id: "r2",
-        title: "Seminar Proposal Anda sudah dijadwalkan",
-        detail: "Buka detail untuk melihat ruangan dan penguji.",
-        due: "H-2",
-        priority: "urgent",
-    },
 ];
 
 type Registrant = {
@@ -181,7 +162,6 @@ const openDetail = (item: ScheduleDetail) => {
                 title="Pendaftar & Jadwal Tugas Akhir"
                 subtitle="Informasi pendaftar, jadwal Seminar Proposal, dan jadwal Sidang TA."
             />
-            <ReminderList :items="reminders" />
             <PageTabs v-model="activeTab" :tabs="tabs" />
             <div class="flex flex-col gap-3 sm:flex-row">
                 <div class="relative flex-1">

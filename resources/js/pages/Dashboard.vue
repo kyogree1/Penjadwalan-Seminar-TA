@@ -23,7 +23,6 @@ import {
 
 import AppLayout from "@/Layouts/AppLayout.vue";
 import Modal from "@/Components/Modal.vue";
-import ReminderList, { type ReminderItem } from "@/Components/ReminderList.vue";
 
 const page = usePage();
 const authUser = computed(() => (page.props.auth as any)?.user);
@@ -32,24 +31,6 @@ const studentName = computed(
 );
 const studentNim = computed(() => authUser.value?.nim_nip || "NIM: 11231006");
 const studentProdi = computed(() => authUser.value?.prodi || "S1 Informatika");
-const reminders: ReminderItem[] = [
-    {
-        id: "dashboard-sempro",
-        title: "Seminar Proposal semakin dekat",
-        detail: "Siapkan presentasi dan berkas untuk jadwal 02 Oktober 2026.",
-        due: "H-2",
-        priority: "urgent",
-        href: "/pendaftaran/jadwal",
-    },
-    {
-        id: "dashboard-sidang",
-        title: "Pendaftaran Sidang Gelombang 1 segera ditutup",
-        detail: "Pastikan syarat bimbingan dan Turnitin sudah terpenuhi.",
-        due: "H-6",
-        priority: "soon",
-        href: "/pendaftaran/sidang",
-    },
-];
 
 // ==========================================
 // 1. STATUS PERIODE (Dinamis per event & semester)
@@ -841,44 +822,6 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                         </div>
                     </Link>
                 </div>
-            </div>
-
-            <div
-                class="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]"
-            >
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h3
-                            class="text-sm font-bold text-slate-900 dark:text-white"
-                        >
-                            Reminder
-                        </h3>
-                        <span class="text-xs text-slate-500"
-                            >Tenggat terdekat</span
-                        >
-                    </div>
-                    <ReminderList :items="reminders" />
-                </div>
-                <Link
-                    href="/pendaftaran/jadwal"
-                    class="flex items-center justify-between rounded-2xl border border-blue-200 bg-blue-50 p-4 transition-colors hover:border-blue-400 dark:border-blue-900/60 dark:bg-blue-950/20"
-                >
-                    <div>
-                        <p
-                            class="text-xs font-bold text-blue-900 dark:text-blue-200"
-                        >
-                            Pendaftar & Jadwal
-                        </p>
-                        <p
-                            class="mt-1 text-[11px] text-blue-700 dark:text-blue-300"
-                        >
-                            Lihat daftar peserta dan jadwal Sempro/Sidang.
-                        </p>
-                    </div>
-                    <span class="text-sm font-bold text-blue-600"
-                        >Lihat &gt;</span
-                    >
-                </Link>
             </div>
 
             <!-- 4. Statistik Bimbingan & Kalender Personal -->

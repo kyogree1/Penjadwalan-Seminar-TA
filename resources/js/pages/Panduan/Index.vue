@@ -1,79 +1,94 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { computed, ref } from "vue";
+import { Head, Link } from "@inertiajs/vue3";
 import {
     ChevronDown,
     FileText,
     HelpCircle,
     Info,
     Search,
-} from 'lucide-vue-next';
+} from "lucide-vue-next";
 
-import AppLayout from '@/Layouts/AppLayout.vue';
+import AppLayout from "@/Layouts/AppLayout.vue";
 
-const searchQuery = ref('');
+const searchQuery = ref("");
 
 const openIndex = ref<number | null>(0);
 
 const toggleAccordion = (idx: number) => {
     openIndex.value = openIndex.value === idx ? null : idx;
 };
-
 const guideItems = [
     {
-        title: 'Masuk & Melengkapi Profil',
-        menu: 'User Profile & Unggah e-TTD',
+        title: "Masuk & Melengkapi Profil",
+        menu: "User Profile & Unggah e-TTD",
+        link: "/profile",
         content: [
-            'Masuk memakai username (alamat email kampus Anda) dengan password berupa NIM. Percobaan login dibatasi 5 kali per menit.',
-            'Buka menu User Profile untuk melengkapi data diri dan mengunggah tanda tangan digital (e-TTD).',
+            "Masuk memakai username (alamat email kampus Anda) dengan password berupa NIM. Percobaan login dibatasi 5 kali per menit.",
+            "Buka menu User Profile untuk melengkapi data diri dan mengunggah tanda tangan digital (e-TTD).",
         ],
         warning: {
-            title: 'Perhatian Penting!',
+            title: "Perhatian Penting!",
             notes: [
-                'Password mahasiswa tetap NIM dan tidak bisa diganti sendiri. Kalau tidak bisa masuk, hubungi Tendik — halaman login sengaja tidak menyediakan tautan lupa password.',
-                'Selama tanda tangan belum diunggah, semua menu pendaftaran terkunci dan Anda akan selalu dikembalikan ke halaman User Profile. Tanda tangan dipakai untuk membubuhkan paraf Anda di formulir TA yang dicetak sistem.',
+                "Password mahasiswa tetap NIM dan tidak bisa diganti sendiri. Kalau tidak bisa masuk, hubungi Tendik — halaman login sengaja tidak menyediakan tautan lupa password.",
+                "Selama tanda tangan belum diunggah, semua menu pendaftaran terkunci dan Anda akan selalu dikembalikan ke halaman User Profile. Tanda tangan dipakai untuk membubuhkan paraf Anda di formulir TA yang dicetak sistem.",
                 'Data Prodi Anda diisi oleh Tendik/Koorprodi. Prodi wajib terisi karena periode pendaftaran Sempro dan Sidang TA dibuka per prodi — kalau kosong, pendaftaran akan ditolak dengan pesan "Prodi Anda belum diatur".',
             ],
         },
     },
     {
-        title: 'Pengajuan Judul & Dosen Pembimbing',
-        menu: 'Menu: Pengajuan Judul',
+        title: "Pengajuan Judul & Dosen Pembimbing",
+        menu: "Menu: Pengajuan Judul",
+        link: "/pendaftaran/judul",
         content: [
-            'Pastikan telah berdiskusi awal dengan calon Dosen Pembimbing 1 dan 2 sebelum menginput data.',
-            'Masukkan judul lengkap dan deskripsi bidang penelitian (AI, IoT, Cyber Security, RPL, dll.).',
-            'Centang pernyataan konfirmasi bahwa kedua pembimbing telah bersedia.',
-            'Setelah dikirim dan disetujui, pembimbing TIDAK DAPAT DIUBAH lagi secara mandiri.',
+            "Pastikan telah berdiskusi awal dengan calon Dosen Pembimbing 1 dan 2 sebelum menginput data.",
+            "Masukkan judul lengkap dan deskripsi bidang penelitian (AI, IoT, Cyber Security, RPL, dll.).",
+            "Centang pernyataan konfirmasi bahwa kedua pembimbing telah bersedia.",
+            "Setelah dikirim dan disetujui, pembimbing TIDAK DAPAT DIUBAH lagi secara mandiri.",
         ],
     },
     {
-        title: 'Pelaksanaan Bimbingan & Logbook (Form TA-04)',
-        menu: 'Menu: Bimbingan',
+        title: "Pelaksanaan Bimbingan & Logbook (Form TA-04)",
+        menu: "Menu: Bimbingan",
+        link: "/pendaftaran/bimbingan",
         content: [
-            'Wajib melakukan bimbingan minimal 8 kali per semester untuk masing-masing pembimbing.',
-            'Input logbook setiap selesai bimbingan (tanggal, rangkuman materi, dan keterangan tempat online/offline).',
-            'Unduh Lembar Monitoring Bimbingan (Form TA-04) saat hendak mendaftar Sempro atau Sidang.',
+            "Wajib melakukan bimbingan minimal 8 kali per semester untuk masing-masing pembimbing.",
+            "Input logbook setiap selesai bimbingan (tanggal, rangkuman materi, dan keterangan tempat online/offline).",
+            "Unduh Lembar Monitoring Bimbingan (Form TA-04) saat hendak mendaftar Sempro atau Sidang.",
         ],
     },
     {
-        title: 'Pendaftaran Seminar Proposal (Sempro)',
-        menu: 'Menu: Seminar Proposal',
+        title: "Pendaftaran Seminar Proposal (Sempro)",
+        menu: "Menu: Seminar Proposal",
+        link: "/pendaftaran/sempro",
         content: [
-            'Buka formulir pendaftaran Sempro saat status periode gelombang aktif dibuka.',
-            'Unggah berkas: Lembar Kehadiran Sempro (Form TA-03D min. 5 kali), Proposal BAB 1-3, dan Bukti Cek Plagiasi Turnitin (maks 20%).',
-            'Tunggu verifikasi berkas dari tim akademik sebelum jadwal seminar diterbitkan oleh sistem penjadwalan.',
+            "Buka formulir pendaftaran Sempro saat status periode gelombang aktif dibuka.",
+            "Unggah berkas: Lembar Kehadiran Sempro (Form TA-03D min. 5 kali), Proposal BAB 1-3, dan Bukti Cek Plagiasi Turnitin (maks 20%).",
+            "Tunggu verifikasi berkas dari tim akademik sebelum jadwal seminar diterbitkan oleh sistem penjadwalan.",
         ],
     },
     {
-        title: 'Pendaftaran Sidang Tugas Akhir',
-        menu: 'Menu: Sidang TA',
+        title: "Pendaftaran Sidang Tugas Akhir",
+        menu: "Menu: Sidang TA",
+        link: "/pendaftaran/sidang",
         content: [
-            'Prasyarat: Telah dinyatakan LULUS seminar proposal dan menyelesaikan revisi proposal.',
-            'Unggah Naskah Lengkap Skripsi (BAB 1-5), Skor IAET (ITK Academic English Test), dan Bukti Turnitin terbaru.',
-            'Setelah sidang dan revisi di-ACC semua dosen, Lembar Pengesahan Tugas Akhir resmi akan otomatis terbit.',
+            "Prasyarat: Telah dinyatakan LULUS seminar proposal dan menyelesaikan revisi proposal.",
+            "Unggah Draft Laporan TA (BAB 1-5), Skor IAET (ITK Academic English Test) berupa angka (opsional), dan Bukti Turnitin terbaru.",
+            "Setelah sidang dan revisi di-ACC semua dosen, Lembar Pengesahan Tugas Akhir resmi akan otomatis terbit.",
         ],
     },
 ];
+
+const filteredGuideItems = computed(() => {
+    const query = searchQuery.value.trim().toLowerCase();
+    if (!query) return guideItems;
+    return guideItems.filter((item) =>
+        [item.title, item.menu, ...item.content, ...(item.warning?.notes ?? [])]
+            .join(" ")
+            .toLowerCase()
+            .includes(query),
+    );
+});
 </script>
 
 <template>
@@ -122,9 +137,9 @@ const guideItems = [
             </div>
 
             <!-- Accordion List (Sesuai Mockup) -->
-            <div class="space-y-4">
+            <div v-if="filteredGuideItems.length" class="space-y-4">
                 <div
-                    v-for="(item, idx) in guideItems"
+                    v-for="(item, idx) in filteredGuideItems"
                     :key="idx"
                     class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
                 >
@@ -187,8 +202,40 @@ const guideItems = [
                                 </li>
                             </ul>
                         </div>
+
+                        <Link
+                            v-if="item.link"
+                            :href="item.link"
+                            class="mt-4 inline-flex items-center gap-2 rounded-xl bg-blue-50 px-4 py-2 text-xs font-bold text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-900"
+                        >
+                            <span
+                                >Buka Halaman
+                                {{ item.menu.replace("Menu: ", "") }}</span
+                            >
+                            <svg
+                                class="h-3.5 w-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 5l7 7-7 7"
+                                />
+                            </svg>
+                        </Link>
                     </div>
                 </div>
+            </div>
+            <div
+                v-else
+                class="rounded-2xl border border-slate-200/80 bg-white p-10 text-center shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            >
+                <p class="text-sm text-slate-500 dark:text-slate-400">
+                    Panduan tidak ditemukan. Coba kata kunci lain.
+                </p>
             </div>
         </div>
     </AppLayout>
