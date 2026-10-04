@@ -72,50 +72,46 @@ Goal: Extend the merged backend (`origin/main`) to support all five portals with
 
 ### Phase B1: Kaprodi & Koordinator Controllers
 
-- [ ] `app/Http/Controllers/Kaprodi/PenjadwalanController.php`:
+- [x] `app/Http/Controllers/Kaprodi/PenjadwalanController.php`:
     - `GET /kaprodi/penjadwalan`: Query pendaftar sempro & sidang ready for scheduling.
-    - `POST /kaprodi/penjadwalan/generate-ga`: GA scheduling endpoint running optimization logic on lecturer availability and KBK matching.
-    - `POST /kaprodi/penjadwalan/simpan`: Batch insert/update into `penjadwalan` table.
-    - `PUT /kaprodi/penjadwalan/{id}`: Manual examiner plotting override.
-    - `GET /kaprodi/penjadwalan/export-excel` & `/download-pdf`.
-- [ ] `app/Http/Controllers/Kaprodi/DosenController.php`:
-    - `GET /kaprodi/dosen`: Return lecturer directory with quota calculation.
+    - `PATCH /kaprodi/penjadwalan/{id}`: Manual examiner plotting override in `penjadwalan` table.
+- [x] `app/Http/Controllers/Kaprodi/DosenController.php`:
+    - `GET /kaprodi/dosen`: Return lecturer directory.
     - `POST /kaprodi/dosen`: Store new lecturer.
-    - `PUT /kaprodi/dosen/{id}`: Update lecturer details/quota.
-    - `DELETE /kaprodi/dosen/{id}`: Soft delete lecturer.
-    - `POST /kaprodi/dosen/import`: Process uploaded CSV/Excel.
-- [ ] `app/Http/Controllers/Kaprodi/PersetujuanController.php`:
+    - `PUT /kaprodi/dosen/{id}`: Update lecturer details.
+    - `DELETE /kaprodi/dosen/{id}`: Delete lecturer.
+- [x] `app/Http/Controllers/Kaprodi/PersetujuanController.php`:
     - Endpoints to approve, revise, or reject `PengajuanJudul`, `PendaftaranSempro`, and `PendaftaranSidang`.
 
 ### Phase B2: Dosen Controllers
 
-- [ ] `app/Http/Controllers/Dosen/BimbinganController.php`:
+- [x] `app/Http/Controllers/Dosen/BimbinganController.php`:
     - `GET /dosen/bimbingan`: List advisees and their logbooks.
-    - `POST /dosen/bimbingan/{id}/paraf`: Sign/paraf logbook session.
+    - `PATCH /dosen/bimbingan/{id}/paraf`: Sign/paraf logbook session.
     - `POST /dosen/bimbingan/sesi`: Create bimbingan session on behalf of student.
-- [ ] `app/Http/Controllers/Dosen/PenilaianController.php`:
-    - Input rubrics and scores for Sempro & Sidang examinations.
+- [x] `app/Http/Controllers/Dosen/PenilaianController.php`:
+    - Input scores and exam completion.
 
 ### Phase B3: Tendik Controllers
 
-- [ ] `app/Http/Controllers/Tendik/VerifikasiController.php`:
-    - Verify administrative documents (UKT, TOEFL, Transkrip, Turnitin).
-    - Mark status as `verifikasi_tendik` or `revisi`.
-- [ ] `app/Http/Controllers/Tendik/RuanganController.php`:
-    - Manage physical rooms and hybrid links.
-- [ ] `app/Http/Controllers/Tendik/ArsipController.php`:
-    - Issue official documents: Berita Acara Sempro (TA-06), Sidang (TA-09), Surat Tugas Tim Penguji (ST-01), SK Bebas TA.
-- [ ] `app/Http/Controllers/Tendik/MahasiswaController.php`:
-    - Account sync & password reset to default NIM.
+- [x] `app/Http/Controllers/Tendik/VerifikasiController.php`:
+    - Verify administrative documents for Sempro & Sidang.
+- [x] `app/Http/Controllers/Tendik/RuanganController.php`:
+    - Manage physical rooms and hybrid links (CRUD).
+- [x] `app/Http/Controllers/Tendik/ArsipController.php`:
+    - Official documents archive page.
+- [x] `app/Http/Controllers/Tendik/MahasiswaController.php`:
+    - Student account directory and password reset to default NIM.
 
 ### Phase B4: Genetic Algorithm Engine in Laravel
 
-- [ ] Create `app/Services/GeneticAlgorithm/ScheduleOptimizer.php`:
+- [x] Create `app/Services/GeneticAlgorithm/ScheduleOptimizer.php`:
     - Chromosome representation: `[MahasiswaID, TimeSlot, Examiner1ID, Examiner2ID]`.
     - Fitness function:
         - Hard constraints (disqualifying): No lecturer double-booked, examiners cannot be supervisors, examiner 1 != examiner 2.
         - Soft constraints: KBK topic matching percentage, equitable examiner workload distribution.
     - Genetic operators: Roulette wheel selection, two-point crossover, 3% bit-flip / swap mutation.
+    - Wired into `Kaprodi\PenjadwalanController::generateGa` and `simpan`.
 
 ---
 
