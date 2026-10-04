@@ -1,144 +1,128 @@
-# Frontend Refactor Plan
+# SIPTA IF — Master Development & Integration Plan
 
-Scope: `resources/js`, `resources/css`, `resources/views/app.blade.php`. The backend is out of scope, except where a frontend step needs a contract (marked **Backend contract**).
+Scope: Frontend (`resources/js`, `resources/css`) and Backend (`app/`, `routes/`, `database/`, `tests/`).
 
-Baseline (2026-10-04):
+Baseline Status (2026-10-04):
 
-| Check                     | State                                            |
-| ------------------------- | ------------------------------------------------ |
-| `vue-tsc --noEmit`        | 0 errors, 26 `any` casts                         |
-| `vp check`                | 23 files fail formatting                         |
-| Wayfinder usage           | 0 imports, 73 hardcoded URLs                     |
-| Arbitrary Tailwind values | 407 (147 inline hex colors)                      |
-| Unused components         | 6                                                |
-| Largest files             | AppLayout 1419, Dashboard 1335, Login 1286 lines |
-
-Each phase ends green on `bun run types:check` and `bun run check`, and gets its own commit.
+- **Tooling:** `bun run check` clean, `bun run types:check` 0 errors, `bun run build` passes.
+- **Backend Merge:** Cleanly merged `origin/main` (`dd6508f`). Mahasiswa controllers, models, and migrations active; PHPUnit test suite passing (`3 passed, 9 assertions`).
+- **Tendik Slice Complete:** 5 pages typed with props, 43 unused icons pruned, Wayfinder routes linked, zero inline mock arrays, zero `any` casts.
+- **External Asset:** `Front-End(1).zip` extracted to scratchpad, containing prototype implementations of AI Genetic Algorithm scheduling, Master Data Dosen, Dosen Bimbingan logbook, and Kaprodi review flows.
 
 ---
 
-## Phase 0: Commit what's there
+## Completed Phases
 
-The working tree has 9 modified files and an untracked `resources/js/data/`.
-
-- [ ] Commit or stash the current changes so the refactor starts from a clean tree.
-- [ ] Add `resources/js/data/` to git (it's imported by `Login.vue`; a fresh clone breaks without it).
-
-## Phase 1: Tooling green
-
-Goal: CI passes, so every later phase gives a meaningful signal.
-
-- [ ] Add to `.gitattributes`: `* text=auto eol=lf` (the modified files have CRLF, the rest LF).
-- [ ] Run `git add --renormalize .`.
-- [ ] Run `bun run check:fix` (fixes the quote style: code uses double quotes, config says `singleQuote: true`).
-- [ ] Fix the `vite.config.ts` ignore paths: `resources/js/components/ui/*` should be `resources/js/Components/ui/*`, or remove them if unused.
-
-**Verify:** `bun run check` and `bun run types:check` both exit 0.
-
-## Phase 2: Persistent layout
-
-Goal: stop remounting the shell on every navigation. Right now this resets sidebar state, notifications, the chatbot conversation, and re-runs theme init.
-
-- [ ] In `app.ts`, set the default layout in `resolve`:
-    ```ts
-    resolve: async (name) => {
-        const page = await resolvePageComponent(...);
-        page.default.layout ??= name.startsWith('Auth/') ? undefined : AppLayout;
-        return page;
-    },
-    ```
-- [ ] Remove the `<AppLayout>` wrapper from all 22 pages.
-- [ ] Replace the `title` prop on `AppLayout` with the page's `<Head>` title, or a shared prop.
-- [ ] Move `initializeTheme()` out of `AppLayout`/`Login` `onMounted` into `app.ts` setup, so it runs once.
-
-**Verify:** collapse the sidebar, open a chat, mark notifications read, then navigate between 3 pages. All of that state survives.
-
-## Phase 3: Typed page props, centralized mocks
-
-Goal: wiring the backend later only swaps the data source; templates stay unchanged.
-
-- [ ] Create `resources/js/types/models.ts` with domain types: `User`, `Role`, `Dosen`, `Mahasiswa`, `PengajuanJudul`, `Bimbingan`, `JadwalSesi`, `Ruangan`, `Notification`, `ApplicationStatus`.
-- [ ] Add `role`, `username`, `nim_nip`, `prodi`, `jabatan`, `avatar` to `types/auth.ts`, then remove the `page.props.auth as any` casts.
-- [ ] Add a `useAuth()` composable returning a typed `user` and normalized `role` (`koordinator → kaprodi`). Use it in `AppLayout` and in the pages.
-- [ ] Move all inline mock arrays (AppLayout notifications, `dosenList`, Monitoring cohort, Dosen advisees, etc.) into `resources/js/data/*.ts`, one file per domain, typed with `models.ts`.
-- [ ] Each page declares its data as typed props, defaulting to the mocks: `withDefaults(defineProps<{ dosenList?: Dosen[] }>(), { dosenList: () => mockDosen })`. The backend sends nothing for now; when controllers exist, they pass real props and the defaults (then the `data/` files) get deleted. No template changes needed.
-- [ ] For layout-level data (notifications), add a composable (`useNotifications()`) that reads from `data/` now and can switch to a shared Inertia prop later.
-- [ ] Remove the hardcoded "Akmal Falah Maulana" fallback in `AppLayout.profileData`.
-- [ ] Bring the `any` count to 0.
-
-**Verify:** `grep -r "Mock" resources/js/pages resources/js/Layouts` returns nothing (mocks live only in `data/`); types pass.
-
-## Phase 4: Honest forms and UI states
-
-- [ ] Add a `lib/mockSubmit.ts` helper with the same callback shape as `form.post` (`onStart`, `onSuccess`, `onError`, `onFinish`), resolving after a short delay. Until the backend exists, all Pendaftaran forms and Profile submit through it instead of POSTing to routes that 405. Later, swapping to `form.post` is a one-line change per form.
-- [ ] `Judul.vue`, `Sidang.vue`: set the status only in `onSuccess`, not before submitting.
-- [ ] `Bimbingan.vue`, `Sempro.vue`, `Profile/Index.vue`: wire their existing `useForm` to the same helper.
-    - **Backend contract (later):** `POST /pendaftaran/{judul,sidang,sempro,bimbingan}`, `PUT /profile`.
-- [ ] Every submit button: `:disabled="form.processing"` plus a spinner. Show `form.errors.*` under each field.
-- [ ] Every data view: empty, loading, and error states (`RiwayatTimelineCard` already has an empty state; use it as the pattern).
-- [ ] Replace `alert()` in `Pendaftaran/Bimbingan.vue:145` with the existing `Modal` or an inline message.
-- [ ] Hook the shared `flash.success/error/info` props into a toast in `AppLayout` (the backend already sends them; nothing renders them).
-
-## Phase 5: Design audit (before tokens)
-
-Goal: decide what the visual system should be _before_ encoding it into tokens, so Phase 6 doesn't lock in mistakes.
-
-- [ ] Compare each portal against the `design-plan/` mockups (Dashboard, Pengajuan Judul, Bimbingan, Seminar Proposal, Sidang, Katalog, Panduan, Prosedur, landing page).
-- [ ] Audit for generic AI-template patterns (antislop audit mode): purposeless gradients and glows, uniform card grids, contrast failures, dead controls, fabricated numbers in mocks shown as real data.
-- [ ] Output: numbered findings list in `anti-slop/audit-001-2026-10-04.md`, each with a rule reference, priority (HIGH / MEDIUM / LOW) and a one-line reason.
-- [ ] The user picks which numbers to fix. Approved visual decisions (palette, surfaces, radius, shadows) feed into Phase 6. Nothing gets changed in this phase.
-
-## Phase 6: Design tokens
-
-Goal: replace pasted hex values with named tokens, making dark mode maintainable.
-
-- [ ] Inventory the distinct arbitrary colors: `#0E1626`, `#080D1A`, `#F4F6FA`, `#1E293B`, …
-- [ ] Define them in `app.css` `@theme`, e.g. `--color-surface`, `--color-surface-dark`, `--color-canvas`, `--color-canvas-dark`, `--color-sidebar`, `--color-brand`.
-- [ ] Optionally use CSS variables that flip under `.dark`, so one class (`bg-surface`) replaces a `bg-white dark:bg-[#0E1626]` pair.
-- [ ] Replace usages file by file.
-- [ ] Match `app.ts` progress color `#2563eb` to the brand token.
-
-**Verify:** arbitrary-value count drops substantially; take visual before/after screenshots of each portal in light and dark.
-
-## Phase 7: Component extraction and dedupe
-
-- [ ] Make `Card.vue` the only card surface and replace the inline `rounded-2xl border ... dark:bg-[#0E1626]` blocks.
-- [ ] Add `FormField.vue` (label, input slot, error, hint). Use it in every Pendaftaran form and in Profile.
-- [ ] Move status→label/color mapping into `StatusBadge.vue` (or `lib/status.ts`) and delete the per-page `switch` blocks.
-- [ ] Keep the 6 unused components (`AssessmentResultCard`, `FileTemplateLink`, `FileUpload`, `GaMetricCard`, `ReminderList`, `StatusTracker`) for upcoming features. Bring them onto the Phase 6 tokens so they don't rot; wire them in where a page already needs them (e.g. `FileUpload` for Sempro/Sidang uploads).
-- [ ] Delete `Welcome.vue` if no route uses it.
-
-## Phase 8: Split the big files
-
-- [ ] `AppLayout.vue` (1419) → `Layouts/partials/Sidebar.vue`, `Topbar.vue`, `MobileNav.vue`, `NotificationPanel.vue`, plus a `navigation.ts` config per role.
-- [ ] `Login.vue` (1286) and `Dashboard.vue` (1335): extract the shared academic calendar into `Components/calendar/AcademicCalendar.vue` (+ day modal, mobile week list). It already reuses `CompactCalendar`, `ScheduleDetailModal`, `WeekSelector`, `WeeklyAgendaList`.
-- [ ] Target: no `.vue` file over ~400 lines.
-
-## Phase 9: Routing via Wayfinder
-
-- [ ] Replace hardcoded URLs with generated helpers: `import { judul } from '@/routes/pendaftaran'`, then `form.submit(judul.post())`, `<Link :href="dashboard()">`.
-- [ ] Point notification and nav links at `kaprodi.*`, not the `/koordinator/*` redirect aliases.
-- [ ] Derive active-nav detection from route names instead of `url.startsWith(...)`.
-
-**Verify:** hardcoded-path grep (`"/pendaftaran`, `"/dosen`, `"/kaprodi`, `"/tendik`) returns 0 in `.vue` files.
-
-## Phase 10: Security, accessibility, consistency
-
-- [ ] Render the quick-login buttons in `Login.vue` only in local dev (`import.meta.env.DEV`) so seeded credentials don't ship in the production bundle.
-- [ ] Login footer: remove the 3 `href="#"` links, or point them at real pages.
-- [ ] Add `alt` to the `<img>` at `Index.vue:123`.
-- [ ] Audit the 7 `outline-none` usages; each must have a `focus-visible:` replacement.
-- [ ] Icon-only buttons (sidebar collapse, theme toggle, notifications, close) get `aria-label`.
-- [ ] Modals: Escape closes them, focus is trapped, and focus returns to the trigger.
-- [ ] Use **SIPTA IF** everywhere: `APP_NAME` / `VITE_APP_NAME` in `.env.example`, the `app.ts` fallback, the `<title>` fallback in `app.blade.php`, footer and sidebar. Remove any "SIDATA-FSTI" or "Enrolify" strings from the UI.
-- [ ] Remove the `- SIPTA IF` suffix from every `<Head title>` (the `app.ts` title callback already appends it).
-- [ ] Clean up "Sesuai Mockup" comments; pick one comment language.
+- [x] **Phase 0: Baseline Commit** — Working tree committed and tracked.
+- [x] **Phase 1: Tooling Green** — `.gitattributes` LF, `check:fix` single-quote style, case-sensitive `Components/ui/*` ignore.
+- [x] **Tendik Vertical Slice (Pass 1 & 2):**
+    - [x] Pruned 43 dead icon imports across all 5 Tendik pages.
+    - [x] Converted hardcoded `/tendik/*` URLs to Wayfinder route helpers.
+    - [x] Created `resources/js/types/models.ts` with canonical `Pengajuan` lifecycle and role permissions.
+    - [x] Created `resources/js/lib/status.ts` (single source of truth for status badges, `can()` rules, and `hasilEdit` re-check logic).
+    - [x] Centralized mock data into `resources/js/data/tendik/`.
+    - [x] Replaced inline status switches with `<StatusBadge>` and typed props.
 
 ---
 
-## Decisions (2026-10-04)
+## Track F: Frontend Integration (Kaprodi, Koordinator, Dosen)
 
-1. **Product name:** SIPTA IF.
-2. **Mock data:** stays in the frontend (`resources/js/data/*.ts`) for now. No backend work.
-3. **Unused components:** kept for upcoming features.
-4. **Design audit:** Phase 5, run before design tokens (Phase 6).
+Goal: Port the rich UI and features from `Front-End(1).zip` (HTML+Vue CDN) into proper compiled Inertia Vue 3 Single File Components.
+
+### Phase F1: Koordinator Penjadwalan — AI Genetic Algorithm Engine
+
+- [ ] Create `resources/js/data/koordinator/jadwalGa.ts` with typed dummy datasets from `mockData.js` (`jadwalList`, `gaParams`, `dosenListAll`).
+- [ ] Port `penentuan-jadwal.html` into `resources/js/pages/Koordinator/Penjadwalan.vue`:
+    - [ ] Top KPI Banner: Fitness Score (0.985), 0 Bentrok Waktu, trigger button "✨ Jalankan Optimasi AI (GA)".
+    - [ ] AI GA Optimizer Modal: Parameter inputs (PopSize, MaxGenerations, Crossover Rate 85%, Mutation Rate 3%) + generational convergence logs.
+    - [ ] Scheduling Table: Student, Title, Pembimbing, Penguji 1 (with `% Match KBK` badge), Penguji 2, Date/Time (room-free per thesis specification).
+    - [ ] Manual Override Modal: Edit plotting penguji and exam time slots without schedule collisions.
+    - [ ] Action buttons: Export Excel, Download PDF, Riwayat Kelulusan.
+- [ ] Connect `jadwal-sempro.html` wave cards into the Period manager tabs.
+
+### Phase F2: Master Data Dosen & Workload Quotas
+
+- [ ] Add `resources/js/pages/Kaprodi/Dosen.vue` (or an active tab in `Monitoring.vue`):
+    - [ ] 4 KPI Cards: Total Dosen, Dosen Informatika ITK, Dosen Lintas/Eksternal, Rata-rata Beban Uji GA.
+    - [ ] Master table with NIP, Jabatan Akademik, KBK (Bidang Keahlian), Role, and Quota progress bar (`currentQuota / maxQuota`).
+    - [ ] Modal Tambah / Edit Dosen.
+    - [ ] Modal Import CSV/Excel.
+    - [ ] Filters: Search query, Filter Prodi (Informatika vs Lintas), Filter Jabatan, Filter Role.
+
+### Phase F3: Dosen Bimbingan Logbook & Digital Paraf
+
+- [ ] Upgrade `resources/js/pages/Dosen/Bimbingan.vue` using patterns from `bimbingan.html`:
+    - [ ] Advisee selection sidebar/cards with progress indicator and eligibility tag (`Memenuhi Syarat (Siap Sempro)` vs `Belum Cukup`).
+    - [ ] Detailed per-chapter session logbook (Bab 1-5, rangkuman, catatan dosen, status paraf).
+    - [ ] Modal Catat Sesi Bimbingan baru.
+    - [ ] One-click digital paraf action with confirmation feedback.
+
+### Phase F4: Kaprodi Persetujuan & Review System
+
+- [ ] Align `resources/js/pages/Kaprodi/Persetujuan.vue` with `pengajuan-judul.html`, `sempro.html`, and `sidang.html`:
+    - [ ] Replace inline status switches with `StatusBadge` and `lib/status.ts`.
+    - [ ] Review notes textarea and explicit review actions (Approve, Minta Revisi, Tolak).
+    - [ ] Synchronize reviewer fields with backend `catatan_kaprodi`.
+
+---
+
+## Track B: Backend Architecture & API Contracts
+
+Goal: Extend the merged backend (`origin/main`) to support all five portals with real persistence and business logic.
+
+### Phase B1: Kaprodi & Koordinator Controllers
+
+- [ ] `app/Http/Controllers/Kaprodi/PenjadwalanController.php`:
+    - `GET /kaprodi/penjadwalan`: Query pendaftar sempro & sidang ready for scheduling.
+    - `POST /kaprodi/penjadwalan/generate-ga`: GA scheduling endpoint running optimization logic on lecturer availability and KBK matching.
+    - `POST /kaprodi/penjadwalan/simpan`: Batch insert/update into `penjadwalan` table.
+    - `PUT /kaprodi/penjadwalan/{id}`: Manual examiner plotting override.
+    - `GET /kaprodi/penjadwalan/export-excel` & `/download-pdf`.
+- [ ] `app/Http/Controllers/Kaprodi/DosenController.php`:
+    - `GET /kaprodi/dosen`: Return lecturer directory with quota calculation.
+    - `POST /kaprodi/dosen`: Store new lecturer.
+    - `PUT /kaprodi/dosen/{id}`: Update lecturer details/quota.
+    - `DELETE /kaprodi/dosen/{id}`: Soft delete lecturer.
+    - `POST /kaprodi/dosen/import`: Process uploaded CSV/Excel.
+- [ ] `app/Http/Controllers/Kaprodi/PersetujuanController.php`:
+    - Endpoints to approve, revise, or reject `PengajuanJudul`, `PendaftaranSempro`, and `PendaftaranSidang`.
+
+### Phase B2: Dosen Controllers
+
+- [ ] `app/Http/Controllers/Dosen/BimbinganController.php`:
+    - `GET /dosen/bimbingan`: List advisees and their logbooks.
+    - `POST /dosen/bimbingan/{id}/paraf`: Sign/paraf logbook session.
+    - `POST /dosen/bimbingan/sesi`: Create bimbingan session on behalf of student.
+- [ ] `app/Http/Controllers/Dosen/PenilaianController.php`:
+    - Input rubrics and scores for Sempro & Sidang examinations.
+
+### Phase B3: Tendik Controllers
+
+- [ ] `app/Http/Controllers/Tendik/VerifikasiController.php`:
+    - Verify administrative documents (UKT, TOEFL, Transkrip, Turnitin).
+    - Mark status as `verifikasi_tendik` or `revisi`.
+- [ ] `app/Http/Controllers/Tendik/RuanganController.php`:
+    - Manage physical rooms and hybrid links.
+- [ ] `app/Http/Controllers/Tendik/ArsipController.php`:
+    - Issue official documents: Berita Acara Sempro (TA-06), Sidang (TA-09), Surat Tugas Tim Penguji (ST-01), SK Bebas TA.
+- [ ] `app/Http/Controllers/Tendik/MahasiswaController.php`:
+    - Account sync & password reset to default NIM.
+
+### Phase B4: Genetic Algorithm Engine in Laravel
+
+- [ ] Create `app/Services/GeneticAlgorithm/ScheduleOptimizer.php`:
+    - Chromosome representation: `[MahasiswaID, TimeSlot, Examiner1ID, Examiner2ID]`.
+    - Fitness function:
+        - Hard constraints (disqualifying): No lecturer double-booked, examiners cannot be supervisors, examiner 1 != examiner 2.
+        - Soft constraints: KBK topic matching percentage, equitable examiner workload distribution.
+    - Genetic operators: Roulette wheel selection, two-point crossover, 3% bit-flip / swap mutation.
+
+---
+
+## Track G: Global Architecture & Quality Locks
+
+- [ ] **Persistent Shell (AppLayout):** Extract default layout in `app.ts` to prevent remounting shell state across navigation.
+- [ ] **Big File Refactoring:** Break down `AppLayout.vue` (>1400 lines) and `Login.vue` into modular components.
+- [ ] **Global Design Tokens:** Migrate remaining arbitrary hex colors to Tailwind `@theme` variables.
+- [ ] **Route Cleanliness:** Ensure all navigation links use Wayfinder route helpers.
+- [ ] **Production Verification:** `bun run check:fix`, `bun run types:check`, `bun run build`, and `php artisan test`.
