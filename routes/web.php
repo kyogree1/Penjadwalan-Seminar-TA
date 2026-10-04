@@ -1,6 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Mahasiswa\BimbinganController;
+use App\Http\Controllers\Mahasiswa\PendaftaranJadwalController;
+use App\Http\Controllers\Mahasiswa\PendaftaranJudulController;
+use App\Http\Controllers\Mahasiswa\PendaftaranSemproController;
+use App\Http\Controllers\Mahasiswa\PendaftaranSidangController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // 1. Entry point (Home & Login) - Defaults to Login page
@@ -15,7 +21,11 @@ Route::middleware('auth')->group(function () {
     Route::inertia('/katalog', 'Katalog/Index')->name('katalog');
     Route::inertia('/panduan', 'Panduan/Index')->name('panduan');
     Route::inertia('/prosedur', 'Prosedur/Index')->name('prosedur');
-    Route::inertia('/profile', 'Profile/Index')->name('profile');
+
+    // Profile routes
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
     // ==========================================
     // PORTAL MAHASISWA
@@ -24,11 +34,24 @@ Route::middleware('auth')->group(function () {
         Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
 
         Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
-            Route::inertia('/judul', 'Pendaftaran/Judul')->name('judul');
-            Route::inertia('/bimbingan', 'Pendaftaran/Bimbingan')->name('bimbingan');
-            Route::inertia('/jadwal', 'Mahasiswa/PendaftaranJadwal')->name('jadwal');
-            Route::inertia('/sempro', 'Pendaftaran/Sempro')->name('sempro');
-            Route::inertia('/sidang', 'Pendaftaran/Sidang')->name('sidang');
+            // 1. Pengajuan Judul
+            Route::get('/judul', [PendaftaranJudulController::class, 'index'])->name('judul');
+            Route::post('/judul', [PendaftaranJudulController::class, 'store']);
+
+            // 2. Logbook Bimbingan
+            Route::get('/bimbingan', [BimbinganController::class, 'index'])->name('bimbingan');
+            Route::post('/bimbingan', [BimbinganController::class, 'store']);
+
+            // 3. Pendaftaran & Jadwal
+            Route::get('/jadwal', [PendaftaranJadwalController::class, 'index'])->name('jadwal');
+
+            // 4. Seminar Proposal (Sempro)
+            Route::get('/sempro', [PendaftaranSemproController::class, 'index'])->name('sempro');
+            Route::post('/sempro', [PendaftaranSemproController::class, 'store']);
+
+            // 5. Sidang Tugas Akhir
+            Route::get('/sidang', [PendaftaranSidangController::class, 'index'])->name('sidang');
+            Route::post('/sidang', [PendaftaranSidangController::class, 'store']);
         });
     });
 
