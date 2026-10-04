@@ -1,21 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import {
-    Check,
-    CheckCircle2,
-    Clock,
-    Download,
-    Eye,
-    FileCheck,
-    FileText,
-    Filter,
-    HelpCircle,
-    Search,
-    ShieldAlert,
-    ShieldCheck,
-    X,
-} from 'lucide-vue-next';
+import { Check, Eye, Filter, Search, X } from 'lucide-vue-next';
 
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Button from '@/Components/Button.vue';

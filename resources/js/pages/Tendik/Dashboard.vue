@@ -1,24 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { arsip, mahasiswa, ruangan, verifikasi } from '@/routes/tendik';
 import {
-    AlertCircle,
     ArrowUpRight,
     Building2,
-    Calendar,
-    CheckCircle2,
-    Clock,
     FileCheck,
-    FileSpreadsheet,
     FileText,
-    GraduationCap,
     KeyRound,
-    MapPin,
     Printer,
-    Search,
-    ShieldAlert,
-    UserCheck,
-    Users,
 } from 'lucide-vue-next';
 
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -128,7 +118,7 @@ const roomsStatus = ref([
             <!-- Quick Action Links -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Link
-                    href="/tendik/verifikasi"
+                    :href="verifikasi()"
                     class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-xs transition-all hover:border-blue-500 hover:shadow-md dark:border-slate-800 dark:bg-[#0E1626]"
                 >
                     <div class="flex items-center justify-between">
@@ -152,7 +142,7 @@ const roomsStatus = ref([
                 </Link>
 
                 <Link
-                    href="/tendik/ruangan"
+                    :href="ruangan()"
                     class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-xs transition-all hover:border-emerald-500 hover:shadow-md dark:border-slate-800 dark:bg-[#0E1626]"
                 >
                     <div class="flex items-center justify-between">
@@ -176,7 +166,7 @@ const roomsStatus = ref([
                 </Link>
 
                 <Link
-                    href="/tendik/arsip"
+                    :href="arsip()"
                     class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-xs transition-all hover:border-purple-500 hover:shadow-md dark:border-slate-800 dark:bg-[#0E1626]"
                 >
                     <div class="flex items-center justify-between">
@@ -200,7 +190,7 @@ const roomsStatus = ref([
                 </Link>
 
                 <Link
-                    href="/tendik/mahasiswa"
+                    :href="mahasiswa()"
                     class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-xs transition-all hover:border-amber-500 hover:shadow-md dark:border-slate-800 dark:bg-[#0E1626]"
                 >
                     <div class="flex items-center justify-between">
@@ -245,7 +235,7 @@ const roomsStatus = ref([
                                 </p>
                             </div>
                             <Link
-                                href="/tendik/verifikasi"
+                                :href="verifikasi()"
                                 class="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400"
                             >
                                 Buka Semua →
@@ -284,7 +274,7 @@ const roomsStatus = ref([
                                 </div>
 
                                 <Link
-                                    href="/tendik/verifikasi"
+                                    :href="verifikasi()"
                                     class="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                                 >
                                     Verifikasi

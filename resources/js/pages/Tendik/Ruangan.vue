@@ -1,18 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import {
-    Building2,
-    Calendar,
-    CheckCircle2,
-    Clock,
-    Laptop,
-    MapPin,
-    Plus,
-    Tv,
-    Users,
-    Video,
-} from 'lucide-vue-next';
+import { Building2 } from 'lucide-vue-next';
 
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Button from '@/Components/Button.vue';

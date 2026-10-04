@@ -1,18 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import {
-    Award,
-    Check,
-    Download,
-    FileCheck,
-    FileSpreadsheet,
-    FileText,
-    Filter,
-    FolderArchive,
-    Printer,
-    Search,
-} from 'lucide-vue-next';
+import { Printer, Search } from 'lucide-vue-next';
 
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Button from '@/Components/Button.vue';
