@@ -36,6 +36,7 @@ class PendaftaranSemproController extends Controller
             'judul_ta' => ['required', 'string', 'max:255'],
             'bentuk_ta' => ['required', 'string', 'max:150'],
             'lokasi_mitra' => ['nullable', 'string', 'max:255'],
+            'skor_iaet' => ['nullable'],
             'lembar_kehadiran_file' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
             'proposal_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'turnitin_file' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],

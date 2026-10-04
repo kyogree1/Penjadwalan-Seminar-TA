@@ -37,7 +37,16 @@ type Registrant = {
     examiners?: string[];
     own?: boolean;
 };
-const registrants: Registrant[] = [
+
+interface Props {
+    registrantsData?: Registrant[];
+    jadwalSempro?: any[];
+    jadwalSidang?: any[];
+}
+
+const props = defineProps<Props>();
+
+const defaultRegistrants: Registrant[] = [
     {
         name: 'Akmal Falah Maulana',
         nim: '11231006',
@@ -61,16 +70,14 @@ const registrants: Registrant[] = [
     },
 ];
 
-const schedules = ref<
-    (ScheduleDetail & {
-        type: 'sempro' | 'sidang';
-        period: string;
-        wave: string;
-        own?: boolean;
-        name?: string;
-        registered?: string;
-    })[]
->([
+const defaultSchedules: (ScheduleDetail & {
+    type: 'sempro' | 'sidang';
+    period: string;
+    wave: string;
+    own?: boolean;
+    name?: string;
+    registered?: string;
+})[] = [
     {
         type: 'sempro',
         period: 'Gasal 2026/2027',
@@ -123,11 +130,70 @@ const schedules = ref<
         ],
         status: 'Terjadwal',
     },
-]);
+];
+
+const activeRegistrants = computed<Registrant[]>(() => {
+    if (props.registrantsData && props.registrantsData.length > 0) {
+        return props.registrantsData;
+    }
+    return defaultRegistrants;
+});
+
+const schedules = computed(() => {
+    const list: typeof defaultSchedules = [];
+    if (props.jadwalSempro && props.jadwalSempro.length > 0) {
+        for (const item of props.jadwalSempro) {
+            list.push({
+                type: 'sempro',
+                period: 'Gasal 2026/2027',
+                wave: String(item.gelombang || '1'),
+                studentName: item.mahasiswa?.name || 'Mahasiswa',
+                nim: item.mahasiswa?.username || '-',
+                title: item.judul || 'Seminar Proposal Tugas Akhir',
+                date: item.tanggal || 'TBA',
+                time: item.jam_mulai
+                    ? `${item.jam_mulai} - ${item.jam_selesai}`
+                    : '09.00 - 10.30 WITA',
+                room: item.ruangan?.nama_ruangan || 'Ruang Sidang',
+                supervisors: [item.pembimbing1?.name || 'Pembimbing 1'],
+                examiners: [
+                    item.penguji1?.name || 'Penguji 1',
+                    item.penguji2?.name || 'Penguji 2',
+                ].filter(Boolean),
+                status: 'Terjadwal',
+            });
+        }
+    }
+    if (props.jadwalSidang && props.jadwalSidang.length > 0) {
+        for (const item of props.jadwalSidang) {
+            list.push({
+                type: 'sidang',
+                period: 'Gasal 2026/2027',
+                wave: String(item.gelombang || '1'),
+                studentName: item.mahasiswa?.name || 'Mahasiswa',
+                nim: item.mahasiswa?.username || '-',
+                title: item.judul || 'Sidang Tugas Akhir',
+                date: item.tanggal || 'TBA',
+                time: item.jam_mulai
+                    ? `${item.jam_mulai} - ${item.jam_selesai}`
+                    : '09.00 - 11.00 WITA',
+                room: item.ruangan?.nama_ruangan || 'Ruang Sidang',
+                supervisors: [item.pembimbing1?.name || 'Pembimbing 1'],
+                examiners: [
+                    item.penguji1?.name || 'Penguji 1',
+                    item.penguji2?.name || 'Penguji 2',
+                ].filter(Boolean),
+                status: 'Terjadwal',
+            });
+        }
+    }
+    if (list.length > 0) return list;
+    return defaultSchedules;
+});
 
 const filteredRegistrants = computed(() => {
     const query = search.value.toLowerCase().trim();
-    return registrants.filter(
+    return activeRegistrants.value.filter(
         (item) =>
             !query || `${item.name} ${item.nim}`.toLowerCase().includes(query),
     );

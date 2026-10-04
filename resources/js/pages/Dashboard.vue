@@ -100,19 +100,45 @@ interface RoadmapStep {
     date?: string;
 }
 
-const semproSteps = ref<RoadmapStep[]>([
+interface Props {
+    dbJudul?: any;
+    dbSempro?: any;
+    dbSidang?: any;
+    dbTotalBimbinganAcc?: number;
+    dbJadwal?: any;
+    dbSemproSteps?: RoadmapStep[];
+    dbSidangSteps?: RoadmapStep[];
+}
+
+const props = defineProps<Props>();
+
+const defaultSemproSteps: RoadmapStep[] = [
     { name: 'Pengajuan', status: 'completed', date: '10 Sep 2026' },
     { name: 'Verifikasi', status: 'completed', date: '14 Sep 2026' },
     { name: 'Penilaian', status: 'in_progress', date: 'Sedang Berjalan' },
     { name: 'Hasil Seminar', status: 'pending' },
-]);
+];
 
-const sidangSteps = ref<RoadmapStep[]>([
+const defaultSidangSteps: RoadmapStep[] = [
     { name: 'Pengajuan', status: 'completed', date: '20 Sep 2026' },
     { name: 'Verifikasi', status: 'in_progress', date: 'Dalam Review' },
     { name: 'Penilaian', status: 'pending' },
     { name: 'Hasil Sidang', status: 'pending' },
-]);
+];
+
+const semproSteps = computed<RoadmapStep[]>(() => {
+    if (props.dbSemproSteps && props.dbSemproSteps.length > 0) {
+        return props.dbSemproSteps;
+    }
+    return defaultSemproSteps;
+});
+
+const sidangSteps = computed<RoadmapStep[]>(() => {
+    if (props.dbSidangSteps && props.dbSidangSteps.length > 0) {
+        return props.dbSidangSteps;
+    }
+    return defaultSidangSteps;
+});
 
 const getStepNodeClasses = (status: StepStatus) => {
     switch (status) {

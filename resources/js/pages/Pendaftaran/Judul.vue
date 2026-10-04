@@ -15,22 +15,61 @@ import Card from '@/Components/Card.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 import StatusBadge, { type BadgeStatus } from '@/Components/StatusBadge.vue';
 
-const form = useForm({
-    judul_ta: '',
-    bidang_penelitian: '',
-    pembimbing_1: '',
-    pembimbing_2: '',
-    telah_konsultasi: false,
-});
+interface Props {
+    pengajuan?: {
+        id?: number;
+        judul_ta?: string;
+        bidang_penelitian?: string;
+        pembimbing_1_id?: number | null;
+        pembimbing_2_id?: number | null;
+        pembimbing_1?: { id: number; name: string } | null;
+        pembimbing_2?: { id: number; name: string } | null;
+        telah_konsultasi?: boolean;
+        status?: string;
+        catatan_kaprodi?: string | null;
+    } | null;
+    dosenList?: Array<{ id: number | string; name: string }>;
+}
 
-const dosenList = [
+const props = defineProps<Props>();
+
+const fallbackDosenList = [
     { id: '1', name: 'Dr. Ir. Hendra Wijaya, M.Kom.' },
     { id: '2', name: 'Rina Agustina, S.T., M.Kom.' },
     { id: '3', name: 'Dr. Dian Indah Permatasari, M.Kom.' },
     { id: '4', name: 'Ahmad Fauzi, S.Kom., M.T.' },
 ];
 
-const applicationStatus = ref<BadgeStatus>('draft');
+const availableDosenList = computed(() => {
+    if (props.dosenList && props.dosenList.length > 0) {
+        return props.dosenList;
+    }
+    return fallbackDosenList;
+});
+
+const initialStatus = (): BadgeStatus => {
+    if (!props.pengajuan) return 'draft';
+    const s = props.pengajuan.status;
+    if (s === 'menunggu') return 'diajukan';
+    if (s === 'disetujui') return 'disetujui';
+    if (s === 'revisi') return 'revisi';
+    if (s === 'ditolak') return 'ditolak';
+    return 'draft';
+};
+
+const applicationStatus = ref<BadgeStatus>(initialStatus());
+
+const form = useForm({
+    judul_ta: props.pengajuan?.judul_ta || '',
+    bidang_penelitian: props.pengajuan?.bidang_penelitian || '',
+    pembimbing_1: props.pengajuan?.pembimbing_1_id
+        ? String(props.pengajuan.pembimbing_1_id)
+        : props.pengajuan?.pembimbing_1?.name || '',
+    pembimbing_2: props.pengajuan?.pembimbing_2_id
+        ? String(props.pengajuan.pembimbing_2_id)
+        : props.pengajuan?.pembimbing_2?.name || '',
+    telah_konsultasi: Boolean(props.pengajuan?.telah_konsultasi),
+});
 const statusLabel = computed(() => {
     switch (applicationStatus.value) {
         case 'draft':
@@ -131,6 +170,28 @@ const submitForm = () => {
             </div>
         </div>
 
+        <!-- 2.5 Catatan Kaprodi Alert jika ada -->
+        <div
+            v-if="props.pengajuan?.catatan_kaprodi"
+            class="rounded-2xl border border-amber-200 bg-amber-50/80 p-5 shadow-xs dark:border-amber-900/60 dark:bg-amber-950/40"
+        >
+            <div class="flex items-start gap-3">
+                <Info
+                    class="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400"
+                />
+                <div>
+                    <h4
+                        class="text-sm font-bold text-amber-900 dark:text-amber-200"
+                    >
+                        Catatan dari Koordinator / Kaprodi
+                    </h4>
+                    <p class="mt-1 text-xs text-amber-800 dark:text-amber-300">
+                        {{ props.pengajuan.catatan_kaprodi }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <!-- 3. Card Data Pengajuan TA Form (Sesuai Mockup) -->
         <form
             class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
@@ -208,7 +269,7 @@ const submitForm = () => {
                         >
                             <option value="" disabled>Pilih Pembimbing</option>
                             <option
-                                v-for="dosen in dosenList"
+                                v-for="dosen in availableDosenList"
                                 :key="dosen.id"
                                 :value="dosen.name"
                             >
@@ -235,7 +296,7 @@ const submitForm = () => {
                         >
                             <option value="" disabled>Pilih Pembimbing</option>
                             <option
-                                v-for="dosen in dosenList"
+                                v-for="dosen in availableDosenList"
                                 :key="dosen.id"
                                 :value="dosen.name"
                             >

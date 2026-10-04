@@ -9,6 +9,23 @@ import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 import ProfileHeaderCard from '@/Components/ProfileHeaderCard.vue';
 import RiwayatTimelineCard from '@/Components/RiwayatTimelineCard.vue';
 
+interface Props {
+    sidang?: {
+        id?: number;
+        judul_ta?: string;
+        lokasi_mitra?: string;
+        status?: string;
+        skor_iaet_file?: string;
+        draft_laporan_file?: string;
+        turnitin_file?: string;
+        created_at?: string;
+        catatan?: string | null;
+    } | null;
+    defaultJudul?: string | null;
+}
+
+const props = defineProps<Props>();
+
 const page = usePage();
 const authUser = computed(() => (page.props.auth as any)?.user);
 const studentName = computed(
@@ -33,11 +50,61 @@ const studentInitials = computed(() => {
 
 const form = useForm({
     judul_ta:
+        props.sidang?.judul_ta ||
+        props.defaultJudul ||
         'Sistem Penjadwalan Seminar dan Chatbot Layanan Akademik Menggunakan Algoritma Genetika dan Large Language Model',
     skor_iaet: '' as number | string,
-    lokasi_mitra: '',
+    lokasi_mitra: props.sidang?.lokasi_mitra || '',
     draft_laporan_file: null as File | null,
     turnitin_file: null as File | null,
+});
+
+const statusSidangConfig = computed(() => {
+    if (!props.sidang) {
+        return { label: 'Belum Isi Formulir', bg: 'bg-[#FF7575] text-white' };
+    }
+    switch (props.sidang.status) {
+        case 'menunggu':
+            return {
+                label: 'Diajukan (Menunggu Tendik)',
+                bg: 'bg-amber-500 text-white',
+            };
+        case 'verifikasi_tendik':
+            return {
+                label: 'Berkas Diverifikasi',
+                bg: 'bg-blue-600 text-white',
+            };
+        case 'terjadwal':
+            return {
+                label: 'Jadwal Telah Ditetapkan',
+                bg: 'bg-emerald-600 text-white',
+            };
+        case 'selesai':
+            return { label: 'Sidang Selesai', bg: 'bg-emerald-700 text-white' };
+        case 'ditolak':
+            return {
+                label: 'Perlu Revisi / Ditolak',
+                bg: 'bg-rose-600 text-white',
+            };
+        default:
+            return { label: 'Diajukan', bg: 'bg-amber-500 text-white' };
+    }
+});
+
+const riwayatItems = computed(() => {
+    if (!props.sidang) return [];
+    return [
+        {
+            title: 'Pendaftaran Sidang Diajukan',
+            subtitle: props.sidang.judul_ta,
+            date: props.sidang.created_at
+                ? new Date(props.sidang.created_at).toLocaleDateString(
+                      'id-ID',
+                      { day: 'numeric', month: 'short', year: 'numeric' },
+                  )
+                : 'Baru saja',
+        },
+    ];
 });
 
 const fileError = (file: File | null) => {
@@ -115,9 +182,10 @@ const submitSidang = () => {
                 Status Sidang
             </span>
             <span
-                class="rounded-xl bg-[#FF7575] px-4 py-2 text-xs font-bold text-white shadow-2xs"
+                class="rounded-xl px-4 py-2 text-xs font-bold shadow-2xs"
+                :class="statusSidangConfig.bg"
             >
-                Belum Isi Formulir
+                {{ statusSidangConfig.label }}
             </span>
         </ProfileHeaderCard>
 
@@ -296,7 +364,10 @@ const submitSidang = () => {
 
             <!-- Right Column: Riwayat Pendaftaran -->
             <div class="space-y-6">
-                <RiwayatTimelineCard title="Riwayat Pendaftaran" />
+                <RiwayatTimelineCard
+                    title="Riwayat Pendaftaran"
+                    :items="riwayatItems"
+                />
             </div>
         </div>
     </div>

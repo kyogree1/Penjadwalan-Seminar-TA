@@ -9,6 +9,7 @@ use App\Http\Controllers\Kaprodi\DosenController as KaprodiDosenController;
 use App\Http\Controllers\Kaprodi\PenjadwalanController as KaprodiPenjadwalanController;
 use App\Http\Controllers\Kaprodi\PersetujuanController as KaprodiPersetujuanController;
 use App\Http\Controllers\Mahasiswa\BimbinganController;
+use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJadwalController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJudulController;
 use App\Http\Controllers\Mahasiswa\PendaftaranSemproController;
@@ -43,7 +44,7 @@ Route::middleware('auth')->group(function () {
     // PORTAL MAHASISWA
     // ==========================================
     Route::middleware('role:mahasiswa')->group(function () {
-        Route::inertia('/dashboard', 'Dashboard')->name('dashboard');
+        Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('dashboard');
 
         Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
             // 1. Pengajuan Judul
