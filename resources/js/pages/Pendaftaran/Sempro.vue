@@ -33,6 +33,23 @@ const studentInitials = computed(() => {
         .join('');
 });
 
+interface Props {
+    sempro?: {
+        id?: number;
+        judul_ta?: string;
+        bentuk_ta?: string;
+        lokasi_mitra?: string;
+        status?: string;
+        lembar_kehadiran_file?: string;
+        proposal_file?: string;
+        turnitin_file?: string;
+        iaet_file?: string;
+    } | null;
+    defaultJudul?: string | null;
+}
+
+const props = defineProps<Props>();
+
 type SemproStatus =
     | 'draft'
     | 'diajukan'
@@ -44,7 +61,18 @@ type SemproStatus =
 
 type FileField = 'lembar_kehadiran_file' | 'proposal_file' | 'turnitin_file';
 
-const status = ref<SemproStatus>('draft');
+const initialStatus = (): SemproStatus => {
+    if (!props.sempro) return 'draft';
+    const s = props.sempro.status;
+    if (s === 'menunggu') return 'diajukan';
+    if (s === 'verifikasi_tendik') return 'diverifikasi';
+    if (s === 'terjadwal') return 'siap_jadwal';
+    if (s === 'selesai') return 'selesai';
+    if (s === 'ditolak') return 'ditolak';
+    return 'draft';
+};
+
+const status = ref<SemproStatus>(initialStatus());
 const revisionNote = ref('');
 const showRevisionNote = ref(false);
 const maxFileSize = 10 * 1024 * 1024;
@@ -52,12 +80,16 @@ const fileErrors = ref<Partial<Record<FileField, string>>>({});
 
 const form = useForm({
     judul_ta:
+        props.sempro?.judul_ta ||
+        props.defaultJudul ||
         'Sistem Penjadwalan Seminar dan Chatbot Layanan Akademik Menggunakan Algoritma Genetika dan Large Language Model',
-    bentuk_ta: 'Skripsi Reguler (Pengembangan Perangkat Lunak & AI)',
+    bentuk_ta:
+        props.sempro?.bentuk_ta ||
+        'Skripsi Reguler (Pengembangan Perangkat Lunak & AI)',
     lembar_kehadiran_file: null as File | null,
     proposal_file: null as File | null,
     turnitin_file: null as File | null,
-    lokasi_mitra: '',
+    lokasi_mitra: props.sempro?.lokasi_mitra || '',
     skor_iaet: '' as number | '',
 });
 
@@ -146,8 +178,13 @@ const removeFile = (field: FileField, inputId: string) => {
 
 const submitSempro = () => {
     if (!canEdit.value || !isFormValid.value) return;
-    status.value = 'diajukan';
-    showRevisionNote.value = false;
+    form.post('/pendaftaran/sempro', {
+        preserveScroll: true,
+        onSuccess: () => {
+            status.value = 'diajukan';
+            showRevisionNote.value = false;
+        },
+    });
 };
 </script>
 

@@ -39,6 +39,22 @@ const studentInitials = computed(() => {
         .join('');
 });
 
+interface Props {
+    bimbinganList?: Array<{
+        id: number;
+        tanggal: string;
+        dosen?: { id: number; name: string } | string;
+        rangkuman: string;
+        keterangan: string;
+        status: string;
+        catatan_dosen?: string | null;
+        created_at?: string;
+    }>;
+    dosenList?: Array<{ id: number; name: string }>;
+}
+
+const props = defineProps<Props>();
+
 interface BimbinganLog {
     id: number;
     tanggal: string;
@@ -52,14 +68,7 @@ interface BimbinganLog {
     updatedAt?: string;
 }
 
-const showModal = ref(false);
-const selectedLog = ref<BimbinganLog | null>(null);
-const editingId = ref<number | null>(null);
-const searchQuery = ref('');
-const entriesPerPage = ref(10);
-const currentPage = ref(1);
-
-const bimbinganList = ref<BimbinganLog[]>([
+const fallbackLogs: BimbinganLog[] = [
     {
         id: 1,
         tanggal: '2026-05-13',
@@ -68,7 +77,7 @@ const bimbinganList = ref<BimbinganLog[]>([
             'Diskusi arsitektur sistem & pemilihan algoritma genetika untuk penjadwalan tugas akhir',
         keterangan: 'Lab Riset Informatika',
         metode: 'offline',
-        tindakLanjut: 'Mengkaji paperGA scheduling, prepare dataset',
+        tindakLanjut: 'Mengkaji paper GA scheduling, prepare dataset',
         status: 'disetujui',
         createdAt: '2026-05-13T10:00:00Z',
     },
@@ -108,7 +117,57 @@ const bimbinganList = ref<BimbinganLog[]>([
         status: 'diajukan',
         createdAt: '2026-08-05T16:45:00Z',
     },
-]);
+];
+
+const parseInitialLogs = (): BimbinganLog[] => {
+    if (props.bimbinganList && props.bimbinganList.length > 0) {
+        return props.bimbinganList.map((item) => {
+            const dosenName =
+                typeof item.dosen === 'object' && item.dosen
+                    ? item.dosen.name
+                    : typeof item.dosen === 'string'
+                      ? item.dosen
+                      : 'Dosen Pembimbing';
+
+            let mappedStatus: BimbinganLog['status'] = 'diajukan';
+            if (item.status === 'delivered') mappedStatus = 'disetujui';
+            else if (item.status === 'process') mappedStatus = 'diajukan';
+            else if (item.status === 'ditolak') mappedStatus = 'ditolak';
+
+            return {
+                id: item.id,
+                tanggal: item.tanggal,
+                dosen: dosenName,
+                rangkuman: item.rangkuman,
+                keterangan: item.keterangan,
+                metode: 'offline',
+                tindakLanjut: item.catatan_dosen || undefined,
+                status: mappedStatus,
+                createdAt: item.created_at || item.tanggal,
+            };
+        });
+    }
+    return fallbackLogs;
+};
+
+const showModal = ref(false);
+const selectedLog = ref<BimbinganLog | null>(null);
+const editingId = ref<number | null>(null);
+const searchQuery = ref('');
+const entriesPerPage = ref(10);
+const currentPage = ref(1);
+
+const bimbinganList = ref<BimbinganLog[]>(parseInitialLogs());
+
+const dosenOptions = computed(() => {
+    if (props.dosenList && props.dosenList.length > 0) {
+        return props.dosenList;
+    }
+    return [
+        { id: 1, name: 'Dr. Ir. Hendra Wijaya, M.Kom.' },
+        { id: 2, name: 'Rina Agustina, S.T., M.Kom.' },
+    ];
+});
 
 const form = useForm({
     tanggal: '',
@@ -167,40 +226,13 @@ const submitBimbingan = () => {
     )
         return;
 
-    const now = new Date().toISOString();
-
-    if (editingId.value) {
-        const idx = bimbinganList.value.findIndex(
-            (l) => l.id === editingId.value,
-        );
-        if (idx !== -1) {
-            bimbinganList.value[idx] = {
-                ...bimbinganList.value[idx],
-                tanggal: form.tanggal,
-                dosen: form.dosen,
-                rangkuman: form.rangkuman,
-                keterangan: form.keterangan,
-                metode: form.metode,
-                tindakLanjut: form.tindakLanjut || undefined,
-                status: 'diajukan',
-                updatedAt: now,
-            };
-        }
-    } else {
-        bimbinganList.value.unshift({
-            id: Date.now(),
-            tanggal: form.tanggal,
-            dosen: form.dosen,
-            rangkuman: form.rangkuman,
-            keterangan: form.keterangan,
-            metode: form.metode,
-            tindakLanjut: form.tindakLanjut || undefined,
-            status: 'diajukan',
-            createdAt: now,
-        });
-    }
-
-    closeModal();
+    form.post('/pendaftaran/bimbingan', {
+        preserveScroll: true,
+        onSuccess: () => {
+            closeModal();
+            form.reset();
+        },
+    });
 };
 
 const filteredList = computed(() => {
@@ -613,11 +645,12 @@ const formatWaktu = (isoString: string) => {
                                 <option value="" disabled>
                                     Pilih Dosen Pembimbing
                                 </option>
-                                <option value="Dr. Ir. Hendra Wijaya, M.Kom.">
-                                    Dr. Ir. Hendra Wijaya, M.Kom. (Pembimbing 1)
-                                </option>
-                                <option value="Rina Agustina, S.T., M.Kom.">
-                                    Rina Agustina, S.T., M.Kom. (Pembimbing 2)
+                                <option
+                                    v-for="d in dosenOptions"
+                                    :key="d.id"
+                                    :value="d.name"
+                                >
+                                    {{ d.name }}
                                 </option>
                             </select>
                         </div>

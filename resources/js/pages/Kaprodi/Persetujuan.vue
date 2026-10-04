@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import {
     Check,
     CheckCircle2,
@@ -112,8 +112,28 @@ const updateAcademicStatus = (status: StatusPengajuan) => {
     )
         return;
 
+    const note = academicNote.value.trim();
+    const id = selectedAcademicSubmission.value.id;
     selectedAcademicSubmission.value.status = status;
-    selectedAcademicSubmission.value.catatan = academicNote.value.trim();
+    selectedAcademicSubmission.value.catatan = note;
+
+    const endpoint =
+        activeSection.value === 'sempro'
+            ? `/kaprodi/persetujuan/sempro/${id}`
+            : `/kaprodi/persetujuan/sidang/${id}`;
+
+    router.patch(
+        endpoint,
+        {
+            status: status === 'disetujui' ? 'verifikasi_tendik' : 'revisi',
+            catatan_kaprodi: note,
+        },
+        {
+            preserveScroll: true,
+            onError: () => {},
+        },
+    );
+
     showAcademicModal.value = false;
     showToast(
         `Pengajuan ${academicDecision.value} untuk ${selectedAcademicSubmission.value.nama} berhasil diperbarui statusnya (${statusToBadge(status).label}).`,
@@ -136,9 +156,23 @@ const openApprovalModal = (item: JudulSubmission) => {
 
 const confirmApproval = () => {
     if (activeItem.value) {
+        const id = activeItem.value.id;
         activeItem.value.status = 'disetujui';
         activeItem.value.pembimbing1Final = selectedP1.value;
         activeItem.value.pembimbing2Final = selectedP2.value;
+
+        router.patch(
+            `/kaprodi/persetujuan/judul/${id}`,
+            {
+                status: 'disetujui',
+                catatan_kaprodi: `Disetujui Kaprodi. SK: ${skNumber.value}. Pembimbing 1: ${selectedP1.value}, Pembimbing 2: ${selectedP2.value}`,
+            },
+            {
+                preserveScroll: true,
+                onError: () => {},
+            },
+        );
+
         showToast(
             `Judul mahasiswa "${activeItem.value.nama}" berhasil disetujui dan SK Pembimbing (${skNumber.value}) diterbitkan!`,
         );

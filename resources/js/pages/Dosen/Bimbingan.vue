@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import {
     Award,
     Check,
@@ -103,11 +103,28 @@ const openReviewModal = (logbook: BimbinganSesi) => {
 
 const submitReview = () => {
     if (activeLogbook.value) {
-        activeLogbook.value.catatanDosen = feedbackInput.value;
+        const id = activeLogbook.value.id;
+        const statusParaf = isAccBimbingan.value ? 'delivered' : 'process';
+        const catatan = feedbackInput.value;
+
+        activeLogbook.value.catatanDosen = catatan;
         activeLogbook.value.statusParaf = isAccBimbingan.value
             ? 'Disetujui'
             : 'Perlu Revisi';
         activeLogbook.value.tglParaf = 'Hari ini';
+
+        router.patch(
+            `/dosen/bimbingan/${id}/paraf`,
+            {
+                status: statusParaf,
+                catatan_dosen: catatan,
+            },
+            {
+                preserveScroll: true,
+                onError: () => {},
+            },
+        );
+
         showToast(
             `Catatan dan paraf digital berhasil disimpan untuk sesi "${activeLogbook.value.bab}".`,
         );
@@ -119,6 +136,19 @@ const submitReview = () => {
 const quickParafSesi = (sesi: BimbinganSesi) => {
     sesi.statusParaf = 'Disetujui';
     sesi.tglParaf = 'Hari ini';
+
+    router.patch(
+        `/dosen/bimbingan/${sesi.id}/paraf`,
+        {
+            status: 'delivered',
+            catatan_dosen: 'Disetujui pembimbing',
+        },
+        {
+            preserveScroll: true,
+            onError: () => {},
+        },
+    );
+
     showToast(
         `Sesi ke-${sesi.no} (${sesi.bab}) berhasil diparaf dan disetujui!`,
     );
@@ -175,6 +205,24 @@ const saveSesiBimbingan = () => {
 
     selectedAdvisee.value.sesiList.push(newSesi);
     isModalTambahOpen.value = false;
+
+    router.post(
+        '/dosen/bimbingan/sesi',
+        {
+            mahasiswa_id: selectedAdvisee.value.id,
+            tanggal: formSesi.value.tanggal,
+            rangkuman: `${formSesi.value.bab}: ${formSesi.value.rangkuman}`,
+            keterangan: 'Sesi bimbingan resmi portal dosen',
+            catatan_dosen:
+                formSesi.value.catatanDosen ||
+                'Disetujui oleh dosen pembimbing.',
+        },
+        {
+            preserveScroll: true,
+            onError: () => {},
+        },
+    );
+
     showToast(`Sesi bimbingan ke-${nextNo} berhasil dicatat dan diparaf!`);
 };
 </script>

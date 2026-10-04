@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { Check, Eye, Search, X } from 'lucide-vue-next';
 
 import Button from '@/Components/Button.vue';
@@ -63,16 +63,54 @@ const openVerification = (app: Pengajuan) => {
 
 const verifySuccess = () => {
     if (activeApplicant.value) {
+        const id = activeApplicant.value.id;
+        const tipe = activeApplicant.value.tipe;
         activeApplicant.value.status = 'disetujui';
         activeApplicant.value.catatanTendik = tendikNotes.value;
+
+        const endpoint =
+            tipe === 'Seminar Proposal'
+                ? `/tendik/verifikasi/sempro/${id}`
+                : `/tendik/verifikasi/sidang/${id}`;
+
+        router.patch(
+            endpoint,
+            {
+                status: 'verifikasi_tendik',
+                catatan: tendikNotes.value,
+            },
+            {
+                preserveScroll: true,
+                onError: () => {},
+            },
+        );
     }
     showModal.value = false;
 };
 
 const requestRevision = () => {
     if (activeApplicant.value) {
+        const id = activeApplicant.value.id;
+        const tipe = activeApplicant.value.tipe;
         activeApplicant.value.status = 'revisi';
         activeApplicant.value.catatanTendik = tendikNotes.value;
+
+        const endpoint =
+            tipe === 'Seminar Proposal'
+                ? `/tendik/verifikasi/sempro/${id}`
+                : `/tendik/verifikasi/sidang/${id}`;
+
+        router.patch(
+            endpoint,
+            {
+                status: 'ditolak',
+                catatan: tendikNotes.value,
+            },
+            {
+                preserveScroll: true,
+                onError: () => {},
+            },
+        );
     }
     showModal.value = false;
 };
