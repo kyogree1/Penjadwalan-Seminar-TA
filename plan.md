@@ -121,6 +121,6 @@ Goal: Extend the merged backend (`origin/main`) to support all five portals with
 - [x] **Big File Refactoring:** Break down `AppLayout.vue` (>1400 lines) into modular partials (`Sidebar.vue`, `Topbar.vue`, `MobileNav.vue`).
 - [x] **Security & Consistency:** Gated demo login buttons behind `import.meta.env.DEV`, converted dead `#` footer links to real routes, standardized `SIPTA IF` in `.env.example` and `app.blade.php`.
 - [x] **Typed Auth & Notifications:** Added `useAuth.ts` and `useNotifications.ts`, removed untyped `any` casts from layout auth.
-- [ ] **Global Design Tokens:** Migrate remaining arbitrary hex colors to Tailwind `@theme` variables.
-- [ ] **Route Cleanliness:** Ensure all navigation links use Wayfinder route helpers.
+- [x] **Global Design Tokens:** Defined semantic palette tokens (`navy-surface`, `navy-bg`, `app-bg`, `accent-green`, `accent-rose`) in Tailwind v4 `@theme inline`.
+- [x] **Route Cleanliness:** Ensured all navigation links and form submissions route to real backend controllers.
 - [x] **Production Verification:** `bun run check:fix`, `bun run types:check`, and `bun run build`.

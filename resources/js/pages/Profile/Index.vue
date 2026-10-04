@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import {
     CheckCircle2,
@@ -15,18 +15,58 @@ import {
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 import SignaturePadModal from '@/Components/SignaturePadModal.vue';
 
+interface Props {
+    user?: {
+        id: number;
+        name: string;
+        username?: string;
+        nim_nip?: string;
+        email: string;
+        role: string;
+        prodi?: string;
+        jabatan?: string;
+    };
+}
+
+const props = defineProps<Props>();
+
 const showSignatureModal = ref(false);
 const signaturePreview = ref<string | null>(
     'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80"><path d="M20 50 Q 60 10, 90 45 T 160 30" fill="none" stroke="%231E40AF" stroke-width="3"/></svg>',
 );
 
 const form = useForm({
-    name: 'Akmal Falah Maulana',
-    nim: '11231006',
-    email: '11231006@student.itk.ac.id',
-    prodi: 'S1 Teknik Informatika',
+    name: props.user?.name || 'Akmal Falah Maulana',
+    nim:
+        props.user?.nim_nip?.replace('NIM: ', '') ||
+        props.user?.username ||
+        '11231006',
+    email: props.user?.email || '11231006@student.itk.ac.id',
+    prodi: props.user?.prodi || 'S1 Teknik Informatika',
     angkatan: '2023',
     phone: '081234567890',
+});
+
+const userRoleBadge = computed(() => {
+    switch (props.user?.role) {
+        case 'kaprodi':
+            return 'Ketua Program Studi';
+        case 'dosen':
+            return 'Dosen Fakultas';
+        case 'tendik':
+            return 'Tenaga Kependidikan';
+        default:
+            return 'Akun Mahasiswa Aktif';
+    }
+});
+
+const userInitials = computed(() => {
+    return form.name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((w: string) => w[0]?.toUpperCase())
+        .join('');
 });
 
 const onSaveSignature = (dataUrl: string) => {
@@ -80,7 +120,7 @@ const onSaveSignature = (dataUrl: string) => {
                     <div
                         class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-blue-100 text-2xl font-bold text-blue-700 shadow-md dark:bg-blue-950 dark:text-blue-300"
                     >
-                        AF
+                        {{ userInitials }}
                     </div>
                     <h3
                         class="mt-4 text-base font-bold text-slate-900 dark:text-white"
@@ -93,7 +133,7 @@ const onSaveSignature = (dataUrl: string) => {
                     <span
                         class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
                     >
-                        <ShieldCheck class="h-3.5 w-3.5" /> Akun Mahasiswa Aktif
+                        <ShieldCheck class="h-3.5 w-3.5" /> {{ userRoleBadge }}
                     </span>
                 </div>
 
