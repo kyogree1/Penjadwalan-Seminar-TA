@@ -142,3 +142,48 @@ export type Mahasiswa = {
     tahap: string;
     statusAkun: StatusAkun;
 };
+
+/* --------------------------------------------------------------- *
+ * Koordinator portal: AI Genetic Algorithm Scheduling & Plotting
+ * --------------------------------------------------------------- */
+
+export type JadwalSeminarGa = {
+    id: number;
+    nama: string;
+    nim: string;
+    angkatan: string;
+    judul: string;
+    kbk: string;
+    pembimbing1: string;
+    pembimbing2: string;
+    penguji1: string;
+    penguji1MatchScore: number;
+    penguji2: string;
+    hari: string;
+    tanggal: string;
+    mulai: string;
+    selesai: string;
+    nilai: string | null;
+};
+
+export type GaOptimizationParams = {
+    popSize: number;
+    maxGenerations: number;
+    crossoverRate: string;
+    mutationRate: string;
+};
+
+export type ExamType = 'Sempro' | 'Sidang';
+export type Semester = 'Gasal' | 'Genap';
+
+export type Period = {
+    id: number;
+    type: ExamType;
+    academicYear: string;
+    semester: Semester;
+    wave: number;
+    quota: number;
+    startDate: string;
+    endDate: string;
+    isOpen: boolean;
+};

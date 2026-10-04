@@ -31,14 +31,14 @@ Goal: Port the rich UI and features from `Front-End(1).zip` (HTML+Vue CDN) into 
 
 ### Phase F1: Koordinator Penjadwalan — AI Genetic Algorithm Engine
 
-- [ ] Create `resources/js/data/koordinator/jadwalGa.ts` with typed dummy datasets from `mockData.js` (`jadwalList`, `gaParams`, `dosenListAll`).
-- [ ] Port `penentuan-jadwal.html` into `resources/js/pages/Koordinator/Penjadwalan.vue`:
-    - [ ] Top KPI Banner: Fitness Score (0.985), 0 Bentrok Waktu, trigger button "✨ Jalankan Optimasi AI (GA)".
-    - [ ] AI GA Optimizer Modal: Parameter inputs (PopSize, MaxGenerations, Crossover Rate 85%, Mutation Rate 3%) + generational convergence logs.
-    - [ ] Scheduling Table: Student, Title, Pembimbing, Penguji 1 (with `% Match KBK` badge), Penguji 2, Date/Time (room-free per thesis specification).
-    - [ ] Manual Override Modal: Edit plotting penguji and exam time slots without schedule collisions.
-    - [ ] Action buttons: Export Excel, Download PDF, Riwayat Kelulusan.
-- [ ] Connect `jadwal-sempro.html` wave cards into the Period manager tabs.
+- [x] Create `resources/js/data/koordinator/jadwalGa.ts` with typed dummy datasets from `mockData.js` (`jadwalList`, `gaParams`, `dosenListAll`).
+- [x] Port `penentuan-jadwal.html` into `resources/js/pages/Koordinator/Penjadwalan.vue`:
+    - [x] Top KPI Banner: Fitness Score (0.985), 0 Bentrok Waktu, trigger button "✨ Jalankan Optimasi AI (GA)".
+    - [x] AI GA Optimizer Modal: Parameter inputs (PopSize, MaxGenerations, Crossover Rate 85%, Mutation Rate 3%) + generational convergence logs.
+    - [x] Scheduling Table: Student, Title, Pembimbing, Penguji 1 (with `% Match KBK` badge), Penguji 2, Date/Time (room-free per thesis specification).
+    - [x] Manual Override Modal: Edit plotting penguji and exam time slots without schedule collisions.
+    - [x] Action buttons: Export Excel, Download PDF, Riwayat Kelulusan.
+- [x] Connect `jadwal-sempro.html` wave cards into the Period manager tabs.
 
 ### Phase F2: Master Data Dosen & Workload Quotas
 
