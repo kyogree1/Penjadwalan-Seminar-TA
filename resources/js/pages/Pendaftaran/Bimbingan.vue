@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { Head, useForm, usePage } from "@inertiajs/vue3";
+import { computed, ref } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import {
     Download,
     Edit2,
@@ -9,35 +9,35 @@ import {
     Search,
     Trash2,
     X,
-} from "lucide-vue-next";
+} from 'lucide-vue-next';
 
-import StatusBadge from "@/Components/StatusBadge.vue";
+import StatusBadge from '@/Components/StatusBadge.vue';
 
-import DosenTeamSection from "@/Components/DosenTeamSection.vue";
-import PageHeaderBox from "@/Components/PageHeaderBox.vue";
-import ProfileHeaderCard from "@/Components/ProfileHeaderCard.vue";
-import AppLayout from "@/Layouts/AppLayout.vue";
+import DosenTeamSection from '@/Components/DosenTeamSection.vue';
+import PageHeaderBox from '@/Components/PageHeaderBox.vue';
+import ProfileHeaderCard from '@/Components/ProfileHeaderCard.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 const page = usePage();
 const authUser = computed(() => (page.props.auth as any)?.user);
 const studentName = computed(
-    () => authUser.value?.name || "Akmal Falah Maulana",
+    () => authUser.value?.name || 'Akmal Falah Maulana',
 );
 const studentNim = computed(
     () =>
         authUser.value?.username ||
-        authUser.value?.nim_nip?.replace("NIM: ", "") ||
-        "11231006",
+        authUser.value?.nim_nip?.replace('NIM: ', '') ||
+        '11231006',
 );
-const studentProdi = computed(() => authUser.value?.prodi || "Informatika");
+const studentProdi = computed(() => authUser.value?.prodi || 'Informatika');
 const studentInitials = computed(() => {
-    if (!authUser.value?.name) return "AF";
+    if (!authUser.value?.name) return 'AF';
     return authUser.value.name
-        .split(" ")
+        .split(' ')
         .filter(Boolean)
         .slice(0, 2)
         .map((w: string) => w[0]?.toUpperCase())
-        .join("");
+        .join('');
 });
 
 interface BimbinganLog {
@@ -46,9 +46,9 @@ interface BimbinganLog {
     dosen: string;
     rangkuman: string;
     keterangan: string;
-    metode: "online" | "offline";
+    metode: 'online' | 'offline';
     tindakLanjut?: string;
-    status: "draft" | "diajukan" | "disetujui" | "revisi" | "ditolak";
+    status: 'draft' | 'diajukan' | 'disetujui' | 'revisi' | 'ditolak';
     createdAt: string;
     updatedAt?: string;
 }
@@ -56,93 +56,93 @@ interface BimbinganLog {
 const showModal = ref(false);
 const selectedLog = ref<BimbinganLog | null>(null);
 const editingId = ref<number | null>(null);
-const searchQuery = ref("");
+const searchQuery = ref('');
 const entriesPerPage = ref(10);
 const currentPage = ref(1);
 
 const bimbinganList = ref<BimbinganLog[]>([
     {
         id: 1,
-        tanggal: "2026-05-13",
-        dosen: "Dr. Ir. Hendra Wijaya, M.Kom.",
+        tanggal: '2026-05-13',
+        dosen: 'Dr. Ir. Hendra Wijaya, M.Kom.',
         rangkuman:
-            "Diskusi arsitektur sistem & pemilihan algoritma genetika untuk penjadwalan tugas akhir",
-        keterangan: "Lab Riset Informatika",
-        metode: "offline",
-        tindakLanjut: "Mengkaji paperGA scheduling, prepare dataset",
-        status: "disetujui",
-        createdAt: "2026-05-13T10:00:00Z",
+            'Diskusi arsitektur sistem & pemilihan algoritma genetika untuk penjadwalan tugas akhir',
+        keterangan: 'Lab Riset Informatika',
+        metode: 'offline',
+        tindakLanjut: 'Mengkaji paperGA scheduling, prepare dataset',
+        status: 'disetujui',
+        createdAt: '2026-05-13T10:00:00Z',
     },
     {
         id: 2,
-        tanggal: "2026-06-15",
-        dosen: "Rina Agustina, S.T., M.Kom.",
+        tanggal: '2026-06-15',
+        dosen: 'Rina Agustina, S.T., M.Kom.',
         rangkuman:
-            "Penyusunan use case diagram dan activity diagram modul pendaftaran seminar",
-        keterangan: "Google Meet",
-        metode: "online",
-        tindakLanjut: "Revisi ERD, prepare prototype UI",
-        status: "disetujui",
-        createdAt: "2026-06-15T14:30:00Z",
+            'Penyusunan use case diagram dan activity diagram modul pendaftaran seminar',
+        keterangan: 'Google Meet',
+        metode: 'online',
+        tindakLanjut: 'Revisi ERD, prepare prototype UI',
+        status: 'disetujui',
+        createdAt: '2026-06-15T14:30:00Z',
     },
     {
         id: 3,
-        tanggal: "2026-07-20",
-        dosen: "Dr. Ir. Hendra Wijaya, M.Kom.",
+        tanggal: '2026-07-20',
+        dosen: 'Dr. Ir. Hendra Wijaya, M.Kom.',
         rangkuman:
-            "Evaluasi integrasi Large Language Model dan format data training untuk layanan akademik",
-        keterangan: "Ruang Dosen Gedung A",
-        metode: "offline",
-        tindakLanjut: "Test prompting, evaluasi hasil",
-        status: "revisi",
-        createdAt: "2026-07-20T09:15:00Z",
+            'Evaluasi integrasi Large Language Model dan format data training untuk layanan akademik',
+        keterangan: 'Ruang Dosen Gedung A',
+        metode: 'offline',
+        tindakLanjut: 'Test prompting, evaluasi hasil',
+        status: 'revisi',
+        createdAt: '2026-07-20T09:15:00Z',
     },
     {
         id: 4,
-        tanggal: "2026-08-05",
-        dosen: "Rina Agustina, S.T., M.Kom.",
+        tanggal: '2026-08-05',
+        dosen: 'Rina Agustina, S.T., M.Kom.',
         rangkuman:
-            "Revisi instrumen pengujian blackbox dan definition skenario usability testing",
-        keterangan: "Zoom Meeting",
-        metode: "online",
-        tindakLanjut: "Finalisasi test plan",
-        status: "diajukan",
-        createdAt: "2026-08-05T16:45:00Z",
+            'Revisi instrumen pengujian blackbox dan definition skenario usability testing',
+        keterangan: 'Zoom Meeting',
+        metode: 'online',
+        tindakLanjut: 'Finalisasi test plan',
+        status: 'diajukan',
+        createdAt: '2026-08-05T16:45:00Z',
     },
 ]);
 
 const form = useForm({
-    tanggal: "",
-    dosen: "",
-    rangkuman: "",
-    keterangan: "",
-    metode: "offline" as "online" | "offline",
-    tindakLanjut: "",
+    tanggal: '',
+    dosen: '',
+    rangkuman: '',
+    keterangan: '',
+    metode: 'offline' as 'online' | 'offline',
+    tindakLanjut: '',
 });
 
 const openModal = () => {
     editingId.value = null;
     form.reset();
-    form.metode = "offline";
+    form.metode = 'offline';
     showModal.value = true;
 };
 
 const editLog = (log: BimbinganLog) => {
-    if (log.status !== "draft" && log.status !== "revisi") return;
+    if (log.status !== 'draft' && log.status !== 'revisi') return;
     editingId.value = log.id;
     form.tanggal = log.tanggal;
     form.dosen = log.dosen;
     form.rangkuman = log.rangkuman;
     form.keterangan = log.keterangan;
     form.metode = log.metode;
-    form.tindakLanjut = log.tindakLanjut || "";
+    form.tindakLanjut = log.tindakLanjut || '';
     showModal.value = true;
 };
 
 const deleteLog = (id: number) => {
     const log = bimbinganList.value.find((l) => l.id === id);
-    if (!log || (log.status !== "draft" && log.status !== "revisi")) return;
-    if (!confirm("Hapus catatan bimbingan ini?")) return;
+    if (!log || (log.status !== 'draft' && log.status !== 'revisi')) return;
+    if (!confirm('Hapus catatan bimbingan ini?')) return;
     bimbinganList.value = bimbinganList.value.filter((l) => l.id !== id);
 };
 
@@ -183,7 +183,7 @@ const submitBimbingan = () => {
                 keterangan: form.keterangan,
                 metode: form.metode,
                 tindakLanjut: form.tindakLanjut || undefined,
-                status: "diajukan",
+                status: 'diajukan',
                 updatedAt: now,
             };
         }
@@ -196,7 +196,7 @@ const submitBimbingan = () => {
             keterangan: form.keterangan,
             metode: form.metode,
             tindakLanjut: form.tindakLanjut || undefined,
-            status: "diajukan",
+            status: 'diajukan',
             createdAt: now,
         });
     }
@@ -226,25 +226,25 @@ const totalPages = computed(() =>
 );
 
 const canEdit = (log: BimbinganLog) =>
-    log.status === "draft" || log.status === "revisi";
+    log.status === 'draft' || log.status === 'revisi';
 
 const formatTanggal = (tanggal: string) => {
     const d = new Date(tanggal);
-    return d.toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
+    return d.toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
     });
 };
 
 const formatWaktu = (isoString: string) => {
     const d = new Date(isoString);
-    return d.toLocaleString("id-ID", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+    return d.toLocaleString('id-ID', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
     });
 };
 </script>
@@ -348,7 +348,7 @@ const formatWaktu = (isoString: string) => {
                     <p class="text-xs text-slate-500 dark:text-slate-400">
                         {{
                             searchQuery
-                                ? "Pencarian tidak menemukan hasil. Coba kata kunci lain."
+                                ? 'Pencarian tidak menemukan hasil. Coba kata kunci lain.'
                                 : 'Klik "Tambah Baru" untuk mulai mencatat kegiatan bimbingan.'
                         }}
                     </p>
@@ -389,7 +389,7 @@ const formatWaktu = (isoString: string) => {
                                     }}.
                                 </td>
                                 <td
-                                    class="px-3 py-3.5 whitespace-nowrap font-medium text-slate-900 dark:text-white"
+                                    class="px-3 py-3.5 font-medium whitespace-nowrap text-slate-900 dark:text-white"
                                 >
                                     {{ formatTanggal(item.tanggal) }}
                                 </td>
@@ -411,9 +411,9 @@ const formatWaktu = (isoString: string) => {
                                         ]"
                                     >
                                         {{
-                                            item.metode === "online"
-                                                ? "Daring"
-                                                : "Tatap Muka"
+                                            item.metode === 'online'
+                                                ? 'Daring'
+                                                : 'Tatap Muka'
                                         }}
                                     </span>
                                 </td>
@@ -445,7 +445,7 @@ const formatWaktu = (isoString: string) => {
                                         </button>
                                         <span
                                             v-if="!canEdit(item)"
-                                            class="text-[11px] italic text-slate-400 dark:text-slate-600"
+                                            class="text-[11px] text-slate-400 italic dark:text-slate-600"
                                             >Dikunci</span
                                         >
                                     </div>
@@ -495,9 +495,9 @@ const formatWaktu = (isoString: string) => {
                                 ]"
                             >
                                 {{
-                                    item.metode === "online"
-                                        ? "Daring"
-                                        : "Tatap Muka"
+                                    item.metode === 'online'
+                                        ? 'Daring'
+                                        : 'Tatap Muka'
                                 }}
                             </span>
                             <span>•</span>
@@ -804,9 +804,9 @@ const formatWaktu = (isoString: string) => {
                                         class="mt-1 text-sm text-slate-900 dark:text-white"
                                     >
                                         {{
-                                            selectedLog.metode === "online"
-                                                ? "Daring"
-                                                : "Tatap Muka"
+                                            selectedLog.metode === 'online'
+                                                ? 'Daring'
+                                                : 'Tatap Muka'
                                         }}
                                     </p>
                                 </div>
@@ -830,7 +830,7 @@ const formatWaktu = (isoString: string) => {
                                     >Rangkuman Pembahasan</label
                                 >
                                 <p
-                                    class="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-300"
+                                    class="mt-1 text-sm leading-relaxed whitespace-pre-wrap text-slate-700 dark:text-slate-300"
                                 >
                                     {{ selectedLog.rangkuman }}
                                 </p>
@@ -843,7 +843,7 @@ const formatWaktu = (isoString: string) => {
                                     >Tindak Lanjut / Target</label
                                 >
                                 <p
-                                    class="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-300"
+                                    class="mt-1 text-sm leading-relaxed whitespace-pre-wrap text-slate-700 dark:text-slate-300"
                                 >
                                     {{ selectedLog.tindakLanjut }}
                                 </p>

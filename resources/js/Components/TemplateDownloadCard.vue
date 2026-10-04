@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useId } from "vue";
-import { Download } from "lucide-vue-next";
+import { useId } from 'vue';
+import { Download } from 'lucide-vue-next';
 
 const availabilityId = useId();
 
@@ -17,11 +17,11 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-    title: "Template Dokumen Pendukung",
+    title: 'Template Dokumen Pendukung',
     description:
-        "Unduh template yang diperlukan sebelum melengkapi berkas pendaftaran.",
+        'Unduh template yang diperlukan sebelum melengkapi berkas pendaftaran.',
     availabilityNote:
-        "Unduhan belum tersedia. Menunggu file resmi dari program studi.",
+        'Unduhan belum tersedia. Menunggu file resmi dari program studi.',
 });
 </script>
 

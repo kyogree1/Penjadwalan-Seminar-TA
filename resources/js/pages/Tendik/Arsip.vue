@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import {
     Award,
@@ -87,6 +87,21 @@ const recentPrints = ref([
         status: 'Sudah Dicetak',
     },
 ]);
+
+const searchRecent = ref('');
+
+const filteredRecentPrints = computed(() => {
+    const query = searchRecent.value.trim().toLowerCase();
+    if (!query) return recentPrints.value;
+    return recentPrints.value.filter((print) => {
+        return (
+            print.namaMhs.toLowerCase().includes(query) ||
+            print.nim.includes(query) ||
+            print.dokumen.toLowerCase().includes(query) ||
+            print.petugas.toLowerCase().includes(query)
+        );
+    });
+});
 </script>
 
 <template>
@@ -160,6 +175,18 @@ const recentPrints = ref([
                             ruang sidang
                         </p>
                     </div>
+
+                    <div class="relative">
+                        <Search
+                            class="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+                        />
+                        <input
+                            v-model="searchRecent"
+                            type="text"
+                            placeholder="Cari nama, NIM, dokumen..."
+                            class="w-64 rounded-xl border border-slate-200 bg-slate-50 py-2 pr-4 pl-9 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900 dark:text-white"
+                        />
+                    </div>
                 </div>
 
                 <div class="mt-4 overflow-x-auto">
@@ -179,10 +206,11 @@ const recentPrints = ref([
                             </tr>
                         </thead>
                         <tbody
+                            v-if="filteredRecentPrints.length"
                             class="divide-y divide-slate-100 dark:divide-slate-800"
                         >
                             <tr
-                                v-for="item in recentPrints"
+                                v-for="item in filteredRecentPrints"
                                 :key="item.id"
                                 class="hover:bg-slate-50/50 dark:hover:bg-slate-900/40"
                             >
@@ -226,6 +254,35 @@ const recentPrints = ref([
                                         <Printer class="mr-1 h-3.5 w-3.5" />
                                         Cetak Ulang
                                     </Button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
+                            <tr>
+                                <td colspan="6" class="px-4 py-12 text-center">
+                                    <div
+                                        class="flex flex-col items-center gap-3"
+                                    >
+                                        <div
+                                            class="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+                                        >
+                                            <Search
+                                                class="h-8 w-8 text-slate-400"
+                                            />
+                                        </div>
+                                        <div>
+                                            <h4
+                                                class="text-sm font-bold text-slate-900 dark:text-white"
+                                            >
+                                                Tidak ada hasil pencarian
+                                            </h4>
+                                            <p
+                                                class="mt-1 text-xs text-slate-500 dark:text-slate-400"
+                                            >
+                                                Coba ubah kata kunci pencarian.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

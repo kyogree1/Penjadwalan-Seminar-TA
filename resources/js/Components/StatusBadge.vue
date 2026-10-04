@@ -41,7 +41,7 @@ const config = computed(() => {
                     bg: 'bg-blue-50 dark:bg-blue-950/50',
                     text: 'text-blue-700 dark:text-blue-300',
                     border: 'border-blue-200 dark:border-blue-900',
-                    dot: 'bg-blue-500 animate-pulse',
+                    dot: 'bg-blue-500',
                     defaultLabel: 'Info',
                 };
             case 'emerald':
@@ -110,7 +110,7 @@ const config = computed(() => {
                 bg: 'bg-blue-50 dark:bg-blue-950/50',
                 text: 'text-blue-700 dark:text-blue-300',
                 border: 'border-blue-200 dark:border-blue-900',
-                dot: 'bg-blue-500 animate-pulse',
+                dot: 'bg-blue-500',
                 defaultLabel: 'Diajukan',
             };
         case 'verifikasi':

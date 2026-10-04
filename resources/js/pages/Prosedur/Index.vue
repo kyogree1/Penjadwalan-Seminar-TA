@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from "@inertiajs/vue3";
+import { Head } from '@inertiajs/vue3';
 import {
     BookOpen,
     CheckCircle2,
@@ -8,17 +8,17 @@ import {
     FileCheck2,
     FileText,
     Lock,
-} from "lucide-vue-next";
+} from 'lucide-vue-next';
 
-import AppLayout from "@/Layouts/AppLayout.vue";
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 const stages = [
-    { label: "Pengajuan Judul", state: "done" },
-    { label: "Bimbingan TA", state: "current" },
-    { label: "Seminar Proposal", state: "next" },
-    { label: "Penyusunan Laporan", state: "next" },
-    { label: "Sidang TA", state: "next" },
-    { label: "Revisi & Pengesahan", state: "next" },
+    { label: 'Pengajuan Judul', state: 'done' },
+    { label: 'Bimbingan TA', state: 'current' },
+    { label: 'Seminar Proposal', state: 'next' },
+    { label: 'Penyusunan Laporan', state: 'next' },
+    { label: 'Sidang TA', state: 'next' },
+    { label: 'Revisi & Pengesahan', state: 'next' },
 ];
 
 const documents: {
@@ -34,40 +34,40 @@ const documents: {
     }[];
 }[] = [
     {
-        group: "Panduan Utama",
+        group: 'Panduan Utama',
         icon: BookOpen,
         items: [
             {
-                title: "SOP & Buku Pedoman Tugas Akhir Informatika ITK",
+                title: 'SOP & Buku Pedoman Tugas Akhir Informatika ITK',
                 description:
-                    "Panduan teknis penulisan, format sitasi IEEE, dan alur pendaftaran.",
-                action: "Unduh PDF",
+                    'Panduan teknis penulisan, format sitasi IEEE, dan alur pendaftaran.',
+                action: 'Unduh PDF',
                 available: false,
             },
         ],
     },
     {
-        group: "Template Administrasi",
+        group: 'Template Administrasi',
         icon: FileText,
         items: [
             {
-                code: "TA-01 s/d TA-05",
-                title: "Template Formulir Pengajuan & Monitoring Bimbingan",
-                description: "Format resmi berkas administrasi Tugas Akhir.",
-                action: "Unduh ZIP",
+                code: 'TA-01 s/d TA-05',
+                title: 'Template Formulir Pengajuan & Monitoring Bimbingan',
+                description: 'Format resmi berkas administrasi Tugas Akhir.',
+                action: 'Unduh ZIP',
                 available: false,
             },
         ],
     },
     {
-        group: "Dokumen Tahap Akhir",
+        group: 'Dokumen Tahap Akhir',
         icon: FileCheck2,
         items: [
             {
-                title: "Lembar Pengesahan Tugas Akhir",
+                title: 'Lembar Pengesahan Tugas Akhir',
                 description:
-                    "Tersedia setelah revisi disetujui oleh dosen terkait.",
-                action: "Terkunci",
+                    'Tersedia setelah revisi disetujui oleh dosen terkait.',
+                action: 'Terkunci',
                 available: false,
                 locked: true,
             },
@@ -85,7 +85,7 @@ const documents: {
                 class="rounded-2xl border border-slate-200/80 bg-white px-6 py-5 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
             >
                 <p
-                    class="text-xs font-semibold uppercase tracking-[0.12em] text-blue-600 dark:text-blue-400"
+                    class="text-xs font-semibold tracking-[0.12em] text-blue-600 uppercase dark:text-blue-400"
                 >
                     Panduan Akademik
                 </p>
@@ -171,11 +171,11 @@ const documents: {
                         </div>
                         <div
                             v-if="index < stages.length - 1"
-                            class="absolute left-4 top-8 h-4 w-px -translate-x-1/2 bg-slate-200 dark:bg-slate-700 sm:hidden"
+                            class="absolute top-8 left-4 h-4 w-px -translate-x-1/2 bg-slate-200 sm:hidden dark:bg-slate-700"
                         />
                         <div
                             v-if="index < stages.length - 1"
-                            class="absolute left-8 right-0 top-4 z-0 hidden h-px -translate-y-1/2 bg-slate-200 dark:bg-slate-700 lg:block"
+                            class="absolute top-4 right-0 left-8 z-0 hidden h-px -translate-y-1/2 bg-slate-200 lg:block dark:bg-slate-700"
                         />
                     </div>
                 </div>
@@ -213,7 +213,7 @@ const documents: {
                                 class="h-4 w-4 text-slate-400"
                             />
                             <h3
-                                class="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                                class="text-xs font-bold tracking-wide text-slate-500 uppercase dark:text-slate-400"
                             >
                                 {{ section.group }}
                             </h3>
@@ -257,8 +257,8 @@ const documents: {
                                     <Download v-else class="h-3.5 w-3.5" />
                                     {{
                                         item.locked
-                                            ? "Terkunci"
-                                            : "Belum tersedia"
+                                            ? 'Terkunci'
+                                            : 'Belum tersedia'
                                     }}
                                 </button>
                             </div>

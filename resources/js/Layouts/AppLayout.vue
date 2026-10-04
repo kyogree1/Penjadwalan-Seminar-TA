@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { Link, router, usePage } from "@inertiajs/vue3";
+import { computed, onMounted, ref } from 'vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import {
     Award,
     Bell,
@@ -22,7 +22,6 @@ import {
     Layers,
     LogOut,
     Menu,
-    Monitor,
     Moon,
     PenTool,
     Printer,
@@ -33,17 +32,17 @@ import {
     UserCheck,
     Users,
     X,
-} from "lucide-vue-next";
+} from 'lucide-vue-next';
 
-import AcademicChatbot from "@/Components/AcademicChatbot.vue";
-import { useTheme } from "@/composables/useTheme";
+import AcademicChatbot from '@/Components/AcademicChatbot.vue';
+import { useTheme } from '@/composables/useTheme';
 
 interface Props {
     title?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    title: "Dashboard",
+    title: 'Dashboard',
 });
 
 const page = usePage();
@@ -52,89 +51,60 @@ const sidebarCollapsed = ref(false);
 const pengajuanDropdownOpen = ref(true);
 const { isDarkMode, toggleDarkMode, initializeTheme } = useTheme();
 
-// Mobile Screen Advisory Modal
-const showMobileDeviceModal = ref(false);
-const dontShowMobileDeviceModalAgain = ref(false);
-
-const checkMobileDeviceNotice = () => {
-    if (typeof window === "undefined") return;
-    const dismissed = localStorage.getItem("sipta_mobile_notice_dismissed");
-    if (dismissed === "true") return;
-
-    // Deteksi layar kecil atau user agent mobile
-    const isSmallScreen = window.innerWidth < 1024;
-    const isMobileUA =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-            navigator.userAgent,
-        );
-
-    if (isSmallScreen || isMobileUA) {
-        showMobileDeviceModal.value = true;
-    }
-};
-
-const closeMobileDeviceModal = () => {
-    if (dontShowMobileDeviceModalAgain.value && typeof window !== "undefined") {
-        localStorage.setItem("sipta_mobile_notice_dismissed", "true");
-    }
-    showMobileDeviceModal.value = false;
-};
-
 onMounted(() => {
     initializeTheme();
-    checkMobileDeviceNotice();
 });
 
 const currentUrl = computed(() => page.url);
 
 const isPengajuanActive = computed(
     () =>
-        currentUrl.value.startsWith("/pendaftaran") &&
-        !currentUrl.value.startsWith("/pendaftaran/jadwal"),
+        currentUrl.value.startsWith('/pendaftaran') &&
+        !currentUrl.value.startsWith('/pendaftaran/jadwal'),
 );
 
 // Authenticated User & Role Detection
 const authUser = computed(() => (page.props.auth as any)?.user);
-const userRole = computed<"mahasiswa" | "dosen" | "kaprodi" | "tendik">(() => {
+const userRole = computed<'mahasiswa' | 'dosen' | 'kaprodi' | 'tendik'>(() => {
     const r = authUser.value?.role;
-    if (r === "koordinator") return "kaprodi";
-    if (r === "dosen") return "dosen";
-    if (r === "kaprodi") return "kaprodi";
-    if (r === "tendik") return "tendik";
-    return "mahasiswa";
+    if (r === 'koordinator') return 'kaprodi';
+    if (r === 'dosen') return 'dosen';
+    if (r === 'kaprodi') return 'kaprodi';
+    if (r === 'tendik') return 'tendik';
+    return 'mahasiswa';
 });
 
 // Role Badge and Labels
 const roleInfo = computed(() => {
     switch (userRole.value) {
-        case "dosen":
+        case 'dosen':
             return {
-                title: "Portal Dosen",
-                badge: "Dosen Pembimbing & Penguji",
-                color: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30",
-                homePath: "/dosen/dashboard",
+                title: 'Portal Dosen',
+                badge: 'Dosen Pembimbing & Penguji',
+                color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
+                homePath: '/dosen/dashboard',
             };
-        case "kaprodi":
+        case 'kaprodi':
             return {
-                title: "Portal Kaprodi",
-                badge: "Koordinator Program Studi",
-                color: "bg-purple-500/10 text-purple-400 border-purple-500/30",
-                homePath: "/kaprodi/dashboard",
+                title: 'Portal Kaprodi',
+                badge: 'Koordinator Program Studi',
+                color: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+                homePath: '/kaprodi/dashboard',
             };
-        case "tendik":
+        case 'tendik':
             return {
-                title: "Portal Tendik",
-                badge: "Tenaga Kependidikan & Admin",
-                color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
-                homePath: "/tendik/dashboard",
+                title: 'Portal Tendik',
+                badge: 'Tenaga Kependidikan & Admin',
+                color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+                homePath: '/tendik/dashboard',
             };
-        case "mahasiswa":
+        case 'mahasiswa':
         default:
             return {
-                title: "Portal Mahasiswa",
-                badge: "Mahasiswa S1 Informatika",
-                color: "bg-blue-500/10 text-blue-400 border-blue-500/30",
-                homePath: "/dashboard",
+                title: 'Portal Mahasiswa',
+                badge: 'Mahasiswa S1 Informatika',
+                color: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
+                homePath: '/dashboard',
             };
     }
 });
@@ -143,26 +113,26 @@ const profileData = computed(() => {
     const u = authUser.value;
     if (!u) {
         return {
-            name: "Akmal Falah Maulana",
-            idNumber: "NIM: 11231006",
-            initials: "AF",
-            roleLabel: "Mahasiswa S1 Informatika",
+            name: 'Akmal Falah Maulana',
+            idNumber: 'NIM: 11231006',
+            initials: 'AF',
+            roleLabel: 'Mahasiswa S1 Informatika',
         };
     }
 
     const initials = u.name
         ? u.name
-              .split(" ")
+              .split(' ')
               .filter(Boolean)
               .slice(0, 2)
               .map((w: string) => w[0]?.toUpperCase())
-              .join("")
-        : "US";
+              .join('')
+        : 'US';
 
     return {
         name: u.name,
         idNumber: u.nim_nip || u.username || u.email,
-        initials: initials || "US",
+        initials: initials || 'US',
         roleLabel: u.jabatan || roleInfo.value.badge,
     };
 });
@@ -174,7 +144,7 @@ interface NotificationItem {
     message: string;
     time: string;
     read: boolean;
-    type: "success" | "info" | "warning" | "calendar";
+    type: 'success' | 'info' | 'warning' | 'calendar';
     link?: string;
 }
 
@@ -184,139 +154,139 @@ const notifications = ref<Record<string, NotificationItem[]>>({
     mahasiswa: [
         {
             id: 1,
-            title: "Verifikasi Berkas Sempro Diterima",
+            title: 'Verifikasi Berkas Sempro Diterima',
             message:
-                "Tendik telah memverifikasi kelengkapan berkas pendaftaran Seminar Proposal TA Anda. Status: Siap Jadwal.",
-            time: "15 menit yang lalu",
+                'Tendik telah memverifikasi kelengkapan berkas pendaftaran Seminar Proposal TA Anda. Status: Siap Jadwal.',
+            time: '15 menit yang lalu',
             read: false,
-            type: "success",
-            link: "/pendaftaran/sempro",
+            type: 'success',
+            link: '/pendaftaran/sempro',
         },
         {
             id: 2,
-            title: "Validasi Logbook Bimbingan",
+            title: 'Validasi Logbook Bimbingan',
             message:
-                "Dr. Ir. Hendra Wijaya, M.Kom. menyetujui catatan bimbingan Bab 4 Anda.",
-            time: "2 jam yang lalu",
+                'Dr. Ir. Hendra Wijaya, M.Kom. menyetujui catatan bimbingan Bab 4 Anda.',
+            time: '2 jam yang lalu',
             read: false,
-            type: "info",
-            link: "/pendaftaran/bimbingan",
+            type: 'info',
+            link: '/pendaftaran/bimbingan',
         },
         {
             id: 3,
-            title: "Jadwal Seminar Proposal Ditetapkan",
+            title: 'Jadwal Seminar Proposal Ditetapkan',
             message:
-                "Seminar Proposal dijadwalkan pada Senin, 30 September 2026, 10.00 WITA.",
-            time: "1 hari yang lalu",
+                'Seminar Proposal dijadwalkan pada Senin, 30 September 2026, 10.00 WITA.',
+            time: '1 hari yang lalu',
             read: false,
-            type: "calendar",
-            link: "/pendaftaran/sempro",
+            type: 'calendar',
+            link: '/pendaftaran/sempro',
         },
         {
             id: 4,
-            title: "Pengingat Periode Sidang Gelombang 2",
+            title: 'Pengingat Periode Sidang Gelombang 2',
             message:
-                "Pendaftaran Sidang Tugas Akhir dibuka hingga akhir bulan Oktober 2026.",
-            time: "3 hari yang lalu",
+                'Pendaftaran Sidang Tugas Akhir dibuka hingga akhir bulan Oktober 2026.',
+            time: '3 hari yang lalu',
             read: true,
-            type: "warning",
-            link: "/pendaftaran/sidang",
+            type: 'warning',
+            link: '/pendaftaran/sidang',
         },
     ],
     dosen: [
         {
             id: 101,
-            title: "Pengajuan Bimbingan Baru",
+            title: 'Pengajuan Bimbingan Baru',
             message:
-                "Akmal Falah Maulana mengajukan logbook bimbingan Bab 4 untuk ditinjau.",
-            time: "10 menit yang lalu",
+                'Akmal Falah Maulana mengajukan logbook bimbingan Bab 4 untuk ditinjau.',
+            time: '10 menit yang lalu',
             read: false,
-            type: "info",
-            link: "/dosen/bimbingan",
+            type: 'info',
+            link: '/dosen/bimbingan',
         },
         {
             id: 102,
-            title: "Penugasan Penguji Sidang TA",
+            title: 'Penugasan Penguji Sidang TA',
             message:
-                "Anda ditugaskan sebagai Penguji 1 Sidang TA Mahasiswa Bagus Pratama.",
-            time: "3 jam yang lalu",
+                'Anda ditugaskan sebagai Penguji 1 Sidang TA Mahasiswa Bagus Pratama.',
+            time: '3 jam yang lalu',
             read: false,
-            type: "calendar",
-            link: "/dosen/penilaian",
+            type: 'calendar',
+            link: '/dosen/penilaian',
         },
         {
             id: 103,
-            title: "Input Nilai Belum Lengkap",
+            title: 'Input Nilai Belum Lengkap',
             message:
-                "Terdapat 2 mahasiswa seminar proposal yang belum diinputkan nilai akhirnya.",
-            time: "Kemarin",
+                'Terdapat 2 mahasiswa seminar proposal yang belum diinputkan nilai akhirnya.',
+            time: 'Kemarin',
             read: true,
-            type: "warning",
-            link: "/dosen/penilaian",
+            type: 'warning',
+            link: '/dosen/penilaian',
         },
     ],
     kaprodi: [
         {
             id: 201,
-            title: "Validasi Judul Menunggu ACC",
+            title: 'Validasi Judul Menunggu ACC',
             message:
-                "Ada 4 pengajuan judul Tugas Akhir mahasiswa baru yang memerlukan persetujuan Koordinator.",
-            time: "30 menit yang lalu",
+                'Ada 4 pengajuan judul Tugas Akhir mahasiswa baru yang memerlukan persetujuan Koordinator.',
+            time: '30 menit yang lalu',
             read: false,
-            type: "info",
-            link: "/kaprodi/persetujuan",
+            type: 'info',
+            link: '/kaprodi/persetujuan',
         },
         {
             id: 202,
-            title: "Optimasi Penjadwalan Selesai",
+            title: 'Optimasi Penjadwalan Selesai',
             message:
-                "Algoritma Genetika menyelesaikan penjadwalan 18 sesi seminar tanpa konflik (Fitness 98.4%).",
-            time: "2 jam yang lalu",
+                'Algoritma Genetika menyelesaikan penjadwalan 18 sesi seminar tanpa konflik (Fitness 98.4%).',
+            time: '2 jam yang lalu',
             read: false,
-            type: "success",
-            link: "/koordinator/penjadwalan",
+            type: 'success',
+            link: '/koordinator/penjadwalan',
         },
         {
             id: 203,
-            title: "Penerbitan SK Tim Penguji",
+            title: 'Penerbitan SK Tim Penguji',
             message:
-                "Draft SK Penguji periode Gasal 2026/2027 telah siap diterbitkan dan ditandatangani.",
-            time: "1 hari yang lalu",
+                'Draft SK Penguji periode Gasal 2026/2027 telah siap diterbitkan dan ditandatangani.',
+            time: '1 hari yang lalu',
             read: true,
-            type: "calendar",
-            link: "/kaprodi/persetujuan",
+            type: 'calendar',
+            link: '/kaprodi/persetujuan',
         },
     ],
     tendik: [
         {
             id: 301,
-            title: "Berkas Sempro Baru Masuk",
+            title: 'Berkas Sempro Baru Masuk',
             message:
-                "3 berkas pendaftaran Seminar Proposal mahasiswa baru membutuhkan verifikasi keabsahan.",
-            time: "5 menit yang lalu",
+                '3 berkas pendaftaran Seminar Proposal mahasiswa baru membutuhkan verifikasi keabsahan.',
+            time: '5 menit yang lalu',
             read: false,
-            type: "warning",
-            link: "/tendik/verifikasi",
+            type: 'warning',
+            link: '/tendik/verifikasi',
         },
         {
             id: 302,
-            title: "Konfirmasi Ruangan Sidang",
+            title: 'Konfirmasi Ruangan Sidang',
             message:
-                "Ruangan Lab Riset A telah dikonfirmasi untuk sesi seminar besok.",
-            time: "1 jam yang lalu",
+                'Ruangan Lab Riset A telah dikonfirmasi untuk sesi seminar besok.',
+            time: '1 jam yang lalu',
             read: false,
-            type: "success",
-            link: "/tendik/ruangan",
+            type: 'success',
+            link: '/tendik/ruangan',
         },
         {
             id: 303,
-            title: "Berita Acara Siap Cetak",
+            title: 'Berita Acara Siap Cetak',
             message:
-                "Berita Acara Sidang TA tanggal 18 September telah selesai diarsipkan.",
-            time: "Kemarin",
+                'Berita Acara Sidang TA tanggal 18 September telah selesai diarsipkan.',
+            time: 'Kemarin',
             read: true,
-            type: "info",
-            link: "/tendik/arsip",
+            type: 'info',
+            link: '/tendik/arsip',
         },
     ],
 });
@@ -349,7 +319,7 @@ const clearAllNotifications = () => {
 };
 
 const handleLogout = () => {
-    router.post("/logout");
+    router.post('/logout');
 };
 </script>
 
@@ -925,7 +895,7 @@ const handleLogout = () => {
                         />
                         <Moon v-else class="h-3.5 w-3.5 text-blue-400" />
                         <span class="hidden sm:inline">{{
-                            isDarkMode ? "Dark mode" : "Light mode"
+                            isDarkMode ? 'Dark mode' : 'Light mode'
                         }}</span>
                     </button>
 
@@ -946,7 +916,7 @@ const handleLogout = () => {
                             <Bell class="h-4 w-4" />
                             <span
                                 v-if="unreadCount > 0"
-                                class="absolute top-2 right-2 h-2 w-2 animate-pulse rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900"
+                                class="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900"
                             />
                         </button>
 
@@ -1396,7 +1366,7 @@ const handleLogout = () => {
                             <span
                                 class="rounded-md bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-400 uppercase"
                             >
-                                {{ isDarkMode ? "Dark" : "Light" }}
+                                {{ isDarkMode ? 'Dark' : 'Light' }}
                             </span>
                         </button>
 
@@ -1428,19 +1398,19 @@ const handleLogout = () => {
                         class="flex flex-col items-center justify-between gap-2 sm:flex-row"
                     >
                         <div class="flex items-center gap-4">
-                            <a href="#" class="hover:text-blue-600"
-                                >Privacy Policy</a
+                            <Link
+                                href="/panduan"
+                                class="transition-colors hover:text-blue-600"
+                                >Panduan Layanan</Link
                             >
-                            <span>|</span>
-                            <a href="#" class="hover:text-blue-600"
-                                >Terms & Conditions</a
-                            >
-                            <span>|</span>
-                            <a href="#" class="hover:text-blue-600"
-                                >Cookie Policy</a
+                            <span>•</span>
+                            <Link
+                                href="/prosedur"
+                                class="transition-colors hover:text-blue-600"
+                                >SOP & Prosedur TA</Link
                             >
                         </div>
-                        <p>© 2026 Informatika ITK • SIPTA IF</p>
+                        <p>© 2026 Program Studi Informatika ITK • SIPTA IF</p>
                     </div>
                 </footer>
             </div>
@@ -1448,62 +1418,5 @@ const handleLogout = () => {
 
         <!-- 3. FLOATING ACADEMIC AI CHATBOT WIDGET -->
         <AcademicChatbot />
-
-        <!-- Mobile Device Notice Modal -->
-        <div
-            v-if="showMobileDeviceModal"
-            class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm"
-            @click="closeMobileDeviceModal"
-        >
-            <div
-                class="relative w-full max-w-md rounded-2xl border border-slate-700 bg-slate-800 p-6 shadow-2xl"
-                @click.stop
-            >
-                <div class="flex items-start gap-4">
-                    <div
-                        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400"
-                    >
-                        <Monitor class="h-6 w-6" />
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-bold text-white">
-                            Rekomendasi: Buka di Laptop/Desktop
-                        </h3>
-                        <p class="mt-2 text-sm leading-relaxed text-slate-300">
-                            Portal SIPTA IF menampilkan banyak data dan tabel
-                            yang lebih nyaman diakses melalui layar yang lebih
-                            besar. Untuk pengalaman terbaik, kami sarankan
-                            membuka portal ini di laptop atau komputer Anda.
-                        </p>
-                        <label
-                            class="mt-4 flex cursor-pointer items-center gap-2 text-xs text-slate-400"
-                        >
-                            <input
-                                v-model="dontShowMobileDeviceModalAgain"
-                                type="checkbox"
-                                class="rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                            />
-                            <span>Jangan tampilkan lagi</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-end gap-3">
-                    <button
-                        type="button"
-                        class="rounded-xl border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-300 transition-colors hover:bg-slate-700"
-                        @click="closeMobileDeviceModal"
-                    >
-                        Tutup
-                    </button>
-                    <button
-                        type="button"
-                        class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-blue-600/30 transition-colors hover:bg-blue-700"
-                        @click="closeMobileDeviceModal"
-                    >
-                        Mengerti
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
 </template>

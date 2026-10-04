@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { Head } from "@inertiajs/vue3";
+import { computed, ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import {
     Bookmark,
     BookOpen,
@@ -12,9 +12,9 @@ import {
     Share2,
     SlidersHorizontal,
     X,
-} from "lucide-vue-next";
+} from 'lucide-vue-next';
 
-import AppLayout from "@/Layouts/AppLayout.vue";
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 interface SkripsiItem {
     id: number;
@@ -37,13 +37,13 @@ interface SkripsiItem {
 }
 
 const selectedItem = ref<SkripsiItem | null>(null);
-const activeTab = ref<"id" | "en">("id");
-const searchQuery = ref("");
-const filterTahun = ref("");
-const filterBidang = ref("");
-const filterProdi = ref("");
-const filterMetode = ref("");
-const sortBy = ref("terbaru");
+const activeTab = ref<'id' | 'en'>('id');
+const searchQuery = ref('');
+const filterTahun = ref('');
+const filterBidang = ref('');
+const filterProdi = ref('');
+const filterMetode = ref('');
+const sortBy = ref('terbaru');
 
 const filteredSkripsiList = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
@@ -57,7 +57,7 @@ const filteredSkripsiList = computed(() => {
                 item.abstrak_id,
                 ...item.tags,
             ]
-                .join(" ")
+                .join(' ')
                 .toLowerCase();
             return (
                 (!query || searchable.includes(query)) &&
@@ -68,8 +68,8 @@ const filteredSkripsiList = computed(() => {
             );
         })
         .sort((a, b) => {
-            if (sortBy.value === "judul") return a.judul.localeCompare(b.judul);
-            if (sortBy.value === "terlama")
+            if (sortBy.value === 'judul') return a.judul.localeCompare(b.judul);
+            if (sortBy.value === 'terlama')
                 return a.tahun.localeCompare(b.tahun);
             return b.tahun.localeCompare(a.tahun);
         });
@@ -78,83 +78,83 @@ const filteredSkripsiList = computed(() => {
 const skripsiList = ref<SkripsiItem[]>([
     {
         id: 1,
-        tahun: "2024",
-        prodi: "Teknik Informatika",
-        bidang: "UI/UX & Human-Computer Interaction",
-        judul: "Implementasi Augmented Reality (AR) Berbasis Web untuk Pembelajaran Interaktif Anatomi Organ Tubuh Manusia",
-        penulis: "Claudia Stephanie Tan",
-        nim: "200411100233",
-        pembimbing_1: "Dr. Dian Indah Permatasari, M.Kom.",
-        nip_pembimbing_1: "198402122010122004",
-        pembimbing_2: "Rina Agustina, S.T., M.Kom.",
-        nip_pembimbing_2: "198607142012122001",
+        tahun: '2024',
+        prodi: 'Teknik Informatika',
+        bidang: 'UI/UX & Human-Computer Interaction',
+        judul: 'Implementasi Augmented Reality (AR) Berbasis Web untuk Pembelajaran Interaktif Anatomi Organ Tubuh Manusia',
+        penulis: 'Claudia Stephanie Tan',
+        nim: '200411100233',
+        pembimbing_1: 'Dr. Dian Indah Permatasari, M.Kom.',
+        nip_pembimbing_1: '198402122010122004',
+        pembimbing_2: 'Rina Agustina, S.T., M.Kom.',
+        nip_pembimbing_2: '198607142012122001',
         abstrak_id:
-            "Model anatomi fisik di laboratorium seringkali terbatas jumlahnya. Penelitian ini mengembangkan media WebAR markerless menggunakan WebXR API dan Three.js. Hasil pre-test dan post-test pada 45 siswa menunjukkan peningkatan pemahaman materi organ kardiovaskular sebesar 38.6%.",
+            'Model anatomi fisik di laboratorium seringkali terbatas jumlahnya. Penelitian ini mengembangkan media WebAR markerless menggunakan WebXR API dan Three.js. Hasil pre-test dan post-test pada 45 siswa menunjukkan peningkatan pemahaman materi organ kardiovaskular sebesar 38.6%.',
         abstrak_en:
-            "Physical anatomical models in laboratories are often limited in number. This study developed markerless WebAR media using WebXR API and Three.js. Pre-test and post-test results on 45 students showed an increase in understanding of cardiovascular organs by 38.6%.",
+            'Physical anatomical models in laboratories are often limited in number. This study developed markerless WebAR media using WebXR API and Three.js. Pre-test and post-test results on 45 students showed an increase in understanding of cardiovascular organs by 38.6%.',
         tags: [
-            "#WebAR",
-            "#Augmented Reality",
-            "#Three.js",
-            "#Media Pembelajaran",
-            "#Anatomi Manusia",
+            '#WebAR',
+            '#Augmented Reality',
+            '#Three.js',
+            '#Media Pembelajaran',
+            '#Anatomi Manusia',
         ],
-        metode: "Prototyping & Field Testing",
-        tanggal_sidang: "22 Mei 2024",
-        doi: "https://doi.org/10.14710/webar.2024.310",
+        metode: 'Prototyping & Field Testing',
+        tanggal_sidang: '22 Mei 2024',
+        doi: 'https://doi.org/10.14710/webar.2024.310',
     },
     {
         id: 2,
-        tahun: "2024",
-        prodi: "Teknik Informatika",
-        bidang: "Kecerdasan Buatan (AI) & NLP",
-        judul: "Rancang Bangun Chatbot Layanan Akademik Kampus Berbasis Fine-Tuned LLaMA-3 dan Retrieval-Augmented Generation (RAG)",
-        penulis: "Muhammad Fadhil Ramadhan",
-        nim: "200411100189",
-        pembimbing_1: "Dr. Ir. Hendra Wijaya, M.Kom.",
-        nip_pembimbing_1: "197903152005011002",
-        pembimbing_2: "Ahmad Fauzi, S.Kom., M.T.",
-        nip_pembimbing_2: "198811052015041003",
+        tahun: '2024',
+        prodi: 'Teknik Informatika',
+        bidang: 'Kecerdasan Buatan (AI) & NLP',
+        judul: 'Rancang Bangun Chatbot Layanan Akademik Kampus Berbasis Fine-Tuned LLaMA-3 dan Retrieval-Augmented Generation (RAG)',
+        penulis: 'Muhammad Fadhil Ramadhan',
+        nim: '200411100189',
+        pembimbing_1: 'Dr. Ir. Hendra Wijaya, M.Kom.',
+        nip_pembimbing_1: '197903152005011002',
+        pembimbing_2: 'Ahmad Fauzi, S.Kom., M.T.',
+        nip_pembimbing_2: '198811052015041003',
         abstrak_id:
-            "Layanan informasi akademik konvensional sering mengalami antrean respon yang lambat. Penelitian ini membangun sistem tanya jawab cerdas menggunakan model bahasa besar LLaMA-3 dengan teknik RAG untuk memitigasi halusinasi dan meningkatkan akurasi jawaban dokumen panduan akademik ITK.",
+            'Layanan informasi akademik konvensional sering mengalami antrean respon yang lambat. Penelitian ini membangun sistem tanya jawab cerdas menggunakan model bahasa besar LLaMA-3 dengan teknik RAG untuk memitigasi halusinasi dan meningkatkan akurasi jawaban dokumen panduan akademik ITK.',
         abstrak_en:
-            "Conventional academic information services often face slow response queues. This research develops an intelligent question-answering system using LLaMA-3 LLM with RAG techniques to mitigate hallucination and improve answer accuracy based on ITK academic guideline documents.",
-        tags: ["#LLM", "#RAG", "#LangChain", "#Academic Chatbot", "#VectorDB"],
-        metode: "Experimental Research & Evaluation",
-        tanggal_sidang: "18 Juni 2024",
-        doi: "https://doi.org/10.14710/rag.2024.412",
+            'Conventional academic information services often face slow response queues. This research develops an intelligent question-answering system using LLaMA-3 LLM with RAG techniques to mitigate hallucination and improve answer accuracy based on ITK academic guideline documents.',
+        tags: ['#LLM', '#RAG', '#LangChain', '#Academic Chatbot', '#VectorDB'],
+        metode: 'Experimental Research & Evaluation',
+        tanggal_sidang: '18 Juni 2024',
+        doi: 'https://doi.org/10.14710/rag.2024.412',
     },
     {
         id: 3,
-        tahun: "2024",
-        prodi: "Teknik Informatika",
-        bidang: "Sistem Informasi & Optimasi",
-        judul: "Optimasi Penjadwalan Sidang Tugas Akhir Multi-Ruangan Menggunakan Algoritma Genetika Hibrida (Studi Kasus: FSTI ITK)",
-        penulis: "Akmal Falah Maulana",
-        nim: "11231006",
-        pembimbing_1: "Dr. Ir. Hendra Wijaya, M.Kom.",
-        nip_pembimbing_1: "197903152005011002",
-        pembimbing_2: "Rina Agustina, S.T., M.Kom.",
-        nip_pembimbing_2: "198607142012122001",
+        tahun: '2024',
+        prodi: 'Teknik Informatika',
+        bidang: 'Sistem Informasi & Optimasi',
+        judul: 'Optimasi Penjadwalan Sidang Tugas Akhir Multi-Ruangan Menggunakan Algoritma Genetika Hibrida (Studi Kasus: FSTI ITK)',
+        penulis: 'Akmal Falah Maulana',
+        nim: '11231006',
+        pembimbing_1: 'Dr. Ir. Hendra Wijaya, M.Kom.',
+        nip_pembimbing_1: '197903152005011002',
+        pembimbing_2: 'Rina Agustina, S.T., M.Kom.',
+        nip_pembimbing_2: '198607142012122001',
         abstrak_id:
-            "Penyusunan jadwal seminar dan sidang yang melibatkan puluhan dosen dan ratusan mahasiswa merupakan masalah NP-hard. Penelitian ini mengimplementasikan algoritma genetika dengan penyesuaian penalti dinamis untuk menghasilkan jadwal bebas bentrok dan beban menguji yang proporsional.",
+            'Penyusunan jadwal seminar dan sidang yang melibatkan puluhan dosen dan ratusan mahasiswa merupakan masalah NP-hard. Penelitian ini mengimplementasikan algoritma genetika dengan penyesuaian penalti dinamis untuk menghasilkan jadwal bebas bentrok dan beban menguji yang proporsional.',
         abstrak_en:
-            "Scheduling seminars and defenses involving dozens of lecturers and hundreds of students is an NP-hard problem. This study implements a hybrid genetic algorithm with dynamic penalty adjustment to generate conflict-free schedules with balanced examination workloads.",
+            'Scheduling seminars and defenses involving dozens of lecturers and hundreds of students is an NP-hard problem. This study implements a hybrid genetic algorithm with dynamic penalty adjustment to generate conflict-free schedules with balanced examination workloads.',
         tags: [
-            "#Algoritma Genetika",
-            "#Penjadwalan Otomatis",
-            "#Optimization",
-            "#Constraint Satisfaction",
+            '#Algoritma Genetika',
+            '#Penjadwalan Otomatis',
+            '#Optimization',
+            '#Constraint Satisfaction',
         ],
-        metode: "Design Science Research (DSR)",
-        tanggal_sidang: "10 Juli 2024",
-        doi: "https://doi.org/10.14710/ga.2024.509",
+        metode: 'Design Science Research (DSR)',
+        tanggal_sidang: '10 Juli 2024',
+        doi: 'https://doi.org/10.14710/ga.2024.509',
     },
 ]);
 
 const openDetail = (item: SkripsiItem) => {
     selectedItem.value = item;
-    activeTab.value = "id";
+    activeTab.value = 'id';
 };
 
 const closeDetail = () => {
@@ -626,7 +626,7 @@ const closeDetail = () => {
                                         class="mt-3 text-xs leading-relaxed text-slate-700 dark:text-slate-300"
                                     >
                                         {{
-                                            activeTab === "id"
+                                            activeTab === 'id'
                                                 ? selectedItem.abstrak_id
                                                 : selectedItem.abstrak_en
                                         }}

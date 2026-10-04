@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import {
     Check,
@@ -24,6 +24,23 @@ import Modal from '@/Components/Modal.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 
 const activeTab = ref<'Sempro' | 'Sidang'>('Sidang');
+const searchQuery = ref('');
+
+const filteredApplicants = computed(() => {
+    const query = searchQuery.value.trim().toLowerCase();
+    return applicants.value.filter((app) => {
+        const matchesTab =
+            activeTab.value === 'Sidang'
+                ? app.tipe.includes('Sidang')
+                : app.tipe.includes('Seminar');
+        const matchesSearch =
+            !query ||
+            app.nama.toLowerCase().includes(query) ||
+            app.nim.includes(query) ||
+            app.judul.toLowerCase().includes(query);
+        return matchesTab && matchesSearch;
+    });
+});
 
 const applicants = ref([
     {
@@ -192,39 +209,57 @@ const requestRevision = () => {
                         </p>
                     </div>
 
-                    <!-- Type Filter Pills -->
                     <div
-                        class="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100/70 p-1 text-xs font-bold dark:border-slate-800 dark:bg-slate-900"
+                        class="flex flex-col gap-3 sm:flex-row sm:items-center"
                     >
-                        <button
-                            type="button"
-                            class="rounded-lg px-3 py-1 transition-all"
-                            :class="[
-                                activeTab === 'Sidang'
-                                    ? 'bg-blue-600 text-white shadow-xs'
-                                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400',
-                            ]"
-                            @click="activeTab = 'Sidang'"
+                        <!-- Search Box -->
+                        <div class="relative">
+                            <Search
+                                class="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+                            />
+                            <input
+                                v-model="searchQuery"
+                                type="text"
+                                placeholder="Cari nama, NIM, atau judul..."
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-4 pl-9 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden sm:w-64 dark:border-slate-800 dark:bg-slate-900 dark:text-white"
+                            />
+                        </div>
+
+                        <!-- Type Filter Pills -->
+                        <div
+                            class="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100/70 p-1 text-xs font-bold dark:border-slate-800 dark:bg-slate-900"
                         >
-                            Sidang Akhir TA (2)
-                        </button>
-                        <button
-                            type="button"
-                            class="rounded-lg px-3 py-1 transition-all"
-                            :class="[
-                                activeTab === 'Sempro'
-                                    ? 'bg-blue-600 text-white shadow-xs'
-                                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400',
-                            ]"
-                            @click="activeTab = 'Sempro'"
-                        >
-                            Seminar Proposal (1)
-                        </button>
+                            <button
+                                type="button"
+                                class="rounded-lg px-3 py-1 transition-all"
+                                :class="[
+                                    activeTab === 'Sidang'
+                                        ? 'bg-blue-600 text-white shadow-xs'
+                                        : 'text-slate-600 hover:text-slate-900 dark:text-slate-400',
+                                ]"
+                                @click="activeTab = 'Sidang'"
+                            >
+                                Sidang Akhir TA (2)
+                            </button>
+                            <button
+                                type="button"
+                                class="rounded-lg px-3 py-1 transition-all"
+                                :class="[
+                                    activeTab === 'Sempro'
+                                        ? 'bg-blue-600 text-white shadow-xs'
+                                        : 'text-slate-600 hover:text-slate-900 dark:text-slate-400',
+                                ]"
+                                @click="activeTab = 'Sempro'"
+                            >
+                                Seminar Proposal (1)
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="mt-4 overflow-x-auto">
                     <table
+                        v-if="filteredApplicants.length"
                         class="w-full text-left text-xs text-slate-600 dark:text-slate-300"
                     >
                         <thead
@@ -243,13 +278,10 @@ const requestRevision = () => {
                             class="divide-y divide-slate-100 dark:divide-slate-800"
                         >
                             <tr
-                                v-for="app in applicants.filter((a) =>
-                                    activeTab === 'Sidang'
-                                        ? a.tipe.includes('Sidang')
-                                        : a.tipe.includes('Seminar'),
-                                )"
+                                v-for="app in filteredApplicants"
                                 :key="app.id"
-                                class="hover:bg-slate-50/50 dark:hover:bg-slate-900/40"
+                                class="cursor-pointer hover:bg-slate-50/60 dark:hover:bg-slate-800/40"
+                                @click="openVerification(app)"
                             >
                                 <td class="px-4 py-3.5">
                                     <p
@@ -298,7 +330,7 @@ const requestRevision = () => {
                                         }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3.5 text-right">
+                                <td class="px-4 py-3.5 text-right" @click.stop>
                                     <Button
                                         size="sm"
                                         variant="primary"
@@ -310,6 +342,29 @@ const requestRevision = () => {
                             </tr>
                         </tbody>
                     </table>
+
+                    <div v-else class="py-12 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <div
+                                class="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+                            >
+                                <Search class="h-8 w-8 text-slate-400" />
+                            </div>
+                            <div>
+                                <h4
+                                    class="text-sm font-bold text-slate-900 dark:text-white"
+                                >
+                                    Tidak ada pendaftar yang sesuai
+                                </h4>
+                                <p
+                                    class="mt-1 text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    Coba ubah kata kunci pencarian atau filter
+                                    tab.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </Card>
         </div>

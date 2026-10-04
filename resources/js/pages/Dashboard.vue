@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { Head, Link, usePage } from "@inertiajs/vue3";
+import { computed, ref } from 'vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     AlertCircle,
     Calendar as CalendarIcon,
@@ -16,30 +16,29 @@ import {
     GraduationCap,
     Info,
     MapPin,
-    Sparkles,
     User,
     X,
-} from "lucide-vue-next";
+} from 'lucide-vue-next';
 
-import AppLayout from "@/Layouts/AppLayout.vue";
-import Modal from "@/Components/Modal.vue";
+import AppLayout from '@/Layouts/AppLayout.vue';
+import Modal from '@/Components/Modal.vue';
 
 const page = usePage();
 const authUser = computed(() => (page.props.auth as any)?.user);
 const studentName = computed(
-    () => authUser.value?.name || "Akmal Falah Maulana",
+    () => authUser.value?.name || 'Akmal Falah Maulana',
 );
-const studentNim = computed(() => authUser.value?.nim_nip || "NIM: 11231006");
-const studentProdi = computed(() => authUser.value?.prodi || "S1 Informatika");
+const studentNim = computed(() => authUser.value?.nim_nip || 'NIM: 11231006');
+const studentProdi = computed(() => authUser.value?.prodi || 'S1 Informatika');
 
 // ==========================================
 // 1. STATUS PERIODE (Dinamis per event & semester)
 // ==========================================
 interface ActivePeriod {
     id: string;
-    type: "sempro" | "sidang";
+    type: 'sempro' | 'sidang';
     title: string;
-    semester: "Gasal" | "Genap";
+    semester: 'Gasal' | 'Genap';
     academicYear: string;
     gelombang: string;
     startDate: string;
@@ -55,37 +54,37 @@ interface ActivePeriod {
 
 const activePeriods = ref<ActivePeriod[]>([
     {
-        id: "p-sempro",
-        type: "sempro",
-        title: "SEMINAR PROPOSAL",
-        semester: "Gasal",
-        academicYear: "2026/2027",
-        gelombang: "2 (Dua)",
-        startDate: "01 Okt 2026",
-        endDate: "15 Okt 2026",
+        id: 'p-sempro',
+        type: 'sempro',
+        title: 'SEMINAR PROPOSAL',
+        semester: 'Gasal',
+        academicYear: '2026/2027',
+        gelombang: '2 (Dua)',
+        startDate: '01 Okt 2026',
+        endDate: '15 Okt 2026',
         colorTheme: {
-            bg: "bg-lime-100 dark:bg-lime-950/40",
-            badgeBg: "bg-lime-200 dark:bg-lime-900/60",
-            text: "text-slate-900 dark:text-lime-200",
-            accentText: "text-lime-800 dark:text-lime-300",
-            border: "border-lime-300/80 dark:border-lime-700/50",
+            bg: 'bg-lime-100 dark:bg-lime-950/40',
+            badgeBg: 'bg-lime-200 dark:bg-lime-900/60',
+            text: 'text-slate-900 dark:text-lime-200',
+            accentText: 'text-lime-800 dark:text-lime-300',
+            border: 'border-lime-300/80 dark:border-lime-700/50',
         },
     },
     {
-        id: "p-sidang",
-        type: "sidang",
-        title: "SIDANG TUGAS AKHIR",
-        semester: "Gasal",
-        academicYear: "2026/2027",
-        gelombang: "1 (Satu)",
-        startDate: "08 Okt 2026",
-        endDate: "24 Okt 2026",
+        id: 'p-sidang',
+        type: 'sidang',
+        title: 'SIDANG TUGAS AKHIR',
+        semester: 'Gasal',
+        academicYear: '2026/2027',
+        gelombang: '1 (Satu)',
+        startDate: '08 Okt 2026',
+        endDate: '24 Okt 2026',
         colorTheme: {
-            bg: "bg-indigo-100 dark:bg-indigo-950/40",
-            badgeBg: "bg-indigo-200 dark:bg-indigo-900/60",
-            text: "text-slate-900 dark:text-indigo-200",
-            accentText: "text-indigo-800 dark:text-indigo-300",
-            border: "border-indigo-300/80 dark:border-indigo-700/50",
+            bg: 'bg-indigo-100 dark:bg-indigo-950/40',
+            badgeBg: 'bg-indigo-200 dark:bg-indigo-900/60',
+            text: 'text-slate-900 dark:text-indigo-200',
+            accentText: 'text-indigo-800 dark:text-indigo-300',
+            border: 'border-indigo-300/80 dark:border-indigo-700/50',
         },
     },
 ]);
@@ -94,7 +93,7 @@ const activePeriods = ref<ActivePeriod[]>([
 // 2. ROADMAP & STATUS TUGAS AKHIR (Status Dinamis)
 // Selesai = Blue, Berlangsung = Amber (Kuning), Belum = Slate
 // ==========================================
-type StepStatus = "completed" | "in_progress" | "pending";
+type StepStatus = 'completed' | 'in_progress' | 'pending';
 
 interface RoadmapStep {
     name: string;
@@ -103,34 +102,34 @@ interface RoadmapStep {
 }
 
 const semproSteps = ref<RoadmapStep[]>([
-    { name: "Pengajuan", status: "completed", date: "10 Sep 2026" },
-    { name: "Verifikasi", status: "completed", date: "14 Sep 2026" },
-    { name: "Penilaian", status: "in_progress", date: "Sedang Berjalan" },
-    { name: "Hasil Seminar", status: "pending" },
+    { name: 'Pengajuan', status: 'completed', date: '10 Sep 2026' },
+    { name: 'Verifikasi', status: 'completed', date: '14 Sep 2026' },
+    { name: 'Penilaian', status: 'in_progress', date: 'Sedang Berjalan' },
+    { name: 'Hasil Seminar', status: 'pending' },
 ]);
 
 const sidangSteps = ref<RoadmapStep[]>([
-    { name: "Pengajuan", status: "completed", date: "20 Sep 2026" },
-    { name: "Verifikasi", status: "in_progress", date: "Dalam Review" },
-    { name: "Penilaian", status: "pending" },
-    { name: "Hasil Sidang", status: "pending" },
+    { name: 'Pengajuan', status: 'completed', date: '20 Sep 2026' },
+    { name: 'Verifikasi', status: 'in_progress', date: 'Dalam Review' },
+    { name: 'Penilaian', status: 'pending' },
+    { name: 'Hasil Sidang', status: 'pending' },
 ]);
 
 const getStepNodeClasses = (status: StepStatus) => {
     switch (status) {
-        case "completed":
-            return "bg-blue-600 text-white ring-4 ring-blue-100 dark:ring-blue-950";
-        case "in_progress":
-            return "bg-amber-400 text-slate-950 ring-4 ring-amber-200 dark:ring-amber-900/60 animate-pulse";
-        case "pending":
+        case 'completed':
+            return 'bg-blue-600 text-white ring-4 ring-blue-100 dark:ring-blue-950';
+        case 'in_progress':
+            return 'bg-amber-400 text-slate-950 ring-4 ring-amber-200 dark:ring-amber-900/60 font-bold';
+        case 'pending':
         default:
-            return "bg-slate-300 text-slate-600 ring-4 ring-white dark:bg-slate-700 dark:text-slate-400 dark:ring-slate-900";
+            return 'bg-slate-300 text-slate-600 ring-4 ring-white dark:bg-slate-700 dark:text-slate-400 dark:ring-slate-900';
     }
 };
 
 const getStepProgressWidth = (steps: RoadmapStep[]) => {
     const lastActiveIdx = steps.reduce(
-        (acc, cur, idx) => (cur.status !== "pending" ? idx : acc),
+        (acc, cur, idx) => (cur.status !== 'pending' ? idx : acc),
         0,
     );
     const totalSegments = steps.length - 1;
@@ -146,7 +145,10 @@ interface CurrentStatusCard {
     stage: string;
     description: string;
     type:
-        "progress-sempro" | "progress-sidang" | "alert-sempro" | "alert-sidang";
+        | 'progress-sempro'
+        | 'progress-sidang'
+        | 'alert-sempro'
+        | 'alert-sidang';
     daysLeft?: number;
     linkUrl: string;
     badgeText: string;
@@ -154,46 +156,46 @@ interface CurrentStatusCard {
 
 const currentStatusCards = ref<CurrentStatusCard[]>([
     {
-        id: "cs-1",
-        title: "Progress Proposal TA",
-        stage: "Tahap Penilaian & Revisi",
+        id: 'cs-1',
+        title: 'Progress Proposal TA',
+        stage: 'Tahap Penilaian & Revisi',
         description:
-            "Telah melaksanakan seminar, menunggu input revisi tim dosen.",
-        type: "progress-sempro",
-        linkUrl: "/pendaftaran/sempro",
-        badgeText: "Bab 1 - 3 Disetujui",
+            'Telah melaksanakan seminar, menunggu input revisi tim dosen.',
+        type: 'progress-sempro',
+        linkUrl: '/pendaftaran/sempro',
+        badgeText: 'Bab 1 - 3 Disetujui',
     },
     {
-        id: "cs-2",
-        title: "Progress Sidang TA",
-        stage: "Verifikasi Berkas Akhir",
+        id: 'cs-2',
+        title: 'Progress Sidang TA',
+        stage: 'Verifikasi Berkas Akhir',
         description:
-            "Berkas dan naskah lengkap sedang dalam antrean verifikasi Tendik.",
-        type: "progress-sidang",
-        linkUrl: "/pendaftaran/sidang",
-        badgeText: "Menunggu ACC",
+            'Berkas dan naskah lengkap sedang dalam antrean verifikasi Tendik.',
+        type: 'progress-sidang',
+        linkUrl: '/pendaftaran/sidang',
+        badgeText: 'Menunggu ACC',
     },
     {
-        id: "cs-3",
-        title: "Mendekati Seminar Proposal",
-        stage: "Jadwal: 02 Oktober 2026",
+        id: 'cs-3',
+        title: 'Mendekati Seminar Proposal',
+        stage: 'Jadwal: 02 Oktober 2026',
         description:
-            "Waktu tersisa 2 hari lagi. Siapkan slide presentasi dan berkas cetak.",
-        type: "alert-sempro",
+            'Waktu tersisa 2 hari lagi. Siapkan slide presentasi dan berkas cetak.',
+        type: 'alert-sempro',
         daysLeft: 2,
-        linkUrl: "/pendaftaran/sempro",
-        badgeText: "H-2 Seminar",
+        linkUrl: '/pendaftaran/sempro',
+        badgeText: 'H-2 Seminar',
     },
     {
-        id: "cs-4",
-        title: "Mendekati Sidang TA",
-        stage: "Estimasi: 09 Oktober 2026",
+        id: 'cs-4',
+        title: 'Mendekati Sidang TA',
+        stage: 'Estimasi: 09 Oktober 2026',
         description:
-            "Batas pendaftaran berkas dan penutupan slot tinggal 6 hari lagi.",
-        type: "alert-sidang",
+            'Batas pendaftaran berkas dan penutupan slot tinggal 6 hari lagi.',
+        type: 'alert-sidang',
         daysLeft: 6,
-        linkUrl: "/pendaftaran/sidang",
-        badgeText: "H-6 Sidang",
+        linkUrl: '/pendaftaran/sidang',
+        badgeText: 'H-6 Sidang',
     },
 ]);
 
@@ -205,7 +207,7 @@ interface StudentCalendarAgenda {
     date: number;
     fullDateString: string;
     title: string;
-    type: "sempro" | "sidang" | "bimbingan" | "pendaftaran";
+    type: 'sempro' | 'sidang' | 'bimbingan' | 'pendaftaran';
     time: string;
     location?: string;
     pembimbingPenguji?: string[];
@@ -213,63 +215,63 @@ interface StudentCalendarAgenda {
     badgeColor: string;
 }
 
-const currentMonth = ref("Oktober 2026");
+const currentMonth = ref('Oktober 2026');
 
 const studentAgendas = ref<StudentCalendarAgenda[]>([
     {
-        id: "ag-1",
+        id: 'ag-1',
         date: 2,
-        fullDateString: "Jumat, 02 Oktober 2026",
-        title: "Seminar Proposal TA (Saya)",
-        type: "sempro",
-        time: "13.30 - 15.00 WITA",
-        location: "Ruang Lab JSTI 2 / Gedung A",
+        fullDateString: 'Jumat, 02 Oktober 2026',
+        title: 'Seminar Proposal TA (Saya)',
+        type: 'sempro',
+        time: '13.30 - 15.00 WITA',
+        location: 'Ruang Lab JSTI 2 / Gedung A',
         pembimbingPenguji: [
-            "Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.",
-            "Penguji 1: Prof. Dr. Agus Susanto, M.T.",
-            "Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.",
+            'Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.',
+            'Penguji 1: Prof. Dr. Agus Susanto, M.T.',
+            'Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.',
         ],
-        notes: "Wajib membawa jas almamater, lembar berita acara, dan presentasi 15 menit.",
-        badgeColor: "bg-lime-500",
+        notes: 'Wajib membawa jas almamater, lembar berita acara, dan presentasi 15 menit.',
+        badgeColor: 'bg-lime-500',
     },
     {
-        id: "ag-2",
+        id: 'ag-2',
         date: 7,
-        fullDateString: "Rabu, 07 Oktober 2026",
-        title: "Bimbingan Pasca Sempro",
-        type: "bimbingan",
-        time: "10.00 - 11.30 WITA",
-        location: "Ruang Dosen Gedung B / Lab Riset",
-        pembimbingPenguji: ["Dr. Ir. Hendra Wijaya, M.Kom."],
-        notes: "Membahas catatan revisi dewan penguji terkait perbaikan dataset pengujian.",
-        badgeColor: "bg-blue-500",
+        fullDateString: 'Rabu, 07 Oktober 2026',
+        title: 'Bimbingan Pasca Sempro',
+        type: 'bimbingan',
+        time: '10.00 - 11.30 WITA',
+        location: 'Ruang Dosen Gedung B / Lab Riset',
+        pembimbingPenguji: ['Dr. Ir. Hendra Wijaya, M.Kom.'],
+        notes: 'Membahas catatan revisi dewan penguji terkait perbaikan dataset pengujian.',
+        badgeColor: 'bg-blue-500',
     },
     {
-        id: "ag-3",
+        id: 'ag-3',
         date: 9,
-        fullDateString: "Jumat, 09 Oktober 2026",
-        title: "Batas Pendaftaran Sidang Gelombang 1",
-        type: "pendaftaran",
-        time: "Tutup 23.59 WITA",
-        location: "Portal Daring SIPTA IF",
-        notes: "Pastikan minimal 8 kali bimbingan dan skor Turnitin di bawah 20%.",
-        badgeColor: "bg-amber-500",
+        fullDateString: 'Jumat, 09 Oktober 2026',
+        title: 'Batas Pendaftaran Sidang Gelombang 1',
+        type: 'pendaftaran',
+        time: 'Tutup 23.59 WITA',
+        location: 'Portal Daring SIPTA IF',
+        notes: 'Pastikan minimal 8 kali bimbingan dan skor Turnitin di bawah 20%.',
+        badgeColor: 'bg-amber-500',
     },
     {
-        id: "ag-4",
+        id: 'ag-4',
         date: 20,
-        fullDateString: "Selasa, 20 Oktober 2026",
-        title: "Sidang Tugas Akhir (Terjadwal)",
-        type: "sidang",
-        time: "09.00 - 11.00 WITA",
-        location: "Ruang Sidang Utama Informatika Lt. 3",
+        fullDateString: 'Selasa, 20 Oktober 2026',
+        title: 'Sidang Tugas Akhir (Terjadwal)',
+        type: 'sidang',
+        time: '09.00 - 11.00 WITA',
+        location: 'Ruang Sidang Utama Informatika Lt. 3',
         pembimbingPenguji: [
-            "Ketua Penguji: Ir. Budi Santoso, M.Eng.",
-            "Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.",
-            "Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.",
+            'Ketua Penguji: Ir. Budi Santoso, M.Eng.',
+            'Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.',
+            'Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.',
         ],
-        notes: "Ujian komprehensif tertutup. Menyiapkan prototipe software/alat.",
-        badgeColor: "bg-indigo-500",
+        notes: 'Ujian komprehensif tertutup. Menyiapkan prototipe software/alat.',
+        badgeColor: 'bg-indigo-500',
     },
 ]);
 
@@ -342,8 +344,8 @@ interface AssessmentDetail {
     period: string;
     pembimbing: string;
     penguji: string[];
-    status: "Lulus dengan Revisi" | "Lulus Murni" | "Tidak Lulus";
-    variant: "neutral" | "success" | "danger";
+    status: 'Lulus dengan Revisi' | 'Lulus Murni' | 'Tidak Lulus';
+    variant: 'neutral' | 'success' | 'danger';
     finalScore: number;
     grade: string;
     revisionDeadline: string;
@@ -352,74 +354,74 @@ interface AssessmentDetail {
 
 const assessments = ref<AssessmentDetail[]>([
     {
-        id: "ass-1",
-        title: "Sidang Tugas Akhir",
-        period: "Gasal 2026/2027 • Gelombang 1",
-        pembimbing: "Dr. Ir. Hendra Wijaya, M.Kom.",
+        id: 'ass-1',
+        title: 'Sidang Tugas Akhir',
+        period: 'Gasal 2026/2027 • Gelombang 1',
+        pembimbing: 'Dr. Ir. Hendra Wijaya, M.Kom.',
         penguji: [
-            "Ir. Budi Santoso, M.Eng. (Ketua)",
-            "Siti Nurhaliza, S.Kom., M.Cs. (Anggota)",
+            'Ir. Budi Santoso, M.Eng. (Ketua)',
+            'Siti Nurhaliza, S.Kom., M.Cs. (Anggota)',
         ],
-        status: "Lulus dengan Revisi",
-        variant: "neutral",
+        status: 'Lulus dengan Revisi',
+        variant: 'neutral',
         finalScore: 84.5,
-        grade: "A-",
-        revisionDeadline: "14 Hari (s.d. 16 Oktober 2026)",
+        grade: 'A-',
+        revisionDeadline: '14 Hari (s.d. 16 Oktober 2026)',
         examinerNotes: [
             {
-                by: "Ketua Penguji - Ir. Budi Santoso, M.Eng.",
-                note: "Perbaiki penjelasan arsitektur Genetic Algorithm pada bab 3 dan tambahkan perbandingan fitness value awal vs akhir.",
+                by: 'Ketua Penguji - Ir. Budi Santoso, M.Eng.',
+                note: 'Perbaiki penjelasan arsitektur Genetic Algorithm pada bab 3 dan tambahkan perbandingan fitness value awal vs akhir.',
             },
             {
-                by: "Penguji 2 - Siti Nurhaliza, S.Kom., M.Cs.",
-                note: "Format sitasi IEEE harus dicek kembali pada daftar pustaka. Lampirkan hasil uji usability pengujian user.",
+                by: 'Penguji 2 - Siti Nurhaliza, S.Kom., M.Cs.',
+                note: 'Format sitasi IEEE harus dicek kembali pada daftar pustaka. Lampirkan hasil uji usability pengujian user.',
             },
             {
-                by: "Pembimbing - Dr. Ir. Hendra Wijaya, M.Kom.",
-                note: "Sudah cukup baik secara konsep, selesaikan revisi sebelum deadline agar lembar pengesahan bisa ditandatangani.",
+                by: 'Pembimbing - Dr. Ir. Hendra Wijaya, M.Kom.',
+                note: 'Sudah cukup baik secara konsep, selesaikan revisi sebelum deadline agar lembar pengesahan bisa ditandatangani.',
             },
         ],
     },
     {
-        id: "ass-2",
-        title: "Seminar Proposal Tugas Akhir",
-        period: "Gasal 2026/2027 • Gelombang 2",
-        pembimbing: "Dr. Ir. Hendra Wijaya, M.Kom.",
+        id: 'ass-2',
+        title: 'Seminar Proposal Tugas Akhir',
+        period: 'Gasal 2026/2027 • Gelombang 2',
+        pembimbing: 'Dr. Ir. Hendra Wijaya, M.Kom.',
         penguji: [
-            "Prof. Dr. Agus Susanto, M.T.",
-            "Siti Nurhaliza, S.Kom., M.Cs.",
+            'Prof. Dr. Agus Susanto, M.T.',
+            'Siti Nurhaliza, S.Kom., M.Cs.',
         ],
-        status: "Lulus dengan Revisi",
-        variant: "neutral",
+        status: 'Lulus dengan Revisi',
+        variant: 'neutral',
         finalScore: 81.0,
-        grade: "A-",
-        revisionDeadline: "7 Hari (s.d. 09 Oktober 2026)",
+        grade: 'A-',
+        revisionDeadline: '7 Hari (s.d. 09 Oktober 2026)',
         examinerNotes: [
             {
-                by: "Prof. Dr. Agus Susanto, M.T.",
-                note: "Fokuskan batasan masalah hanya pada penjadwalan seminar informatika ITK.",
+                by: 'Prof. Dr. Agus Susanto, M.T.',
+                note: 'Fokuskan batasan masalah hanya pada penjadwalan seminar informatika ITK.',
             },
             {
-                by: "Siti Nurhaliza, S.Kom., M.Cs.",
-                note: "Perjelas parameter mutasi dan crossover yang digunakan pada rancangan algoritma.",
+                by: 'Siti Nurhaliza, S.Kom., M.Cs.',
+                note: 'Perjelas parameter mutasi dan crossover yang digunakan pada rancangan algoritma.',
             },
         ],
     },
     {
-        id: "ass-3",
-        title: "Seminar Proposal Tugas Akhir (Gelombang 1)",
-        period: "Genap 2025/2026 • Gelombang 1",
-        pembimbing: "Dr. Ir. Hendra Wijaya, M.Kom.",
-        penguji: ["Prof. Dr. Agus Susanto, M.T.", "Ir. Budi Santoso, M.Eng."],
-        status: "Tidak Lulus",
-        variant: "danger",
+        id: 'ass-3',
+        title: 'Seminar Proposal Tugas Akhir (Gelombang 1)',
+        period: 'Genap 2025/2026 • Gelombang 1',
+        pembimbing: 'Dr. Ir. Hendra Wijaya, M.Kom.',
+        penguji: ['Prof. Dr. Agus Susanto, M.T.', 'Ir. Budi Santoso, M.Eng.'],
+        status: 'Tidak Lulus',
+        variant: 'danger',
         finalScore: 54.0,
-        grade: "D",
-        revisionDeadline: "Silakan daftar ulang pada Gelombang berikutnya",
+        grade: 'D',
+        revisionDeadline: 'Silakan daftar ulang pada Gelombang berikutnya',
         examinerNotes: [
             {
-                by: "Dewan Penguji",
-                note: "Metodologi belum matang dan rumusan masalah belum menunjukkan urgensi penelitian yang kuat.",
+                by: 'Dewan Penguji',
+                note: 'Metodologi belum matang dan rumusan masalah belum menunjukkan urgensi penelitian yang kuat.',
             },
         ],
     },
@@ -448,7 +450,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                     <div>
                         <div class="flex items-center gap-2">
                             <span
-                                class="inline-flex h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-500"
+                                class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20"
                             />
                             <span
                                 class="text-[11px] font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400"
@@ -1086,7 +1088,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                                 <span
                                     class="text-[11px] font-bold text-blue-600 dark:text-blue-400"
                                 >
-                                    {{ agenda.time.split(" ")[0] }}
+                                    {{ agenda.time.split(' ')[0] }}
                                 </span>
                             </div>
                         </div>

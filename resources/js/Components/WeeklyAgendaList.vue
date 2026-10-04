@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronRight } from "lucide-vue-next";
+import { ChevronRight } from 'lucide-vue-next';
 
 interface CalendarEventLike {
     id: string | number;
@@ -93,7 +93,7 @@ const emit = defineEmits<{
                     />
                     <div class="min-w-0 flex-1">
                         <p
-                            class="text-sm font-semibold leading-normal text-slate-800 dark:text-slate-200"
+                            class="text-sm leading-normal font-semibold text-slate-800 dark:text-slate-200"
                         >
                             {{ ev.title }}
                         </p>

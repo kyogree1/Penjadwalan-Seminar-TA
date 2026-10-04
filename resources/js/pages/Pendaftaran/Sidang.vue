@@ -1,65 +1,65 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { Head, useForm, usePage } from "@inertiajs/vue3";
+import { computed } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 
-import CollapsibleCard from "@/Components/CollapsibleCard.vue";
-import DosenTeamSection from "@/Components/DosenTeamSection.vue";
-import TemplateDownloadCard from "@/Components/TemplateDownloadCard.vue";
-import PageHeaderBox from "@/Components/PageHeaderBox.vue";
-import ProfileHeaderCard from "@/Components/ProfileHeaderCard.vue";
-import RiwayatTimelineCard from "@/Components/RiwayatTimelineCard.vue";
-import AppLayout from "@/Layouts/AppLayout.vue";
+import CollapsibleCard from '@/Components/CollapsibleCard.vue';
+import DosenTeamSection from '@/Components/DosenTeamSection.vue';
+import TemplateDownloadCard from '@/Components/TemplateDownloadCard.vue';
+import PageHeaderBox from '@/Components/PageHeaderBox.vue';
+import ProfileHeaderCard from '@/Components/ProfileHeaderCard.vue';
+import RiwayatTimelineCard from '@/Components/RiwayatTimelineCard.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 const page = usePage();
 const authUser = computed(() => (page.props.auth as any)?.user);
 const studentName = computed(
-    () => authUser.value?.name || "Akmal Falah Maulana",
+    () => authUser.value?.name || 'Akmal Falah Maulana',
 );
 const studentNim = computed(
     () =>
         authUser.value?.username ||
-        authUser.value?.nim_nip?.replace("NIM: ", "") ||
-        "11231006",
+        authUser.value?.nim_nip?.replace('NIM: ', '') ||
+        '11231006',
 );
-const studentProdi = computed(() => authUser.value?.prodi || "Informatika");
+const studentProdi = computed(() => authUser.value?.prodi || 'Informatika');
 const studentInitials = computed(() => {
-    if (!authUser.value?.name) return "AF";
+    if (!authUser.value?.name) return 'AF';
     return authUser.value.name
-        .split(" ")
+        .split(' ')
         .filter(Boolean)
         .slice(0, 2)
         .map((w: string) => w[0]?.toUpperCase())
-        .join("");
+        .join('');
 });
 
 const form = useForm({
     judul_ta:
-        "Sistem Penjadwalan Seminar dan Chatbot Layanan Akademik Menggunakan Algoritma Genetika dan Large Language Model",
-    skor_iaet: "" as number | string,
-    lokasi_mitra: "",
+        'Sistem Penjadwalan Seminar dan Chatbot Layanan Akademik Menggunakan Algoritma Genetika dan Large Language Model',
+    skor_iaet: '' as number | string,
+    lokasi_mitra: '',
     draft_laporan_file: null as File | null,
     turnitin_file: null as File | null,
 });
 
 const fileError = (file: File | null) => {
-    if (!file) return "Berkas wajib diunggah.";
+    if (!file) return 'Berkas wajib diunggah.';
     if (
         !/\.pdf$/i.test(file.name) ||
-        (file.type && file.type !== "application/pdf")
+        (file.type && file.type !== 'application/pdf')
     )
-        return "Berkas harus berupa PDF.";
-    if (file.size === 0) return "Berkas tidak boleh kosong.";
-    if (file.size > 10 * 1024 * 1024) return "Ukuran berkas maksimal 10 MB.";
-    return "";
+        return 'Berkas harus berupa PDF.';
+    if (file.size === 0) return 'Berkas tidak boleh kosong.';
+    if (file.size > 10 * 1024 * 1024) return 'Ukuran berkas maksimal 10 MB.';
+    return '';
 };
 const validationErrors = computed(() => ({
     draft_laporan_file: fileError(form.draft_laporan_file),
     turnitin_file: fileError(form.turnitin_file),
     skor_iaet:
-        form.skor_iaet !== "" &&
+        form.skor_iaet !== '' &&
         (!Number.isFinite(Number(form.skor_iaet)) || Number(form.skor_iaet) < 0)
-            ? "Skor IAET harus berupa angka nol atau lebih."
-            : "",
+            ? 'Skor IAET harus berupa angka nol atau lebih.'
+            : '',
 }));
 const isFormValid = computed(() =>
     Object.values(validationErrors.value).every((error) => !error),
@@ -69,9 +69,9 @@ const submitSidang = () => {
     form.clearErrors();
     if (!isFormValid.value) {
         for (const field of [
-            "draft_laporan_file",
-            "turnitin_file",
-            "skor_iaet",
+            'draft_laporan_file',
+            'turnitin_file',
+            'skor_iaet',
         ] as const) {
             if (validationErrors.value[field])
                 form.setError(field, validationErrors.value[field]);
@@ -79,16 +79,16 @@ const submitSidang = () => {
         return;
     }
     if (
-        form.skor_iaet !== "" &&
+        form.skor_iaet !== '' &&
         (!Number.isFinite(Number(form.skor_iaet)) || Number(form.skor_iaet) < 0)
     ) {
         form.setError(
-            "skor_iaet",
-            "Skor IAET harus berupa angka nol atau lebih.",
+            'skor_iaet',
+            'Skor IAET harus berupa angka nol atau lebih.',
         );
         return;
     }
-    form.post("/pendaftaran/sidang", {
+    form.post('/pendaftaran/sidang', {
         forceFormData: true,
         preserveScroll: true,
     });
@@ -207,13 +207,13 @@ const submitSidang = () => {
                                     <span class="text-rose-500">*</span>
                                 </label>
                                 <div
-                                    class="flex flex-col items-stretch gap-2 rounded-xl border border-slate-300 sm:flex-row sm:items-center bg-slate-50/50 p-2.5 dark:border-slate-700 dark:bg-slate-900"
+                                    class="flex flex-col items-stretch gap-2 rounded-xl border border-slate-300 bg-slate-50/50 p-2.5 sm:flex-row sm:items-center dark:border-slate-700 dark:bg-slate-900"
                                 >
                                     <input
                                         type="file"
                                         required
                                         accept=".pdf"
-                                        class="min-w-0 w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
+                                        class="w-full min-w-0 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
                                         @change="
                                             (e: any) =>
                                                 (form.draft_laporan_file =
@@ -248,13 +248,13 @@ const submitSidang = () => {
                                     <span class="text-rose-500">*</span>
                                 </label>
                                 <div
-                                    class="flex flex-col items-stretch gap-2 rounded-xl border border-slate-300 sm:flex-row sm:items-center bg-slate-50/50 p-2.5 dark:border-slate-700 dark:bg-slate-900"
+                                    class="flex flex-col items-stretch gap-2 rounded-xl border border-slate-300 bg-slate-50/50 p-2.5 sm:flex-row sm:items-center dark:border-slate-700 dark:bg-slate-900"
                                 >
                                     <input
                                         type="file"
                                         required
                                         accept=".pdf"
-                                        class="min-w-0 w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
+                                        class="w-full min-w-0 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
                                         @change="
                                             (e: any) =>
                                                 (form.turnitin_file =
@@ -292,7 +292,7 @@ const submitSidang = () => {
                                 <button
                                     type="submit"
                                     :disabled="!isFormValid || form.processing"
-                                    class="w-full rounded-xl bg-[#8CE79B] px-6 py-3 text-sm sm:w-auto font-bold text-slate-900 transition-all hover:bg-[#7BD68A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                    class="w-full rounded-xl bg-[#8CE79B] px-6 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-[#7BD68A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                                 >
                                     Ajukan Pendaftaran Sidang
                                 </button>

@@ -1,82 +1,82 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { Head, useForm, usePage } from "@inertiajs/vue3";
-import { AlertCircle, Send, X } from "lucide-vue-next";
+import { computed, ref } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { AlertCircle, Send, X } from 'lucide-vue-next';
 
-import CollapsibleCard from "@/Components/CollapsibleCard.vue";
-import DosenTeamSection from "@/Components/DosenTeamSection.vue";
-import PageHeaderBox from "@/Components/PageHeaderBox.vue";
-import ProfileHeaderCard from "@/Components/ProfileHeaderCard.vue";
-import RiwayatTimelineCard from "@/Components/RiwayatTimelineCard.vue";
-import StatusBadge from "@/Components/StatusBadge.vue";
-import TemplateDownloadCard from "@/Components/TemplateDownloadCard.vue";
-import AppLayout from "@/Layouts/AppLayout.vue";
+import CollapsibleCard from '@/Components/CollapsibleCard.vue';
+import DosenTeamSection from '@/Components/DosenTeamSection.vue';
+import PageHeaderBox from '@/Components/PageHeaderBox.vue';
+import ProfileHeaderCard from '@/Components/ProfileHeaderCard.vue';
+import RiwayatTimelineCard from '@/Components/RiwayatTimelineCard.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import TemplateDownloadCard from '@/Components/TemplateDownloadCard.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 const page = usePage();
 const authUser = computed(() => (page.props.auth as any)?.user);
 const studentName = computed(
-    () => authUser.value?.name || "Akmal Falah Maulana",
+    () => authUser.value?.name || 'Akmal Falah Maulana',
 );
 const studentNim = computed(
     () =>
         authUser.value?.username ||
-        authUser.value?.nim_nip?.replace("NIM: ", "") ||
-        "11231006",
+        authUser.value?.nim_nip?.replace('NIM: ', '') ||
+        '11231006',
 );
-const studentProdi = computed(() => authUser.value?.prodi || "Informatika");
+const studentProdi = computed(() => authUser.value?.prodi || 'Informatika');
 const studentInitials = computed(() => {
-    if (!authUser.value?.name) return "AF";
+    if (!authUser.value?.name) return 'AF';
     return authUser.value.name
-        .split(" ")
+        .split(' ')
         .filter(Boolean)
         .slice(0, 2)
         .map((word: string) => word[0]?.toUpperCase())
-        .join("");
+        .join('');
 });
 
 type SemproStatus =
-    | "draft"
-    | "diajukan"
-    | "revisi"
-    | "diverifikasi"
-    | "siap_jadwal"
-    | "selesai"
-    | "ditolak";
+    | 'draft'
+    | 'diajukan'
+    | 'revisi'
+    | 'diverifikasi'
+    | 'siap_jadwal'
+    | 'selesai'
+    | 'ditolak';
 
-type FileField = "lembar_kehadiran_file" | "proposal_file" | "turnitin_file";
+type FileField = 'lembar_kehadiran_file' | 'proposal_file' | 'turnitin_file';
 
-const status = ref<SemproStatus>("draft");
-const revisionNote = ref("");
+const status = ref<SemproStatus>('draft');
+const revisionNote = ref('');
 const showRevisionNote = ref(false);
 const maxFileSize = 10 * 1024 * 1024;
 const fileErrors = ref<Partial<Record<FileField, string>>>({});
 
 const form = useForm({
     judul_ta:
-        "Sistem Penjadwalan Seminar dan Chatbot Layanan Akademik Menggunakan Algoritma Genetika dan Large Language Model",
-    bentuk_ta: "Skripsi Reguler (Pengembangan Perangkat Lunak & AI)",
+        'Sistem Penjadwalan Seminar dan Chatbot Layanan Akademik Menggunakan Algoritma Genetika dan Large Language Model',
+    bentuk_ta: 'Skripsi Reguler (Pengembangan Perangkat Lunak & AI)',
     lembar_kehadiran_file: null as File | null,
     proposal_file: null as File | null,
     turnitin_file: null as File | null,
-    lokasi_mitra: "",
-    skor_iaet: "" as number | "",
+    lokasi_mitra: '',
+    skor_iaet: '' as number | '',
 });
 
 const statusLabel = computed(() => {
     const labels: Record<SemproStatus, string> = {
-        draft: "Belum Mengisi",
-        diajukan: "Diajukan",
-        revisi: "Perlu Revisi",
-        diverifikasi: "Berkas Diverifikasi",
-        siap_jadwal: "Siap Jadwal",
-        selesai: "Selesai",
-        ditolak: "Ditolak",
+        draft: 'Belum Mengisi',
+        diajukan: 'Diajukan',
+        revisi: 'Perlu Revisi',
+        diverifikasi: 'Berkas Diverifikasi',
+        siap_jadwal: 'Siap Jadwal',
+        selesai: 'Selesai',
+        ditolak: 'Ditolak',
     };
     return labels[status.value];
 });
 
 const canEdit = computed(
-    () => status.value === "draft" || status.value === "revisi",
+    () => status.value === 'draft' || status.value === 'revisi',
 );
 const requiredFiles = computed(
     () =>
@@ -86,8 +86,8 @@ const requiredFiles = computed(
 );
 const isIaetValid = computed(
     () =>
-        form.skor_iaet === "" ||
-        (typeof form.skor_iaet === "number" &&
+        form.skor_iaet === '' ||
+        (typeof form.skor_iaet === 'number' &&
             Number.isFinite(form.skor_iaet) &&
             form.skor_iaet >= 0),
 );
@@ -104,12 +104,12 @@ const formatFileSize = (bytes: number) => {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-const fileName = (file: File | null) => file?.name || "";
+const fileName = (file: File | null) => file?.name || '';
 
 const setFile = (field: FileField, event: Event) => {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] || null;
-    fileErrors.value[field] = "";
+    fileErrors.value[field] = '';
 
     if (!file) {
         form[field] = null;
@@ -118,19 +118,19 @@ const setFile = (field: FileField, event: Event) => {
     }
 
     if (
-        file.type !== "application/pdf" &&
-        !file.name.toLowerCase().endsWith(".pdf")
+        file.type !== 'application/pdf' &&
+        !file.name.toLowerCase().endsWith('.pdf')
     ) {
-        fileErrors.value[field] = "File harus berformat PDF.";
+        fileErrors.value[field] = 'File harus berformat PDF.';
         form[field] = null;
-        input.value = "";
+        input.value = '';
         return;
     }
 
     if (file.size > maxFileSize) {
-        fileErrors.value[field] = "Ukuran file maksimal 10 MB.";
+        fileErrors.value[field] = 'Ukuran file maksimal 10 MB.';
         form[field] = null;
-        input.value = "";
+        input.value = '';
         return;
     }
 
@@ -142,12 +142,12 @@ const removeFile = (field: FileField, inputId: string) => {
     form[field] = null;
     delete fileErrors.value[field];
     const input = document.getElementById(inputId) as HTMLInputElement | null;
-    if (input) input.value = "";
+    if (input) input.value = '';
 };
 
 const submitSempro = () => {
     if (!canEdit.value || !isFormValid.value) return;
-    status.value = "diajukan";
+    status.value = 'diajukan';
     showRevisionNote.value = false;
 };
 </script>
@@ -441,9 +441,9 @@ const submitSempro = () => {
                                 >
                                     <Send class="h-3.5 w-3.5" />
                                     {{
-                                        status === "revisi"
-                                            ? "Ajukan Ulang"
-                                            : "Ajukan Seminar Proposal"
+                                        status === 'revisi'
+                                            ? 'Ajukan Ulang'
+                                            : 'Ajukan Seminar Proposal'
                                     }}
                                 </button>
                             </div>

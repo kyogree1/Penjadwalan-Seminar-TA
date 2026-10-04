@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { AlertCircle, CheckCircle2, Clock3, Info } from "lucide-vue-next";
+import { computed } from 'vue';
+import { AlertCircle, CheckCircle2, Clock3, Info } from 'lucide-vue-next';
 
 export interface ReminderItem {
     id: string;
     title: string;
     detail: string;
     due?: string;
-    priority: "urgent" | "soon" | "info";
+    priority: 'urgent' | 'soon' | 'info';
     href?: string;
 }
 
 const props = defineProps<{ items: ReminderItem[]; compact?: boolean }>();
 const visibleItems = computed(() => props.items.filter((item) => item.title));
 const priorityClasses = {
-    urgent: "border-rose-200 bg-rose-50 dark:border-rose-900/60 dark:bg-rose-950/20",
-    soon: "border-amber-200 bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/20",
-    info: "border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0E1626]",
+    urgent: 'border-rose-200 bg-rose-50 dark:border-rose-900/60 dark:bg-rose-950/20',
+    soon: 'border-amber-200 bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/20',
+    info: 'border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0E1626]',
 };
 </script>
 

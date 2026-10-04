@@ -6,7 +6,7 @@ import {
     MapPin,
     UserRound,
     X,
-} from "lucide-vue-next";
+} from 'lucide-vue-next';
 
 export interface ScheduleDetail {
     studentName: string;
@@ -21,7 +21,7 @@ export interface ScheduleDetail {
 }
 
 defineProps<{ show: boolean; detail: ScheduleDetail | null }>();
-defineEmits<{ (e: "close"): void }>();
+defineEmits<{ (e: 'close'): void }>();
 </script>
 
 <template>

@@ -17,7 +17,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+    <div class="scrollbar-hide flex gap-2 overflow-x-auto pb-2">
         <button
             v-for="week in weeks"
             :key="week.index"

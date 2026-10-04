@@ -13,6 +13,7 @@ import {
     ShieldCheck,
     UserCheck,
     Users,
+    X,
 } from 'lucide-vue-next';
 
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -23,6 +24,21 @@ import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 
 const searchQuery = ref('');
 const filterAngkatan = ref('Semua');
+
+const filteredStudents = computed(() => {
+    const query = searchQuery.value.trim().toLowerCase();
+    return students.value.filter((student) => {
+        const matchesSearch =
+            !query ||
+            student.nama.toLowerCase().includes(query) ||
+            student.nim.includes(query) ||
+            student.email.toLowerCase().includes(query);
+        const matchesAngkatan =
+            filterAngkatan.value === 'Semua' ||
+            student.angkatan === filterAngkatan.value;
+        return matchesSearch && matchesAngkatan;
+    });
+});
 
 const students = ref([
     {
@@ -77,23 +93,18 @@ const students = ref([
     },
 ]);
 
-const filteredStudents = computed(() => {
-    return students.value.filter((s) => {
-        const matchQuery =
-            s.nama.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            s.nim.includes(searchQuery.value) ||
-            s.email.toLowerCase().includes(searchQuery.value.toLowerCase());
-        const matchAngkatan =
-            filterAngkatan.value === 'Semua' ||
-            s.angkatan === filterAngkatan.value;
-        return matchQuery && matchAngkatan;
-    });
-});
-
 // Reset Password Modal
 const showResetModal = ref(false);
 const selectedStudent = ref<any>(null);
 const resetSuccessMsg = ref('');
+
+// Detail Modal
+const showDetailModal = ref(false);
+
+const openDetailModal = (s: any) => {
+    selectedStudent.value = s;
+    showDetailModal.value = true;
+};
 
 const openResetModal = (s: any) => {
     selectedStudent.value = s;
@@ -170,12 +181,14 @@ const executeResetPassword = () => {
                             </tr>
                         </thead>
                         <tbody
+                            v-if="filteredStudents.length"
                             class="divide-y divide-slate-100 dark:divide-slate-800"
                         >
                             <tr
                                 v-for="s in filteredStudents"
                                 :key="s.id"
-                                class="hover:bg-slate-50/50 dark:hover:bg-slate-900/40"
+                                class="cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-900/40"
+                                @click="openDetailModal(s)"
                             >
                                 <td class="px-4 py-3.5">
                                     <p
@@ -212,7 +225,7 @@ const executeResetPassword = () => {
                                         {{ s.statusAkun }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3.5 text-right">
+                                <td class="px-4 py-3.5 text-right" @click.stop>
                                     <Button
                                         size="sm"
                                         variant="outline"
@@ -221,6 +234,36 @@ const executeResetPassword = () => {
                                         <KeyRound class="mr-1 h-3.5 w-3.5" />
                                         Reset Password
                                     </Button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody v-if="!filteredStudents.length">
+                            <tr>
+                                <td colspan="6" class="px-4 py-12 text-center">
+                                    <div
+                                        class="flex flex-col items-center gap-3"
+                                    >
+                                        <div
+                                            class="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
+                                        >
+                                            <Users
+                                                class="h-8 w-8 text-slate-400"
+                                            />
+                                        </div>
+                                        <div>
+                                            <h4
+                                                class="text-sm font-bold text-slate-900 dark:text-white"
+                                            >
+                                                Tidak ada mahasiswa yang sesuai
+                                            </h4>
+                                            <p
+                                                class="mt-1 text-xs text-slate-500 dark:text-slate-400"
+                                            >
+                                                Coba ubah kata kunci pencarian
+                                                atau filter angkatan.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -280,6 +323,132 @@ const executeResetPassword = () => {
                         @click="executeResetPassword"
                     >
                         Ya, Reset Password
+                    </Button>
+                </div>
+            </div>
+        </Modal>
+
+        <!-- Student Detail Modal -->
+        <Modal
+            :show="showDetailModal"
+            max-width="lg"
+            @close="showDetailModal = false"
+        >
+            <div class="p-6">
+                <div
+                    class="flex items-center justify-between border-b border-slate-200 pb-3 dark:border-slate-800"
+                >
+                    <h3
+                        class="text-sm font-bold text-slate-900 dark:text-white"
+                    >
+                        Detail Mahasiswa
+                    </h3>
+                    <button
+                        type="button"
+                        class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                        @click="showDetailModal = false"
+                    >
+                        <X class="h-4 w-4" />
+                    </button>
+                </div>
+
+                <div v-if="selectedStudent" class="mt-4 space-y-4">
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <p class="text-slate-500 dark:text-slate-400">
+                                Nama Lengkap
+                            </p>
+                            <p
+                                class="mt-1 font-semibold text-slate-900 dark:text-white"
+                            >
+                                {{ selectedStudent.nama }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 dark:text-slate-400">
+                                NIM
+                            </p>
+                            <p
+                                class="mt-1 font-semibold text-slate-900 dark:text-white"
+                            >
+                                {{ selectedStudent.nim }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 dark:text-slate-400">
+                                Program Studi
+                            </p>
+                            <p
+                                class="mt-1 font-semibold text-slate-900 dark:text-white"
+                            >
+                                {{ selectedStudent.prodi }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 dark:text-slate-400">
+                                Angkatan
+                            </p>
+                            <p
+                                class="mt-1 font-semibold text-slate-900 dark:text-white"
+                            >
+                                {{ selectedStudent.angkatan }}
+                            </p>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="text-slate-500 dark:text-slate-400">
+                                Email
+                            </p>
+                            <p
+                                class="mt-1 font-semibold text-slate-900 dark:text-white"
+                            >
+                                {{ selectedStudent.email }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 dark:text-slate-400">
+                                Tahap Tugas Akhir
+                            </p>
+                            <p
+                                class="mt-1 font-semibold text-slate-900 dark:text-white"
+                            >
+                                {{ selectedStudent.tahap }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 dark:text-slate-400">
+                                Status Akun
+                            </p>
+                            <span
+                                class="mt-1 inline-block rounded-md px-2 py-0.5 text-[10px] font-bold"
+                                :class="[
+                                    selectedStudent.statusAkun === 'Aktif'
+                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+                                        : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+                                ]"
+                            >
+                                {{ selectedStudent.statusAkun }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end gap-2">
+                    <Button
+                        variant="secondary"
+                        @click="showDetailModal = false"
+                    >
+                        Tutup
+                    </Button>
+                    <Button
+                        v-if="selectedStudent"
+                        variant="outline"
+                        @click="
+                            showDetailModal = false;
+                            openResetModal(selectedStudent);
+                        "
+                    >
+                        <KeyRound class="mr-1 h-3.5 w-3.5" />
+                        Reset Password
                     </Button>
                 </div>
             </div>

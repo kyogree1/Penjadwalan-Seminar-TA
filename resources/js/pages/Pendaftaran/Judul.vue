@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { computed, ref } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
 import {
     AlertTriangle,
     CheckCircle2,
@@ -8,65 +8,65 @@ import {
     FileText,
     Info,
     Send,
-} from "lucide-vue-next";
+} from 'lucide-vue-next';
 
-import Button from "@/Components/Button.vue";
-import Card from "@/Components/Card.vue";
-import PageHeaderBox from "@/Components/PageHeaderBox.vue";
-import StatusBadge, { type BadgeStatus } from "@/Components/StatusBadge.vue";
-import AppLayout from "@/Layouts/AppLayout.vue";
+import Button from '@/Components/Button.vue';
+import Card from '@/Components/Card.vue';
+import PageHeaderBox from '@/Components/PageHeaderBox.vue';
+import StatusBadge, { type BadgeStatus } from '@/Components/StatusBadge.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 const form = useForm({
-    judul_ta: "",
-    bidang_penelitian: "",
-    pembimbing_1: "",
-    pembimbing_2: "",
+    judul_ta: '',
+    bidang_penelitian: '',
+    pembimbing_1: '',
+    pembimbing_2: '',
     telah_konsultasi: false,
 });
 
 const dosenList = [
-    { id: "1", name: "Dr. Ir. Hendra Wijaya, M.Kom." },
-    { id: "2", name: "Rina Agustina, S.T., M.Kom." },
-    { id: "3", name: "Dr. Dian Indah Permatasari, M.Kom." },
-    { id: "4", name: "Ahmad Fauzi, S.Kom., M.T." },
+    { id: '1', name: 'Dr. Ir. Hendra Wijaya, M.Kom.' },
+    { id: '2', name: 'Rina Agustina, S.T., M.Kom.' },
+    { id: '3', name: 'Dr. Dian Indah Permatasari, M.Kom.' },
+    { id: '4', name: 'Ahmad Fauzi, S.Kom., M.T.' },
 ];
 
-const applicationStatus = ref<BadgeStatus>("draft");
+const applicationStatus = ref<BadgeStatus>('draft');
 const statusLabel = computed(() => {
     switch (applicationStatus.value) {
-        case "draft":
-            return "Belum Selesai";
-        case "diajukan":
-            return "Menunggu Persetujuan";
-        case "revisi":
-            return "Perlu Revisi";
-        case "disetujui":
-            return "Disetujui";
-        case "ditolak":
-            return "Tidak Disetujui";
+        case 'draft':
+            return 'Belum Selesai';
+        case 'diajukan':
+            return 'Menunggu Persetujuan';
+        case 'revisi':
+            return 'Perlu Revisi';
+        case 'disetujui':
+            return 'Disetujui';
+        case 'ditolak':
+            return 'Tidak Disetujui';
         default:
-            return "Belum Selesai";
+            return 'Belum Selesai';
     }
 });
 const canEditForm = computed(
     () =>
-        applicationStatus.value === "draft" ||
-        applicationStatus.value === "revisi",
+        applicationStatus.value === 'draft' ||
+        applicationStatus.value === 'revisi',
 );
 
 const isFormValid = computed(() => {
     return (
-        form.judul_ta.trim() !== "" &&
-        form.bidang_penelitian.trim() !== "" &&
-        form.pembimbing_1 !== "" &&
+        form.judul_ta.trim() !== '' &&
+        form.bidang_penelitian.trim() !== '' &&
+        form.pembimbing_1 !== '' &&
         form.telah_konsultasi
     );
 });
 
 const submitForm = () => {
     if (!canEditForm.value) return;
-    applicationStatus.value = "diajukan";
-    form.post("/pendaftaran/judul", {
+    applicationStatus.value = 'diajukan';
+    form.post('/pendaftaran/judul', {
         preserveScroll: true,
     });
 };
@@ -281,7 +281,7 @@ const submitForm = () => {
                         v-if="!isFormValid"
                         class="flex items-start gap-2 rounded-lg bg-blue-50/50 p-3 text-xs text-blue-700 dark:bg-blue-950/30 dark:text-blue-300"
                     >
-                        <Info class="h-4 w-4 flex-shrink-0 mt-0.5" />
+                        <Info class="mt-0.5 h-4 w-4 flex-shrink-0" />
                         <span
                             >Lengkapi semua field bertanda
                             <span class="font-bold">*</span> dan centang

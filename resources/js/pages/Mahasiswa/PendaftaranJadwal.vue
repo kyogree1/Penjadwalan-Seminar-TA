@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { Head } from "@inertiajs/vue3";
-import { Search } from "lucide-vue-next";
+import { computed, ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import { Search } from 'lucide-vue-next';
 
-import AppLayout from "@/Layouts/AppLayout.vue";
-import PageHeaderBox from "@/Components/PageHeaderBox.vue";
-import PageTabs from "@/Components/PageTabs.vue";
+import AppLayout from '@/Layouts/AppLayout.vue';
+import PageHeaderBox from '@/Components/PageHeaderBox.vue';
+import PageTabs from '@/Components/PageTabs.vue';
 import ScheduleDetailModal, {
     type ScheduleDetail,
-} from "@/Components/ScheduleDetailModal.vue";
+} from '@/Components/ScheduleDetailModal.vue';
 
-const activeTab = ref("registrants");
-const search = ref("");
-const period = ref("Semua");
-const wave = ref("Semua");
+const activeTab = ref('registrants');
+const search = ref('');
+const period = ref('Semua');
+const wave = ref('Semua');
 const selectedSchedule = ref<ScheduleDetail | null>(null);
 const showDetail = ref(false);
 
 const tabs = [
-    { id: "registrants", label: "Pendaftar Sempro" },
-    { id: "sempro", label: "Jadwal Sempro" },
-    { id: "sidang", label: "Jadwal Sidang TA" },
+    { id: 'registrants', label: 'Pendaftar Sempro' },
+    { id: 'sempro', label: 'Jadwal Sempro' },
+    { id: 'sidang', label: 'Jadwal Sidang TA' },
 ];
 
 type Registrant = {
@@ -40,31 +40,31 @@ type Registrant = {
 };
 const registrants: Registrant[] = [
     {
-        name: "Akmal Falah Maulana",
-        nim: "11231006",
-        registered: "16 Sep 2026",
-        wave: "2",
-        status: "Diterima",
+        name: 'Akmal Falah Maulana',
+        nim: '11231006',
+        registered: '16 Sep 2026',
+        wave: '2',
+        status: 'Diterima',
     },
     {
-        name: "Anisa Rahmadani",
-        nim: "11231010",
-        registered: "15 Sep 2026",
-        wave: "2",
-        status: "Diterima",
+        name: 'Anisa Rahmadani',
+        nim: '11231010',
+        registered: '15 Sep 2026',
+        wave: '2',
+        status: 'Diterima',
     },
     {
-        name: "Bayu Aditya Saputra",
-        nim: "11231089",
-        registered: "14 Sep 2026",
-        wave: "2",
-        status: "Diterima",
+        name: 'Bayu Aditya Saputra',
+        nim: '11231089',
+        registered: '14 Sep 2026',
+        wave: '2',
+        status: 'Diterima',
     },
 ];
 
 const schedules = ref<
     (ScheduleDetail & {
-        type: "sempro" | "sidang";
+        type: 'sempro' | 'sidang';
         period: string;
         wave: string;
         own?: boolean;
@@ -73,56 +73,56 @@ const schedules = ref<
     })[]
 >([
     {
-        type: "sempro",
-        period: "Gasal 2026/2027",
-        wave: "2",
+        type: 'sempro',
+        period: 'Gasal 2026/2027',
+        wave: '2',
         own: true,
-        studentName: "Akmal Falah Maulana",
-        nim: "11231006",
-        title: "Pengembangan Portal Tugas Akhir Informatika ITK Berbasis Inertia Vue 3",
-        date: "02 Oktober 2026",
-        time: "13.30 - 15.00 WITA",
-        room: "Ruang Lab JSTI 2 / Gedung A",
-        supervisors: ["Dr. Ir. Hendra Wijaya, M.Kom."],
+        studentName: 'Akmal Falah Maulana',
+        nim: '11231006',
+        title: 'Pengembangan Portal Tugas Akhir Informatika ITK Berbasis Inertia Vue 3',
+        date: '02 Oktober 2026',
+        time: '13.30 - 15.00 WITA',
+        room: 'Ruang Lab JSTI 2 / Gedung A',
+        supervisors: ['Dr. Ir. Hendra Wijaya, M.Kom.'],
         examiners: [
-            "Prof. Dr. Agus Susanto, M.T.",
-            "Siti Nurhaliza, S.Kom., M.Cs.",
+            'Prof. Dr. Agus Susanto, M.T.',
+            'Siti Nurhaliza, S.Kom., M.Cs.',
         ],
-        status: "Terjadwal",
+        status: 'Terjadwal',
     },
     {
-        type: "sempro",
-        period: "Gasal 2026/2027",
-        wave: "2",
-        studentName: "Anisa Rahmadani",
-        nim: "11231010",
-        title: "Analisis Perbandingan Kinerja Model Computer Vision pada Edge Device",
-        date: "02 Oktober 2026",
-        time: "09.00 - 10.30 WITA",
-        room: "Ruang B-207",
-        supervisors: ["Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom."],
+        type: 'sempro',
+        period: 'Gasal 2026/2027',
+        wave: '2',
+        studentName: 'Anisa Rahmadani',
+        nim: '11231010',
+        title: 'Analisis Perbandingan Kinerja Model Computer Vision pada Edge Device',
+        date: '02 Oktober 2026',
+        time: '09.00 - 10.30 WITA',
+        room: 'Ruang B-207',
+        supervisors: ['Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.'],
         examiners: [
-            "Sri Wahyuni, S.Kom., M.T.",
-            "Gusti Ahmad Fanshuri, S.Kom., M.Cs.",
+            'Sri Wahyuni, S.Kom., M.T.',
+            'Gusti Ahmad Fanshuri, S.Kom., M.Cs.',
         ],
-        status: "Terjadwal",
+        status: 'Terjadwal',
     },
     {
-        type: "sidang",
-        period: "Gasal 2026/2027",
-        wave: "1",
-        studentName: "Siti Nurhaliza Putri",
-        nim: "11211045",
-        title: "Sistem Deteksi Retinopati Diabetik Menggunakan Vision Transformer",
-        date: "20 Oktober 2026",
-        time: "09.00 - 11.00 WITA",
-        room: "Ruang Sidang Utama Informatika Lt. 3",
-        supervisors: ["Dr. Ir. Hendra Wijaya, M.Kom."],
+        type: 'sidang',
+        period: 'Gasal 2026/2027',
+        wave: '1',
+        studentName: 'Siti Nurhaliza Putri',
+        nim: '11211045',
+        title: 'Sistem Deteksi Retinopati Diabetik Menggunakan Vision Transformer',
+        date: '20 Oktober 2026',
+        time: '09.00 - 11.00 WITA',
+        room: 'Ruang Sidang Utama Informatika Lt. 3',
+        supervisors: ['Dr. Ir. Hendra Wijaya, M.Kom.'],
         examiners: [
-            "Ir. Budi Santoso, M.Eng.",
-            "Siti Nurhaliza, S.Kom., M.Cs.",
+            'Ir. Budi Santoso, M.Eng.',
+            'Siti Nurhaliza, S.Kom., M.Cs.',
         ],
-        status: "Terjadwal",
+        status: 'Terjadwal',
     },
 ]);
 
@@ -138,8 +138,8 @@ const filteredSchedules = computed(() => {
     return schedules.value.filter((item) => {
         return (
             item.type === activeTab.value &&
-            (period.value === "Semua" || item.period === period.value) &&
-            (wave.value === "Semua" || item.wave === wave.value) &&
+            (period.value === 'Semua' || item.period === period.value) &&
+            (wave.value === 'Semua' || item.wave === wave.value) &&
             (!query ||
                 `${item.studentName} ${item.nim} ${item.title}`
                     .toLowerCase()
@@ -170,7 +170,7 @@ const openDetail = (item: ScheduleDetail) => {
                     /><input
                         v-model="search"
                         placeholder="Cari nama, NIM, atau judul"
-                        class="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-sm dark:border-slate-700 dark:bg-slate-900"
+                        class="w-full rounded-xl border border-slate-300 py-2 pr-3 pl-9 text-sm dark:border-slate-700 dark:bg-slate-900"
                     />
                 </div>
                 <select
@@ -202,16 +202,16 @@ const openDetail = (item: ScheduleDetail) => {
                             <th class="p-4">Mahasiswa</th>
                             <th class="p-4">
                                 {{
-                                    activeTab === "registrants"
-                                        ? "Tanggal Daftar"
-                                        : "Judul & Jadwal"
+                                    activeTab === 'registrants'
+                                        ? 'Tanggal Daftar'
+                                        : 'Judul & Jadwal'
                                 }}
                             </th>
                             <th class="p-4">
                                 {{
-                                    activeTab === "registrants"
-                                        ? "Gelombang"
-                                        : "Pembimbing & Penguji"
+                                    activeTab === 'registrants'
+                                        ? 'Gelombang'
+                                        : 'Pembimbing & Penguji'
                                 }}
                             </th>
                             <th class="p-4">Status</th>

@@ -9,7 +9,6 @@ import {
     MessageSquare,
     Minimize2,
     Send,
-    Sparkles,
     User,
     X,
 } from 'lucide-vue-next';
@@ -146,7 +145,7 @@ const handleSend = () => {
             >
                 <!-- Chat Window Header -->
                 <div
-                    class="flex items-center justify-between border-b border-blue-700/30 bg-linear-to-r from-blue-700 via-blue-600 to-indigo-700 px-4 py-3.5 text-white"
+                    class="flex items-center justify-between border-b border-blue-800 bg-[#0C1A40] px-4 py-3.5 text-white"
                 >
                     <div class="flex items-center gap-3">
                         <div
@@ -295,23 +294,19 @@ const handleSend = () => {
         <!-- Floating Launcher Button -->
         <button
             type="button"
-            class="group relative flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-r from-blue-700 to-indigo-700 text-white shadow-xl shadow-blue-600/30 transition-all duration-300 hover:scale-105 active:scale-95"
+            class="group relative flex h-13 w-13 items-center justify-center rounded-2xl bg-[#0C1A40] text-white shadow-lg transition-all duration-200 hover:bg-slate-900 active:scale-95"
             @click="isOpen = !isOpen"
+            title="Tanya Layanan Akademik"
         >
-            <!-- Glow pulse animation -->
-            <span
-                class="absolute -inset-1 -z-10 animate-pulse rounded-2xl bg-blue-600 opacity-40 blur-md transition-all group-hover:opacity-75"
-            />
-
-            <X v-if="isOpen" class="h-6 w-6" />
+            <X v-if="isOpen" class="h-5 w-5" />
             <div v-else class="flex flex-col items-center">
-                <Bot class="h-6 w-6" />
+                <Bot class="h-5 w-5" />
             </div>
 
             <!-- Unread notification badge -->
             <span
                 v-if="!isOpen"
-                class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-white ring-2 ring-white dark:ring-slate-900"
+                class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white ring-2 ring-white dark:ring-slate-900"
             >
                 1
             </span>
