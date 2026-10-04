@@ -273,3 +273,13 @@ export type AcademicSubmission = {
     catatan?: string;
     requirements?: { label: string; ready: boolean }[];
 };
+
+export type NotificationItem = {
+    id: number;
+    title: string;
+    message: string;
+    time: string;
+    read: boolean;
+    type: 'success' | 'info' | 'warning' | 'calendar';
+    link?: string;
+};

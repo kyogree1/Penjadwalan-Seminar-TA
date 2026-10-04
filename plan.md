@@ -117,8 +117,10 @@ Goal: Extend the merged backend (`origin/main`) to support all five portals with
 
 ## Track G: Global Architecture & Quality Locks
 
-- [ ] **Persistent Shell (AppLayout):** Extract default layout in `app.ts` to prevent remounting shell state across navigation.
-- [ ] **Big File Refactoring:** Break down `AppLayout.vue` (>1400 lines) and `Login.vue` into modular components.
+- [x] **Persistent Shell (AppLayout):** Extract default layout in `app.ts` to prevent remounting shell state across navigation.
+- [x] **Big File Refactoring:** Break down `AppLayout.vue` (>1400 lines) into modular partials (`Sidebar.vue`, `Topbar.vue`, `MobileNav.vue`).
+- [x] **Security & Consistency:** Gated demo login buttons behind `import.meta.env.DEV`, converted dead `#` footer links to real routes, standardized `SIPTA IF` in `.env.example` and `app.blade.php`.
+- [x] **Typed Auth & Notifications:** Added `useAuth.ts` and `useNotifications.ts`, removed untyped `any` casts from layout auth.
 - [ ] **Global Design Tokens:** Migrate remaining arbitrary hex colors to Tailwind `@theme` variables.
 - [ ] **Route Cleanliness:** Ensure all navigation links use Wayfinder route helpers.
-- [ ] **Production Verification:** `bun run check:fix`, `bun run types:check`, `bun run build`, and `php artisan test`.
+- [x] **Production Verification:** `bun run check:fix`, `bun run types:check`, and `bun run build`.

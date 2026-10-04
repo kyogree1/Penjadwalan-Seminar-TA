@@ -11,7 +11,7 @@ const applyTheme = (dark: boolean) => {
     } catch {}
 };
 
-const initializeTheme = () => {
+export const initializeTheme = () => {
     let savedTheme: string | null = null;
 
     try {

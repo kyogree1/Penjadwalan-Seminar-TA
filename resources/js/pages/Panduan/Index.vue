@@ -9,8 +9,6 @@ import {
     Search,
 } from 'lucide-vue-next';
 
-import AppLayout from '@/Layouts/AppLayout.vue';
-
 const searchQuery = ref('');
 
 const openIndex = ref<number | null>(0);
@@ -92,151 +90,147 @@ const filteredGuideItems = computed(() => {
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
-        <Head title="Panduan SIPTA IF" />
+    <Head title="Panduan SIPTA IF" />
 
-        <div class="mx-auto max-w-7xl space-y-6">
-            <!-- Header Title Box -->
-            <div
-                class="rounded-2xl border border-slate-200/80 bg-white px-6 py-4 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+    <div class="mx-auto max-w-7xl space-y-6">
+        <!-- Header Title Box -->
+        <div
+            class="rounded-2xl border border-slate-200/80 bg-white px-6 py-4 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+        >
+            <h2
+                class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
             >
-                <h2
-                    class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
-                >
-                    Panduan SIPTA IF
-                </h2>
-            </div>
+                Panduan SIPTA IF
+            </h2>
+        </div>
 
-            <!-- Panduan Mahasiswa Search Box (Sesuai Mockup) -->
-            <div
-                class="flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:bg-[#0E1626]"
-            >
-                <div>
-                    <h3
-                        class="text-base font-bold text-slate-900 dark:text-white"
-                    >
-                        Panduan Mahasiswa
-                    </h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">
-                        Alur Tugas Akhir dari pengajuan judul sampai nilai
-                        sidang keluar.
-                    </p>
-                </div>
-
-                <div class="relative w-full sm:w-72">
-                    <Search
-                        class="absolute top-2.5 left-3 h-3.5 w-3.5 text-slate-400"
-                    />
-                    <input
-                        v-model="searchQuery"
-                        type="text"
-                        placeholder="Cari langkah atau menu..."
-                        class="w-full rounded-xl border border-slate-300 bg-slate-50/50 py-1.5 pr-3 pl-8 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                    />
-                </div>
-            </div>
-
-            <!-- Accordion List (Sesuai Mockup) -->
-            <div v-if="filteredGuideItems.length" class="space-y-4">
-                <div
-                    v-for="(item, idx) in filteredGuideItems"
-                    :key="idx"
-                    class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
-                >
-                    <!-- Accordion Header -->
-                    <div
-                        class="flex cursor-pointer items-center justify-between p-5 hover:bg-slate-50/60 dark:hover:bg-slate-900/60"
-                        @click="toggleAccordion(idx)"
-                    >
-                        <div class="flex items-center gap-3">
-                            <span
-                                class="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-950 dark:text-blue-400"
-                            >
-                                {{ idx + 1 }}.
-                            </span>
-                            <div>
-                                <h4
-                                    class="text-sm font-bold text-slate-900 dark:text-white"
-                                >
-                                    {{ item.title }}
-                                </h4>
-                                <p class="text-[11px] text-slate-400">
-                                    {{ item.menu }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <ChevronDown
-                            class="h-4 w-4 text-slate-400 transition-transform"
-                            :class="{ 'rotate-180': openIndex === idx }"
-                        />
-                    </div>
-
-                    <!-- Accordion Content -->
-                    <div
-                        v-if="openIndex === idx"
-                        class="space-y-4 border-t border-slate-100 p-6 text-xs text-slate-700 dark:border-slate-800 dark:text-slate-300"
-                    >
-                        <ul class="list-disc space-y-2 pl-5">
-                            <li v-for="(p, pIdx) in item.content" :key="pIdx">
-                                {{ p }}
-                            </li>
-                        </ul>
-
-                        <!-- Warning Box (Jika ada) -->
-                        <div
-                            v-if="item.warning"
-                            class="space-y-2 rounded-xl border border-yellow-200 bg-[#FCFDE1] p-4 text-slate-800 dark:border-yellow-900/50 dark:bg-yellow-950/30 dark:text-yellow-200"
-                        >
-                            <h5 class="text-xs font-bold">
-                                {{ item.warning.title }}
-                            </h5>
-                            <ul
-                                class="list-disc space-y-1 pl-4 text-[11px] leading-relaxed"
-                            >
-                                <li
-                                    v-for="(note, nIdx) in item.warning.notes"
-                                    :key="nIdx"
-                                >
-                                    {{ note }}
-                                </li>
-                            </ul>
-                        </div>
-
-                        <Link
-                            v-if="item.link"
-                            :href="item.link"
-                            class="mt-4 inline-flex items-center gap-2 rounded-xl bg-blue-50 px-4 py-2 text-xs font-bold text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-900"
-                        >
-                            <span
-                                >Buka Halaman
-                                {{ item.menu.replace('Menu: ', '') }}</span
-                            >
-                            <svg
-                                class="h-3.5 w-3.5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M9 5l7 7-7 7"
-                                />
-                            </svg>
-                        </Link>
-                    </div>
-                </div>
-            </div>
-            <div
-                v-else
-                class="rounded-2xl border border-slate-200/80 bg-white p-10 text-center shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
-            >
-                <p class="text-sm text-slate-500 dark:text-slate-400">
-                    Panduan tidak ditemukan. Coba kata kunci lain.
+        <!-- Panduan Mahasiswa Search Box (Sesuai Mockup) -->
+        <div
+            class="flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:bg-[#0E1626]"
+        >
+            <div>
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">
+                    Panduan Mahasiswa
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                    Alur Tugas Akhir dari pengajuan judul sampai nilai sidang
+                    keluar.
                 </p>
             </div>
+
+            <div class="relative w-full sm:w-72">
+                <Search
+                    class="absolute top-2.5 left-3 h-3.5 w-3.5 text-slate-400"
+                />
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Cari langkah atau menu..."
+                    class="w-full rounded-xl border border-slate-300 bg-slate-50/50 py-1.5 pr-3 pl-8 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                />
+            </div>
         </div>
-    </AppLayout>
+
+        <!-- Accordion List (Sesuai Mockup) -->
+        <div v-if="filteredGuideItems.length" class="space-y-4">
+            <div
+                v-for="(item, idx) in filteredGuideItems"
+                :key="idx"
+                class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            >
+                <!-- Accordion Header -->
+                <div
+                    class="flex cursor-pointer items-center justify-between p-5 hover:bg-slate-50/60 dark:hover:bg-slate-900/60"
+                    @click="toggleAccordion(idx)"
+                >
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-950 dark:text-blue-400"
+                        >
+                            {{ idx + 1 }}.
+                        </span>
+                        <div>
+                            <h4
+                                class="text-sm font-bold text-slate-900 dark:text-white"
+                            >
+                                {{ item.title }}
+                            </h4>
+                            <p class="text-[11px] text-slate-400">
+                                {{ item.menu }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <ChevronDown
+                        class="h-4 w-4 text-slate-400 transition-transform"
+                        :class="{ 'rotate-180': openIndex === idx }"
+                    />
+                </div>
+
+                <!-- Accordion Content -->
+                <div
+                    v-if="openIndex === idx"
+                    class="space-y-4 border-t border-slate-100 p-6 text-xs text-slate-700 dark:border-slate-800 dark:text-slate-300"
+                >
+                    <ul class="list-disc space-y-2 pl-5">
+                        <li v-for="(p, pIdx) in item.content" :key="pIdx">
+                            {{ p }}
+                        </li>
+                    </ul>
+
+                    <!-- Warning Box (Jika ada) -->
+                    <div
+                        v-if="item.warning"
+                        class="space-y-2 rounded-xl border border-yellow-200 bg-[#FCFDE1] p-4 text-slate-800 dark:border-yellow-900/50 dark:bg-yellow-950/30 dark:text-yellow-200"
+                    >
+                        <h5 class="text-xs font-bold">
+                            {{ item.warning.title }}
+                        </h5>
+                        <ul
+                            class="list-disc space-y-1 pl-4 text-[11px] leading-relaxed"
+                        >
+                            <li
+                                v-for="(note, nIdx) in item.warning.notes"
+                                :key="nIdx"
+                            >
+                                {{ note }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <Link
+                        v-if="item.link"
+                        :href="item.link"
+                        class="mt-4 inline-flex items-center gap-2 rounded-xl bg-blue-50 px-4 py-2 text-xs font-bold text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-900"
+                    >
+                        <span
+                            >Buka Halaman
+                            {{ item.menu.replace('Menu: ', '') }}</span
+                        >
+                        <svg
+                            class="h-3.5 w-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5l7 7-7 7"
+                            />
+                        </svg>
+                    </Link>
+                </div>
+            </div>
+        </div>
+        <div
+            v-else
+            class="rounded-2xl border border-slate-200/80 bg-white p-10 text-center shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+        >
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+                Panduan tidak ditemukan. Coba kata kunci lain.
+            </p>
+        </div>
+    </div>
 </template>

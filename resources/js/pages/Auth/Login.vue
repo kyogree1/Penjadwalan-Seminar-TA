@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import {
     Calendar as CalendarIcon,
     ChevronLeft,
@@ -40,6 +40,8 @@ const { isDarkMode, toggleDarkMode, initializeTheme } = useTheme();
 onMounted(() => {
     initializeTheme();
 });
+
+const isDev = import.meta.env.DEV;
 
 const showPassword = ref(false);
 
@@ -379,6 +381,7 @@ onMounted(() => {
 
                         <!-- Demo Accounts Quick Access -->
                         <div
+                            v-if="isDev"
                             class="mt-5 border-t border-blue-200/80 pt-4 dark:border-blue-900/50"
                         >
                             <p
@@ -1278,13 +1281,17 @@ onMounted(() => {
                 class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 sm:flex-row"
             >
                 <div class="flex items-center gap-4">
-                    <a href="#" class="hover:text-blue-600">Privacy Policy</a>
-                    <span>|</span>
-                    <a href="#" class="hover:text-blue-600"
-                        >Terms & Conditions</a
+                    <Link href="/panduan" class="hover:text-blue-600"
+                        >Panduan Layanan</Link
                     >
                     <span>|</span>
-                    <a href="#" class="hover:text-blue-600">Cookie Policy</a>
+                    <Link href="/prosedur" class="hover:text-blue-600"
+                        >SOP & Prosedur TA</Link
+                    >
+                    <span>|</span>
+                    <Link href="/katalog" class="hover:text-blue-600"
+                        >Katalog Publik</Link
+                    >
                 </div>
                 <p>© 2026 Informatika ITK • SIPTA IF</p>
             </div>

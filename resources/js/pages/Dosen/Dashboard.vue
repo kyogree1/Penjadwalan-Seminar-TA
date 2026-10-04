@@ -20,7 +20,6 @@ import {
     Users,
 } from 'lucide-vue-next';
 
-import AppLayout from '@/Layouts/AppLayout.vue';
 import Button from '@/Components/Button.vue';
 import Card from '@/Components/Card.vue';
 import LogbookApprovalModal from '@/Components/LogbookApprovalModal.vue';
@@ -205,294 +204,292 @@ const upcomingExaminations = ref([
 </script>
 
 <template>
-    <AppLayout title="Dashboard Dosen">
-        <Head title="Dashboard Dosen • SIPTA IF" />
+    <Head title="Dashboard Dosen • SIPTA IF" />
 
-        <div class="space-y-6">
-            <!-- 1. Header Box Profil Dosen -->
-            <PageHeaderBox
-                title="Portal Evaluasi & Pembimbing Tugas Akhir"
-                subtitle="Selamat datang di sistem monitoring bimbingan dan pengujian tugas akhir Program Studi Informatika ITK."
-            >
-                <template #action>
-                    <div class="flex items-center gap-3">
-                        <div class="text-right">
-                            <p
-                                class="text-xs font-bold text-slate-900 dark:text-white"
-                            >
-                                {{ dosenInfo.nama }}
-                            </p>
-                            <p
-                                class="text-[11px] text-slate-500 dark:text-slate-400"
-                            >
-                                NIP: {{ dosenInfo.nip }} •
-                                {{ dosenInfo.jabatan }}
-                            </p>
-                        </div>
-                        <div
-                            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 text-sm font-bold text-white shadow-md shadow-blue-500/20"
+    <div class="space-y-6">
+        <!-- 1. Header Box Profil Dosen -->
+        <PageHeaderBox
+            title="Portal Evaluasi & Pembimbing Tugas Akhir"
+            subtitle="Selamat datang di sistem monitoring bimbingan dan pengujian tugas akhir Program Studi Informatika ITK."
+        >
+            <template #action>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <p
+                            class="text-xs font-bold text-slate-900 dark:text-white"
                         >
-                            TW
-                        </div>
-                    </div>
-                </template>
-            </PageHeaderBox>
-
-            <!-- 2. Grid Statistik Ringkas Dosen -->
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <StatCard
-                    title="Bimbingan Aktif"
-                    value="8"
-                    subtitle="Kapasitas kuota: 8 / 10 Mahasiswa"
-                    :icon="GraduationCap"
-                    icon-color="blue"
-                />
-                <StatCard
-                    title="Antrean Logbook"
-                    :value="pendingLogbooks.length"
-                    subtitle="Menunggu validasi Form TA-04"
-                    :icon="FileCheck"
-                    icon-color="amber"
-                />
-                <StatCard
-                    title="Jadwal Uji Sempro"
-                    value="4"
-                    subtitle="Sesi periode Gasal 2026/2027"
-                    :icon="FileSpreadsheet"
-                    icon-color="indigo"
-                />
-                <StatCard
-                    title="Jadwal Sidang Akhir"
-                    value="2"
-                    subtitle="Sesi ujian skripsi pekan ini"
-                    :icon="Award"
-                    icon-color="emerald"
-                />
-            </div>
-
-            <!-- 3. Section: Antrean Validasi Logbook Mahasiswa (Form TA-04) -->
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3
-                            class="text-base font-bold text-slate-900 dark:text-white"
+                            {{ dosenInfo.nama }}
+                        </p>
+                        <p
+                            class="text-[11px] text-slate-500 dark:text-slate-400"
                         >
-                            Antrean Validasi Logbook Bimbingan (Form TA-04)
-                        </h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">
-                            Mahasiswa asuhan Anda membutuhkan paraf/e-TTD
-                            validasi untuk memenuhi syarat minimal 8x bimbingan.
+                            NIP: {{ dosenInfo.nip }} •
+                            {{ dosenInfo.jabatan }}
                         </p>
                     </div>
-                    <span
-                        class="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 dark:bg-amber-950/40 dark:text-amber-400"
+                    <div
+                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 text-sm font-bold text-white shadow-md shadow-blue-500/20"
                     >
-                        {{ pendingLogbooks.length }} Perlu Ditinjau
-                    </span>
+                        TW
+                    </div>
                 </div>
+            </template>
+        </PageHeaderBox>
 
-                <div
-                    v-if="pendingLogbooks.length === 0"
-                    class="rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-[#0E1626]"
-                >
-                    <CheckCircle2 class="mx-auto h-10 w-10 text-emerald-500" />
-                    <p
-                        class="mt-2 text-sm font-bold text-slate-800 dark:text-slate-200"
+        <!-- 2. Grid Statistik Ringkas Dosen -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+                title="Bimbingan Aktif"
+                value="8"
+                subtitle="Kapasitas kuota: 8 / 10 Mahasiswa"
+                :icon="GraduationCap"
+                icon-color="blue"
+            />
+            <StatCard
+                title="Antrean Logbook"
+                :value="pendingLogbooks.length"
+                subtitle="Menunggu validasi Form TA-04"
+                :icon="FileCheck"
+                icon-color="amber"
+            />
+            <StatCard
+                title="Jadwal Uji Sempro"
+                value="4"
+                subtitle="Sesi periode Gasal 2026/2027"
+                :icon="FileSpreadsheet"
+                icon-color="indigo"
+            />
+            <StatCard
+                title="Jadwal Sidang Akhir"
+                value="2"
+                subtitle="Sesi ujian skripsi pekan ini"
+                :icon="Award"
+                icon-color="emerald"
+            />
+        </div>
+
+        <!-- 3. Section: Antrean Validasi Logbook Mahasiswa (Form TA-04) -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3
+                        class="text-base font-bold text-slate-900 dark:text-white"
                     >
-                        Seluruh Logbook Telah Tervalidasi
-                    </p>
+                        Antrean Validasi Logbook Bimbingan (Form TA-04)
+                    </h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">
-                        Tidak ada antrean logbook bimbingan mahasiswa yang
-                        menunggu persetujuan Anda saat ini.
+                        Mahasiswa asuhan Anda membutuhkan paraf/e-TTD validasi
+                        untuk memenuhi syarat minimal 8x bimbingan.
                     </p>
                 </div>
-
-                <div v-else class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                    <div
-                        v-for="item in pendingLogbooks"
-                        :key="item.id"
-                        class="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:border-blue-300 dark:border-slate-800 dark:bg-[#0E1626]"
-                    >
-                        <div>
-                            <!-- Header Item -->
-                            <div class="flex items-start justify-between gap-2">
-                                <div>
-                                    <h4
-                                        class="text-xs font-bold text-slate-900 dark:text-white"
-                                    >
-                                        {{ item.studentName }}
-                                    </h4>
-                                    <p
-                                        class="text-[11px] text-slate-500 dark:text-slate-400"
-                                    >
-                                        NIM: {{ item.studentNim }}
-                                    </p>
-                                </div>
-                                <span
-                                    class="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-950/50 dark:text-blue-400"
-                                >
-                                    {{ item.date }}
-                                </span>
-                            </div>
-
-                            <!-- Content -->
-                            <div
-                                class="mt-3 rounded-xl bg-slate-50/80 p-3 dark:bg-slate-800/40"
-                            >
-                                <p
-                                    class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
-                                >
-                                    {{ item.bab }}
-                                </p>
-                                <p
-                                    class="mt-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200"
-                                >
-                                    {{ item.topik }}
-                                </p>
-                                <p
-                                    class="mt-1.5 line-clamp-2 text-xs text-slate-500 dark:text-slate-400"
-                                >
-                                    {{ item.rangkuman }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Action Button -->
-                        <div
-                            class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-slate-800"
-                        >
-                            <span
-                                class="text-[11px] text-slate-500 dark:text-slate-400"
-                            >
-                                {{ item.metode }}
-                            </span>
-                            <Button
-                                size="sm"
-                                variant="primary"
-                                @click="openReviewModal(item)"
-                            >
-                                <FileCheck class="mr-1 h-3.5 w-3.5" />
-                                <span>Validasi Logbook</span>
-                            </Button>
-                        </div>
-                    </div>
-                </div>
+                <span
+                    class="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 dark:bg-amber-950/40 dark:text-amber-400"
+                >
+                    {{ pendingLogbooks.length }} Perlu Ditinjau
+                </span>
             </div>
 
-            <!-- 4. Section: Jadwal Pengujian Sempro & Sidang Skripsi -->
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3
-                            class="text-base font-bold text-slate-900 dark:text-white"
-                        >
-                            Jadwal Pengujian Seminar & Sidang (Waktu WITA)
-                        </h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">
-                            Sesi ujian yang telah dijadwalkan oleh Koordinator
-                            Prodi. Klik "Beri Nilai" untuk membuka lembar
-                            penilaian resmi.
-                        </p>
-                    </div>
-                    <Link
-                        href="/dosen/penilaian"
-                        class="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400"
-                    >
-                        Buka Lembar Penilaian →
-                    </Link>
-                </div>
-
-                <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                    <ScheduleSlotCard
-                        v-for="exam in upcomingExaminations"
-                        :key="exam.id"
-                        :id="exam.id"
-                        :type="exam.type"
-                        :date="exam.date"
-                        :time="exam.time"
-                        :room="exam.room"
-                        :student-name="exam.studentName"
-                        :student-nim="exam.studentNim"
-                        :judul="exam.judul"
-                        :pembimbing="exam.pembimbing"
-                        :penguji="exam.penguji"
-                        action-text="Input Nilai & Revisi"
-                        :action-href="'/dosen/penilaian?exam_id=' + exam.id"
-                        is-dosen-view
-                    />
-                </div>
+            <div
+                v-if="pendingLogbooks.length === 0"
+                class="rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-[#0E1626]"
+            >
+                <CheckCircle2 class="mx-auto h-10 w-10 text-emerald-500" />
+                <p
+                    class="mt-2 text-sm font-bold text-slate-800 dark:text-slate-200"
+                >
+                    Seluruh Logbook Telah Tervalidasi
+                </p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                    Tidak ada antrean logbook bimbingan mahasiswa yang menunggu
+                    persetujuan Anda saat ini.
+                </p>
             </div>
 
-            <!-- 5. Section: Mahasiswa Bimbingan Aktif -->
-            <div class="space-y-4">
+            <div v-else class="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <div
-                    class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                    v-for="item in pendingLogbooks"
+                    :key="item.id"
+                    class="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:border-blue-300 dark:border-slate-800 dark:bg-[#0E1626]"
                 >
                     <div>
-                        <h3
-                            class="text-base font-bold text-slate-900 dark:text-white"
+                        <!-- Header Item -->
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <h4
+                                    class="text-xs font-bold text-slate-900 dark:text-white"
+                                >
+                                    {{ item.studentName }}
+                                </h4>
+                                <p
+                                    class="text-[11px] text-slate-500 dark:text-slate-400"
+                                >
+                                    NIM: {{ item.studentNim }}
+                                </p>
+                            </div>
+                            <span
+                                class="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-950/50 dark:text-blue-400"
+                            >
+                                {{ item.date }}
+                            </span>
+                        </div>
+
+                        <!-- Content -->
+                        <div
+                            class="mt-3 rounded-xl bg-slate-50/80 p-3 dark:bg-slate-800/40"
                         >
-                            Daftar Mahasiswa Asuhan Aktif
-                        </h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">
-                            Pantau kemajuan bab, frekuensi bimbingan, serta
-                            kemajuan Turnitin mahasiswa bimbingan Anda.
-                        </p>
+                            <p
+                                class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            >
+                                {{ item.bab }}
+                            </p>
+                            <p
+                                class="mt-0.5 text-xs font-semibold text-slate-800 dark:text-slate-200"
+                            >
+                                {{ item.topik }}
+                            </p>
+                            <p
+                                class="mt-1.5 line-clamp-2 text-xs text-slate-500 dark:text-slate-400"
+                            >
+                                {{ item.rangkuman }}
+                            </p>
+                        </div>
                     </div>
 
-                    <!-- Filter Tabs -->
+                    <!-- Action Button -->
                     <div
-                        class="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white p-1 text-xs font-semibold dark:border-slate-800 dark:bg-[#0E1626]"
+                        class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
-                        <button
-                            v-for="tab in [
-                                'Semua',
-                                'Proposal (Sempro)',
-                                'Pengerjaan TA',
-                                'Siap Sidang',
-                            ]"
-                            :key="tab"
-                            type="button"
-                            class="rounded-lg px-3 py-1.5 transition-colors"
-                            :class="[
-                                selectedStageFilter === tab
-                                    ? 'bg-blue-600 text-white shadow-xs'
-                                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800',
-                            ]"
-                            @click="selectedStageFilter = tab"
+                        <span
+                            class="text-[11px] text-slate-500 dark:text-slate-400"
                         >
-                            {{ tab }}
-                        </button>
+                            {{ item.metode }}
+                        </span>
+                        <Button
+                            size="sm"
+                            variant="primary"
+                            @click="openReviewModal(item)"
+                        >
+                            <FileCheck class="mr-1 h-3.5 w-3.5" />
+                            <span>Validasi Logbook</span>
+                        </Button>
                     </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                    <StudentReviewCard
-                        v-for="(stu, idx) in filteredAdvisees"
-                        :key="idx"
-                        :name="stu.name"
-                        :nim="stu.nim"
-                        :angkatan="stu.angkatan"
-                        :judul="stu.judul"
-                        :status-text="stu.statusText"
-                        :status-variant="stu.statusVariant"
-                        :bidang="stu.bidang"
-                        :bimbingan-count="stu.bimbinganCount"
-                        :turnitin-score="stu.turnitinScore"
-                        :role-as="stu.roleAs"
-                        action-text="Detail Bimbingan"
-                        action-href="/pendaftaran/bimbingan"
-                    />
                 </div>
             </div>
         </div>
 
-        <!-- Reusable Modal: Validasi Logbook -->
-        <LogbookApprovalModal
-            :show="showApprovalModal"
-            :item="selectedLogbook"
-            @close="showApprovalModal = false"
-            @approve="handleLogbookApprove"
-        />
-    </AppLayout>
+        <!-- 4. Section: Jadwal Pengujian Sempro & Sidang Skripsi -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3
+                        class="text-base font-bold text-slate-900 dark:text-white"
+                    >
+                        Jadwal Pengujian Seminar & Sidang (Waktu WITA)
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        Sesi ujian yang telah dijadwalkan oleh Koordinator
+                        Prodi. Klik "Beri Nilai" untuk membuka lembar penilaian
+                        resmi.
+                    </p>
+                </div>
+                <Link
+                    href="/dosen/penilaian"
+                    class="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                >
+                    Buka Lembar Penilaian →
+                </Link>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <ScheduleSlotCard
+                    v-for="exam in upcomingExaminations"
+                    :key="exam.id"
+                    :id="exam.id"
+                    :type="exam.type"
+                    :date="exam.date"
+                    :time="exam.time"
+                    :room="exam.room"
+                    :student-name="exam.studentName"
+                    :student-nim="exam.studentNim"
+                    :judul="exam.judul"
+                    :pembimbing="exam.pembimbing"
+                    :penguji="exam.penguji"
+                    action-text="Input Nilai & Revisi"
+                    :action-href="'/dosen/penilaian?exam_id=' + exam.id"
+                    is-dosen-view
+                />
+            </div>
+        </div>
+
+        <!-- 5. Section: Mahasiswa Bimbingan Aktif -->
+        <div class="space-y-4">
+            <div
+                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            >
+                <div>
+                    <h3
+                        class="text-base font-bold text-slate-900 dark:text-white"
+                    >
+                        Daftar Mahasiswa Asuhan Aktif
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        Pantau kemajuan bab, frekuensi bimbingan, serta kemajuan
+                        Turnitin mahasiswa bimbingan Anda.
+                    </p>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div
+                    class="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white p-1 text-xs font-semibold dark:border-slate-800 dark:bg-[#0E1626]"
+                >
+                    <button
+                        v-for="tab in [
+                            'Semua',
+                            'Proposal (Sempro)',
+                            'Pengerjaan TA',
+                            'Siap Sidang',
+                        ]"
+                        :key="tab"
+                        type="button"
+                        class="rounded-lg px-3 py-1.5 transition-colors"
+                        :class="[
+                            selectedStageFilter === tab
+                                ? 'bg-blue-600 text-white shadow-xs'
+                                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800',
+                        ]"
+                        @click="selectedStageFilter = tab"
+                    >
+                        {{ tab }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <StudentReviewCard
+                    v-for="(stu, idx) in filteredAdvisees"
+                    :key="idx"
+                    :name="stu.name"
+                    :nim="stu.nim"
+                    :angkatan="stu.angkatan"
+                    :judul="stu.judul"
+                    :status-text="stu.statusText"
+                    :status-variant="stu.statusVariant"
+                    :bidang="stu.bidang"
+                    :bimbingan-count="stu.bimbinganCount"
+                    :turnitin-score="stu.turnitinScore"
+                    :role-as="stu.roleAs"
+                    action-text="Detail Bimbingan"
+                    action-href="/pendaftaran/bimbingan"
+                />
+            </div>
+        </div>
+    </div>
+
+    <!-- Reusable Modal: Validasi Logbook -->
+    <LogbookApprovalModal
+        :show="showApprovalModal"
+        :item="selectedLogbook"
+        @close="showApprovalModal = false"
+        @approve="handleLogbookApprove"
+    />
 </template>
