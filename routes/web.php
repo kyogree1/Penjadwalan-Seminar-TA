@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // 1. Entry point (Home & Login) - Defaults to Login page
@@ -15,7 +16,11 @@ Route::middleware('auth')->group(function () {
     Route::inertia('/katalog', 'Katalog/Index')->name('katalog');
     Route::inertia('/panduan', 'Panduan/Index')->name('panduan');
     Route::inertia('/prosedur', 'Prosedur/Index')->name('prosedur');
-    Route::inertia('/profile', 'Profile/Index')->name('profile');
+
+    // Profile routes
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
     // ==========================================
     // PORTAL MAHASISWA
