@@ -51,11 +51,11 @@ Goal: Port the rich UI and features from `Front-End(1).zip` (HTML+Vue CDN) into 
 
 ### Phase F3: Dosen Bimbingan Logbook & Digital Paraf
 
-- [ ] Upgrade `resources/js/pages/Dosen/Bimbingan.vue` using patterns from `bimbingan.html`:
-    - [ ] Advisee selection sidebar/cards with progress indicator and eligibility tag (`Memenuhi Syarat (Siap Sempro)` vs `Belum Cukup`).
-    - [ ] Detailed per-chapter session logbook (Bab 1-5, rangkuman, catatan dosen, status paraf).
-    - [ ] Modal Catat Sesi Bimbingan baru.
-    - [ ] One-click digital paraf action with confirmation feedback.
+- [x] Upgrade `resources/js/pages/Dosen/Bimbingan.vue` using patterns from `bimbingan.html`:
+    - [x] Advisee selection sidebar/cards with progress indicator and eligibility tag (`Memenuhi Syarat (Siap Sempro)` vs `Belum Cukup`).
+    - [x] Detailed per-chapter session logbook (Bab 1-5, rangkuman, catatan dosen, status paraf).
+    - [x] Modal Catat Sesi Bimbingan baru.
+    - [x] One-click digital paraf action with confirmation feedback.
 
 ### Phase F4: Kaprodi Persetujuan & Review System
 

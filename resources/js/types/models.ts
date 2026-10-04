@@ -207,3 +207,33 @@ export type MasterDosen = {
     maxQuota: number;
     status: 'Aktif' | 'Cuti' | 'Nonaktif';
 };
+
+/* --------------------------------------------------------------- *
+ * Dosen portal: Advisees & Logbook Verification (TA-04)
+ * --------------------------------------------------------------- */
+
+export type BimbinganSesi = {
+    id: number;
+    no: number;
+    tanggal: string;
+    pembimbing: string;
+    bab: string;
+    rangkuman: string;
+    catatanDosen: string;
+    statusParaf: 'Disetujui' | 'Menunggu Paraf' | 'Perlu Revisi';
+    tglParaf: string;
+};
+
+export type DosenAdvisee = {
+    id: number;
+    nama: string;
+    nim: string;
+    angkatan: string;
+    judul: string;
+    roleAs: string;
+    pembimbing1: string;
+    pembimbing2?: string;
+    statusSyarat: string;
+    tahap: string;
+    sesiList: BimbinganSesi[];
+};

@@ -12,6 +12,7 @@ import {
     MessageSquare,
     PenTool,
     Plus,
+    Printer,
     Search,
     UserCheck,
     Users,
@@ -25,111 +26,76 @@ import Modal from '@/Components/Modal.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 import StatCard from '@/Components/StatCard.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import { mockDosenAdvisees } from '@/data/dosen/bimbingan';
+import type { BimbinganSesi, DosenAdvisee } from '@/types/models';
 
-// Advisees list for Dr. Ir. Tejo Wahyu Susanto
-const advisees = ref([
+const props = withDefaults(
+    defineProps<{
+        advisees?: DosenAdvisee[];
+    }>(),
     {
-        id: 1,
-        name: 'Akmal Falah Maulana',
-        nim: '11231006',
-        angkatan: '2023',
-        judul: 'Pengembangan Portal Tugas Akhir Informatika ITK Berbasis Inertia Vue 3 & Optimasi Penjadwalan Algoritma Genetika',
-        roleAs: 'Pembimbing 1',
-        totalBimbingan: 9,
-        targetBimbingan: 10,
-        status: 'Pengerjaan TA Bab 4-5',
-        logbooks: [
-            {
-                id: 101,
-                tanggal: '15 September 2026',
-                materi: 'Revisi Bab 4: Implementasi Algoritma Genetika & Crossover Rate',
-                catatanMahasiswa:
-                    'Sudah menyelesaikan perbaikan mutation rate 0.05 dan seleksi roulette wheel.',
-                catatanDosen:
-                    'Algoritma sudah cukup bagus. Tambahkan grafik konvergensi fitness di subbab 4.3.',
-                status: 'approved',
-            },
-            {
-                id: 102,
-                tanggal: '10 September 2026',
-                materi: 'Pengujian Blackbox & Perancangan Dashboard Tendik',
-                catatanMahasiswa:
-                    'Menambahkan use case pengelolaan ruangan dan validasi berkas fisik.',
-                catatanDosen:
-                    'Perhatikan hak akses role kaprodi dan dosen penguji agar tidak tumpang tindih.',
-                status: 'approved',
-            },
-            {
-                id: 103,
-                tanggal: '18 September 2026',
-                materi: 'Draft Naskah Lengkap Bab 1 s.d. Bab 5 & Hasil Kuesioner SUS',
-                catatanMahasiswa:
-                    'Mengajukan ACC lembar TA-04 untuk pendaftaran sidang akhir.',
-                catatanDosen: '',
-                status: 'pending',
-            },
-        ],
+        advisees: () => mockDosenAdvisees,
     },
-    {
-        id: 2,
-        name: 'Siti Nurhaliza Putri',
-        nim: '11211045',
-        angkatan: '2021',
-        judul: 'Sistem Deteksi Retinopati Diabetik Menggunakan Arsitektur Vision Transformer pada Citra Fundus',
-        roleAs: 'Pembimbing 1',
-        totalBimbingan: 12,
-        targetBimbingan: 10,
-        status: 'Siap Daftar Sidang',
-        logbooks: [
-            {
-                id: 201,
-                tanggal: '12 September 2026',
-                materi: 'Review Hasil Pengujian Confusion Matrix & Perbandingan dengan ResNet50',
-                catatanMahasiswa:
-                    'Akurasi mencapai 94.2% pada dataset APTOS 2019.',
-                catatanDosen:
-                    'Hasil sangat memuaskan, silakan lanjut susun slide presentasi sidang.',
-                status: 'approved',
-            },
-        ],
-    },
-    {
-        id: 3,
-        name: 'Bagus Pratama Hendrawan',
-        nim: '11221089',
-        angkatan: '2022',
-        judul: 'Penerapan Internet of Things untuk Monitoring Kualitas Air Tambak Udang Berbasis LoRaWAN di Balikpapan',
-        roleAs: 'Pembimbing 2',
-        totalBimbingan: 6,
-        targetBimbingan: 10,
-        status: 'Proposal (Sempro)',
-        logbooks: [
-            {
-                id: 301,
-                tanggal: '08 September 2026',
-                materi: 'Kalibrasi Sensor pH dan Turbidity dengan NodeMCU ESP32',
-                catatanMahasiswa:
-                    'Pengujian transmisi packet loss pada jarak 2.5 km.',
-                catatanDosen:
-                    'Lakukan kalibrasi ulang larutan buffer pH 4 dan pH 7 sebelum pengujian lapangan.',
-                status: 'approved',
-            },
-        ],
-    },
-]);
-
-const selectedAdviseeId = ref(1);
-const selectedAdvisee = computed(() =>
-    advisees.value.find((a) => a.id === selectedAdviseeId.value),
 );
 
-// Review Modal State
+const advisees = ref<DosenAdvisee[]>([...props.advisees]);
+
+const searchQuery = ref('');
+const selectedAdviseeId = ref(1);
+
+const filteredAdvisees = computed(() => {
+    const q = searchQuery.value.toLowerCase().trim();
+    if (!q) return advisees.value;
+    return advisees.value.filter(
+        (a) =>
+            a.nama.toLowerCase().includes(q) ||
+            a.nim.includes(q) ||
+            a.judul.toLowerCase().includes(q),
+    );
+});
+
+const selectedAdvisee = computed(
+    () =>
+        advisees.value.find((a) => a.id === selectedAdviseeId.value) ||
+        filteredAdvisees.value[0],
+);
+
+// KPI Stats
+const totalSesiGlobal = computed(() =>
+    advisees.value.reduce((acc, a) => acc + a.sesiList.length, 0),
+);
+const mhsEligibleCount = computed(
+    () => advisees.value.filter((a) => a.sesiList.length >= 8).length,
+);
+const pendingParafCount = computed(() =>
+    advisees.value.reduce(
+        (acc, a) =>
+            acc +
+            a.sesiList.filter((s) => s.statusParaf !== 'Disetujui').length,
+        0,
+    ),
+);
+const avgSesiCount = computed(() => {
+    if (advisees.value.length === 0) return 0;
+    return (totalSesiGlobal.value / advisees.value.length).toFixed(1);
+});
+
+// Toast / Notice
+const toast = ref('');
+const showToast = (msg: string) => {
+    toast.value = msg;
+    setTimeout(() => {
+        toast.value = '';
+    }, 3500);
+};
+
+// Review / Paraf Modal State
 const showApprovalModal = ref(false);
-const activeLogbook = ref<any>(null);
+const activeLogbook = ref<BimbinganSesi | null>(null);
 const feedbackInput = ref('');
 const isAccBimbingan = ref(true);
 
-const openReviewModal = (logbook: any) => {
+const openReviewModal = (logbook: BimbinganSesi) => {
     activeLogbook.value = logbook;
     feedbackInput.value = logbook.catatanDosen || '';
     isAccBimbingan.value = true;
@@ -139,55 +105,215 @@ const openReviewModal = (logbook: any) => {
 const submitReview = () => {
     if (activeLogbook.value) {
         activeLogbook.value.catatanDosen = feedbackInput.value;
-        activeLogbook.value.status = isAccBimbingan.value
-            ? 'approved'
-            : 'revision';
+        activeLogbook.value.statusParaf = isAccBimbingan.value
+            ? 'Disetujui'
+            : 'Perlu Revisi';
+        activeLogbook.value.tglParaf = 'Hari ini';
+        showToast(
+            `Catatan dan paraf digital berhasil disimpan untuk sesi "${activeLogbook.value.bab}".`,
+        );
     }
     showApprovalModal.value = false;
+};
+
+// One-click quick paraf action
+const quickParafSesi = (sesi: BimbinganSesi) => {
+    sesi.statusParaf = 'Disetujui';
+    sesi.tglParaf = 'Hari ini';
+    showToast(
+        `Sesi ke-${sesi.no} (${sesi.bab}) berhasil diparaf dan disetujui!`,
+    );
+};
+
+// Modal Tambah Sesi Bimbingan
+const isModalTambahOpen = ref(false);
+const formSesi = ref({
+    tanggal: new Date().toISOString().split('T')[0],
+    pembimbing: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
+    bab: 'Bab 3 - Metodologi Penelitian & Desain',
+    rangkuman: '',
+    catatanDosen: '',
+});
+
+const openModalTambahSesi = () => {
+    formSesi.value = {
+        tanggal: new Date().toISOString().split('T')[0],
+        pembimbing:
+            selectedAdvisee.value?.pembimbing1 ||
+            'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
+        bab: 'Bab 3 - Metodologi Penelitian & Desain',
+        rangkuman: '',
+        catatanDosen: '',
+    };
+    isModalTambahOpen.value = true;
+};
+
+const isFormSesiValid = computed(() => {
+    return (
+        formSesi.value.tanggal !== '' &&
+        formSesi.value.pembimbing !== '' &&
+        formSesi.value.bab !== '' &&
+        formSesi.value.rangkuman.trim() !== ''
+    );
+});
+
+const saveSesiBimbingan = () => {
+    if (!isFormSesiValid.value || !selectedAdvisee.value) return;
+
+    const nextNo = selectedAdvisee.value.sesiList.length + 1;
+    const newSesi: BimbinganSesi = {
+        id: Date.now(),
+        no: nextNo,
+        tanggal: formSesi.value.tanggal,
+        pembimbing: formSesi.value.pembimbing,
+        bab: formSesi.value.bab,
+        rangkuman: formSesi.value.rangkuman,
+        catatanDosen:
+            formSesi.value.catatanDosen || 'Disetujui oleh dosen pembimbing.',
+        statusParaf: 'Disetujui',
+        tglParaf: 'Hari ini',
+    };
+
+    selectedAdvisee.value.sesiList.push(newSesi);
+    isModalTambahOpen.value = false;
+    showToast(`Sesi bimbingan ke-${nextNo} berhasil dicatat dan diparaf!`);
 };
 </script>
 
 <template>
     <AppLayout title="Bimbingan Mahasiswa (TA-04)">
-        <Head title="Bimbingan Mahasiswa - Portal Dosen" />
+        <Head title="Bimbingan Mahasiswa • Portal Dosen" />
 
         <div class="space-y-6">
             <PageHeaderBox
                 badge="Portal Dosen Pembimbing"
                 title="Bimbingan & Verifikasi Logbook (TA-04)"
-                description="Pantau progres konsultasi mahasiswa bimbingan, berikan feedback naskah, dan setujui logbook bimbingan secara digital."
-            />
+                description="Pantau progres konsultasi mahasiswa bimbingan, catat sesi bimbingan resmi, dan berikan paraf persetujuan naskah secara digital."
+            >
+                <template #action>
+                    <div class="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            @click="
+                                showToast(
+                                    'Mencetak Lembar Kendali Bimbingan TA-04 format PDF...',
+                                )
+                            "
+                        >
+                            <Printer class="mr-1.5 h-4 w-4" />
+                            Cetak Lembar Kendali
+                        </Button>
+                        <Button
+                            variant="primary"
+                            size="sm"
+                            @click="openModalTambahSesi"
+                        >
+                            <Plus class="mr-1.5 h-4 w-4" />
+                            Catat Sesi Baru
+                        </Button>
+                    </div>
+                </template>
+            </PageHeaderBox>
 
-            <!-- Metric Cards -->
+            <!-- Toast Notice -->
+            <div
+                v-if="toast"
+                class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/60 dark:text-emerald-300"
+            >
+                {{ toast }}
+            </div>
+
+            <!-- 4 Metric Cards -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <StatCard
-                    title="Total Bimbingan Aktif"
-                    value="4 Mahasiswa"
-                    subtitle="3 Pembimbing 1 • 1 Pembimbing 2"
-                    :icon="Users"
-                    icon-color="blue"
-                />
-                <StatCard
-                    title="Menunggu Validasi"
-                    value="1 Logbook"
-                    subtitle="Perlu review & paraf dosen"
-                    :icon="Clock"
-                    icon-color="amber"
-                />
-                <StatCard
-                    title="Siap Maju Sidang"
-                    value="2 Mahasiswa"
-                    subtitle="Syarat minimal 10x terpenuhi"
-                    :icon="FileCheck"
-                    icon-color="emerald"
-                />
-                <StatCard
-                    title="Beban Kuota"
-                    value="8 / 10"
-                    subtitle="Sisa kuota: 2 mahasiswa"
-                    :icon="UserCheck"
-                    icon-color="indigo"
-                />
+                <Card class="flex items-center justify-between p-4">
+                    <div>
+                        <p
+                            class="text-[11px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Total Sesi Bimbingan
+                        </p>
+                        <p
+                            class="mt-1 text-2xl font-black text-slate-900 dark:text-white"
+                        >
+                            {{ totalSesiGlobal }} Sesi
+                        </p>
+                    </div>
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400"
+                    >
+                        <FileText class="h-5 w-5" />
+                    </div>
+                </Card>
+
+                <Card
+                    class="flex items-center justify-between border-emerald-200 p-4 dark:border-emerald-900/40"
+                >
+                    <div>
+                        <p
+                            class="text-[11px] font-bold tracking-wider text-emerald-600 uppercase"
+                        >
+                            Memenuhi Syarat (≥ 8x)
+                        </p>
+                        <p
+                            class="mt-1 text-2xl font-black text-emerald-600 dark:text-emerald-400"
+                        >
+                            {{ mhsEligibleCount }} Mhs
+                        </p>
+                    </div>
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
+                    >
+                        <CheckCircle2 class="h-5 w-5" />
+                    </div>
+                </Card>
+
+                <Card
+                    class="flex items-center justify-between border-amber-200 p-4 dark:border-amber-900/40"
+                >
+                    <div>
+                        <p
+                            class="text-[11px] font-bold tracking-wider text-amber-600 uppercase"
+                        >
+                            Menunggu Paraf Dosen
+                        </p>
+                        <p
+                            class="mt-1 text-2xl font-black text-amber-600 dark:text-amber-400"
+                        >
+                            {{ pendingParafCount }} Sesi
+                        </p>
+                    </div>
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
+                    >
+                        <Clock class="h-5 w-5" />
+                    </div>
+                </Card>
+
+                <Card
+                    class="flex items-center justify-between border-purple-200 p-4 dark:border-purple-900/40"
+                >
+                    <div>
+                        <p
+                            class="text-[11px] font-bold tracking-wider text-purple-600 uppercase"
+                        >
+                            Rata-rata Konsultasi
+                        </p>
+                        <p
+                            class="mt-1 text-2xl font-black text-purple-600 dark:text-purple-400"
+                        >
+                            {{ avgSesiCount }}
+                            <span class="text-xs font-normal text-slate-400"
+                                >/ Mhs</span
+                            >
+                        </p>
+                    </div>
+                    <div
+                        class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400"
+                    >
+                        <Users class="h-5 w-5" />
+                    </div>
+                </Card>
             </div>
 
             <!-- Main Advisees & Logbook View -->
@@ -203,18 +329,30 @@ const submitReview = () => {
                         <span
                             class="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
                         >
-                            {{ advisees.length }} Mahasiswa
+                            {{ filteredAdvisees.length }} Mahasiswa
                         </span>
+                    </div>
+
+                    <div class="relative">
+                        <Search
+                            class="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+                        />
+                        <input
+                            v-model="searchQuery"
+                            type="text"
+                            placeholder="Cari nama, NIM, atau judul..."
+                            class="w-full rounded-xl border border-slate-200 bg-white py-1.5 pr-3 pl-9 text-xs text-slate-800 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                        />
                     </div>
 
                     <div class="space-y-2">
                         <button
-                            v-for="mhs in advisees"
+                            v-for="mhs in filteredAdvisees"
                             :key="mhs.id"
                             type="button"
-                            class="w-full rounded-2xl border p-4 text-left transition-all"
+                            class="w-full cursor-pointer rounded-2xl border p-4 text-left transition-all"
                             :class="[
-                                selectedAdviseeId === mhs.id
+                                selectedAdvisee && selectedAdvisee.id === mhs.id
                                     ? 'border-blue-600 bg-blue-50/70 shadow-sm dark:border-blue-500 dark:bg-blue-950/40'
                                     : 'border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-[#0E1626] dark:hover:border-slate-700',
                             ]"
@@ -225,7 +363,7 @@ const submitReview = () => {
                                     <p
                                         class="text-xs font-bold text-slate-900 dark:text-white"
                                     >
-                                        {{ mhs.name }}
+                                        {{ mhs.nama }}
                                     </p>
                                     <p class="text-[10px] text-slate-500">
                                         NIM: {{ mhs.nim }} • Angkatan
@@ -250,18 +388,49 @@ const submitReview = () => {
                                 {{ mhs.judul }}
                             </p>
 
-                            <div
-                                class="mt-3 flex items-center justify-between border-t border-slate-100 pt-2 text-[10px] dark:border-slate-800"
-                            >
-                                <span class="font-medium text-slate-500">
-                                    Progress Bimbingan:
-                                </span>
-                                <span
-                                    class="font-bold text-blue-600 dark:text-blue-400"
+                            <!-- Progress Sesi Bar -->
+                            <div class="mt-3 space-y-1">
+                                <div
+                                    class="flex items-center justify-between text-[10px]"
                                 >
-                                    {{ mhs.totalBimbingan }} /
-                                    {{ mhs.targetBimbingan }} Pertemuan
-                                </span>
+                                    <span class="font-bold text-slate-500">
+                                        Progress: {{ mhs.sesiList.length }} / 8
+                                        Sesi
+                                    </span>
+                                    <span
+                                        class="font-extrabold"
+                                        :class="
+                                            mhs.sesiList.length >= 8
+                                                ? 'text-emerald-600 dark:text-emerald-400'
+                                                : 'text-amber-600 dark:text-amber-400'
+                                        "
+                                    >
+                                        {{
+                                            Math.min(
+                                                Math.round(
+                                                    (mhs.sesiList.length / 8) *
+                                                        100,
+                                                ),
+                                                100,
+                                            )
+                                        }}%
+                                    </span>
+                                </div>
+                                <div
+                                    class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+                                >
+                                    <div
+                                        class="h-full rounded-full transition-all duration-300"
+                                        :class="
+                                            mhs.sesiList.length >= 8
+                                                ? 'bg-emerald-500'
+                                                : 'bg-amber-500'
+                                        "
+                                        :style="{
+                                            width: `${Math.min((mhs.sesiList.length / 8) * 100, 100)}%`,
+                                        }"
+                                    />
+                                </div>
                             </div>
                         </button>
                     </div>
@@ -279,12 +448,17 @@ const submitReview = () => {
                                     <h2
                                         class="text-base font-extrabold text-slate-900 dark:text-white"
                                     >
-                                        {{ selectedAdvisee.name }}
+                                        {{ selectedAdvisee.nama }}
                                     </h2>
                                     <span
-                                        class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                                        class="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                                        :class="[
+                                            selectedAdvisee.sesiList.length >= 8
+                                                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
+                                                : 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
+                                        ]"
                                     >
-                                        {{ selectedAdvisee.status }}
+                                        {{ selectedAdvisee.statusSyarat }}
                                     </span>
                                 </div>
                                 <p class="mt-1 text-xs text-slate-500">
@@ -294,13 +468,14 @@ const submitReview = () => {
                             </div>
 
                             <div class="flex items-center gap-2">
-                                <span
-                                    class="rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300"
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    @click="openModalTambahSesi"
                                 >
-                                    Logbook:
-                                    {{ selectedAdvisee.logbooks.length }} Sesi
-                                    Tercatat
-                                </span>
+                                    <Plus class="mr-1 h-3.5 w-3.5" />
+                                    Tambah Sesi
+                                </Button>
                             </div>
                         </div>
 
@@ -310,12 +485,23 @@ const submitReview = () => {
                         >
                             <span
                                 class="font-bold text-slate-700 dark:text-slate-300"
-                                >Judul Tugas Akhir:</span
                             >
+                                Judul Tugas Akhir:
+                            </span>
                             <p
                                 class="mt-0.5 text-slate-600 dark:text-slate-400"
                             >
                                 {{ selectedAdvisee.judul }}
+                            </p>
+                            <p class="mt-1 text-[11px] text-slate-400">
+                                Pembimbing 1:
+                                <b>{{ selectedAdvisee.pembimbing1 }}</b>
+                                <span v-if="selectedAdvisee.pembimbing2">
+                                    • Pembimbing 2:
+                                    <b>{{
+                                        selectedAdvisee.pembimbing2
+                                    }}</b></span
+                                >
                             </p>
                         </div>
 
@@ -328,11 +514,11 @@ const submitReview = () => {
                             </h3>
 
                             <div
-                                v-for="(log, idx) in selectedAdvisee.logbooks"
+                                v-for="log in selectedAdvisee.sesiList"
                                 :key="log.id"
                                 class="relative rounded-2xl border p-4 transition-all"
                                 :class="[
-                                    log.status === 'pending'
+                                    log.statusParaf !== 'Disetujui'
                                         ? 'border-amber-300 bg-amber-50/40 dark:border-amber-800/60 dark:bg-amber-950/20'
                                         : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0E1626]',
                                 ]"
@@ -343,12 +529,14 @@ const submitReview = () => {
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <span
+                                                class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white"
+                                            >
+                                                {{ log.no }}
+                                            </span>
+                                            <span
                                                 class="text-xs font-extrabold text-slate-900 dark:text-white"
                                             >
-                                                Pertemuan ke-{{
-                                                    selectedAdvisee.logbooks
-                                                        .length - idx
-                                                }}
+                                                {{ log.bab }}
                                             </span>
                                             <span class="text-xs text-slate-400"
                                                 >•</span
@@ -359,39 +547,44 @@ const submitReview = () => {
                                                 {{ log.tanggal }}
                                             </span>
                                         </div>
-                                        <p
-                                            class="mt-1 text-xs font-bold text-blue-600 dark:text-blue-400"
-                                        >
-                                            {{ log.materi }}
-                                        </p>
                                     </div>
 
                                     <div class="flex items-center gap-2">
                                         <span
-                                            v-if="log.status === 'approved'"
+                                            v-if="
+                                                log.statusParaf === 'Disetujui'
+                                            "
                                             class="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
                                         >
-                                            <Check class="h-3 w-3" /> Disetujui
-                                            (ACC)
+                                            <Check class="h-3 w-3" /> Diparaf
+                                            Dosen ({{ log.tglParaf }})
                                         </span>
                                         <span
                                             v-else
                                             class="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-950 dark:text-amber-300"
                                         >
                                             <Clock class="h-3 w-3" /> Menunggu
-                                            Validasi
+                                            Paraf
                                         </span>
+
+                                        <Button
+                                            v-if="
+                                                log.statusParaf !== 'Disetujui'
+                                            "
+                                            size="sm"
+                                            variant="primary"
+                                            @click="quickParafSesi(log)"
+                                        >
+                                            <PenTool class="mr-1 h-3 w-3" />
+                                            Paraf
+                                        </Button>
 
                                         <button
                                             type="button"
-                                            class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                                            class="cursor-pointer rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                                             @click="openReviewModal(log)"
                                         >
-                                            <span
-                                                v-if="log.status === 'pending'"
-                                                >Review & ACC</span
-                                            >
-                                            <span v-else>Edit Catatan</span>
+                                            Edit Arahan
                                         </button>
                                     </div>
                                 </div>
@@ -402,10 +595,11 @@ const submitReview = () => {
                                 >
                                     <span
                                         class="font-bold text-slate-900 dark:text-white"
-                                        >Uraian Kemajuan Mahasiswa:</span
                                     >
+                                        Rangkuman Pembahasan Mahasiswa:
+                                    </span>
                                     <p class="mt-0.5 leading-relaxed">
-                                        {{ log.catatanMahasiswa }}
+                                        {{ log.rangkuman }}
                                     </p>
                                 </div>
 
@@ -422,13 +616,20 @@ const submitReview = () => {
                                     </p>
                                 </div>
                             </div>
+
+                            <div
+                                v-if="selectedAdvisee.sesiList.length === 0"
+                                class="py-8 text-center text-xs text-slate-400"
+                            >
+                                Belum ada riwayat sesi bimbingan yang tercatat.
+                            </div>
                         </div>
                     </Card>
                 </div>
             </div>
         </div>
 
-        <!-- Approval / Review Modal -->
+        <!-- MODAL 1: REVIEW & CATATAN PARAF -->
         <Modal
             :show="showApprovalModal"
             max-width="lg"
@@ -445,7 +646,7 @@ const submitReview = () => {
                     </h3>
                     <button
                         type="button"
-                        class="text-slate-400 hover:text-slate-600"
+                        class="cursor-pointer text-slate-400 hover:text-slate-600"
                         @click="showApprovalModal = false"
                     >
                         <X class="h-4 w-4" />
@@ -457,12 +658,12 @@ const submitReview = () => {
                         <label
                             class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                         >
-                            Keputusan Bimbingan
+                            Keputusan Paraf Bimbingan
                         </label>
                         <div class="mt-2 grid grid-cols-2 gap-3">
                             <button
                                 type="button"
-                                class="flex items-center justify-center gap-2 rounded-xl border p-2.5 text-xs font-bold transition-all"
+                                class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border p-2.5 text-xs font-bold transition-all"
                                 :class="[
                                     isAccBimbingan
                                         ? 'border-emerald-600 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
@@ -470,12 +671,11 @@ const submitReview = () => {
                                 ]"
                                 @click="isAccBimbingan = true"
                             >
-                                <Check class="h-4 w-4" /> Setujui (ACC
-                                Bimbingan)
+                                <Check class="h-4 w-4" /> Setujui & Paraf
                             </button>
                             <button
                                 type="button"
-                                class="flex items-center justify-center gap-2 rounded-xl border p-2.5 text-xs font-bold transition-all"
+                                class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border p-2.5 text-xs font-bold transition-all"
                                 :class="[
                                     !isAccBimbingan
                                         ? 'border-amber-600 bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
@@ -493,7 +693,7 @@ const submitReview = () => {
                         <label
                             class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                         >
-                            Catatan & Arahan untuk Mahasiswa (Wajib)
+                            Catatan & Arahan Pembimbing (Wajib)
                         </label>
                         <textarea
                             v-model="feedbackInput"
@@ -513,6 +713,146 @@ const submitReview = () => {
                     </Button>
                     <Button variant="primary" @click="submitReview">
                         Simpan & Beri Paraf Digital
+                    </Button>
+                </div>
+            </div>
+        </Modal>
+
+        <!-- MODAL 2: TAMBAH SESI BIMBINGAN BARU -->
+        <Modal
+            :show="isModalTambahOpen"
+            max-width="lg"
+            @close="isModalTambahOpen = false"
+        >
+            <div class="space-y-4 p-6">
+                <div
+                    class="flex items-center justify-between border-b border-slate-200 pb-3 dark:border-slate-800"
+                >
+                    <h3
+                        class="text-base font-bold text-slate-900 dark:text-white"
+                    >
+                        Form Sesi Bimbingan Tugas Akhir
+                    </h3>
+                    <button
+                        type="button"
+                        class="cursor-pointer text-slate-400 hover:text-slate-600"
+                        @click="isModalTambahOpen = false"
+                    >
+                        <X class="h-4 w-4" />
+                    </button>
+                </div>
+
+                <div class="space-y-3 text-xs">
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div class="space-y-1">
+                            <label
+                                class="font-bold text-slate-700 dark:text-slate-300"
+                            >
+                                Tanggal Konsultasi
+                                <span class="text-rose-500">*</span>
+                            </label>
+                            <input
+                                v-model="formSesi.tanggal"
+                                type="date"
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                            />
+                        </div>
+
+                        <div class="space-y-1">
+                            <label
+                                class="font-bold text-slate-700 dark:text-slate-300"
+                            >
+                                Dosen Pembimbing
+                            </label>
+                            <input
+                                v-model="formSesi.pembimbing"
+                                type="text"
+                                class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label
+                            class="font-bold text-slate-700 dark:text-slate-300"
+                        >
+                            Bab / Topik Bahasan
+                            <span class="text-rose-500">*</span>
+                        </label>
+                        <select
+                            v-model="formSesi.bab"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        >
+                            <option value="Bab 1 - Pendahuluan">
+                                Bab 1 - Pendahuluan
+                            </option>
+                            <option value="Bab 2 - Tinjauan Pustaka">
+                                Bab 2 - Tinjauan Pustaka
+                            </option>
+                            <option
+                                value="Bab 3 - Metodologi Penelitian & Desain"
+                            >
+                                Bab 3 - Metodologi Penelitian & Desain
+                            </option>
+                            <option
+                                value="Bab 4 - Implementasi & Hasil Pengujian"
+                            >
+                                Bab 4 - Implementasi & Hasil Pengujian
+                            </option>
+                            <option value="Bab 5 - Kesimpulan & Rekomendasi">
+                                Bab 5 - Kesimpulan & Rekomendasi
+                            </option>
+                            <option value="Review Draf Naskah Lengkap">
+                                Review Draf Naskah Lengkap
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label
+                            class="font-bold text-slate-700 dark:text-slate-300"
+                        >
+                            Rangkuman Pembahasan Mahasiswa
+                            <span class="text-rose-500">*</span>
+                        </label>
+                        <textarea
+                            v-model="formSesi.rangkuman"
+                            rows="3"
+                            placeholder="Tuliskan poin pembahasan atau materi yang dikonsultasikan..."
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                    </div>
+
+                    <div class="space-y-1">
+                        <label
+                            class="font-bold text-slate-700 dark:text-slate-300"
+                        >
+                            Arahan / Revisi Dosen Pembimbing
+                        </label>
+                        <textarea
+                            v-model="formSesi.catatanDosen"
+                            rows="3"
+                            placeholder="Catatan arahan perbaikan dari dosen..."
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                        />
+                    </div>
+                </div>
+
+                <div
+                    class="flex justify-end gap-2 border-t border-slate-200 pt-3 dark:border-slate-800"
+                >
+                    <Button
+                        variant="outline"
+                        @click="isModalTambahOpen = false"
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        variant="primary"
+                        :disabled="!isFormSesiValid"
+                        @click="saveSesiBimbingan"
+                    >
+                        Simpan Sesi
                     </Button>
                 </div>
             </div>
