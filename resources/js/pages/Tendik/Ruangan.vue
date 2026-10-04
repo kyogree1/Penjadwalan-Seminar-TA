@@ -7,87 +7,19 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Button from '@/Components/Button.vue';
 import Card from '@/Components/Card.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
+import { mockRuangan } from '@/data/tendik';
+import type { Ruangan } from '@/types/models';
 
-const rooms = ref([
+const props = withDefaults(
+    defineProps<{
+        ruangan?: Ruangan[];
+    }>(),
     {
-        id: 1,
-        nama: 'Ruang Sidang FSTI A (GKT 304)',
-        gedung: 'Gedung Kuliah Terpadu Lantai 3',
-        kapasitas: '25 Orang',
-        fasilitas: [
-            'Proyektor HDMI 4K',
-            'Sound & Mic Wireless',
-            'Webcam Hybrid Meeting',
-            'AC Sentral',
-        ],
-        status: 'Digunakan',
-        sesiHariIni: [
-            {
-                waktu: '09:00 - 10:30 WITA',
-                kegiatan: 'Sidang Akhir TA (Akmal Falah)',
-                status: 'Berlangsung',
-            },
-            {
-                waktu: '13:00 - 14:30 WITA',
-                kegiatan: 'Seminar Proposal (Bagus Pratama)',
-                status: 'Terjadwal',
-            },
-        ],
+        ruangan: () => mockRuangan,
     },
-    {
-        id: 2,
-        nama: 'Ruang Sidang FSTI B (GKT 305)',
-        gedung: 'Gedung Kuliah Terpadu Lantai 3',
-        kapasitas: '20 Orang',
-        fasilitas: [
-            'Smart TV 65 Inch',
-            'Sound System',
-            'Webcam Logitech MeetUp',
-            'AC',
-        ],
-        status: 'Tersedia',
-        sesiHariIni: [
-            {
-                waktu: '10:45 - 12:15 WITA',
-                kegiatan: 'Sidang Akhir TA (Siti Nurhaliza)',
-                status: 'Selesai',
-            },
-        ],
-    },
-    {
-        id: 3,
-        nama: 'Lab Software Engineering (GKT 208)',
-        gedung: 'Gedung Kuliah Terpadu Lantai 2',
-        kapasitas: '35 Komputer',
-        fasilitas: [
-            'Dual Monitor PC',
-            'Koneksi LAN Gigabit',
-            'Proyektor HD',
-            'Whiteboard',
-        ],
-        status: 'Tersedia',
-        sesiHariIni: [],
-    },
-    {
-        id: 4,
-        nama: 'Ruang Sidang Virtual Zoom FSTI',
-        gedung: 'Cloud Meeting Server ITK',
-        kapasitas: '300 Peserta',
-        fasilitas: [
-            'Breakout Rooms',
-            'Cloud Recording Otomatis',
-            'Live Stream YouTube',
-        ],
-        status: 'Tersedia',
-        sesiHariIni: [
-            {
-                waktu: '15:00 - 16:30 WITA',
-                kegiatan: 'Bimbingan Hybrid Terpadu',
-                status: 'Terjadwal',
-            },
-        ],
-    },
-]);
+);
+
+const rooms = ref<Ruangan[]>([...props.ruangan]);
 
 const viewMode = ref<'cards' | 'timeline'>('cards');
 </script>

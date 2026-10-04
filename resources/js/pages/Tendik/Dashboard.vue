@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { arsip, mahasiswa, ruangan, verifikasi } from '@/routes/tendik';
+import {
+    arsip,
+    mahasiswa,
+    ruangan as ruanganRoute,
+    verifikasi,
+} from '@/routes/tendik';
 import {
     ArrowUpRight,
     Building2,
@@ -17,59 +22,49 @@ import Card from '@/Components/Card.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 import StatCard from '@/Components/StatCard.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import { mockPengajuan } from '@/data/tendik/pengajuan';
+import { mockRuangan } from '@/data/tendik';
+import type { Pengajuan, Ruangan } from '@/types/models';
 
-// Queue of document submissions waiting for tendik verification
-const pendingVerifications = ref([
+const props = withDefaults(
+    defineProps<{
+        pengajuan?: Pengajuan[];
+        ruangan?: Ruangan[];
+    }>(),
     {
-        id: 1,
-        nama: 'Akmal Falah Maulana',
-        nim: '11231006',
-        tipe: 'Sidang Akhir TA',
-        waktu: 'Hari ini, 10:15 WITA',
-        status: 'Menunggu Verifikasi',
-        berkas: 'UKT, Transkrip, ACC TA-04, Turnitin 14%',
+        pengajuan: () => mockPengajuan,
+        ruangan: () => mockRuangan,
     },
-    {
-        id: 2,
-        nama: 'Siti Nurhaliza Putri',
-        nim: '11211045',
-        tipe: 'Sidang Akhir TA',
-        waktu: 'Hari ini, 09:30 WITA',
-        status: 'Menunggu Verifikasi',
-        berkas: 'UKT, Transkrip, ACC TA-04, TOEFL 485',
-    },
-    {
-        id: 3,
-        nama: 'Bagus Pratama Hendrawan',
-        nim: '11221089',
-        tipe: 'Seminar Proposal',
-        waktu: 'Kemarin, 16:45 WITA',
-        status: 'Menunggu Verifikasi',
-        berkas: 'KRS, Proposal Bab 1-3, ACC Pembimbing',
-    },
-]);
+);
 
-// Room availability today
-const roomsStatus = ref([
-    {
-        nama: 'Ruang Sidang FSTI A (GKT 304)',
-        status: 'Digunakan',
-        sesi: '09:00 - 10:30 WITA (Sidang Mhs 11211045)',
-        operator: 'Siti Nurhaliza (Tendik)',
-    },
-    {
-        nama: 'Ruang Sidang FSTI B (GKT 305)',
-        status: 'Tersedia',
-        sesi: 'Siap untuk sesi sore',
-        operator: 'Standby',
-    },
-    {
-        nama: 'Lab Software Engineering (GKT 208)',
-        status: 'Tersedia',
-        sesi: 'Siap untuk seminar teknis',
-        operator: 'Standby',
-    },
-]);
+const pengajuan = ref<Pengajuan[]>([...props.pengajuan]);
+const ruangan = ref<Ruangan[]>([...props.ruangan]);
+
+// Dashboard only shows the queue in front of tendik.
+const pendingVerifications = computed(() =>
+    pengajuan.value.filter(
+        (p) => p.status === 'diajukan' || p.status === 'menunggu_ulang',
+    ),
+);
+
+// Today's room occupancy, derived from the same room list as Ruangan.vue.
+const roomsStatus = computed(() =>
+    ruangan.value.map((r) => {
+        const sedangBerjalan = r.sesiHariIni.find(
+            (s) => s.status === 'Berlangsung',
+        );
+        return {
+            nama: r.nama,
+            status: r.status,
+            sesi: sedangBerjalan
+                ? `${sedangBerjalan.waktu} (${sedangBerjalan.kegiatan})`
+                : r.sesiHariIni.length
+                  ? 'Siap untuk sesi berikutnya'
+                  : 'Tersedia sepanjang hari',
+            operator: 'Standby',
+        };
+    }),
+);
 </script>
 
 <template>
@@ -142,7 +137,7 @@ const roomsStatus = ref([
                 </Link>
 
                 <Link
-                    :href="ruangan()"
+                    :href="ruanganRoute()"
                     class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-xs transition-all hover:border-emerald-500 hover:shadow-md dark:border-slate-800 dark:bg-[#0E1626]"
                 >
                     <div class="flex items-center justify-between">
@@ -264,12 +259,13 @@ const roomsStatus = ref([
                                         </span>
                                     </div>
                                     <p class="text-[10px] text-slate-500">
-                                        NIM: {{ item.nim }} • {{ item.waktu }}
+                                        NIM: {{ item.nim }} •
+                                        {{ item.tanggalDaftar }}
                                     </p>
                                     <p
                                         class="mt-1 text-[11px] text-slate-600 dark:text-slate-300"
                                     >
-                                        Lampiran: {{ item.berkas }}
+                                        Berkas: {{ item.syarat.length }} dokumen
                                     </p>
                                 </div>
 

@@ -7,75 +7,23 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Button from '@/Components/Button.vue';
 import Card from '@/Components/Card.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
+import { mockArsipDokumen, mockCetakTerbaru } from '@/data/tendik';
+import type { ArsipDokumen, CetakTerbaru } from '@/types/models';
 
-const documents = ref([
+const props = withDefaults(
+    defineProps<{
+        arsip?: ArsipDokumen[];
+        cetak?: CetakTerbaru[];
+    }>(),
     {
-        id: 1,
-        kode: 'TA-06',
-        nama: 'Berita Acara Seminar Proposal (Sempro)',
-        kategori: 'Berita Acara',
-        deskripsi:
-            'Dokumen pencatatan resmi hasil ujian seminar proposal, lembar revisi penguji, dan status kelulusan sempro.',
-        tersedia: 68,
+        arsip: () => mockArsipDokumen,
+        cetak: () => mockCetakTerbaru,
     },
-    {
-        id: 2,
-        kode: 'TA-09',
-        nama: 'Berita Acara Ujian Sidang Akhir Tugas Akhir',
-        kategori: 'Berita Acara',
-        deskripsi:
-            'Formulir resmi penetapan nilai akhir yudisium skripsi oleh ketua penguji, anggota penguji, dan pembimbing.',
-        tersedia: 34,
-    },
-    {
-        id: 3,
-        kode: 'ST-01',
-        nama: 'Surat Tugas Tim Dosen Penguji & Pembimbing',
-        kategori: 'Surat Tugas',
-        deskripsi:
-            'Surat penugasan dekanat/jurusan untuk dosen penguji 1, penguji 2, dan dosen pembimbing.',
-        tersedia: 102,
-    },
-    {
-        id: 4,
-        kode: 'SK-TA',
-        nama: 'Surat Keterangan Bebas Tugas Akhir (SK Bebas TA)',
-        kategori: 'Surat Keterangan',
-        deskripsi:
-            'Syarat pengambilan ijazah & transkrip final yang menyatakan naskah skripsi telah tuntas dijilid & diunggah di repository.',
-        tersedia: 24,
-    },
-]);
+);
 
-const recentPrints = ref([
-    {
-        id: 101,
-        namaMhs: 'Akmal Falah Maulana',
-        nim: '11231006',
-        dokumen: 'Berita Acara Sidang Akhir (TA-09)',
-        tanggal: '18 September 2026',
-        petugas: 'Siti Nurhaliza, S.Kom.',
-        status: 'Siap Cetak',
-    },
-    {
-        id: 102,
-        namaMhs: 'Siti Nurhaliza Putri',
-        nim: '11211045',
-        dokumen: 'Surat Tugas Tim Penguji (ST-01)',
-        tanggal: '18 September 2026',
-        petugas: 'Siti Nurhaliza, S.Kom.',
-        status: 'Sudah Dicetak',
-    },
-    {
-        id: 103,
-        namaMhs: 'Bagus Pratama Hendrawan',
-        nim: '11221089',
-        dokumen: 'Berita Acara Sempro (TA-06)',
-        tanggal: '17 September 2026',
-        petugas: 'Siti Nurhaliza, S.Kom.',
-        status: 'Sudah Dicetak',
-    },
-]);
+const documents = ref<ArsipDokumen[]>([...props.arsip]);
+
+const recentPrints = ref<CetakTerbaru[]>([...props.cetak]);
 
 const searchRecent = ref('');
 

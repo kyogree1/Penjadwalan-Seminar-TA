@@ -1,16 +1,38 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import { Check, Eye, Filter, Search, X } from 'lucide-vue-next';
+import { Check, Eye, Search, X } from 'lucide-vue-next';
 
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Button from '@/Components/Button.vue';
 import Card from '@/Components/Card.vue';
 import Modal from '@/Components/Modal.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
+import StatusBadge from '@/Components/StatusBadge.vue';
+import { mockPengajuan } from '@/data/tendik/pengajuan';
+import { STATUS_PENGAJUAN } from '@/lib/status';
+import type { Pengajuan } from '@/types/models';
+
+const props = withDefaults(
+    defineProps<{
+        pengajuan?: Pengajuan[];
+    }>(),
+    {
+        pengajuan: () => mockPengajuan,
+    },
+);
 
 const activeTab = ref<'Sempro' | 'Sidang'>('Sidang');
 const searchQuery = ref('');
+
+const applicants = ref<Pengajuan[]>([...props.pengajuan]);
+
+const jumlahSidang = computed(
+    () => applicants.value.filter((a) => a.tipe.includes('Sidang')).length,
+);
+const jumlahSempro = computed(
+    () => applicants.value.filter((a) => a.tipe.includes('Seminar')).length,
+);
 
 const filteredApplicants = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
@@ -28,124 +50,12 @@ const filteredApplicants = computed(() => {
     });
 });
 
-const applicants = ref([
-    {
-        id: 1,
-        nama: 'Akmal Falah Maulana',
-        nim: '11231006',
-        tipe: 'Sidang Akhir TA',
-        judul: 'Pengembangan Portal Tugas Akhir Informatika ITK Berbasis Inertia Vue 3 & Optimasi Penjadwalan Algoritma Genetika',
-        pembimbing1: 'Dr. Ir. Tejo Wahyu Susanto',
-        pembimbing2: 'Gusti Ahmad Fanshuri, M.Cs.',
-        tanggalDaftar: '18 September 2026',
-        items: [
-            {
-                label: 'Bukti Pembayaran UKT Semester Ganjil 2026/2027',
-                file: 'Bukti_UKT_11231006.pdf',
-                valid: true,
-            },
-            {
-                label: 'Transkrip Akademik (140 SKS, IPK 3.82, Bebas D/E)',
-                file: 'Transkrip_11231006.pdf',
-                valid: true,
-            },
-            {
-                label: 'Formulir TA-04 (ACC Pembimbing 1 & 2)',
-                file: 'Form_TA04_Signed.pdf',
-                valid: true,
-            },
-            {
-                label: 'Sertifikat TOEFL ITK (Skor 510)',
-                file: 'TOEFL_Certificate.pdf',
-                valid: true,
-            },
-            {
-                label: 'Laporan Turnitin Similarity Index (14%)',
-                file: 'Turnitin_Report_14pct.pdf',
-                valid: true,
-            },
-        ],
-        status: 'pending',
-    },
-    {
-        id: 2,
-        nama: 'Siti Nurhaliza Putri',
-        nim: '11211045',
-        tipe: 'Sidang Akhir TA',
-        judul: 'Sistem Deteksi Retinopati Diabetik Menggunakan Arsitektur Vision Transformer pada Citra Fundus',
-        pembimbing1: 'Dr. Ir. Tejo Wahyu Susanto',
-        pembimbing2: 'Dewi Ratnasari, S.T., M.T.',
-        tanggalDaftar: '18 September 2026',
-        items: [
-            {
-                label: 'Bukti Pembayaran UKT Semester Ganjil 2026/2027',
-                file: 'UKT_11211045.pdf',
-                valid: true,
-            },
-            {
-                label: 'Transkrip Akademik (142 SKS, IPK 3.75, Bebas D/E)',
-                file: 'Transkrip_11211045.pdf',
-                valid: true,
-            },
-            {
-                label: 'Formulir TA-04 (ACC Pembimbing 1 & 2)',
-                file: 'ACC_TA04_11211045.pdf',
-                valid: true,
-            },
-            {
-                label: 'Sertifikat TOEFL ITK (Skor 485)',
-                file: 'TOEFL_11211045.pdf',
-                valid: true,
-            },
-            {
-                label: 'Laporan Turnitin Similarity Index (11%)',
-                file: 'Turnitin_11pct.pdf',
-                valid: true,
-            },
-        ],
-        status: 'pending',
-    },
-    {
-        id: 3,
-        nama: 'Bagus Pratama Hendrawan',
-        nim: '11221089',
-        tipe: 'Seminar Proposal',
-        judul: 'Penerapan Internet of Things untuk Monitoring Kualitas Air Tambak Udang Berbasis LoRaWAN di Balikpapan',
-        pembimbing1: 'Prof. Dr. Agus Tri Haryanto',
-        pembimbing2: 'Dr. Ir. Tejo Wahyu Susanto',
-        tanggalDaftar: '17 September 2026',
-        items: [
-            {
-                label: 'KRS Aktif Mata Kuliah Seminar Proposal',
-                file: 'KRS_11221089.pdf',
-                valid: true,
-            },
-            {
-                label: 'Transkrip Sementara (Min 110 SKS)',
-                file: 'Transkrip_11221089.pdf',
-                valid: true,
-            },
-            {
-                label: 'Formulir Persetujuan Sempro (TA-02)',
-                file: 'ACC_Sempro_Signed.pdf',
-                valid: true,
-            },
-            {
-                label: 'Draft Proposal Naskah Bab 1-3',
-                file: 'Proposal_Bagus_Fix.pdf',
-                valid: true,
-            },
-        ],
-        status: 'pending',
-    },
-]);
-
 // Modal State
 const showModal = ref(false);
-const activeApplicant = ref<any>(null);
+const activeApplicant = ref<Pengajuan | null>(null);
 const tendikNotes = ref('');
 
-const openVerification = (app: any) => {
+const openVerification = (app: Pengajuan) => {
     activeApplicant.value = app;
     tendikNotes.value =
         'Berkas lengkap dan memenuhi seluruh persyaratan administratif program studi.';
@@ -154,14 +64,16 @@ const openVerification = (app: any) => {
 
 const verifySuccess = () => {
     if (activeApplicant.value) {
-        activeApplicant.value.status = 'verified';
+        activeApplicant.value.status = 'disetujui';
+        activeApplicant.value.catatanTendik = tendikNotes.value;
     }
     showModal.value = false;
 };
 
 const requestRevision = () => {
     if (activeApplicant.value) {
-        activeApplicant.value.status = 'revision';
+        activeApplicant.value.status = 'revisi';
+        activeApplicant.value.catatanTendik = tendikNotes.value;
     }
     showModal.value = false;
 };
@@ -225,7 +137,7 @@ const requestRevision = () => {
                                 ]"
                                 @click="activeTab = 'Sidang'"
                             >
-                                Sidang Akhir TA (2)
+                                Sidang Akhir TA ({{ jumlahSidang }})
                             </button>
                             <button
                                 type="button"
@@ -237,7 +149,7 @@ const requestRevision = () => {
                                 ]"
                                 @click="activeTab = 'Sempro'"
                             >
-                                Seminar Proposal (1)
+                                Seminar Proposal ({{ jumlahSempro }})
                             </button>
                         </div>
                     </div>
@@ -297,24 +209,15 @@ const requestRevision = () => {
                                     {{ app.tanggalDaftar }}
                                 </td>
                                 <td class="px-4 py-3.5">
-                                    <span
-                                        class="rounded-md px-2 py-0.5 text-[10px] font-bold"
-                                        :class="[
-                                            app.status === 'verified'
-                                                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-                                                : app.status === 'revision'
-                                                  ? 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'
-                                                  : 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
-                                        ]"
-                                    >
-                                        {{
-                                            app.status === 'verified'
-                                                ? 'Lolos Verifikasi'
-                                                : app.status === 'revision'
-                                                  ? 'Perlu Revisi'
-                                                  : 'Menunggu Validasi'
-                                        }}
-                                    </span>
+                                    <StatusBadge
+                                        size="sm"
+                                        :variant="
+                                            STATUS_PENGAJUAN[app.status].variant
+                                        "
+                                        :text="
+                                            STATUS_PENGAJUAN[app.status].label
+                                        "
+                                    />
                                 </td>
                                 <td class="px-4 py-3.5 text-right" @click.stop>
                                     <Button
@@ -387,7 +290,7 @@ const requestRevision = () => {
 
                 <div v-if="activeApplicant" class="mt-4 space-y-3">
                     <div
-                        v-for="(item, idx) in activeApplicant.items"
+                        v-for="(item, idx) in activeApplicant.syarat"
                         :key="idx"
                         class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-xs dark:border-slate-800 dark:bg-slate-900/50"
                     >

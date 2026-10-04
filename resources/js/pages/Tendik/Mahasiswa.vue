@@ -8,6 +8,17 @@ import Button from '@/Components/Button.vue';
 import Card from '@/Components/Card.vue';
 import Modal from '@/Components/Modal.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
+import { mockMahasiswa } from '@/data/tendik';
+import type { Mahasiswa } from '@/types/models';
+
+const props = withDefaults(
+    defineProps<{
+        mahasiswa?: Mahasiswa[];
+    }>(),
+    {
+        mahasiswa: () => mockMahasiswa,
+    },
+);
 
 const searchQuery = ref('');
 const filterAngkatan = ref('Semua');
@@ -27,73 +38,22 @@ const filteredStudents = computed(() => {
     });
 });
 
-const students = ref([
-    {
-        id: 1,
-        nama: 'Akmal Falah Maulana',
-        nim: '11231006',
-        angkatan: '2023',
-        prodi: 'S1 Informatika',
-        email: 'akmal.falah@student.itk.ac.id',
-        tahap: 'Sidang Akhir TA',
-        statusAkun: 'Aktif',
-    },
-    {
-        id: 2,
-        nama: 'Siti Nurhaliza Putri',
-        nim: '11211045',
-        angkatan: '2021',
-        prodi: 'S1 Informatika',
-        email: 'siti.nurhaliza@student.itk.ac.id',
-        tahap: 'Sidang Akhir TA',
-        statusAkun: 'Aktif',
-    },
-    {
-        id: 3,
-        nama: 'Bagus Pratama Hendrawan',
-        nim: '11221089',
-        angkatan: '2022',
-        prodi: 'S1 Informatika',
-        email: 'bagus.pratama@student.itk.ac.id',
-        tahap: 'Seminar Proposal',
-        statusAkun: 'Aktif',
-    },
-    {
-        id: 4,
-        nama: 'Dinda Rahmadani',
-        nim: '11221012',
-        angkatan: '2022',
-        prodi: 'S1 Informatika',
-        email: 'dinda.rahmadani@student.itk.ac.id',
-        tahap: 'Pengerjaan TA Bab 4-5',
-        statusAkun: 'Aktif',
-    },
-    {
-        id: 5,
-        nama: 'Rizky Pratama Adhitya',
-        nim: '11221034',
-        angkatan: '2022',
-        prodi: 'S1 Informatika',
-        email: 'rizky.adhitya@student.itk.ac.id',
-        tahap: 'Pengajuan Judul',
-        statusAkun: 'Aktif',
-    },
-]);
+const students = ref<Mahasiswa[]>([...props.mahasiswa]);
 
 // Reset Password Modal
 const showResetModal = ref(false);
-const selectedStudent = ref<any>(null);
+const selectedStudent = ref<Mahasiswa | null>(null);
 const resetSuccessMsg = ref('');
 
 // Detail Modal
 const showDetailModal = ref(false);
 
-const openDetailModal = (s: any) => {
+const openDetailModal = (s: Mahasiswa) => {
     selectedStudent.value = s;
     showDetailModal.value = true;
 };
 
-const openResetModal = (s: any) => {
+const openResetModal = (s: Mahasiswa) => {
     selectedStudent.value = s;
     resetSuccessMsg.value = '';
     showResetModal.value = true;
