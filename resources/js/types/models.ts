@@ -187,3 +187,23 @@ export type Period = {
     endDate: string;
     isOpen: boolean;
 };
+
+/* --------------------------------------------------------------- *
+ * Kaprodi portal: Master Data Dosen & Workload Quota Management
+ * --------------------------------------------------------------- */
+
+export type MasterDosen = {
+    id: number;
+    nama: string;
+    nip: string;
+    prodi: string;
+    role: string;
+    email: string;
+    jabatanAkademik: string;
+    bidangKeahlian: string;
+    tipe: 'Internal ITK' | 'Dosen Eksternal';
+    asalInstansi?: string;
+    currentQuota: number;
+    maxQuota: number;
+    status: 'Aktif' | 'Cuti' | 'Nonaktif';
+};

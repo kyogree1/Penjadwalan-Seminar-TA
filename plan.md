@@ -42,12 +42,12 @@ Goal: Port the rich UI and features from `Front-End(1).zip` (HTML+Vue CDN) into 
 
 ### Phase F2: Master Data Dosen & Workload Quotas
 
-- [ ] Add `resources/js/pages/Kaprodi/Dosen.vue` (or an active tab in `Monitoring.vue`):
-    - [ ] 4 KPI Cards: Total Dosen, Dosen Informatika ITK, Dosen Lintas/Eksternal, Rata-rata Beban Uji GA.
-    - [ ] Master table with NIP, Jabatan Akademik, KBK (Bidang Keahlian), Role, and Quota progress bar (`currentQuota / maxQuota`).
-    - [ ] Modal Tambah / Edit Dosen.
-    - [ ] Modal Import CSV/Excel.
-    - [ ] Filters: Search query, Filter Prodi (Informatika vs Lintas), Filter Jabatan, Filter Role.
+- [x] Add `resources/js/pages/Kaprodi/Dosen.vue` (or an active tab in `Monitoring.vue`):
+    - [x] 4 KPI Cards: Total Dosen, Dosen Informatika ITK, Dosen Lintas/Eksternal, Rata-rata Beban Uji GA.
+    - [x] Master table with NIP, Jabatan Akademik, KBK (Bidang Keahlian), Role, and Quota progress bar (`currentQuota / maxQuota`).
+    - [x] Modal Tambah / Edit Dosen.
+    - [x] Modal Import CSV/Excel.
+    - [x] Filters: Search query, Filter Prodi (Informatika vs Lintas), Filter Jabatan, Filter Role.
 
 ### Phase F3: Dosen Bimbingan Logbook & Digital Paraf
 

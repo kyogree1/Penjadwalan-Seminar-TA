@@ -71,6 +71,7 @@ Route::middleware('auth')->group(function () {
         Route::inertia('/dashboard', 'Kaprodi/Dashboard')->name('dashboard');
         Route::inertia('/penjadwalan', 'Koordinator/Penjadwalan')->name('penjadwalan');
         Route::inertia('/monitoring', 'Koordinator/Monitoring')->name('monitoring');
+        Route::inertia('/dosen', 'Kaprodi/Dosen')->name('dosen');
         Route::inertia('/persetujuan', 'Kaprodi/Persetujuan')->name('persetujuan');
     });
 

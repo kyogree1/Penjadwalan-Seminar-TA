@@ -699,6 +699,22 @@ const handleLogout = () => {
                             >
                         </Link>
 
+                        <!-- Data Dosen & Kuota -->
+                        <Link
+                            href="/kaprodi/dosen"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl.startsWith('/kaprodi/dosen')
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                        >
+                            <GraduationCap class="h-4 w-4 shrink-0" />
+                            <span v-if="!sidebarCollapsed"
+                                >Data Dosen & Kuota</span
+                            >
+                        </Link>
+
                         <!-- Persetujuan Akademik -->
                         <Link
                             href="/kaprodi/persetujuan"
