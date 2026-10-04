@@ -33,12 +33,18 @@ class BimbinganController extends Controller
         $bimbingan = Bimbingan::where('dosen_id', $user->id)->findOrFail($id);
 
         $validated = $request->validate([
-            'status' => ['required', 'in:disetujui,revisi,ditolak'],
+            'status' => ['required', 'in:delivered,disetujui,process,revisi,ditolak'],
             'catatan_dosen' => ['nullable', 'string'],
         ]);
 
+        $dbStatus = match ($validated['status']) {
+            'disetujui', 'delivered' => 'delivered',
+            'ditolak' => 'ditolak',
+            default => 'process',
+        };
+
         $bimbingan->update([
-            'status' => $validated['status'],
+            'status' => $dbStatus,
             'catatan_dosen' => $validated['catatan_dosen'] ?? $bimbingan->catatan_dosen,
         ]);
 
@@ -64,7 +70,7 @@ class BimbinganController extends Controller
             'rangkuman' => $validated['rangkuman'],
             'keterangan' => $validated['keterangan'] ?? 'Sesi bimbingan resmi',
             'catatan_dosen' => $validated['catatan_dosen'] ?? 'Disetujui pembimbing',
-            'status' => 'disetujui',
+            'status' => 'delivered',
         ]);
 
         return redirect()->back()->with('success', 'Sesi bimbingan baru berhasil dicatat dan diparaf!');
