@@ -237,3 +237,39 @@ export type DosenAdvisee = {
     tahap: string;
     sesiList: BimbinganSesi[];
 };
+
+/* --------------------------------------------------------------- *
+ * Kaprodi portal: Academic Submissions & Reviews (Persetujuan)
+ * --------------------------------------------------------------- */
+
+export type JudulSubmission = {
+    id: number;
+    nama: string;
+    nim: string;
+    angkatan: string;
+    bidang: string;
+    judul: string;
+    deskripsi: string;
+    pembimbing1Usulan: string;
+    pembimbing2Usulan: string;
+    pembimbing1Final: string;
+    pembimbing2Final: string;
+    tanggal: string;
+    status: StatusPengajuan;
+    catatanKaprodi?: string;
+};
+
+export type AcademicSubmission = {
+    id: number;
+    nama: string;
+    nim: string;
+    angkatan: string;
+    judul: string;
+    status: StatusPengajuan;
+    pembimbing: string;
+    penguji: string;
+    jadwal: string;
+    files: string[];
+    catatan?: string;
+    requirements?: { label: string; ready: boolean }[];
+};

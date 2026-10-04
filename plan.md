@@ -59,10 +59,10 @@ Goal: Port the rich UI and features from `Front-End(1).zip` (HTML+Vue CDN) into 
 
 ### Phase F4: Kaprodi Persetujuan & Review System
 
-- [ ] Align `resources/js/pages/Kaprodi/Persetujuan.vue` with `pengajuan-judul.html`, `sempro.html`, and `sidang.html`:
-    - [ ] Replace inline status switches with `StatusBadge` and `lib/status.ts`.
-    - [ ] Review notes textarea and explicit review actions (Approve, Minta Revisi, Tolak).
-    - [ ] Synchronize reviewer fields with backend `catatan_kaprodi`.
+- [x] Align `resources/js/pages/Kaprodi/Persetujuan.vue` with `pengajuan-judul.html`, `sempro.html`, and `sidang.html`:
+    - [x] Replace inline status switches with `StatusBadge` and `lib/status.ts`.
+    - [x] Review notes textarea and explicit review actions (Approve, Minta Revisi, Tolak).
+    - [x] Synchronize reviewer fields with backend `catatan_kaprodi`.
 
 ---
 
