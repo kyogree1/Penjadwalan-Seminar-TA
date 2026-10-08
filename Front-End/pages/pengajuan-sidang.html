@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sidang Tugas Akhir - SIPTA IF ITK</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c7d7fe', 300: '#a4bcfd',
+              400: '#7994fa', 500: '#4f68f3', 600: '#2b44e2', 700: '#1b32c6',
+              800: '#0b3084', 900: '#082361', 950: '#041235',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Custom Stylesheet & Shared Utilities -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/shared.js"></script>
+  <script src="../assets/js/mockData.js"></script>
+
+  <!-- Modular Reusable Components -->
+  <script src="../assets/js/components/sidebar.js"></script>
+  <script src="../assets/js/components/navbar.js"></script>
+  <script src="../assets/js/components/chatbot.js"></script>
+</head>
+
+<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased selection:bg-brand-600 selection:text-white flex flex-col">
+
+  <div id="app" v-cloak class="flex min-h-screen flex-1 relative">
+
+    <!-- REUSABLE SIDEBAR COMPONENT -->
+    <app-sidebar 
+      :active-page="'sidang'" 
+      :is-collapsed="isSidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      :root-path="'../'"
+      @toggle-collapse="toggleDesktopSidebar"
+      @close-mobile="closeMobileSidebar"
+    ></app-sidebar>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="app-main-wrapper flex-1 flex flex-col min-w-0 transition-all duration-300 w-full min-h-screen">
+      <!-- REUSABLE NAVBAR COMPONENT -->
+      <app-navbar 
+        :is-dark="isDark"
+        @toggle-sidebar="toggleSidebar"
+        @toggle-theme="toggleTheme"
+        v-model="searchQuery"
+      ></app-navbar>
+
+      <!-- TOAST NOTIFICATION POPUP -->
+      <div 
+        v-if="toast.show" 
+        class="fixed top-24 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-md transition-all duration-300 animate-bounce"
+        :class="toast.isError ? 'bg-rose-50/95 dark:bg-rose-950/90 text-rose-800 dark:text-rose-200 border-rose-300 dark:border-rose-800' : 'bg-emerald-50/95 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800'"
+      >
+        <span class="text-lg">{{ toast.isError ? '⚠️' : '✅' }}</span>
+        <span class="text-xs sm:text-sm font-bold">{{ toast.message }}</span>
+      </div>
+
+      <!-- MAIN PAGE BODY (Matches Data_pengajuan_seminar_ta.png) -->
+      <main class="page-container space-y-6">
+        
+        <!-- Header & Breadcrumb -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-1">
+              <a href="../index.html" class="hover:text-brand-600">Home</a>
+              <span>›</span>
+              <span class="text-slate-600 dark:text-slate-300">Data Pengajuan</span>
+              <span>›</span>
+              <span class="text-brand-700 dark:text-blue-400 font-semibold">Sidang TA</span>
+            </nav>
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Sidang Tugas Akhir</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Verifikasi berkas naskah lengkap skripsi, validasi syarat kelulusan, dan penginputan nilai akhir mahasiswa.
+            </p>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <button 
+              @click="openModalDaftarSidang"
+              class="px-4 py-2.5 bg-gradient-to-r from-brand-800 to-blue-600 hover:from-brand-900 hover:to-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-brand-900/20 flex items-center gap-2 transition-transform active:scale-95"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              <span>+ Pendaftaran Sidang TA</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI SUMMARY CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Pendaftar Sidang</p>
+              <p class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ totalSidangCount }} Mhs</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-brand-700 dark:text-blue-400 flex items-center justify-center font-bold">
+              🎓
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Jadwal Tervalidasi</p>
+              <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{{ terjadwalCount }} Mhs</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center font-bold">
+              🗓️
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-amber-600">Menunggu Validasi</p>
+              <p class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">{{ pendingValidationCount }} Mhs</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center font-bold">
+              ⏳
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-purple-200/80 dark:border-purple-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-purple-600">Selesai Dinilai</p>
+              <p class="text-2xl font-black text-purple-600 dark:text-purple-400 mt-1">{{ selesaiDinilaiCount }} Mhs</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center font-bold">
+              📜
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN LAYOUT: LEFT (PROFILE + TABLE) & RIGHT (INSPECTOR PANEL) -->
+        <div class="flex flex-col lg:flex-row items-start gap-5 w-full">
+          
+          <!-- LEFT SECTION: PROFILE & TABLE (FLEX-1) -->
+          <div class="flex-1 min-w-0 space-y-6 w-full">
+            
+            <!-- DOSEN PROFILE CARD (Exact match to Data_pengajuan_seminar_ta.png) -->
+            <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-5 sm:p-6 space-y-5">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+                <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 border-2 border-white dark:border-slate-800 shadow-md">
+                  <svg class="w-10 h-10 sm:w-12 sm:h-12 text-slate-400 dark:text-slate-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                  <span class="absolute bottom-1 right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#111827]"></span>
+                </div>
+
+                <div class="space-y-1.5 flex-1 min-w-0">
+                  <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-white truncate">Nisa Rizqiya Fadhliana, S.Kom., M.T.</h2>
+                  
+                  <div class="flex items-center gap-2 pt-1 flex-wrap">
+                    <span class="px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-brand-50 dark:bg-brand-950/60 text-brand-800 dark:text-blue-300 border border-brand-200 dark:border-brand-800">
+                      NIP: 198804102019032020
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60">
+                      <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                      <span class="truncate">nisafadhliana@lecturer.itk.ac.id</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60">
+                      <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                      <span>Dosen</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Subtabs: Mahasiswa Bimbingan | Mahasiswa Uji (Matches Mockup) -->
+              <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2 sm:gap-3 flex-wrap">
+                <button 
+                  @click="activeSubtab = 'bimbingan'"
+                  :class="[
+                    activeSubtab === 'bimbingan' 
+                      ? 'bg-brand-800 text-white font-bold shadow-md' 
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold',
+                    'px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-2'
+                  ]"
+                >
+                  <span>Mahasiswa Bimbingan</span>
+                  <span class="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold" :class="activeSubtab === 'bimbingan' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">{{ bimbinganStudentsCount }}</span>
+                </button>
+                <button 
+                  @click="activeSubtab = 'uji'"
+                  :class="[
+                    activeSubtab === 'uji' 
+                      ? 'bg-brand-800 text-white font-bold shadow-md' 
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold',
+                    'px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-2'
+                  ]"
+                >
+                  <span>Mahasiswa Uji</span>
+                  <span class="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold" :class="activeSubtab === 'uji' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">{{ ujiStudentsCount }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- TABLE MAHASISWA SIDANG TA -->
+            <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden space-y-0">
+              
+              <!-- Card Header -->
+              <div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2">
+                  <h3 class="text-sm font-bold text-slate-900 dark:text-white">Daftar Mahasiswa Sidang TA</h3>
+                  <span class="text-xs text-slate-400">({{ filteredSidangStudents.length }} data)</span>
+                </div>
+
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="text-slate-400 font-medium">Angkatan:</span>
+                  <select 
+                    v-model="filterAngkatan"
+                    class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold focus:outline-none cursor-pointer"
+                  >
+                    <option value="all">Semua Angkatan</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Horizontal Scroll Helper Banner (Matches Mockup) -->
+              <div class="bg-slate-50/80 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400 px-4 py-2 text-[11px] flex items-center gap-2 border-b border-slate-100 dark:border-slate-800">
+                <span class="text-brand-600 dark:text-blue-400 font-bold">➔</span>
+                <span>Geser tabel ke samping atau gunakan <kbd class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono text-slate-700 dark:text-slate-300">Shift</kbd> + scroll mouse</span>
+              </div>
+
+              <!-- Table Content (Exact columns matching Data_pengajuan_seminar_ta.png) -->
+              <div class="overflow-x-auto w-full">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-100 dark:border-slate-800">
+                    <tr>
+                      <th class="py-2.5 px-2 w-8 text-center">NO</th>
+                      <th class="py-2.5 px-2 min-w-[120px]">NAMA</th>
+                      <th class="py-2.5 px-1.5 min-w-[80px] font-mono">NIM</th>
+                      <th class="py-2.5 px-2 min-w-[170px]">JUDUL</th>
+                      <th class="py-2.5 px-1.5 text-center min-w-[95px]">STATUS</th>
+                      <th class="py-2.5 px-1.5 text-center min-w-[110px]">PERSETUJUAN</th>
+                      <th class="py-2.5 px-1 text-center w-12">NILAI</th>
+                      <th class="py-2.5 px-1.5 text-center min-w-[80px]">REVISI</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                    <tr 
+                      v-for="(mhs, idx) in filteredSidangStudents" 
+                      :key="mhs.id"
+                      @click="selectStudent(mhs)"
+                      :class="[
+                        selectedSidangStudent && selectedSidangStudent.id === mhs.id 
+                          ? 'bg-blue-50/90 dark:bg-blue-950/50 ring-2 ring-inset ring-brand-500' 
+                          : 'hover:bg-slate-50/70 dark:hover:bg-slate-800/40',
+                        'cursor-pointer transition-colors'
+                      ]"
+                    >
+                      <td class="py-3 px-2 text-center font-medium text-slate-500">{{ idx + 1 }}</td>
+                      <td class="py-3 px-2 font-bold text-slate-900 dark:text-white leading-snug">{{ mhs.nama }}</td>
+                      <td class="py-3 px-1.5 font-mono text-slate-500 whitespace-nowrap">{{ mhs.nim }}</td>
+                      <td class="py-3 px-2 font-medium text-slate-800 dark:text-slate-200">
+                        <p class="line-clamp-2 leading-tight text-[11px]">{{ mhs.judul }}</p>
+                      </td>
+                      <td class="py-3 px-1.5 text-center">
+                        <span :class="[getStatusBadge(mhs.statusBerkas), 'px-2 py-0.5 rounded text-[10px] font-bold inline-block text-center whitespace-nowrap']">
+                          {{ mhs.statusBerkas }}
+                        </span>
+                      </td>
+                      <td class="py-3 px-1.5 text-center">
+                        <span :class="[getPersetujuanBadge(mhs.persetujuan), 'px-2 py-0.5 rounded text-[10px] font-bold inline-block text-center whitespace-nowrap']">
+                          {{ mhs.persetujuan }}
+                        </span>
+                      </td>
+                      <td class="py-3 px-1 text-center font-bold" :class="mhs.nilai ? 'text-emerald-600 dark:text-emerald-400 text-sm' : 'text-slate-400'">
+                        {{ mhs.nilai || '—' }}
+                      </td>
+                      <td class="py-3 px-1.5 text-center text-slate-500 text-[11px] truncate max-w-[100px]">
+                        {{ mhs.revisi || '—' }}
+                      </td>
+                    </tr>
+
+                    <tr v-if="filteredSidangStudents.length === 0">
+                      <td colspan="8" class="py-10 text-center text-slate-400 text-xs">
+                        Tidak ada mahasiswa sidang tugas akhir yang cocok dengan kriteria filter.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Footer -->
+              <div class="p-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                <span>Klik baris mahasiswa untuk melihat dosen penguji, slot jadwal, dan file skripsi lengkap</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT SECTION: 3 CARDS INSPECTOR PANEL (Matches Data_pengajuan_seminar_ta.png) -->
+          <div class="w-full lg:w-80 space-y-4">
+            
+            <!-- CARD 1: DOSEN PENGUJI -->
+            <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                  <svg class="w-4 h-4 text-brand-600 dark:text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                  <span>Dosen Penguji</span>
+                </h3>
+              </div>
+
+              <!-- Selected State -->
+              <div v-if="selectedSidangStudent" class="space-y-2 text-xs pt-1">
+                <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 space-y-0.5">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase">Penguji Utama (1):</span>
+                  <p class="font-bold text-slate-900 dark:text-white leading-tight">{{ selectedSidangStudent.penguji1 }}</p>
+                  <p class="text-[10px] text-emerald-600 font-semibold">✓ Konfirmasi Hadir</p>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 space-y-0.5">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase">Penguji Pendamping (2):</span>
+                  <p class="font-bold text-slate-900 dark:text-white leading-tight">{{ selectedSidangStudent.penguji2 }}</p>
+                  <p class="text-[10px] text-emerald-600 font-semibold">✓ Konfirmasi Hadir</p>
+                </div>
+              </div>
+
+              <!-- Empty State (Matches Mockup) -->
+              <div v-else class="py-5 text-center text-slate-400 space-y-1.5">
+                <div class="w-9 h-9 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                </div>
+                <p class="text-xs font-medium">Klik nama mahasiswa</p>
+              </div>
+            </div>
+
+            <!-- CARD 2: JADWAL -->
+            <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                  <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  <span>Jadwal</span>
+                </h3>
+              </div>
+
+              <!-- Selected State -->
+              <div v-if="selectedSidangStudent" class="space-y-2 text-xs pt-1">
+                <div class="p-2.5 rounded-xl bg-purple-50/60 dark:bg-purple-950/40 border border-purple-200/60 dark:border-purple-900/60 space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-purple-900 dark:text-purple-300">Sidang Akhir Skripsi</span>
+                    <span class="px-1.5 py-0.2 rounded text-[10px] font-extrabold bg-emerald-500 text-white">Plotting AI (GA)</span>
+                  </div>
+                  <p class="text-xs text-slate-700 dark:text-slate-300">📅 {{ selectedSidangStudent.tanggal }}</p>
+                  <p class="text-xs text-slate-700 dark:text-slate-300">⏰ {{ selectedSidangStudent.waktu }} WITA</p>
+                  <p class="text-[11px] text-slate-500 font-mono">📍 Ruang: {{ selectedSidangStudent.ruang }}</p>
+                </div>
+              </div>
+
+              <!-- Empty State (Matches Mockup) -->
+              <div v-else class="py-5 text-center text-slate-400 space-y-1.5">
+                <div class="w-9 h-9 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <p class="text-xs font-medium">Klik nama mahasiswa</p>
+              </div>
+            </div>
+
+            <!-- CARD 3: FILE PENDUKUNG -->
+            <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  <span>File Pendukung</span>
+                </h3>
+              </div>
+
+              <!-- Selected State -->
+              <div v-if="selectedSidangStudent" class="space-y-3 text-xs pt-1">
+                <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  <div 
+                    v-for="(f, fIdx) in selectedSidangStudent.files" 
+                    :key="fIdx"
+                    class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between gap-2"
+                  >
+                    <div class="flex items-center gap-2 truncate">
+                      <span class="text-rose-500 font-bold">📄</span>
+                      <span class="font-medium text-slate-700 dark:text-slate-200 truncate">{{ f.name }}</span>
+                    </div>
+                    <button @click="showToast('Mengunduh ' + f.name)" class="text-brand-600 hover:text-brand-800 dark:text-blue-400 font-bold flex-shrink-0 text-[11px]">
+                      Unduh
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Action Buttons: Validasi Berkas & Input Nilai (Activity 3.3.16 & 3.3.17) -->
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                  <div class="flex items-center gap-2">
+                    <button 
+                      @click="validateSidangDoc(selectedSidangStudent, true)"
+                      class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-sm transition-all active:scale-95"
+                    >
+                      ✓ Setujui Berkas
+                    </button>
+                    <button 
+                      @click="validateSidangDoc(selectedSidangStudent, false)"
+                      class="py-2 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition-colors"
+                    >
+                      Revisi
+                    </button>
+                  </div>
+
+                  <!-- Input Nilai Sidang Button -->
+                  <button 
+                    @click="openModalNilai(selectedSidangStudent)"
+                    class="w-full py-2 bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-800 hover:to-indigo-700 text-white font-bold rounded-xl text-xs shadow-sm transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <span>✎ Input / Edit Nilai Sidang</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Empty State (Matches Mockup) -->
+              <div v-else class="py-5 text-center text-slate-400 space-y-1.5">
+                <div class="w-9 h-9 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                  <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <p class="text-xs font-medium">Klik nama mahasiswa untuk melihat file</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+
+      <!-- MODAL FORM: INPUT NILAI HASIL SIDANG (Activity 3.3.16 / Sequence 3.4.16) -->
+      <div 
+        v-if="isModalNilaiOpen" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
+      >
+        <div class="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-md w-full p-6 space-y-5 animate-scaleIn">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Form Penilaian Sidang TA</h3>
+            <button @click="isModalNilaiOpen = false" class="text-slate-400 hover:text-slate-600">✕</button>
+          </div>
+
+          <div v-if="targetStudentNilai" class="space-y-4 text-xs">
+            <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+              <p class="font-bold text-slate-900 dark:text-white">{{ targetStudentNilai.nama }}</p>
+              <p class="text-[11px] font-mono text-slate-400">NIM: {{ targetStudentNilai.nim }}</p>
+            </div>
+
+            <!-- Skor Nilai Angka -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Skor Nilai Sidang (0 - 100) <span class="text-rose-500">*</span></label>
+              <input 
+                v-model.number="formNilai.skor"
+                type="number" 
+                min="0" 
+                max="100" 
+                placeholder="Contoh: 85.5"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+              />
+              <p class="text-[11px] text-slate-400 font-semibold">
+                Konversi Nilai Huruf: <b class="text-purple-600 dark:text-purple-400">{{ hitungGrade(formNilai.skor) }}</b>
+              </p>
+            </div>
+
+            <!-- Catatan Revisi & Waktu Tenggat -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Catatan Revisi Penguji</label>
+              <textarea 
+                v-model="formNilai.revisi"
+                rows="3"
+                placeholder="Tuliskan poin-poin revisi yang wajib diselesaikan mahasiswa dalam 14 hari..."
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button @click="isModalNilaiOpen = false" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500">Batal</button>
+            <button 
+              @click="submitNilaiSidang" 
+              class="px-5 py-2.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-md active:scale-95 transition-all"
+            >
+              Simpan Nilai
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL FORM: PENDAFTARAN SIDANG TA BARU (Activity 3.3.5 / Sequence 3.4.5) -->
+      <div 
+        v-if="isModalDaftarOpen" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
+      >
+        <div class="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full p-6 space-y-5 animate-scaleIn">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Pendaftaran Sidang Akhir Skripsi</h3>
+            <button @click="isModalDaftarOpen = false" class="text-slate-400 hover:text-slate-600">✕</button>
+          </div>
+
+          <div class="space-y-4 text-xs">
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Nama Lengkap Mahasiswa <span class="text-rose-500">*</span></label>
+              <input v-model="formDaftar.nama" type="text" placeholder="Masukkan Nama Lengkap" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">NIM <span class="text-rose-500">*</span></label>
+                <input v-model="formDaftar.nim" type="text" placeholder="11201085" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono" />
+              </div>
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Angkatan</label>
+                <input v-model="formDaftar.angkatan" type="text" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" />
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Judul Naskah Tugas Akhir <span class="text-rose-500">*</span></label>
+              <textarea v-model="formDaftar.judul" rows="2" placeholder="Judul lengkap skripsi Bab 1-5" class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white"></textarea>
+            </div>
+
+            <div class="p-3 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-900/60 space-y-1.5">
+              <p class="font-bold text-purple-900 dark:text-purple-300">Kelengkapan Berkas Wajib:</p>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400">
+                1. Naskah Lengkap Skripsi (Bab 1 - Bab 5)<br>
+                2. Lembar Persetujuan Pembimbing & Beban Bimbingan (min. 8x)<br>
+                3. Bukti Bebas Plagiasi Turnitin (&lt; 20%) & Sertifikat IAET
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button @click="isModalDaftarOpen = false" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500">Batal</button>
+            <button @click="submitDaftarSidang" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-brand-800 text-white hover:bg-brand-900 shadow-md">
+              Ajukan Permohonan Sidang
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- REUSABLE FLOATING CHATBOT COMPONENT -->
+      <app-chatbot></app-chatbot>
+
+    </div>
+  </div>
+
+  <!-- APPLICATION VUE SCRIPT -->
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    const app = createApp({
+      setup() {
+        const layout = useLayout();
+        const searchQuery = ref('');
+        const activeSubtab = ref('bimbingan');
+        const filterAngkatan = ref('all');
+
+        // Main Dataset Sidang TA
+        const sidangStudents = ref([
+          {
+            id: 1,
+            nama: 'Riyo Rizky Prayogi',
+            nim: '11201085',
+            angkatan: '2020',
+            subtab: 'bimbingan',
+            judul: 'Pembangunan RESTful API Penjadwalan Sidang dengan Rate Limiting dan Caching Redis Berperforma Tinggi',
+            statusBerkas: 'Selesai Validasi',
+            persetujuan: 'Disetujui Pembimbing',
+            nilai: 'A',
+            revisi: 'Perbaiki lampiran kueri Redis',
+            penguji1: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
+            penguji2: 'Dr. Budi Wicaksono, M.Kom.',
+            tanggal: 'Senin, 05 Okt 2026',
+            waktu: '09:00 - 10:30',
+            ruang: 'Lab. Komputasi Cerdas 2',
+            files: [
+              { name: 'Naskah_Lengkap_Skripsi_11201085.pdf' },
+              { name: 'Hasil_Cek_Plagiasi_Turnitin_14%.pdf' },
+              { name: 'Lembar_Persetujuan_Sidang_Pembimbing.pdf' },
+              { name: 'Transkrip_Nilai_IAET_520.pdf' }
+            ]
+          },
+          {
+            id: 2,
+            nama: 'Muhammad Azka Yunastio',
+            nim: '11231036',
+            angkatan: '2023',
+            subtab: 'bimbingan',
+            judul: 'Penerapan Algoritma Genetika dan Large Language Model pada Sistem Penjadwalan Seminar Tugas Akhir',
+            statusBerkas: 'Menunggu Validasi',
+            persetujuan: 'Menunggu Persetujuan',
+            nilai: '',
+            revisi: '',
+            penguji1: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
+            penguji2: 'Rian Kurniawan, S.Kom., M.Eng.',
+            tanggal: 'Rabu, 07 Okt 2026',
+            waktu: '10:30 - 12:00',
+            ruang: 'Ruang Sidang FSTI 1',
+            files: [
+              { name: 'Draf_Lengkap_Bab_1-5_11231036.pdf' },
+              { name: 'Sertifikat_Turnitin_11%.pdf' },
+              { name: 'Formulir_Bimbingan_8_Sesi.pdf' }
+            ]
+          },
+          {
+            id: 3,
+            nama: 'Ahmad Iqbal Fadhillah',
+            nim: '11191004',
+            angkatan: '2019',
+            subtab: 'uji',
+            judul: 'Rancang Bangun Sistem Informasi Geografis Pemetaan Fasilitas Kampus Berbasis Web 3D',
+            statusBerkas: 'Selesai Validasi',
+            persetujuan: 'Disetujui Pembimbing',
+            nilai: 'AB',
+            revisi: 'Lengkapi dokumentasi API',
+            penguji1: 'Nisa Rizqiya Fadhliana, S.Kom., M.T.',
+            penguji2: 'Dian Permata Sari, S.Kom., M.Kom.',
+            tanggal: 'Selasa, 06 Okt 2026',
+            waktu: '13:30 - 15:00',
+            ruang: 'Lab. Rekayasa Perangkat Lunak',
+            files: [
+              { name: 'Skripsi_Final_Ahmad_Iqbal.pdf' },
+              { name: 'Turnitin_Plagiasi_15%.pdf' },
+              { name: 'Logbook_Bimbingan.pdf' }
+            ]
+          },
+          {
+            id: 4,
+            nama: 'Andriani Fenny Maulidha',
+            nim: '11191009',
+            angkatan: '2019',
+            subtab: 'uji',
+            judul: 'Implementasi Algoritma Naive Bayes untuk Klasifikasi Sentimen Ulasan Pengguna Aplikasi E-Commerce',
+            statusBerkas: 'Selesai Validasi',
+            persetujuan: 'Disetujui Pembimbing',
+            nilai: 'A',
+            revisi: 'Sudah Bebas Revisi',
+            penguji1: 'Nisa Rizqiya Fadhliana, S.Kom., M.T.',
+            penguji2: 'Rian Kurniawan, S.Kom., M.Eng.',
+            tanggal: 'Kamis, 08 Okt 2026',
+            waktu: '09:00 - 10:30',
+            ruang: 'Ruang Sidang FSTI 2',
+            files: [
+              { name: 'Naskah_Skripsi_Fenny_11191009.pdf' },
+              { name: 'Turnitin_Similarity_12%.pdf' }
+            ]
+          }
+        ]);
+
+        const selectedSidangStudent = ref(sidangStudents.value[0] || null);
+
+        // Toast State
+        const toast = ref({
+          show: false,
+          message: '',
+          isError: false
+        });
+
+        const showToast = (message, isError = false) => {
+          toast.value = { show: true, message, isError };
+          setTimeout(() => {
+            toast.value.show = false;
+          }, 3500);
+        };
+
+        // Filter Computations
+        const filteredSidangStudents = computed(() => {
+          return sidangStudents.value.filter(item => {
+            const matchTab = item.subtab === activeSubtab.value;
+            const matchAngkatan = filterAngkatan.value === 'all' || item.angkatan === filterAngkatan.value;
+            const q = searchQuery.value.toLowerCase().trim();
+            const matchQuery = !q || item.nama.toLowerCase().includes(q) || item.nim.toLowerCase().includes(q) || item.judul.toLowerCase().includes(q);
+            return matchTab && matchAngkatan && matchQuery;
+          });
+        });
+
+        const bimbinganStudentsCount = computed(() => sidangStudents.value.filter(s => s.subtab === 'bimbingan').length);
+        const ujiStudentsCount = computed(() => sidangStudents.value.filter(s => s.subtab === 'uji').length);
+
+        const totalSidangCount = computed(() => sidangStudents.value.length);
+        const terjadwalCount = computed(() => sidangStudents.value.filter(s => s.tanggal).length);
+        const pendingValidationCount = computed(() => sidangStudents.value.filter(s => s.statusBerkas === 'Menunggu Validasi').length);
+        const selesaiDinilaiCount = computed(() => sidangStudents.value.filter(s => s.nilai).length);
+
+        const selectStudent = (mhs) => {
+          selectedSidangStudent.value = mhs;
+        };
+
+        // Badge styling helpers
+        const getStatusBadge = (status) => {
+          if (status === 'Selesai Validasi') {
+            return 'badge-emerald';
+          }
+          if (status === 'Perlu Revisi Berkas') {
+            return 'badge-rose';
+          }
+          return 'badge-amber';
+        };
+
+        const getPersetujuanBadge = (persetujuan) => {
+          if (persetujuan === 'Disetujui Pembimbing') {
+            return 'badge-blue';
+          }
+          return 'badge-slate';
+        };
+
+        // Document Validation (Activity 3.3.17)
+        const validateSidangDoc = (student, isApproved) => {
+          if (isApproved) {
+            student.statusBerkas = 'Selesai Validasi';
+            student.persetujuan = 'Disetujui Pembimbing';
+            showToast(`Berkas sidang untuk "${student.nama}" berhasil disetujui!`);
+          } else {
+            student.statusBerkas = 'Perlu Revisi Berkas';
+            showToast(`Catatan revisi berkas dikirimkan kepada "${student.nama}".`, true);
+          }
+        };
+
+        // Modal Nilai Sidang State (Activity 3.3.16)
+        const isModalNilaiOpen = ref(false);
+        const targetStudentNilai = ref(null);
+        const formNilai = ref({ skor: 85, revisi: '' });
+
+        const openModalNilai = (student) => {
+          targetStudentNilai.value = student;
+          formNilai.value = {
+            skor: student.nilai === 'A' ? 88 : (student.nilai === 'AB' ? 80 : 85),
+            revisi: student.revisi || ''
+          };
+          isModalNilaiOpen.value = true;
+        };
+
+        const hitungGrade = (skor) => {
+          if (skor >= 85) return 'A (Sangat Memuaskan)';
+          if (skor >= 75) return 'AB (Memuaskan)';
+          if (skor >= 65) return 'B (Baik)';
+          if (skor >= 55) return 'BC (Cukup)';
+          return 'C (Perlu Ujian Ulang)';
+        };
+
+        const submitNilaiSidang = () => {
+          if (!targetStudentNilai.value) return;
+          const grade = formNilai.value.skor >= 85 ? 'A' : (formNilai.value.skor >= 75 ? 'AB' : 'B');
+          targetStudentNilai.value.nilai = grade;
+          targetStudentNilai.value.revisi = formNilai.value.revisi || 'Bebas Revisi';
+          isModalNilaiOpen.value = false;
+          showToast(`Nilai sidang (${grade}) untuk "${targetStudentNilai.value.nama}" berhasil disimpan!`);
+        };
+
+        // Modal Daftar Sidang Baru State (Activity 3.3.5)
+        const isModalDaftarOpen = ref(false);
+        const formDaftar = ref({
+          nama: 'Hari Yatun Nasifa',
+          nim: '11231030',
+          angkatan: '2023',
+          judul: 'Pengembangan Antarmuka Sistem Informasi Akademik Tugas Akhir Berbasis Desain Komponen Reusable dan Responsif'
+        });
+
+        const openModalDaftarSidang = () => {
+          isModalDaftarOpen.value = true;
+        };
+
+        const submitDaftarSidang = () => {
+          const newStudent = {
+            id: Date.now(),
+            nama: formDaftar.value.nama,
+            nim: formDaftar.value.nim,
+            angkatan: formDaftar.value.angkatan,
+            subtab: 'bimbingan',
+            judul: formDaftar.value.judul,
+            statusBerkas: 'Menunggu Validasi',
+            persetujuan: 'Menunggu Persetujuan',
+            nilai: '',
+            revisi: '',
+            penguji1: 'Dra. Nurul Rahmania, M.T.',
+            penguji2: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
+            tanggal: 'Menunggu Jadwal AI',
+            waktu: '—',
+            ruang: 'Belum Diplot',
+            files: [
+              { name: `Naskah_Skripsi_Lengkap_${formDaftar.value.nim}.pdf` },
+              { name: `Turnitin_Similarity_Check.pdf` }
+            ]
+          };
+          sidangStudents.value.unshift(newStudent);
+          selectedSidangStudent.value = newStudent;
+          isModalDaftarOpen.value = false;
+          showToast('Pendaftaran Sidang TA berhasil diajukan! Menunggu validasi.');
+        };
+
+        return {
+          ...layout,
+          searchQuery,
+          activeSubtab,
+          filterAngkatan,
+          sidangStudents,
+          selectedSidangStudent,
+          filteredSidangStudents,
+          bimbinganStudentsCount,
+          ujiStudentsCount,
+          totalSidangCount,
+          terjadwalCount,
+          pendingValidationCount,
+          selesaiDinilaiCount,
+          selectStudent,
+          getStatusBadge,
+          getPersetujuanBadge,
+          validateSidangDoc,
+          toast,
+          showToast,
+          isModalNilaiOpen,
+          targetStudentNilai,
+          formNilai,
+          openModalNilai,
+          hitungGrade,
+          submitNilaiSidang,
+          isModalDaftarOpen,
+          formDaftar,
+          openModalDaftarSidang,
+          submitDaftarSidang
+        };
+      }
+    });
+
+    registerComponents(app);
+    app.mount('#app');
+  </script>
+</body>
+</html>

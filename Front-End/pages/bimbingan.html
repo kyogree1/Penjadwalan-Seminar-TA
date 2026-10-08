@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bimbingan Tugas Akhir - SIPTA IF ITK</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c7d7fe', 300: '#a4bcfd',
+              400: '#7994fa', 500: '#4f68f3', 600: '#2b44e2', 700: '#1b32c6',
+              800: '#0b3084', 900: '#082361', 950: '#041235',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Custom Stylesheet & Shared Utilities -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/shared.js"></script>
+  <script src="../assets/js/mockData.js"></script>
+
+  <!-- Modular Reusable Components -->
+  <script src="../assets/js/components/sidebar.js"></script>
+  <script src="../assets/js/components/navbar.js"></script>
+  <script src="../assets/js/components/chatbot.js"></script>
+</head>
+
+<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased selection:bg-brand-600 selection:text-white flex flex-col">
+
+  <div id="app" v-cloak class="flex min-h-screen flex-1 relative">
+
+    <!-- REUSABLE SIDEBAR COMPONENT -->
+    <app-sidebar 
+      :active-page="'bimbingan'" 
+      :is-collapsed="isSidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      :root-path="'../'"
+      @toggle-collapse="toggleDesktopSidebar"
+      @close-mobile="closeMobileSidebar"
+    ></app-sidebar>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="app-main-wrapper flex-1 flex flex-col min-w-0 transition-all duration-300 w-full min-h-screen">
+      <!-- REUSABLE NAVBAR COMPONENT -->
+      <app-navbar 
+        :is-dark="isDark"
+        @toggle-sidebar="toggleSidebar"
+        @toggle-theme="toggleTheme"
+        v-model="searchQuery"
+      ></app-navbar>
+
+      <!-- TOAST NOTIFICATION POPUP -->
+      <div 
+        v-if="toast.show" 
+        class="fixed top-24 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-md transition-all duration-300 animate-bounce"
+        :class="toast.isError ? 'bg-rose-50/95 dark:bg-rose-950/90 text-rose-800 dark:text-rose-200 border-rose-300 dark:border-rose-800' : 'bg-emerald-50/95 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800'"
+      >
+        <span class="text-lg">{{ toast.isError ? '⚠️' : '✅' }}</span>
+        <span class="text-xs sm:text-sm font-bold">{{ toast.message }}</span>
+      </div>
+
+      <!-- MAIN PAGE BODY -->
+      <main class="page-container space-y-6">
+        
+        <!-- BREADCRUMB & HEADER -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-1">
+              <a href="../index.html" class="hover:text-brand-600">Home</a>
+              <span>›</span>
+              <span class="text-slate-600 dark:text-slate-300">Data Pengajuan</span>
+              <span>›</span>
+              <span class="text-brand-700 dark:text-blue-400 font-semibold">Bimbingan</span>
+            </nav>
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Bimbingan Tugas Akhir</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Pencatatan sesi konsultasi, paraf digital dosen pembimbing, serta pemantauan syarat kelayakan seminar (minimal 8 sesi).
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <button 
+              @click="printLogBimbingan"
+              class="px-3.5 py-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold rounded-xl transition-colors flex items-center gap-2"
+            >
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+              </svg>
+              <span>Cetak Lembar Kendali</span>
+            </button>
+
+            <!-- + Tambah Baru Button (Activity 3.3.8) -->
+            <button 
+              @click="openModalTambahSesi"
+              class="px-4 py-2.5 bg-gradient-to-r from-brand-800 to-blue-600 hover:from-brand-900 hover:to-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-brand-900/20 flex items-center gap-2 transition-transform active:scale-95"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              <span>+ Tambah Baru</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI SUMMARY CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Total Sesi -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Sesi Bimbingan</p>
+              <p class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ totalSesiGlobal }} Sesi</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-brand-700 dark:text-blue-400 flex items-center justify-center font-bold">
+              📖
+            </div>
+          </div>
+
+          <!-- Siap Sempro -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Memenuhi Syarat (≥ 8x)</p>
+              <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{{ mhsEligibleCount }} Mhs</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center font-bold">
+              ✓
+            </div>
+          </div>
+
+          <!-- Menunggu Paraf Dosen -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-amber-600">Menunggu Paraf Dosen</p>
+              <p class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">{{ pendingParafCount }} Sesi</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center font-bold">
+              ✍️
+            </div>
+          </div>
+
+          <!-- Rata-rata Konsultasi -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-purple-200/80 dark:border-purple-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-purple-600">Rata-rata Konsultasi</p>
+              <p class="text-2xl font-black text-purple-600 dark:text-purple-400 mt-1">{{ avgSesiCount }} <span class="text-xs font-normal text-slate-400">/ Mhs</span></p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center font-bold">
+              📊
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN LAYOUT: TABLE MAHASISWA & TIMELINE RIWAYAT SESI -->
+        <div class="flex flex-col lg:flex-row items-start gap-5 w-full">
+          
+          <!-- LEFT SECTION: TABEL DAFTAR MAHASISWA BIMBINGAN (Matches Data_pengajuan_bimbingan.png) -->
+          <div class="flex-1 min-w-0 w-full space-y-4">
+            
+            <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden">
+              
+              <!-- Card Header -->
+              <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-brand-600 dark:text-blue-400 font-bold">📖</span>
+                  <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Daftar Bimbingan TA</h2>
+                  <span class="text-xs text-slate-400">({{ filteredBimbinganStudents.length }} mahasiswa)</span>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative w-full sm:w-64">
+                  <input 
+                    v-model="searchQuery" 
+                    type="text" 
+                    placeholder="Cari nama, NIM, atau judul..."
+                    class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 text-slate-800 dark:text-slate-100"
+                  />
+                  <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+              </div>
+
+              <!-- TABLE CONTENT (Matching Data_pengajuan_bimbingan.png: NO, NAMA, NIM, JUDUL, AKSI) -->
+              <div class="overflow-x-auto w-full">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50/90 dark:bg-slate-800/70 text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider border-b border-slate-100 dark:border-slate-800">
+                    <tr>
+                      <th class="py-3 px-3 text-center w-10">NO</th>
+                      <th class="py-3 px-3 min-w-[150px]">NAMA</th>
+                      <th class="py-3 px-3 font-mono min-w-[95px]">NIM</th>
+                      <th class="py-3 px-3 min-w-[240px]">JUDUL</th>
+                      <th class="py-3 px-3 min-w-[130px]">LOG KONSULTASI</th>
+                      <th class="py-3 px-3 text-center min-w-[120px]">STATUS SYARAT</th>
+                      <th class="py-3 px-3 text-center w-24">AKSI</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                    <tr 
+                      v-for="(mhs, idx) in filteredBimbinganStudents" 
+                      :key="mhs.id"
+                      @click="selectStudent(mhs)"
+                      :class="[
+                        selectedStudent && selectedStudent.id === mhs.id 
+                          ? 'bg-brand-50/70 dark:bg-brand-950/40 ring-1 ring-inset ring-brand-500/40' 
+                          : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40',
+                        'cursor-pointer transition-colors'
+                      ]"
+                    >
+                      <!-- NO -->
+                      <td class="py-3 px-3 text-center font-semibold text-slate-400">{{ idx + 1 }}</td>
+
+                      <!-- NAMA -->
+                      <td class="py-3 px-3">
+                        <p class="font-bold text-slate-900 dark:text-white leading-snug">{{ mhs.nama }}</p>
+                        <span class="text-[10px] text-slate-400">Pembimbing: {{ mhs.pembimbing1.split(',')[0] }}</span>
+                      </td>
+
+                      <!-- NIM -->
+                      <td class="py-3 px-3 font-mono text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                        {{ mhs.nim }}
+                      </td>
+
+                      <!-- JUDUL -->
+                      <td class="py-3 px-3">
+                        <p class="font-medium text-slate-800 dark:text-slate-200 line-clamp-2 leading-relaxed text-[11px]">
+                          {{ mhs.judul }}
+                        </p>
+                      </td>
+
+                      <!-- PROGRESS SESI -->
+                      <td class="py-3 px-3">
+                        <div class="space-y-1">
+                          <div class="flex items-center justify-between text-[10px]">
+                            <span class="font-bold text-slate-700 dark:text-slate-300">{{ mhs.sesiList.length }} / 8 Sesi</span>
+                            <span :class="mhs.sesiList.length >= 8 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'" class="font-extrabold">
+                              {{ Math.min(Math.round((mhs.sesiList.length / 8) * 100), 100) }}%
+                            </span>
+                          </div>
+                          <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div 
+                              class="h-full rounded-full transition-all duration-300"
+                              :class="mhs.sesiList.length >= 8 ? 'bg-emerald-500' : 'bg-amber-500'"
+                              :style="{ width: Math.min((mhs.sesiList.length / 8) * 100, 100) + '%' }"
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- STATUS SYARAT -->
+                      <td class="py-3 px-3 text-center whitespace-nowrap">
+                        <span 
+                          :class="mhs.sesiList.length >= 8 ? 'badge-emerald' : 'badge-amber'"
+                          class="px-2.5 py-1 rounded-full text-[10px] font-extrabold inline-flex items-center gap-1 shadow-sm"
+                        >
+                          <span>{{ mhs.sesiList.length >= 8 ? '✓ Siap Sempro' : '⏳ Kurang ' + (8 - mhs.sesiList.length) + ' Sesi' }}</span>
+                        </span>
+                      </td>
+
+                      <!-- AKSI -->
+                      <td class="py-3 px-3 text-center whitespace-nowrap">
+                        <button 
+                          @click.stop="selectStudent(mhs)"
+                          class="px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-blue-300 hover:bg-brand-100 dark:hover:bg-brand-800/60 font-bold text-[11px] transition-colors"
+                        >
+                          Lihat Log
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Empty State Matching Data_pengajuan_bimbingan.png -->
+                    <tr v-if="filteredBimbinganStudents.length === 0">
+                      <td colspan="7" class="py-14 text-center">
+                        <div class="flex flex-col items-center justify-center space-y-3">
+                          <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/80 text-slate-400 flex items-center justify-center text-2xl shadow-inner">
+                            📖
+                          </div>
+                          <div class="space-y-1">
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Belum ada data bimbingan</p>
+                            <p class="text-xs text-slate-400">Tidak ada riwayat catatan bimbingan yang cocok dengan kriteria pencarian.</p>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Footer -->
+              <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+                <span>Standar akademik ITK: Minimal <b>8 kali bimbingan tervalidasi</b> untuk mengajukan Seminar Proposal</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT SECTION: DETAIL RIWAYAT SESI MAHASISWA (Use Case 3.3.9 / Sequence 3.4.9) -->
+          <div 
+            v-if="selectedStudent"
+            class="w-full lg:w-[460px] bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md p-5 space-y-5 sticky top-24 transition-all"
+          >
+            <!-- Drawer Header -->
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-brand-600 dark:text-blue-400 font-extrabold text-sm">📋 Lembar Kendali Bimbingan</span>
+              </div>
+              <button 
+                @click="selectedStudent = null"
+                class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                ✕
+              </button>
+            </div>
+
+            <!-- Student Profile Badge -->
+            <div class="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60 space-y-2">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate">{{ selectedStudent.nama }}</h3>
+                <span class="text-[10px] font-mono font-bold bg-brand-100 dark:bg-brand-950 text-brand-800 dark:text-blue-300 px-2 py-0.5 rounded-md">
+                  {{ selectedStudent.nim }}
+                </span>
+              </div>
+              <p class="text-[11px] font-semibold text-slate-700 dark:text-slate-300 line-clamp-2 leading-tight">
+                {{ selectedStudent.judul }}
+              </p>
+              <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
+                <span>Pembimbing 1: <b>{{ selectedStudent.pembimbing1.split(',')[0] }}</b></span>
+                <span :class="selectedStudent.sesiList.length >= 8 ? 'text-emerald-600 font-bold' : 'text-amber-600 font-bold'">
+                  {{ selectedStudent.sesiList.length }} / 8 Sesi
+                </span>
+              </div>
+            </div>
+
+            <!-- List of Sessions (Timeline) -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Riwayat Catatan Konsultasi</span>
+                <button 
+                  @click="openModalTambahSesi(selectedStudent)"
+                  class="text-[11px] font-bold text-brand-600 dark:text-blue-400 hover:underline"
+                >
+                  + Tambah Sesi
+                </button>
+              </div>
+
+              <!-- Scrollable Timeline Cards -->
+              <div class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                <div 
+                  v-for="(sesi, sIdx) in selectedStudent.sesiList" 
+                  :key="sesi.id"
+                  class="p-3.5 rounded-xl border transition-all space-y-2 bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/70 dark:border-slate-700/60"
+                >
+                  <!-- Sesi Header -->
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="w-5 h-5 rounded-full bg-brand-600 text-white font-bold text-[10px] flex items-center justify-center">
+                        {{ sesi.no }}
+                      </span>
+                      <span class="text-xs font-bold text-slate-900 dark:text-white">{{ sesi.bab }}</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 font-mono">{{ sesi.tanggal }}</span>
+                  </div>
+
+                  <!-- Pembimbing & Rangkuman -->
+                  <div class="space-y-1 text-xs">
+                    <p class="text-[11px] text-slate-500">
+                      Dosen: <b class="text-slate-700 dark:text-slate-300">{{ sesi.pembimbing }}</b>
+                    </p>
+                    <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed bg-white dark:bg-[#111827] p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                      <b class="text-[10px] uppercase text-slate-400 block mb-0.5">Rangkuman Pembahasan:</b>
+                      {{ sesi.rangkuman }}
+                    </p>
+                  </div>
+
+                  <!-- Catatan / Arahan Dosen -->
+                  <div class="text-xs bg-amber-50/60 dark:bg-amber-950/30 p-2.5 rounded-lg border border-amber-200/60 dark:border-amber-900/40 space-y-0.5">
+                    <span class="text-[10px] font-bold text-amber-800 dark:text-amber-300 uppercase">Arahan / Revisi Dosen:</span>
+                    <p class="text-[11px] text-slate-800 dark:text-slate-200 leading-snug">{{ sesi.catatanDosen }}</p>
+                  </div>
+
+                  <!-- Status Paraf & Action Button -->
+                  <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px]">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full" :class="sesi.statusParaf === 'Disetujui' ? 'bg-emerald-500' : 'bg-amber-500'"></span>
+                      <span class="font-bold" :class="sesi.statusParaf === 'Disetujui' ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'">
+                        {{ sesi.statusParaf }} ({{ sesi.tglParaf }})
+                      </span>
+                    </div>
+
+                    <!-- Paraf Button if pending -->
+                    <button 
+                      v-if="sesi.statusParaf !== 'Disetujui'"
+                      @click="parafSesi(selectedStudent, sesi)"
+                      class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[10px] shadow-sm transition-all"
+                    >
+                      ✍️ Beri Paraf Dosen
+                    </button>
+                  </div>
+                </div>
+
+                <div v-if="selectedStudent.sesiList.length === 0" class="py-8 text-center text-slate-400 text-xs">
+                  Belum ada sesi bimbingan yang tercatat untuk mahasiswa ini.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+
+      <!-- MODAL FORM: TAMBAH SESI BIMBINGAN (Activity 3.3.8 / Sequence 3.4.8) -->
+      <div 
+        v-if="isModalTambahOpen" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
+      >
+        <div class="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full p-6 space-y-5 animate-scaleIn">
+          
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">📝</span>
+              <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Form Bimbingan Tugas Akhir</h3>
+            </div>
+            <button 
+              @click="closeModalTambah"
+              class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Form Fields -->
+          <div class="space-y-4 text-xs">
+            
+            <!-- Pilih Mahasiswa -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Mahasiswa Bimbingan <span class="text-rose-500">*</span></label>
+              <select 
+                v-model="formSesi.studentId"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 cursor-pointer"
+              >
+                <option v-for="m in bimbinganList" :key="m.id" :value="m.id">
+                  {{ m.nama }} ({{ m.nim }})
+                </option>
+              </select>
+            </div>
+
+            <!-- Tanggal & Dosen Pembimbing -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Tanggal Bimbingan <span class="text-rose-500">*</span></label>
+                <input 
+                  v-model="formSesi.tanggal"
+                  type="date" 
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
+              </div>
+
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Dosen Pembimbing <span class="text-rose-500">*</span></label>
+                <select 
+                  v-model="formSesi.pembimbing"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 cursor-pointer"
+                >
+                  <option v-for="d in dosenOptions" :key="d" :value="d">{{ d }}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Bab / Materi Pembahasan -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Bab / Pokok Bahasan <span class="text-rose-500">*</span></label>
+              <select 
+                v-model="formSesi.bab"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 cursor-pointer"
+              >
+                <option value="Bab 1 - Latar Belakang & Rumusan">Bab 1 - Latar Belakang & Rumusan Masalah</option>
+                <option value="Bab 2 - Tinjauan Pustaka & Landasan Teori">Bab 2 - Tinjauan Pustaka & Landasan Teori</option>
+                <option value="Bab 3 - Metodologi Penelitian & Desain">Bab 3 - Metodologi Penelitian & Desain Sistem</option>
+                <option value="Bab 4 - Implementasi Sistem & Analisis">Bab 4 - Implementasi Sistem & Analisis Data</option>
+                <option value="Bab 5 - Pengujian & Penarikan Kesimpulan">Bab 5 - Pengujian & Penarikan Kesimpulan</option>
+                <option value="Revisi Pasca Seminar Proposal">Revisi Pasca Seminar Proposal</option>
+                <option value="Finalisasi Naskah Sidang Akhir">Finalisasi Naskah Sidang Akhir</option>
+              </select>
+            </div>
+
+            <!-- Rangkuman Pembahasan -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Rangkuman Pembahasan <span class="text-rose-500">*</span></label>
+              <textarea 
+                v-model="formSesi.rangkuman"
+                rows="3"
+                placeholder="Tuliskan poin-poin penting materi yang didiskusikan bersama pembimbing..."
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              ></textarea>
+            </div>
+
+            <!-- Catatan Arahan Dosen -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Arahan / Catatan Revisi Dosen <span class="text-rose-500">*</span></label>
+              <textarea 
+                v-model="formSesi.catatanDosen"
+                rows="2"
+                placeholder="Tuliskan arahan perbaikan atau tindak lanjut dari dosen..."
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              ></textarea>
+            </div>
+
+          </div>
+
+          <!-- Modal Action Buttons (Matches Activity 3.3.8) -->
+          <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button 
+              @click="closeModalTambah"
+              class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              Tutup
+            </button>
+            <button 
+              @click="saveSesiBimbingan"
+              :disabled="!isFormSesiValid"
+              :class="[
+                isFormSesiValid 
+                  ? 'bg-gradient-to-r from-brand-800 to-blue-600 hover:from-brand-900 hover:to-blue-700 text-white shadow-md active:scale-95' 
+                  : 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed',
+                'px-6 py-2.5 rounded-xl text-xs font-bold transition-all'
+              ]"
+            >
+              Simpan Data
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- REUSABLE CHATBOT COMPONENT -->
+      <app-chatbot></app-chatbot>
+
+    </div>
+  </div>
+
+  <!-- APPLICATION VUE SCRIPT -->
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    const app = createApp({
+      setup() {
+        const layout = useLayout();
+        const searchQuery = ref('');
+
+        // Main Bimbingan Dataset
+        const bimbinganList = ref([...(window.MockData?.bimbinganStudents || [])]);
+        const selectedStudent = ref(bimbinganList.value[0] || null);
+        const dosenOptions = ref(window.MockData?.dosenNamesAll || []);
+
+        // Toast State
+        const toast = ref({
+          show: false,
+          message: '',
+          isError: false
+        });
+
+        const showToast = (message, isError = false) => {
+          toast.value = { show: true, message, isError };
+          setTimeout(() => {
+            toast.value.show = false;
+          }, 3500);
+        };
+
+        // Filtered Students
+        const filteredBimbinganStudents = computed(() => {
+          const q = searchQuery.value.toLowerCase().trim();
+          if (!q) return bimbinganList.value;
+          return bimbinganList.value.filter(s => 
+            s.nama.toLowerCase().includes(q) ||
+            s.nim.toLowerCase().includes(q) ||
+            s.judul.toLowerCase().includes(q)
+          );
+        });
+
+        // KPI Counts
+        const totalSesiGlobal = computed(() => {
+          return bimbinganList.value.reduce((acc, s) => acc + s.sesiList.length, 0);
+        });
+
+        const mhsEligibleCount = computed(() => {
+          return bimbinganList.value.filter(s => s.sesiList.length >= 8).length;
+        });
+
+        const pendingParafCount = computed(() => {
+          return bimbinganList.value.reduce((acc, s) => {
+            return acc + s.sesiList.filter(sesi => sesi.statusParaf !== 'Disetujui').length;
+          }, 0);
+        });
+
+        const avgSesiCount = computed(() => {
+          if (!bimbinganList.value.length) return 0;
+          return (totalSesiGlobal.value / bimbinganList.value.length).toFixed(1);
+        });
+
+        const selectStudent = (mhs) => {
+          selectedStudent.value = mhs;
+        };
+
+        // Paraf Sesi by Lecturer
+        const parafSesi = (student, sesi) => {
+          sesi.statusParaf = 'Disetujui';
+          sesi.tglParaf = '02 Okt 2026';
+          showToast(`Sesi ke-${sesi.no} untuk "${student.nama}" berhasil diparaf dosen!`);
+        };
+
+        const printLogBimbingan = () => {
+          window.print();
+        };
+
+        // Modal Form Sesi State (Activity 3.3.8)
+        const isModalTambahOpen = ref(false);
+        const formSesi = ref({
+          studentId: bimbinganList.value[0]?.id || 1,
+          tanggal: new Date().toISOString().split('T')[0],
+          pembimbing: dosenOptions.value[0] || '',
+          bab: 'Bab 3 - Metodologi Penelitian & Desain',
+          rangkuman: '',
+          catatanDosen: ''
+        });
+
+        const openModalTambahSesi = (preselectStudent = null) => {
+          const targetId = preselectStudent ? preselectStudent.id : (selectedStudent.value?.id || bimbinganList.value[0]?.id || 1);
+          formSesi.value = {
+            studentId: targetId,
+            tanggal: new Date().toISOString().split('T')[0],
+            pembimbing: dosenOptions.value[0] || '',
+            bab: 'Bab 3 - Metodologi Penelitian & Desain',
+            rangkuman: '',
+            catatanDosen: ''
+          };
+          isModalTambahOpen.value = true;
+        };
+
+        const closeModalTambah = () => {
+          isModalTambahOpen.value = false;
+        };
+
+        const isFormSesiValid = computed(() => {
+          return formSesi.value.tanggal !== '' &&
+                 formSesi.value.pembimbing !== '' &&
+                 formSesi.value.bab !== '' &&
+                 formSesi.value.rangkuman.trim() !== '' &&
+                 formSesi.value.catatanDosen.trim() !== '';
+        });
+
+        const saveSesiBimbingan = () => {
+          if (!isFormSesiValid.value) return;
+
+          const targetStudent = bimbinganList.value.find(s => s.id === formSesi.value.studentId);
+          if (targetStudent) {
+            const nextNo = targetStudent.sesiList.length + 1;
+            const newSesi = {
+              id: Date.now(),
+              no: nextNo,
+              tanggal: formSesi.value.tanggal,
+              pembimbing: formSesi.value.pembimbing,
+              bab: formSesi.value.bab,
+              rangkuman: formSesi.value.rangkuman,
+              catatanDosen: formSesi.value.catatanDosen,
+              statusParaf: 'Menunggu Paraf',
+              tglParaf: '—'
+            };
+            targetStudent.sesiList.push(newSesi);
+            selectedStudent.value = targetStudent;
+            closeModalTambah();
+            showToast(`Sesi bimbingan ke-${nextNo} berhasil dicatat!`);
+          }
+        };
+
+        return {
+          ...layout,
+          searchQuery,
+          bimbinganList,
+          selectedStudent,
+          dosenOptions,
+          filteredBimbinganStudents,
+          totalSesiGlobal,
+          mhsEligibleCount,
+          pendingParafCount,
+          avgSesiCount,
+          selectStudent,
+          parafSesi,
+          printLogBimbingan,
+          toast,
+          showToast,
+          isModalTambahOpen,
+          formSesi,
+          openModalTambahSesi,
+          closeModalTambah,
+          isFormSesiValid,
+          saveSesiBimbingan
+        };
+      }
+    });
+
+    registerComponents(app);
+    app.mount('#app');
+  </script>
+</body>
+</html>

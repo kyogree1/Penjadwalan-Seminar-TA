@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Katalog & Repositori Tugas Akhir - SIPTA IF ITK</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c7d7fe', 300: '#a4bcfd',
+              400: '#7994fa', 500: '#4f68f3', 600: '#2b44e2', 700: '#1b32c6',
+              800: '#0b3084', 900: '#082361', 950: '#041235',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Custom Stylesheet & Shared Utilities -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/shared.js"></script>
+  <script src="../assets/js/mockData.js"></script>
+
+  <!-- Modular Reusable Components -->
+  <script src="../assets/js/components/sidebar.js"></script>
+  <script src="../assets/js/components/navbar.js"></script>
+  <script src="../assets/js/components/chatbot.js"></script>
+</head>
+
+<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased selection:bg-brand-600 selection:text-white flex flex-col">
+
+  <div id="app" v-cloak class="flex min-h-screen flex-1 relative">
+
+    <!-- REUSABLE SIDEBAR COMPONENT -->
+    <app-sidebar 
+      :active-page="'katalog'" 
+      :is-collapsed="isSidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      :root-path="'../'"
+      @toggle-collapse="toggleDesktopSidebar"
+      @close-mobile="closeMobileSidebar"
+    ></app-sidebar>
+
+    <!-- MAIN WRAPPER -->
+    <div class="app-main-wrapper flex-1 flex flex-col min-w-0 transition-all duration-300 w-full min-h-screen">
+
+      <!-- REUSABLE NAVBAR COMPONENT -->
+      <app-navbar 
+        :is-dark="isDark"
+        @toggle-sidebar="toggleSidebar"
+        @toggle-theme="toggleTheme"
+        v-model="searchQuery"
+      ></app-navbar>
+
+      <!-- MAIN SCROLLABLE CONTENT -->
+      <main class="page-container space-y-6">
+
+        <!-- BREADCRUMBS -->
+        <nav class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 font-medium">
+          <a href="../index.html" class="hover:text-brand-600 dark:hover:text-blue-400 transition-colors">SIPTA IF</a>
+          <span>/</span>
+          <span class="text-slate-700 dark:text-slate-300 font-semibold">Prosedur & Katalog</span>
+          <span>/</span>
+          <span class="text-brand-600 dark:text-blue-400 font-semibold">Katalog TA</span>
+        </nav>
+
+        <!-- HERO BANNER -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900 p-6 md:p-8 text-white shadow-xl shadow-brand-950/20 border border-brand-700/40">
+          <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute right-20 top-4 w-32 h-32 bg-blue-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="space-y-2 max-w-2xl">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-blue-200 text-xs font-semibold">
+                <svg class="w-3.5 h-3.5 text-blue-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                <span>Repositori Karya Ilmiah Mahasiswa Informatika ITK</span>
+              </div>
+              <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                Katalog & Repositori Tugas Akhir
+              </h1>
+              <p class="text-blue-100/80 text-sm leading-relaxed">
+                Pusat eksplorasi arsip penelitian, naskah skripsi lengkap, dan referensi akademik alumni Program Studi Informatika Institut Teknologi Kalimantan untuk mendukung orisinalitas riset.
+              </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center gap-3">
+              <button 
+                @click="openSimilarityModal"
+                class="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs md:text-sm rounded-xl shadow-lg shadow-amber-950/20 active:scale-95 transition-all flex items-center gap-2"
+              >
+                <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                <span>Cek Kemiripan Judul</span>
+              </button>
+
+              <button 
+                @click="showToast('Panduan pengunggahan naskah skripsi terunduh!')"
+                class="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium text-xs md:text-sm rounded-xl backdrop-blur-md transition-all flex items-center gap-2"
+              >
+                <svg class="w-4 h-4 text-blue-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span>Pedoman Format TA</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 KPI SUMMARY CARDS -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- KPI 1 -->
+          <div class="p-4 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Naskah Terpublikasi</p>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{{ totalNaskahCount }} <span class="text-xs font-normal text-slate-400">Judul</span></h3>
+            </div>
+          </div>
+
+          <!-- KPI 2 -->
+          <div class="p-4 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Top Bidang Kajian</p>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">AI & Data <span class="text-xs font-normal text-purple-600 dark:text-purple-400">46%</span></h3>
+            </div>
+          </div>
+
+          <!-- KPI 3 -->
+          <div class="p-4 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Unduhan Naskah</p>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{{ totalDownloadsCount }} <span class="text-xs font-normal text-emerald-600 dark:text-emerald-400">x diakses</span></h3>
+            </div>
+          </div>
+
+          <!-- KPI 4 -->
+          <div class="p-4 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Rata-rata Predikat Sidang</p>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Grade A <span class="text-xs font-normal text-amber-600 dark:text-amber-400">(87.5%)</span></h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEARCH & MULTI-FILTER TOOLBAR (Matches Gambar 3.51) -->
+        <div class="p-5 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+          
+          <!-- Search Bar -->
+          <div class="relative">
+            <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input 
+              v-model="searchQuery"
+              type="text" 
+              placeholder="Cari judul skripsi, nama penulis, NIM, atau kata kunci penelitian (misal: Genetika, Deep Learning, IoT)..."
+              class="w-full pl-11 pr-10 py-3 bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 dark:text-white placeholder-slate-400 transition-all"
+            />
+            <button 
+              v-show="searchQuery" 
+              @click="searchQuery = ''"
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Filter Dropdowns & View Switcher -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+              
+              <!-- Filter KBK -->
+              <div class="flex items-center gap-1.5">
+                <label class="font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">Bidang Kajian:</label>
+                <select 
+                  v-model="filterKBK"
+                  class="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                >
+                  <option value="all">Semua Bidang Kajian</option>
+                  <option v-for="kbk in kbkOptions" :key="kbk" :value="kbk">{{ kbk }}</option>
+                </select>
+              </div>
+
+              <!-- Filter Tahun Lulus -->
+              <div class="flex items-center gap-1.5">
+                <label class="font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">Tahun Lulus:</label>
+                <select 
+                  v-model="filterTahun"
+                  class="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                >
+                  <option value="all">Semua Tahun</option>
+                  <option value="2026">2026 (Terbaru)</option>
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                </select>
+              </div>
+
+              <!-- Filter Pembimbing -->
+              <div class="flex items-center gap-1.5">
+                <label class="font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">Pembimbing:</label>
+                <select 
+                  v-model="filterPembimbing"
+                  class="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 max-w-[200px] truncate"
+                >
+                  <option value="all">Semua Dosen</option>
+                  <option v-for="dosen in dosenOptions" :key="dosen" :value="dosen">{{ dosen }}</option>
+                </select>
+              </div>
+
+              <!-- Reset Filter Button -->
+              <button 
+                v-if="searchQuery || filterKBK !== 'all' || filterTahun !== 'all' || filterPembimbing !== 'all'"
+                @click="resetFilters"
+                class="px-3 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl font-bold flex items-center gap-1 transition-all"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                <span>Reset</span>
+              </button>
+            </div>
+
+            <!-- View Switcher & Sorting -->
+            <div class="flex items-center gap-3">
+              <!-- Sort Dropdown -->
+              <select 
+                v-model="sortBy"
+                class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              >
+                <option value="terbaru">Tahun Lulus (Terbaru)</option>
+                <option value="views">Paling Banyak Dibaca</option>
+                <option value="downloads">Paling Banyak Diunduh</option>
+                <option value="judul">Judul (A-Z)</option>
+              </select>
+
+              <!-- View Switch Buttons -->
+              <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+                <button 
+                  @click="viewMode = 'grid'" 
+                  :class="viewMode === 'grid' ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-blue-400 shadow-xs' : 'text-slate-400 hover:text-slate-600'"
+                  class="p-1.5 rounded-lg transition-all"
+                  title="Tampilan Kartu Galeri"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                  </svg>
+                </button>
+                <button 
+                  @click="viewMode = 'table'" 
+                  :class="viewMode === 'table' ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-blue-400 shadow-xs' : 'text-slate-400 hover:text-slate-600'"
+                  class="p-1.5 rounded-lg transition-all"
+                  title="Tampilan Tabel Rinci"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEARCH RESULTS HEADER -->
+        <div class="flex items-center justify-between px-1">
+          <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+            Menampilkan <span class="font-bold text-slate-900 dark:text-white">{{ filteredKatalog.length }}</span> publikasi skripsi
+          </p>
+          <span class="text-[11px] text-slate-400">Terdaftar di Repositori Digital Informatika ITK</span>
+        </div>
+
+        <!-- 1. GRID VIEW MODE (Sesuai Gambar 3.51) -->
+        <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div 
+            v-for="item in filteredKatalog" 
+            :key="item.id"
+            class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-sm hover:shadow-md hover:border-brand-500/50 dark:hover:border-brand-500/50 transition-all flex flex-col justify-between group relative"
+          >
+            <!-- Card Header: Badges & Year -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <span 
+                  :class="getKBKBadgeClass(item.kbk)" 
+                  class="text-[11px] font-bold px-2.5 py-0.5 rounded-full truncate max-w-[200px]"
+                >
+                  {{ item.kbk }}
+                </span>
+                <span class="text-xs font-extrabold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                  Lulus {{ item.tahunLulus }}
+                </span>
+              </div>
+
+              <!-- Title -->
+              <h3 
+                @click="openDetailModal(item)"
+                class="text-base font-bold text-slate-900 dark:text-white leading-snug group-hover:text-brand-600 dark:group-hover:text-blue-400 cursor-pointer transition-colors line-clamp-2"
+                :title="item.judul"
+              >
+                {{ item.judul }}
+              </h3>
+
+              <!-- English Subtitle -->
+              <p class="text-xs italic text-slate-400 dark:text-slate-500 line-clamp-1">
+                {{ item.judulEn }}
+              </p>
+
+              <!-- Author Info -->
+              <div class="flex items-center gap-2.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+                <div class="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-blue-300 font-bold text-xs flex items-center justify-center flex-shrink-0">
+                  {{ getInitials(item.penulis) }}
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{{ item.penulis }}</p>
+                  <p class="text-[11px] text-slate-400 font-mono">{{ item.nim }} • {{ item.prodi }}</p>
+                </div>
+              </div>
+
+              <!-- Supervisors -->
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 space-y-1">
+                <div class="flex items-center gap-1.5 truncate">
+                  <span class="font-semibold text-slate-400">Pembimbing 1:</span>
+                  <span class="text-slate-700 dark:text-slate-300 truncate">{{ item.pembimbing1 }}</span>
+                </div>
+                <div class="flex items-center gap-1.5 truncate">
+                  <span class="font-semibold text-slate-400">Pembimbing 2:</span>
+                  <span class="text-slate-700 dark:text-slate-300 truncate">{{ item.pembimbing2 }}</span>
+                </div>
+              </div>
+
+              <!-- Abstract Excerpt -->
+              <p class="text-xs text-slate-600 dark:text-slate-300/90 leading-relaxed line-clamp-3">
+                {{ item.abstrakId }}
+              </p>
+
+              <!-- Research Keywords Tags -->
+              <div class="flex flex-wrap gap-1.5 pt-1">
+                <span 
+                  v-for="(kw, idx) in item.keywords.slice(0, 3)" 
+                  :key="idx" 
+                  class="text-[10px] font-medium bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-md hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-brand-950 transition-colors"
+                >
+                  #{{ kw }}
+                </span>
+                <span v-if="item.keywords.length > 3" class="text-[10px] text-slate-400 font-bold self-center">
+                  +{{ item.keywords.length - 3 }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Footer: Stats & Action Buttons -->
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+              <!-- Views & Download Counter -->
+              <div class="flex items-center gap-3 text-[11px] text-slate-400">
+                <span class="flex items-center gap-1" title="Dilihat">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  <span>{{ item.views }}</span>
+                </span>
+                <span class="flex items-center gap-1" title="Diunduh">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                  </svg>
+                  <span>{{ item.downloads }}</span>
+                </span>
+              </div>
+
+              <!-- Buttons -->
+              <div class="flex items-center gap-2">
+                <button 
+                  @click="downloadNaskah(item)"
+                  class="p-2 text-slate-500 hover:text-brand-600 dark:hover:text-blue-400 bg-slate-50 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-slate-700/60 rounded-xl border border-slate-200 dark:border-slate-700 transition-all"
+                  title="Unduh Naskah Skripsi PDF"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                  </svg>
+                </button>
+
+                <button 
+                  @click="openDetailModal(item)"
+                  class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
+                >
+                  <span>Buka Naskah</span>
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. TABLE VIEW MODE -->
+        <div v-else class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800 uppercase tracking-wider">
+                  <th class="py-3.5 px-4 w-12 text-center">NO</th>
+                  <th class="py-3.5 px-4">JUDUL SKRIPSI & KATA KUNCI</th>
+                  <th class="py-3.5 px-4">PENULIS / NIM</th>
+                  <th class="py-3.5 px-4">BIDANG KAJIAN</th>
+                  <th class="py-3.5 px-4">PEMBIMBING</th>
+                  <th class="py-3.5 px-4 text-center">TAHUN</th>
+                  <th class="py-3.5 px-4 text-center">AKSI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                <tr 
+                  v-for="(item, index) in filteredKatalog" 
+                  :key="item.id" 
+                  class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                >
+                  <td class="py-3 px-4 text-center font-bold text-slate-400">{{ index + 1 }}</td>
+                  <td class="py-3 px-4 max-w-md">
+                    <a 
+                      href="#" 
+                      @click.prevent="openDetailModal(item)" 
+                      class="font-bold text-slate-900 dark:text-white hover:text-brand-600 dark:hover:text-blue-400 transition-colors line-clamp-2"
+                    >
+                      {{ item.judul }}
+                    </a>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                      <span v-for="kw in item.keywords.slice(0, 2)" :key="kw" class="text-[10px] text-slate-400">#{{ kw }}</span>
+                    </div>
+                  </td>
+                  <td class="py-3 px-4 whitespace-nowrap">
+                    <p class="font-bold text-slate-800 dark:text-slate-200">{{ item.penulis }}</p>
+                    <p class="text-[11px] text-slate-400 font-mono">{{ item.nim }}</p>
+                  </td>
+                  <td class="py-3 px-4 whitespace-nowrap">
+                    <span :class="getKBKBadgeClass(item.kbk)" class="text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      {{ item.kbk }}
+                    </span>
+                  </td>
+                  <td class="py-3 px-4 text-[11px] text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                    <p>1. {{ item.pembimbing1 }}</p>
+                    <p class="text-slate-400">2. {{ item.pembimbing2 }}</p>
+                  </td>
+                  <td class="py-3 px-4 text-center font-extrabold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                    {{ item.tahunLulus }}
+                  </td>
+                  <td class="py-3 px-4 text-center whitespace-nowrap">
+                    <div class="flex items-center justify-center gap-1.5">
+                      <button 
+                        @click="openDetailModal(item)"
+                        class="px-2.5 py-1.5 bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-blue-300 hover:bg-brand-100 font-bold rounded-lg border border-brand-200 dark:border-brand-800 transition-all text-[11px]"
+                      >
+                        Detail
+                      </button>
+                      <button 
+                        @click="downloadNaskah(item)"
+                        class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                        title="Unduh PDF"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- EMPTY SEARCH STATE -->
+        <div v-if="filteredKatalog.length === 0" class="p-12 text-center bg-white dark:bg-[#111827] rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 space-y-3">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+          </div>
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Tidak Menemukan Naskah Skripsi</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+            Tidak ada arsip tugas akhir yang sesuai dengan kriteria pencarian "<span class="font-semibold text-brand-600 dark:text-blue-400">{{ searchQuery }}</span>". Silakan gunakan kata kunci lain atau reset filter Anda.
+          </p>
+          <button 
+            @click="resetFilters" 
+            class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs"
+          >
+            Reset Semua Filter
+          </button>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 1: DETAIL KATALOG TA (Gambar 3.52)   -->
+    <!-- ========================================== -->
+    <div 
+      v-if="isDetailModalOpen && activeDetailItem" 
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn"
+    >
+      <div 
+        @click.stop
+        class="bg-white dark:bg-[#111827] rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden"
+      >
+        <!-- Modal Header -->
+        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/40">
+          <div class="space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2">
+              <span :class="getKBKBadgeClass(activeDetailItem.kbk)" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                {{ activeDetailItem.kbk }}
+              </span>
+              <span class="text-[11px] font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
+                Nilai Sidang: {{ activeDetailItem.nilai }}
+              </span>
+              <span class="text-[11px] text-slate-500 font-bold">
+                Tahun Lulus: {{ activeDetailItem.tahunLulus }}
+              </span>
+            </div>
+            <h2 class="text-lg md:text-xl font-extrabold text-slate-900 dark:text-white leading-snug">
+              {{ activeDetailItem.judul }}
+            </h2>
+            <p class="text-xs italic text-slate-500 dark:text-slate-400">
+              {{ activeDetailItem.judulEn }}
+            </p>
+          </div>
+
+          <button 
+            @click="isDetailModalOpen = false" 
+            class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex-shrink-0"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Modal Body (Scrollable) -->
+        <div class="p-6 overflow-y-auto space-y-6 text-xs text-slate-700 dark:text-slate-300">
+
+          <!-- Author & Supervisor Cards Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Author Card -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Penulis / Mahasiswa</span>
+              <p class="text-sm font-extrabold text-slate-900 dark:text-white">{{ activeDetailItem.penulis }}</p>
+              <p class="text-slate-500 font-mono">NIM: {{ activeDetailItem.nim }} • Angkatan {{ activeDetailItem.angkatan }}</p>
+              <p class="text-[11px] text-brand-600 dark:text-blue-400 font-semibold">{{ activeDetailItem.prodi }} - ITK</p>
+            </div>
+
+            <!-- Committee Card -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Dewan Penguji & Pembimbing</span>
+              <p class="text-[11px]"><b class="text-slate-800 dark:text-slate-200">Pembimbing 1:</b> {{ activeDetailItem.pembimbing1 }}</p>
+              <p class="text-[11px]"><b class="text-slate-800 dark:text-slate-200">Pembimbing 2:</b> {{ activeDetailItem.pembimbing2 }}</p>
+              <p class="text-[11px]"><b class="text-slate-800 dark:text-slate-200">Penguji 1:</b> {{ activeDetailItem.penguji1 }}</p>
+              <p class="text-[11px]"><b class="text-slate-800 dark:text-slate-200">Penguji 2:</b> {{ activeDetailItem.penguji2 }}</p>
+            </div>
+          </div>
+
+          <!-- Abstract Section with Tabs (Bilingual) -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+              <div class="flex items-center gap-3">
+                <button 
+                  @click="detailAbstractTab = 'id'"
+                  :class="detailAbstractTab === 'id' ? 'text-brand-600 dark:text-blue-400 border-brand-600 dark:border-blue-400 font-bold' : 'text-slate-400 border-transparent hover:text-slate-600'"
+                  class="pb-1 border-b-2 text-xs transition-all flex items-center gap-1.5"
+                >
+                  <span>🇮🇩 Abstrak (Indonesia)</span>
+                </button>
+                <button 
+                  @click="detailAbstractTab = 'en'"
+                  :class="detailAbstractTab === 'en' ? 'text-brand-600 dark:text-blue-400 border-brand-600 dark:border-blue-400 font-bold' : 'text-slate-400 border-transparent hover:text-slate-600'"
+                  class="pb-1 border-b-2 text-xs transition-all flex items-center gap-1.5"
+                >
+                  <span>🇬🇧 Abstract (English)</span>
+                </button>
+              </div>
+
+              <span class="text-[11px] text-slate-400 font-mono">{{ activeDetailItem.doi }}</span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 leading-relaxed text-justify">
+              <p v-if="detailAbstractTab === 'id'">{{ activeDetailItem.abstrakId }}</p>
+              <p v-else class="italic">{{ activeDetailItem.abstrakEn }}</p>
+            </div>
+          </div>
+
+          <!-- Research Keywords -->
+          <div class="space-y-1.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Kata Kunci (Keywords)</span>
+            <div class="flex flex-wrap gap-2">
+              <span 
+                v-for="(kw, idx) in activeDetailItem.keywords" 
+                :key="idx" 
+                class="px-3 py-1 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 text-brand-700 dark:text-blue-300 font-semibold rounded-lg text-xs"
+              >
+                {{ kw }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Download Files Section -->
+          <div class="space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Berkas Tugas Akhir Lengkap</span>
+            <div class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  PDF
+                </div>
+                <div>
+                  <p class="font-bold text-slate-900 dark:text-white">{{ activeDetailItem.fileNaskah }}</p>
+                  <p class="text-[11px] text-slate-400">Ukuran Berkas: {{ activeDetailItem.fileSize }} • Digital Watermarked</p>
+                </div>
+              </div>
+              <button 
+                @click="downloadNaskah(activeDetailItem)"
+                class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5 whitespace-nowrap"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span>Unduh PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Citation Generator -->
+          <div class="p-4 rounded-xl bg-slate-100/70 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Kutipan Sitasi (Format APA)</span>
+              <button 
+                @click="copyCitation(activeDetailItem)"
+                class="text-xs font-bold text-brand-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                </svg>
+                <span>Salin Sitasi</span>
+              </button>
+            </div>
+            <p class="font-mono text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed bg-white dark:bg-slate-950 p-2.5 rounded-lg border border-slate-200/60 dark:border-slate-800">
+              {{ generateCitation(activeDetailItem) }}
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 flex items-center justify-between">
+          <span class="text-[11px] text-slate-400">Hak Cipta © Institut Teknologi Kalimantan</span>
+          <button 
+            @click="isDetailModalOpen = false" 
+            class="px-5 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition-all"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 2: CEK KEMIRIPAN JUDUL (PRE-CHECK)   -->
+    <!-- ========================================== -->
+    <div 
+      v-if="isSimilarityModalOpen" 
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn"
+    >
+      <div 
+        @click.stop
+        class="bg-white dark:bg-[#111827] rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl border border-slate-200 dark:border-slate-800"
+      >
+        <div class="flex items-start justify-between">
+          <div class="space-y-1">
+            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+              <span>Deteksi Kemiripan Judul (Pre-submission)</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              Uji potensi duplikasi topik calon skripsi Anda terhadap database arsip tugas akhir yang telah lulus untuk memastikan novelty riset.
+            </p>
+          </div>
+          <button @click="isSimilarityModalOpen = false" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Draf Judul Tugas Akhir Baru:</label>
+            <textarea 
+              v-model="inputTestTitle" 
+              rows="3" 
+              placeholder="Contoh: Penerapan Algoritma Genetika untuk Penjadwalan Sidang Seminar Tugas Akhir..."
+              class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-brand-500 focus:outline-none dark:text-white"
+            ></textarea>
+          </div>
+
+          <button 
+            @click="runSimilarityCheck"
+            class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all active:scale-98 flex items-center justify-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <span>Analisis Tingkat Kemiripan</span>
+          </button>
+        </div>
+
+        <!-- Similarity Results -->
+        <div v-if="hasRunSimilarity" class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div class="flex items-center justify-between p-3.5 rounded-xl" :class="similarityScore > 65 ? 'bg-amber-50 dark:bg-amber-950/60 border border-amber-300' : 'bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300'">
+            <div>
+              <p class="text-xs font-bold" :class="similarityScore > 65 ? 'text-amber-800 dark:text-amber-300' : 'text-emerald-800 dark:text-emerald-300'">
+                Tingkat Kemiripan: {{ similarityScore }}%
+              </p>
+              <p class="text-[11px]" :class="similarityScore > 65 ? 'text-amber-700 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400'">
+                {{ similarityScore > 65 ? 'Perhatian: Ada kemiripan yang cukup tinggi dengan riset terdahulu. Pastikan kebaruan (novelty) metode atau objek riset Anda.' : 'Aman: Tingkat kemiripan rendah. Topik memiliki potensi novelty yang baik.' }}
+              </p>
+            </div>
+          </div>
+
+          <div v-if="mostSimilarTitles.length > 0" class="space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Riset Terdahulu Paling Mendekati:</span>
+            <div 
+              v-for="(sim, idx) in mostSimilarTitles" 
+              :key="idx" 
+              class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-xs flex items-center justify-between gap-3"
+            >
+              <div class="min-w-0">
+                <p class="font-bold text-slate-800 dark:text-slate-200 truncate">{{ sim.item.judul }}</p>
+                <p class="text-[11px] text-slate-400">Oleh: {{ sim.item.penulis }} ({{ sim.item.tahunLulus }})</p>
+              </div>
+              <span class="font-bold font-mono text-amber-600 dark:text-amber-400 text-xs whitespace-nowrap">{{ sim.score }}% mirip</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOATING TOAST NOTIFICATION -->
+    <div 
+      v-if="toast.show" 
+      class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border text-xs font-semibold animate-slideUp"
+      :class="toast.isError ? 'bg-rose-900 text-white border-rose-700' : 'bg-slate-900 text-white border-slate-700 dark:bg-brand-900 dark:border-brand-700'"
+    >
+      <svg v-if="!toast.isError" class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+      </svg>
+      <svg v-else class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+      <span>{{ toast.message }}</span>
+    </div>
+
+    <!-- REUSABLE CHATBOT COMPONENT -->
+    <app-chatbot></app-chatbot>
+
+  </div>
+
+  <!-- APPLICATION VUE SCRIPT -->
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    const app = createApp({
+      setup() {
+        const layout = useLayout();
+
+        // Search & Filters State
+        const searchQuery = ref('');
+        const filterKBK = ref('all');
+        const filterTahun = ref('all');
+        const filterPembimbing = ref('all');
+        const sortBy = ref('terbaru');
+        const viewMode = ref('grid'); // 'grid' | 'table'
+
+        // Dataset
+        const katalogList = ref(MockData.katalogTAList || []);
+
+        // Dropdown options
+        const kbkOptions = [
+          'Artificial Intelligence & NLP',
+          'Computational Intelligence & Optimasi',
+          'Human-Computer Interaction & Software Eng.',
+          'Cloud Computing & Cyber Security',
+          'Data Science & Sistem Rekomendasi'
+        ];
+
+        const dosenOptions = MockData.masterDosenList ? MockData.masterDosenList.map(d => d.nama) : [
+          'Dra. Nurul Rahmania, M.T.',
+          'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
+          'Dian Permata Sari, S.Kom., M.Kom.',
+          'Dr. Budi Wicaksono, M.Kom.',
+          'Rian Kurniawan, S.Kom., M.Eng.',
+          'Nisa Rizqiya Fadhliana, S.Kom., M.T.'
+        ];
+
+        // Toast State
+        const toast = ref({ show: false, message: '', isError: false });
+        const showToast = (message, isError = false) => {
+          toast.value = { show: true, message, isError };
+          setTimeout(() => { toast.value.show = false; }, 3500);
+        };
+
+        // Filter Computations
+        const filteredKatalog = computed(() => {
+          let list = katalogList.value.filter(item => {
+            const matchKBK = filterKBK.value === 'all' || item.kbk === filterKBK.value;
+            const matchTahun = filterTahun.value === 'all' || String(item.tahunLulus) === filterTahun.value;
+            const matchPembimbing = filterPembimbing.value === 'all' || item.pembimbing1 === filterPembimbing.value || item.pembimbing2 === filterPembimbing.value;
+            
+            const q = searchQuery.value.toLowerCase().trim();
+            const matchQuery = !q || 
+              item.judul.toLowerCase().includes(q) || 
+              item.penulis.toLowerCase().includes(q) || 
+              item.nim.toLowerCase().includes(q) ||
+              item.keywords.some(k => k.toLowerCase().includes(q));
+
+            return matchKBK && matchTahun && matchPembimbing && matchQuery;
+          });
+
+          // Sorting
+          if (sortBy.value === 'terbaru') {
+            list.sort((a, b) => b.tahunLulus - a.tahunLulus);
+          } else if (sortBy.value === 'views') {
+            list.sort((a, b) => b.views - a.views);
+          } else if (sortBy.value === 'downloads') {
+            list.sort((a, b) => b.downloads - a.downloads);
+          } else if (sortBy.value === 'judul') {
+            list.sort((a, b) => a.judul.localeCompare(b.judul));
+          }
+
+          return list;
+        });
+
+        // Summary Statistics
+        const totalNaskahCount = computed(() => katalogList.value.length);
+        const totalDownloadsCount = computed(() => katalogList.value.reduce((acc, item) => acc + item.downloads, 0));
+
+        // Reset Filters
+        const resetFilters = () => {
+          searchQuery.value = '';
+          filterKBK.value = 'all';
+          filterTahun.value = 'all';
+          filterPembimbing.value = 'all';
+          sortBy.value = 'terbaru';
+        };
+
+        // KBK Badge styling helper
+        const getKBKBadgeClass = (kbk) => {
+          switch (kbk) {
+            case 'Artificial Intelligence & NLP':
+              return 'badge-purple';
+            case 'Computational Intelligence & Optimasi':
+              return 'badge-blue';
+            case 'Human-Computer Interaction & Software Eng.':
+              return 'badge-emerald';
+            case 'Cloud Computing & Cyber Security':
+              return 'badge-rose';
+            default:
+              return 'badge-amber';
+          }
+        };
+
+        const getInitials = (name) => {
+          if (!name) return 'TA';
+          return name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+        };
+
+        // Modal 1: Detail Naskah (Gambar 3.52)
+        const isDetailModalOpen = ref(false);
+        const activeDetailItem = ref(null);
+        const detailAbstractTab = ref('id'); // 'id' | 'en'
+
+        const openDetailModal = (item) => {
+          activeDetailItem.value = item;
+          item.views += 1;
+          detailAbstractTab.value = 'id';
+          isDetailModalOpen.value = true;
+        };
+
+        const downloadNaskah = (item) => {
+          item.downloads += 1;
+          showToast(`Mengunduh berkas "${item.fileNaskah}" (${item.fileSize})...`);
+        };
+
+        const generateCitation = (item) => {
+          if (!item) return '';
+          const parts = item.penulis.split(' ');
+          const lastName = parts[parts.length - 1];
+          const firstInitials = parts.slice(0, -1).map(p => p[0] + '.').join(' ');
+          return `${lastName}, ${firstInitials} (${item.tahunLulus}). ${item.judul}. Skripsi, Institut Teknologi Kalimantan. DOI: ${item.doi}`;
+        };
+
+        const copyCitation = (item) => {
+          const cit = generateCitation(item);
+          navigator.clipboard.writeText(cit).then(() => {
+            showToast('Format sitasi APA berhasil disalin ke clipboard!');
+          }).catch(() => {
+            showToast('Sitasi: ' + cit);
+          });
+        };
+
+        // Modal 2: Similarity Check
+        const isSimilarityModalOpen = ref(false);
+        const inputTestTitle = ref('Penerapan Algoritma Genetika dan Large Language Model untuk Penjadwalan Tugas Akhir');
+        const hasRunSimilarity = ref(false);
+        const similarityScore = ref(0);
+        const mostSimilarTitles = ref([]);
+
+        const openSimilarityModal = () => {
+          isSimilarityModalOpen.value = true;
+        };
+
+        const runSimilarityCheck = () => {
+          if (!inputTestTitle.value.trim()) {
+            showToast('Silakan masukkan draf judul terlebih dahulu.', true);
+            return;
+          }
+
+          const qTokens = inputTestTitle.value.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+          
+          const scores = katalogList.value.map(item => {
+            const itemTokens = item.judul.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+            const common = qTokens.filter(t => itemTokens.includes(t));
+            const score = Math.min(Math.round((common.length / Math.max(qTokens.length, 1)) * 100), 96);
+            return { item, score };
+          });
+
+          scores.sort((a, b) => b.score - a.score);
+          mostSimilarTitles.value = scores.slice(0, 3).filter(s => s.score > 20);
+          similarityScore.value = scores[0] ? scores[0].score : 15;
+          hasRunSimilarity.value = true;
+          showToast(`Analisis selesai: Kemiripan terdeteksi sebesar ${similarityScore.value}%`);
+        };
+
+        return {
+          ...layout,
+          searchQuery,
+          filterKBK,
+          filterTahun,
+          filterPembimbing,
+          sortBy,
+          viewMode,
+          katalogList,
+          kbkOptions,
+          dosenOptions,
+          toast,
+          showToast,
+          filteredKatalog,
+          totalNaskahCount,
+          totalDownloadsCount,
+          resetFilters,
+          getKBKBadgeClass,
+          getInitials,
+          isDetailModalOpen,
+          activeDetailItem,
+          detailAbstractTab,
+          openDetailModal,
+          downloadNaskah,
+          generateCitation,
+          copyCitation,
+          isSimilarityModalOpen,
+          inputTestTitle,
+          hasRunSimilarity,
+          similarityScore,
+          mostSimilarTitles,
+          openSimilarityModal,
+          runSimilarityCheck
+        };
+      }
+    });
+
+    registerComponents(app);
+    app.mount('#app');
+  </script>
+</body>
+</html>

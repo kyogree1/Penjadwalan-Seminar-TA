@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Pengajuan Judul TA - SIPTA IF ITK</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c7d7fe', 300: '#a4bcfd',
+              400: '#7994fa', 500: '#4f68f3', 600: '#2b44e2', 700: '#1b32c6',
+              800: '#0b3084', 900: '#082361', 950: '#041235',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Custom Stylesheet & Shared Utilities -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/shared.js"></script>
+  <script src="../assets/js/mockData.js"></script>
+
+  <!-- Modular Reusable Components -->
+  <script src="../assets/js/components/sidebar.js"></script>
+  <script src="../assets/js/components/navbar.js"></script>
+  <script src="../assets/js/components/chatbot.js"></script>
+</head>
+
+<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased selection:bg-brand-600 selection:text-white flex flex-col">
+
+  <div id="app" v-cloak class="flex min-h-screen flex-1 relative">
+
+    <!-- REUSABLE SIDEBAR COMPONENT -->
+    <app-sidebar 
+      :active-page="'judul'" 
+      :is-collapsed="isSidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      :root-path="'../'"
+      @toggle-collapse="toggleDesktopSidebar"
+      @close-mobile="closeMobileSidebar"
+    ></app-sidebar>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="app-main-wrapper flex-1 flex flex-col min-w-0 transition-all duration-300 w-full min-h-screen">
+      <!-- REUSABLE NAVBAR COMPONENT -->
+      <app-navbar 
+        :is-dark="isDark"
+        @toggle-sidebar="toggleSidebar"
+        @toggle-theme="toggleTheme"
+        v-model="searchQuery"
+      ></app-navbar>
+
+      <!-- TOAST NOTIFICATION POPUP -->
+      <div 
+        v-if="toast.show" 
+        class="fixed top-24 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-md transition-all duration-300 animate-bounce"
+        :class="toast.isError ? 'bg-rose-50/95 dark:bg-rose-950/90 text-rose-800 dark:text-rose-200 border-rose-300 dark:border-rose-800' : 'bg-emerald-50/95 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800'"
+      >
+        <span class="text-lg">{{ toast.isError ? '⚠️' : '✅' }}</span>
+        <span class="text-xs sm:text-sm font-bold">{{ toast.message }}</span>
+      </div>
+
+      <!-- MAIN PAGE BODY -->
+      <main class="page-container space-y-6">
+        
+        <!-- BREADCRUMB & HEADER -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-1">
+              <a href="../index.html" class="hover:text-brand-600">Home</a>
+              <span>›</span>
+              <span class="text-slate-600 dark:text-slate-300">Data Pengajuan</span>
+              <span>›</span>
+              <span class="text-brand-700 dark:text-blue-400 font-semibold">Judul</span>
+            </nav>
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Daftar & Pengajuan Judul TA</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Pendaftaran topik penelitian, verifikasi orisinalitas, dan alokasi calon pembimbing tugas akhir.
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <button 
+              @click="openModalAjukan"
+              class="px-4 py-2.5 bg-gradient-to-r from-brand-800 to-blue-600 hover:from-brand-900 hover:to-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-brand-900/20 flex items-center gap-2 transition-transform active:scale-95"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              <span>+ Ajukan Judul Baru</span>
+            </button>
+
+            <a 
+              href="pengajuan-sempro.html"
+              class="px-3.5 py-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5"
+            >
+              <span>Lanjut ke Sempro</span>
+              <span class="text-brand-600 dark:text-blue-400 font-bold">→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4 KPI SUMMARY CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Total -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Pengajuan</p>
+              <p class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ totalCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-brand-700 dark:text-blue-400 flex items-center justify-center font-bold">
+              📚
+            </div>
+          </div>
+
+          <!-- Menunggu Review -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-amber-600">Menunggu Review</p>
+              <p class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">{{ pendingCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center font-bold">
+              ⏳
+            </div>
+          </div>
+
+          <!-- Disetujui -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Judul Disetujui</p>
+              <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{{ approvedCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center font-bold">
+              ✓
+            </div>
+          </div>
+
+          <!-- Perlu Revisi -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-rose-200/80 dark:border-rose-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-rose-600">Perlu Revisi</p>
+              <p class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">{{ revisionCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 flex items-center justify-center font-bold">
+              ✎
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN LAYOUT: TABLE & INSPECTOR DRAWER -->
+        <div class="flex flex-col lg:flex-row items-start gap-5 w-full">
+          
+          <!-- LEFT SECTION: TABLE & FILTERS -->
+          <div class="flex-1 min-w-0 w-full space-y-4">
+            
+            <!-- TABLE CARD -->
+            <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden">
+              
+              <!-- Card Header with Filters -->
+              <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 space-y-3">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div class="flex items-center gap-2">
+                    <span class="text-brand-600 dark:text-blue-400 font-bold">📋</span>
+                    <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Daftar Judul</h2>
+                    <span class="text-xs text-slate-400">({{ filteredJudulList.length }} data ditemukan)</span>
+                  </div>
+
+                  <!-- Quick Status Badges Filter -->
+                  <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 text-xs">
+                    <button 
+                      @click="filterStatus = 'all'" 
+                      :class="filterStatus === 'all' ? 'filter-btn-pill active' : 'filter-btn-pill'"
+                      class="transition-all"
+                      type="button"
+                    >
+                      Semua
+                    </button>
+                    <button 
+                      @click="filterStatus = 'Menunggu Review'" 
+                      :class="filterStatus === 'Menunggu Review' ? 'filter-btn-pill active' : 'filter-btn-pill'"
+                      class="transition-all"
+                      type="button"
+                    >
+                      Review
+                    </button>
+                    <button 
+                      @click="filterStatus = 'Disetujui'" 
+                      :class="filterStatus === 'Disetujui' ? 'filter-btn-pill active' : 'filter-btn-pill'"
+                      class="transition-all"
+                      type="button"
+                    >
+                      Disetujui
+                    </button>
+                    <button 
+                      @click="filterStatus = 'Perlu Revisi'" 
+                      :class="filterStatus === 'Perlu Revisi' ? 'filter-btn-pill active' : 'filter-btn-pill'"
+                      class="transition-all"
+                      type="button"
+                    >
+                      Revisi
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Secondary Filters: Bidang Kajian & Angkatan -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+                  <!-- Search input -->
+                  <div class="relative">
+                    <input 
+                      v-model="searchQuery" 
+                      type="text" 
+                      placeholder="Cari judul, nama, atau NIM..."
+                      class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 text-slate-800 dark:text-slate-100"
+                    />
+                    <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  </div>
+
+                  <!-- Bidang Kajian Filter -->
+                  <select 
+                    v-model="filterBidang"
+                    class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-xl text-xs focus:outline-none"
+                  >
+                    <option v-for="b in bidangList" :key="b" :value="b">{{ b }}</option>
+                  </select>
+
+                  <!-- Angkatan Filter -->
+                  <select 
+                    v-model="filterAngkatan"
+                    class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-xl text-xs focus:outline-none"
+                  >
+                    <option value="all">Semua Angkatan</option>
+                    <option value="2023">Angkatan 2023</option>
+                    <option value="2022">Angkatan 2022</option>
+                    <option value="2021">Angkatan 2021</option>
+                    <option value="2020">Angkatan 2020</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- TABLE CONTENT (Exact columns matching Data_pengajuan_daftar_judul.png) -->
+              <div class="overflow-x-auto w-full">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50/90 dark:bg-slate-800/70 text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider border-b border-slate-100 dark:border-slate-800">
+                    <tr>
+                      <th class="py-3 px-3 text-center w-10">NO</th>
+                      <th class="py-3 px-3 min-w-[140px]">NAMA</th>
+                      <th class="py-3 px-3 font-mono min-w-[90px]">NIM</th>
+                      <th class="py-3 px-3 min-w-[260px]">JUDUL TA</th>
+                      <th class="py-3 px-3 min-w-[160px]">PEMBIMBING 1</th>
+                      <th class="py-3 px-3 min-w-[160px]">PEMBIMBING 2</th>
+                      <th class="py-3 px-3 text-center min-w-[110px]">STATUS</th>
+                      <th class="py-3 px-3 text-center min-w-[90px]">AKSI</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                    <tr 
+                      v-for="(item, idx) in filteredJudulList" 
+                      :key="item.id"
+                      @click="selectJudul(item)"
+                      :class="[
+                        selectedJudul && selectedJudul.id === item.id 
+                          ? 'bg-brand-50/70 dark:bg-brand-950/40 ring-1 ring-inset ring-brand-500/40' 
+                          : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40',
+                        'cursor-pointer transition-colors'
+                      ]"
+                    >
+                      <td class="py-3 px-3 text-center font-semibold text-slate-400">{{ idx + 1 }}</td>
+                      
+                      <!-- Nama & Angkatan -->
+                      <td class="py-3 px-3">
+                        <p class="font-bold text-slate-900 dark:text-white leading-snug">{{ item.nama }}</p>
+                        <span class="text-[10px] text-slate-400">Angkatan {{ item.angkatan }}</span>
+                      </td>
+
+                      <!-- NIM -->
+                      <td class="py-3 px-3 font-mono text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                        {{ item.nim }}
+                      </td>
+
+                      <!-- Judul TA -->
+                      <td class="py-3 px-3">
+                        <p class="font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-relaxed text-[11px]">
+                          {{ item.judul }}
+                        </p>
+                        <span class="inline-block mt-1 text-[10px] font-semibold text-brand-600 dark:text-blue-400">
+                          # {{ item.bidangKajian }}
+                        </span>
+                      </td>
+
+                      <!-- Pembimbing 1 -->
+                      <td class="py-3 px-3 text-slate-700 dark:text-slate-300">
+                        <p class="font-medium text-[11px] truncate max-w-[160px]" :title="item.pembimbing1">
+                          {{ item.pembimbing1 }}
+                        </p>
+                        <span class="text-[10px] text-slate-400">Utama</span>
+                      </td>
+
+                      <!-- Pembimbing 2 -->
+                      <td class="py-3 px-3 text-slate-700 dark:text-slate-300">
+                        <p class="font-medium text-[11px] truncate max-w-[160px]" :title="item.pembimbing2">
+                          {{ item.pembimbing2 || '—' }}
+                        </p>
+                        <span class="text-[10px] text-slate-400">Pendamping</span>
+                      </td>
+
+                      <!-- Status -->
+                      <td class="py-3 px-3 text-center whitespace-nowrap">
+                        <span 
+                          :class="getStatusBadge(item.status)"
+                          class="px-2.5 py-1 rounded-full text-[10px] font-extrabold inline-flex items-center gap-1 shadow-sm"
+                        >
+                          <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDot(item.status)"></span>
+                          <span>{{ item.status }}</span>
+                        </span>
+                      </td>
+
+                      <!-- Aksi -->
+                      <td class="py-3 px-3 text-center whitespace-nowrap">
+                        <button 
+                          @click.stop="selectJudul(item)"
+                          class="px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-blue-300 hover:bg-brand-100 dark:hover:bg-brand-800/60 font-bold text-[11px] transition-colors"
+                        >
+                          Detail & Review
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Empty State Matching Data_pengajuan_daftar_judul.png -->
+                    <tr v-if="filteredJudulList.length === 0">
+                      <td colspan="8" class="py-14 text-center">
+                        <div class="flex flex-col items-center justify-center space-y-3">
+                          <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/80 text-slate-400 flex items-center justify-center text-2xl shadow-inner">
+                            📂
+                          </div>
+                          <div class="space-y-1">
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Tidak Ada Data</p>
+                            <p class="text-xs text-slate-400 max-w-sm">
+                              Belum ada pengajuan judul yang sesuai kriteria pencarian atau filter yang dipilih.
+                            </p>
+                          </div>
+                          <button 
+                            @click="resetFilter"
+                            class="px-3.5 py-1.5 bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-blue-300 text-xs font-bold rounded-xl border border-brand-200 dark:border-brand-800/60 hover:bg-brand-100"
+                          >
+                            Reset Filter
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Table Footer Pagination / Info -->
+              <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500">
+                <span>Menampilkan <b>{{ filteredJudulList.length }}</b> dari <b>{{ judulData.length }}</b> total pengajuan judul</span>
+                <div class="flex items-center gap-1">
+                  <span class="text-[11px] text-slate-400 mr-2">Semester Gasal 2026/2027</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT SECTION: DETAIL & REVIEW INSPECTOR PANEL -->
+          <div 
+            v-if="selectedJudul"
+            class="w-full lg:w-96 bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md p-5 space-y-5 sticky top-24 transition-all"
+          >
+            <!-- Inspector Header -->
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-brand-600 dark:text-blue-400 font-extrabold text-sm">🔍 Telaah Usulan Judul</span>
+              </div>
+              <button 
+                @click="selectedJudul = null"
+                class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                ✕
+              </button>
+            </div>
+
+            <!-- Student Profile Summary -->
+            <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-600 to-blue-500 text-white font-black flex items-center justify-center text-sm shadow">
+                {{ selectedJudul.nama.charAt(0) }}
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">{{ selectedJudul.nama }}</h3>
+                <p class="text-[11px] font-mono text-slate-500">NIM: {{ selectedJudul.nim }} • Angk. {{ selectedJudul.angkatan }}</p>
+              </div>
+            </div>
+
+            <!-- Title & Topic Details -->
+            <div class="space-y-2">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Judul Penelitian</span>
+              <p class="text-xs font-bold text-slate-900 dark:text-slate-100 leading-snug bg-slate-50/70 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+                {{ selectedJudul.judul }}
+              </p>
+              <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                <span>Bidang: <b class="text-slate-700 dark:text-slate-300">{{ selectedJudul.bidangKajian }}</b></span>
+                <span>Tgl: {{ selectedJudul.tanggalPengajuan }}</span>
+              </div>
+            </div>
+
+            <!-- Abstract / Summary -->
+            <div class="space-y-1.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Ringkasan Ide / Abstrak</span>
+              <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed max-h-32 overflow-y-auto pr-1">
+                {{ selectedJudul.abstrak }}
+              </p>
+            </div>
+
+            <!-- Proposed Supervisors -->
+            <div class="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Calon Pembimbing</span>
+              <div class="space-y-1.5 text-xs">
+                <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40">
+                  <span class="text-slate-400 text-[11px]">Pembimbing 1:</span>
+                  <span class="font-bold text-slate-800 dark:text-slate-200 truncate max-w-[180px]">{{ selectedJudul.pembimbing1 }}</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/40">
+                  <span class="text-slate-400 text-[11px]">Pembimbing 2:</span>
+                  <span class="font-bold text-slate-800 dark:text-slate-200 truncate max-w-[180px]">{{ selectedJudul.pembimbing2 || '—' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Review Feedback -->
+            <div class="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Catatan Review / Feedback</span>
+              <textarea 
+                v-model="selectedJudul.catatanReview"
+                rows="2"
+                placeholder="Tuliskan catatan arahan atau poin perbaikan untuk mahasiswa..."
+                class="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              ></textarea>
+            </div>
+
+            <!-- Status Action Buttons (For Koorprodi / Tim KBK) -->
+            <div class="space-y-2 pt-2">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Keputusan Review</span>
+              <div class="grid grid-cols-2 gap-2">
+                <button 
+                  @click="updateStatus(selectedJudul, 'Disetujui')"
+                  :class="selectedJudul.status === 'Disetujui' ? 'bg-emerald-700 text-white font-bold ring-2 ring-emerald-400' : 'bg-emerald-600 hover:bg-emerald-700 text-white font-semibold'"
+                  class="p-2 rounded-xl text-xs flex items-center justify-center gap-1 shadow-sm transition-all"
+                >
+                  <span>✓ Setujui</span>
+                </button>
+                <button 
+                  @click="updateStatus(selectedJudul, 'Perlu Revisi')"
+                  :class="selectedJudul.status === 'Perlu Revisi' ? 'bg-amber-700 text-white font-bold ring-2 ring-amber-400' : 'bg-amber-600 hover:bg-amber-700 text-white font-semibold'"
+                  class="p-2 rounded-xl text-xs flex items-center justify-center gap-1 shadow-sm transition-all"
+                >
+                  <span>✎ Minta Revisi</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+
+      <!-- MODAL FORM: AJUKAN JUDUL BARU (USE CASE 3.3.7) -->
+      <div 
+        v-if="isModalAjukanOpen" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
+      >
+        <div class="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-xl w-full p-6 space-y-5 animate-scaleIn">
+          
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-blue-400 flex items-center justify-center font-bold">
+                📝
+              </div>
+              <div>
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Form Pengajuan Judul TA</h3>
+                <p class="text-[11px] text-slate-400">Usulan topik skripsi mahasiswa program studi Informatika ITK</p>
+              </div>
+            </div>
+            <button 
+              @click="closeModalAjukan"
+              class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Form Fields -->
+          <div class="space-y-4 text-xs">
+            
+            <!-- Nama & NIM -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Nama Mahasiswa <span class="text-rose-500">*</span></label>
+                <input 
+                  v-model="formAjukan.nama"
+                  type="text" 
+                  placeholder="Nama Lengkap Mahasiswa"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
+              </div>
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">NIM Mahasiswa <span class="text-rose-500">*</span></label>
+                <input 
+                  v-model="formAjukan.nim"
+                  type="text" 
+                  placeholder="Contoh: 11231036"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
+              </div>
+            </div>
+
+            <!-- Bidang Kajian -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Bidang Kajian / Minat Riset <span class="text-rose-500">*</span></label>
+              <select 
+                v-model="formAjukan.bidangKajian"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              >
+                <option v-for="b in bidangListOnly" :key="b" :value="b">{{ b }}</option>
+              </select>
+            </div>
+
+            <!-- Judul TA -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Usulan Judul Tugas Akhir <span class="text-rose-500">*</span></label>
+              <textarea 
+                v-model="formAjukan.judul"
+                rows="2"
+                placeholder="Tuliskan judul lengkap dan spesifik..."
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              ></textarea>
+            </div>
+
+            <!-- Calon Pembimbing 1 & 2 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Calon Pembimbing 1 <span class="text-rose-500">*</span></label>
+                <select 
+                  v-model="formAjukan.pembimbing1"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                >
+                  <option disabled value="">Pilih Calon Dosen Pembimbing 1</option>
+                  <option v-for="d in dosenOptions" :key="d" :value="d">{{ d }}</option>
+                </select>
+              </div>
+
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Calon Pembimbing 2 (Opsional)</label>
+                <select 
+                  v-model="formAjukan.pembimbing2"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                >
+                  <option value="">Tidak ada / Mandiri</option>
+                  <option v-for="d in dosenOptions" :key="d" :value="d">{{ d }}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Abstrak / Ringkasan -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Ringkasan Ide Penelitian / Masalah <span class="text-rose-500">*</span></label>
+              <textarea 
+                v-model="formAjukan.abstrak"
+                rows="3"
+                placeholder="Jelaskan secara singkat latar belakang masalah, metode yang diusulkan, dan luaran yang diharapkan..."
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              ></textarea>
+            </div>
+
+            <!-- Terms & Conditions Checkbox (Diagram Proposal 3.3.7) -->
+            <div class="p-3 bg-brand-50/70 dark:bg-brand-950/40 rounded-xl border border-brand-200 dark:border-brand-900/60">
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  v-model="formAjukan.agreedTerms"
+                  class="mt-0.5 rounded text-brand-600 focus:ring-brand-500"
+                />
+                <span class="text-[11px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed select-none">
+                  Saya menyatakan bahwa topik usulan ini orisinal, bebas dari plagiarisme, dan telah dikonsultasikan secara awal dengan calon dosen pembimbing.
+                </span>
+              </label>
+            </div>
+
+          </div>
+
+          <!-- Modal Action Buttons -->
+          <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button 
+              @click="closeModalAjukan"
+              class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              Batal
+            </button>
+            <button 
+              @click="submitAjukanJudul"
+              :disabled="!isFormValid"
+              :class="[
+                isFormValid 
+                  ? 'bg-gradient-to-r from-brand-800 to-blue-600 hover:from-brand-900 hover:to-blue-700 text-white shadow-md active:scale-95' 
+                  : 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed',
+                'px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5'
+              ]"
+            >
+              <span>Simpan Pengajuan</span>
+              <span>✓</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- REUSABLE CHATBOT COMPONENT -->
+      <app-chatbot></app-chatbot>
+
+    </div>
+  </div>
+
+  <!-- APPLICATION VUE SCRIPT -->
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    const app = createApp({
+      setup() {
+        const layout = useLayout();
+        const searchQuery = ref('');
+        const filterStatus = ref('all');
+        const filterBidang = ref('Semua Bidang Kajian');
+        const filterAngkatan = ref('all');
+
+        // Main Dataset
+        const judulData = ref([...(window.MockData?.judulList || [])]);
+        const selectedJudul = ref(judulData.value[0] || null);
+
+        const bidangList = ref(window.MockData?.bidangKajianList || ['Semua Bidang Kajian']);
+        const bidangListOnly = computed(() => bidangList.value.filter(b => b !== 'Semua Bidang Kajian'));
+        const dosenOptions = ref(window.MockData?.dosenNamesAll || []);
+
+        // Toast Notification State
+        const toast = ref({
+          show: false,
+          message: '',
+          isError: false
+        });
+
+        const showToast = (message, isError = false) => {
+          toast.value = { show: true, message, isError };
+          setTimeout(() => {
+            toast.value.show = false;
+          }, 3500);
+        };
+
+        // Filtered Computed List
+        const filteredJudulList = computed(() => {
+          return judulData.value.filter(item => {
+            // Search Query
+            const q = searchQuery.value.toLowerCase().trim();
+            const matchSearch = !q || 
+              item.nama.toLowerCase().includes(q) ||
+              item.nim.toLowerCase().includes(q) ||
+              item.judul.toLowerCase().includes(q);
+
+            // Status Filter
+            const matchStatus = filterStatus.value === 'all' || item.status === filterStatus.value;
+
+            // Bidang Kajian Filter
+            const matchBidang = filterBidang.value === 'Semua Bidang Kajian' || item.bidangKajian === filterBidang.value;
+
+            // Angkatan Filter
+            const matchAngkatan = filterAngkatan.value === 'all' || item.angkatan === filterAngkatan.value;
+
+            return matchSearch && matchStatus && matchBidang && matchAngkatan;
+          });
+        });
+
+        // KPI Counts
+        const totalCount = computed(() => judulData.value.length);
+        const pendingCount = computed(() => judulData.value.filter(j => j.status === 'Menunggu Review').length);
+        const approvedCount = computed(() => judulData.value.filter(j => j.status === 'Disetujui').length);
+        const revisionCount = computed(() => judulData.value.filter(j => j.status === 'Perlu Revisi').length);
+
+        // Select a Title Row
+        const selectJudul = (item) => {
+          selectedJudul.value = item;
+        };
+
+        // Reset Filter
+        const resetFilter = () => {
+          searchQuery.value = '';
+          filterStatus.value = 'all';
+          filterBidang.value = 'Semua Bidang Kajian';
+          filterAngkatan.value = 'all';
+        };
+
+        // Status Badges Styling Helpers
+        const getStatusBadge = (status) => {
+          switch (status) {
+            case 'Disetujui':
+              return 'badge-emerald';
+            case 'Perlu Revisi':
+              return 'badge-rose';
+            default:
+              return 'badge-amber';
+          }
+        };
+
+        const getStatusDot = (status) => {
+          switch (status) {
+            case 'Disetujui':
+              return 'bg-emerald-500';
+            case 'Perlu Revisi':
+              return 'bg-rose-500';
+            default:
+              return 'bg-amber-500';
+          }
+        };
+
+        // Update Review Status
+        const updateStatus = (item, newStatus) => {
+          item.status = newStatus;
+          showToast(`Status judul untuk "${item.nama}" berhasil diperbarui menjadi ${newStatus}!`);
+        };
+
+        // Modal Ajukan Judul State (Activity 3.3.7)
+        const isModalAjukanOpen = ref(false);
+        const formAjukan = ref({
+          nama: 'Budi Santoso',
+          nim: '11231050',
+          angkatan: '2023',
+          bidangKajian: 'Artificial Intelligence & NLP',
+          judul: '',
+          pembimbing1: '',
+          pembimbing2: '',
+          abstrak: '',
+          agreedTerms: false
+        });
+
+        const openModalAjukan = () => {
+          formAjukan.value = {
+            nama: 'Budi Santoso',
+            nim: '11231050',
+            angkatan: '2023',
+            bidangKajian: bidangListOnly.value[0] || 'Artificial Intelligence & NLP',
+            judul: '',
+            pembimbing1: dosenOptions.value[0] || '',
+            pembimbing2: '',
+            abstrak: '',
+            agreedTerms: false
+          };
+          isModalAjukanOpen.value = true;
+        };
+
+        const closeModalAjukan = () => {
+          isModalAjukanOpen.value = false;
+        };
+
+        const isFormValid = computed(() => {
+          return formAjukan.value.nama.trim() !== '' &&
+                 formAjukan.value.nim.trim() !== '' &&
+                 formAjukan.value.judul.trim() !== '' &&
+                 formAjukan.value.pembimbing1 !== '' &&
+                 formAjukan.value.abstrak.trim() !== '' &&
+                 formAjukan.value.agreedTerms === true;
+        });
+
+        const submitAjukanJudul = () => {
+          if (!isFormValid.value) return;
+
+          const newId = judulData.value.length ? Math.max(...judulData.value.map(j => j.id)) + 1 : 1;
+          const newEntry = {
+            id: newId,
+            nama: formAjukan.value.nama,
+            nim: formAjukan.value.nim,
+            angkatan: formAjukan.value.angkatan,
+            judul: formAjukan.value.judul,
+            bidangKajian: formAjukan.value.bidangKajian,
+            pembimbing1: formAjukan.value.pembimbing1,
+            pembimbing2: formAjukan.value.pembimbing2 || '—',
+            status: 'Menunggu Review',
+            tanggalPengajuan: '01 Okt 2026',
+            abstrak: formAjukan.value.abstrak,
+            catatanReview: 'Pengajuan baru, menunggu telaah dari Koordinator Program Studi.'
+          };
+
+          judulData.value.unshift(newEntry);
+          selectedJudul.value = newEntry;
+          closeModalAjukan();
+          showToast('Judul Tugas Akhir berhasil diajukan! Menunggu review koordinator.');
+        };
+
+        return {
+          ...layout,
+          searchQuery,
+          filterStatus,
+          filterBidang,
+          filterAngkatan,
+          judulData,
+          selectedJudul,
+          bidangList,
+          bidangListOnly,
+          dosenOptions,
+          filteredJudulList,
+          totalCount,
+          pendingCount,
+          approvedCount,
+          revisionCount,
+          selectJudul,
+          resetFilter,
+          getStatusBadge,
+          getStatusDot,
+          updateStatus,
+          toast,
+          showToast,
+          isModalAjukanOpen,
+          formAjukan,
+          openModalAjukan,
+          closeModalAjukan,
+          isFormValid,
+          submitAjukanJudul
+        };
+      }
+    });
+
+    // Register reusable components & mount
+    registerComponents(app);
+    app.mount('#app');
+  </script>
+</body>
+</html>

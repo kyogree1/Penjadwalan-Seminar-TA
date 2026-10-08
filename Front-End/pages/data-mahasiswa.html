@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data User Mahasiswa - SIPTA IF ITK</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c7d7fe', 300: '#a4bcfd',
+              400: '#7994fa', 500: '#4f68f3', 600: '#2b44e2', 700: '#1b32c6',
+              800: '#0b3084', 900: '#082361', 950: '#041235',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Custom Stylesheet & Shared Utilities -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/shared.js"></script>
+  <script src="../assets/js/mockData.js"></script>
+
+  <!-- Modular Reusable Components -->
+  <script src="../assets/js/components/sidebar.js"></script>
+  <script src="../assets/js/components/navbar.js"></script>
+  <script src="../assets/js/components/chatbot.js"></script>
+</head>
+
+<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased selection:bg-brand-600 selection:text-white flex flex-col">
+
+  <div id="app" v-cloak class="flex min-h-screen flex-1 relative">
+
+    <!-- REUSABLE SIDEBAR COMPONENT -->
+    <app-sidebar 
+      :active-page="'mahasiswa'" 
+      :is-collapsed="isSidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      :root-path="'../'"
+      @toggle-collapse="toggleDesktopSidebar"
+      @close-mobile="closeMobileSidebar"
+    ></app-sidebar>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="app-main-wrapper flex-1 flex flex-col min-w-0 transition-all duration-300 w-full min-h-screen">
+      <!-- REUSABLE NAVBAR COMPONENT -->
+      <app-navbar 
+        :is-dark="isDark"
+        @toggle-sidebar="toggleSidebar"
+        @toggle-theme="toggleTheme"
+        v-model="searchQuery"
+      ></app-navbar>
+
+      <!-- TOAST NOTIFICATION POPUP -->
+      <div 
+        v-if="toast.show" 
+        class="fixed top-24 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-md transition-all duration-300 animate-bounce"
+        :class="toast.isError ? 'bg-rose-50/95 dark:bg-rose-950/90 text-rose-800 dark:text-rose-200 border-rose-300 dark:border-rose-800' : 'bg-emerald-50/95 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800'"
+      >
+        <span class="text-lg">{{ toast.isError ? '⚠️' : '✅' }}</span>
+        <span class="text-xs sm:text-sm font-bold">{{ toast.message }}</span>
+      </div>
+
+      <!-- MAIN PAGE BODY -->
+      <main class="page-container space-y-6">
+        
+        <!-- BREADCRUMB & HEADER -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-1">
+              <a href="../index.html" class="hover:text-brand-600">Home</a>
+              <span>›</span>
+              <span class="text-slate-600 dark:text-slate-300">Data User</span>
+              <span>›</span>
+              <span class="text-brand-700 dark:text-blue-400 font-semibold">Data Mahasiswa</span>
+            </nav>
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Daftar Mahasiswa</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Kelola data akun mahasiswa aktif tugas akhir, nomor kontak, serta status kelayakan ujian seminar.
+            </p>
+          </div>
+
+          <!-- Action Buttons (Matches data_user_mahasiswa.png) -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <!-- Import Data Button -->
+            <button 
+              @click="openModalImport"
+              class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-emerald-900/10 flex items-center gap-2 transition-transform active:scale-95"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+              <span>Import Data</span>
+            </button>
+
+            <!-- + Tambah Mahasiswa Button -->
+            <button 
+              @click="openModalTambah"
+              class="px-4 py-2.5 bg-gradient-to-r from-brand-800 to-blue-600 hover:from-brand-900 hover:to-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-brand-900/20 flex items-center gap-2 transition-transform active:scale-95"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              <span>+ Tambah</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI SUMMARY CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Total Mahasiswa -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Mahasiswa</p>
+              <p class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ totalMhsCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-brand-700 dark:text-blue-400 flex items-center justify-center font-bold">
+              👥
+            </div>
+          </div>
+
+          <!-- Aktif TA -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-brand-200/80 dark:border-brand-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-brand-600 dark:text-blue-400">Aktif Tugas Akhir</p>
+              <p class="text-2xl font-black text-brand-700 dark:text-blue-400 mt-1">{{ aktifTaCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-blue-400 flex items-center justify-center font-bold">
+              📑
+            </div>
+          </div>
+
+          <!-- Seminar Proposal -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-amber-600">Tahap Sempro & Uji</p>
+              <p class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">{{ semproCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center font-bold">
+              🎯
+            </div>
+          </div>
+
+          <!-- Sudah Lulus / Alumni -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Alumni / Lulus</p>
+              <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{{ lulusCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center font-bold">
+              🎓
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN TABLE CARD -->
+        <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden space-y-0">
+          
+          <!-- Card Filters & Controls Bar (Exact layout of data_user_mahasiswa.png) -->
+          <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 space-y-3">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+              <!-- Search Bar -->
+              <div class="relative">
+                <input 
+                  v-model="searchQuery" 
+                  type="text" 
+                  placeholder="Cari mahasiswa..."
+                  class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 text-slate-800 dark:text-slate-100 placeholder-slate-400"
+                />
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </div>
+
+              <!-- Filter Jurusan -->
+              <select 
+                v-model="filterJurusan"
+                class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none cursor-pointer"
+              >
+                <option value="all">Semua Jurusan</option>
+                <option value="Teknik Elektro, Informatika, dan Bisnis">Teknik Elektro, Informatika, dan Bisnis</option>
+                <option value="Jurusan Sains dan Analitika Data">Jurusan Sains dan Analitika Data</option>
+              </select>
+
+              <!-- Filter Prodi -->
+              <select 
+                v-model="filterProdi"
+                class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none cursor-pointer"
+              >
+                <option value="all">Semua Prodi</option>
+                <option value="Informatika">Informatika</option>
+                <option value="Sistem Informasi">Sistem Informasi</option>
+                <option value="Teknik Elektro">Teknik Elektro</option>
+              </select>
+
+              <!-- Filter Angkatan -->
+              <select 
+                v-model="filterAngkatan"
+                class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none cursor-pointer"
+              >
+                <option value="all">Semua Angkatan</option>
+                <option value="2023">Angkatan 2023</option>
+                <option value="2022">Angkatan 2022</option>
+                <option value="2021">Angkatan 2021</option>
+                <option value="2020">Angkatan 2020</option>
+                <option value="2019">Angkatan 2019</option>
+              </select>
+            </div>
+
+            <!-- Active Status Count Bar -->
+            <div class="flex items-center justify-between text-xs pt-1">
+              <span class="text-slate-400 font-medium">
+                Menampilkan <b>{{ paginationStart }} - {{ paginationEnd }}</b> dari <b>{{ filteredMahasiswaList.length }}</b> mahasiswa
+              </span>
+              <button 
+                v-if="hasActiveFilter" 
+                @click="resetFilter"
+                class="text-brand-600 dark:text-blue-400 font-bold hover:underline"
+              >
+                Reset Filter
+              </button>
+            </div>
+          </div>
+
+          <!-- TABLE CONTENT (Exact columns matching data_user_mahasiswa.png) -->
+          <div class="overflow-x-auto w-full">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50/90 dark:bg-slate-800/70 text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th class="py-3 px-3 text-center w-12">NO</th>
+                  <th class="py-3 px-3 min-w-[190px]">NAMA</th>
+                  <th class="py-3 px-3 font-mono min-w-[110px]">NIM</th>
+                  <th class="py-3 px-3 text-center min-w-[90px]">ANGKATAN</th>
+                  <th class="py-3 px-3 min-w-[210px]">JURUSAN</th>
+                  <th class="py-3 px-3 min-w-[120px]">PRODI</th>
+                  <th class="py-3 px-3 min-w-[180px]">EMAIL</th>
+                  <th class="py-3 px-3 font-mono min-w-[130px]">NO TELPON</th>
+                  <th class="py-3 px-3 text-center min-w-[110px]">STATUS TA</th>
+                  <th class="py-3 px-3 text-center w-24">AKSI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                <tr 
+                  v-for="(mhs, idx) in paginatedMahasiswaList" 
+                  :key="mhs.id"
+                  class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                >
+                  <!-- No -->
+                  <td class="py-3 px-3 text-center font-semibold text-slate-400">
+                    {{ (currentPage - 1) * pageSize + idx + 1 }}
+                  </td>
+
+                  <!-- Nama -->
+                  <td class="py-3 px-3 font-bold text-slate-900 dark:text-white leading-snug">
+                    {{ mhs.nama }}
+                  </td>
+
+                  <!-- NIM -->
+                  <td class="py-3 px-3 font-mono text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                    {{ mhs.nim }}
+                  </td>
+
+                  <!-- Angkatan -->
+                  <td class="py-3 px-3 text-center font-semibold text-slate-700 dark:text-slate-300">
+                    {{ mhs.angkatan }}
+                  </td>
+
+                  <!-- Jurusan -->
+                  <td class="py-3 px-3 text-slate-600 dark:text-slate-400 truncate max-w-[210px]" :title="mhs.jurusan">
+                    {{ mhs.jurusan }}
+                  </td>
+
+                  <!-- Prodi -->
+                  <td class="py-3 px-3">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900">
+                      {{ mhs.prodi }}
+                    </span>
+                  </td>
+
+                  <!-- Email -->
+                  <td class="py-3 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+                    <a :href="'mailto:' + mhs.email" class="hover:text-brand-600 dark:hover:text-blue-400 truncate block max-w-[190px]" :title="mhs.email">
+                      {{ mhs.email }}
+                    </a>
+                  </td>
+
+                  <!-- No Telpon -->
+                  <td class="py-3 px-3 font-mono text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                    {{ mhs.noTelpon }}
+                  </td>
+
+                  <!-- Status TA -->
+                  <td class="py-3 px-3 text-center whitespace-nowrap">
+                    <span 
+                      :class="getStatusBadgeClass(mhs.statusTa)"
+                      class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold inline-block"
+                    >
+                      {{ mhs.statusTa }}
+                    </span>
+                  </td>
+
+                  <!-- Aksi: Edit & Delete (Matches data_user_mahasiswa.png buttons) -->
+                  <td class="py-3 px-3 text-center whitespace-nowrap">
+                    <div class="flex items-center justify-center gap-1.5">
+                      <!-- Edit Button (Blue) -->
+                      <button 
+                        @click="openModalEdit(mhs)"
+                        class="w-7 h-7 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center transition-transform active:scale-90 shadow-sm"
+                        title="Edit Mahasiswa"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                      </button>
+
+                      <!-- Delete Button (Red) -->
+                      <button 
+                        @click="confirmDeleteMhs(mhs)"
+                        class="w-7 h-7 rounded-lg bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center transition-transform active:scale-90 shadow-sm"
+                        title="Hapus Mahasiswa"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Empty State -->
+                <tr v-if="filteredMahasiswaList.length === 0">
+                  <td colspan="10" class="py-14 text-center">
+                    <div class="flex flex-col items-center justify-center space-y-3">
+                      <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/80 text-slate-400 flex items-center justify-center text-2xl">
+                        🔍
+                      </div>
+                      <div class="space-y-1">
+                        <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Data Mahasiswa Tidak Ditemukan</p>
+                        <p class="text-xs text-slate-400">Tidak ada mahasiswa yang cocok dengan kriteria filter atau pencarian Anda.</p>
+                      </div>
+                      <button 
+                        @click="resetFilter"
+                        class="px-3.5 py-1.5 bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-blue-300 text-xs font-bold rounded-xl border border-brand-200 dark:border-brand-800 hover:bg-brand-100"
+                      >
+                        Reset Filter
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- TABLE FOOTER & PAGINATION -->
+          <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500">
+            <div>
+              Menampilkan <b class="text-slate-800 dark:text-slate-200">{{ paginationStart }}</b> sampai <b class="text-slate-800 dark:text-slate-200">{{ paginationEnd }}</b> dari <b class="text-slate-800 dark:text-slate-200">{{ filteredMahasiswaList.length }}</b> mahasiswa
+            </div>
+
+            <!-- Pagination Numbers -->
+            <div class="flex items-center gap-1 overflow-x-auto">
+              <button 
+                @click="currentPage--"
+                :disabled="currentPage === 1"
+                class="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                ‹
+              </button>
+
+              <button 
+                v-for="p in totalPages" 
+                :key="p"
+                @click="currentPage = p"
+                :class="currentPage === p ? 'bg-brand-800 text-white font-bold' : 'border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'"
+                class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-semibold transition-colors"
+              >
+                {{ p }}
+              </button>
+
+              <button 
+                @click="currentPage++"
+                :disabled="currentPage === totalPages"
+                class="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                ›
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- MODAL FORM: TAMBAH / EDIT MAHASISWA (Matches data_user_mahasiswa_tambah.png) -->
+      <div 
+        v-if="isModalFormOpen" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
+      >
+        <div class="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full p-6 space-y-5 animate-scaleIn">
+          
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">
+              {{ isEditing ? 'Edit Data Mahasiswa' : 'Tambah Mahasiswa' }}
+            </h3>
+            <button 
+              @click="closeModalForm"
+              class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Form Fields (Matches data_user_mahasiswa_tambah.png) -->
+          <div class="space-y-4 text-xs">
+            
+            <!-- Nama -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Nama <span class="text-rose-500">*</span></label>
+              <input 
+                v-model="formMhs.nama"
+                type="text" 
+                placeholder="Masukkan Nama"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              />
+            </div>
+
+            <!-- NIM -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">NIM <span class="text-rose-500">*</span></label>
+              <input 
+                v-model="formMhs.nim"
+                type="text" 
+                placeholder="Masukkan NIM"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              />
+            </div>
+
+            <!-- Email -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Email <span class="text-rose-500">*</span></label>
+              <input 
+                v-model="formMhs.email"
+                type="email" 
+                placeholder="Masukkan Email"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              />
+            </div>
+
+            <!-- Nomor Telepon -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Nomor Telepon <span class="text-rose-500">*</span></label>
+              <input 
+                v-model="formMhs.noTelpon"
+                type="text" 
+                placeholder="Masukkan Nomor Telepon"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              />
+            </div>
+
+            <!-- Jurusan -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Jurusan <span class="text-rose-500">*</span></label>
+              <select 
+                v-model="formMhs.jurusan"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 cursor-pointer"
+              >
+                <option disabled value="">Pilih Jurusan</option>
+                <option value="Teknik Elektro, Informatika, dan Bisnis">Teknik Elektro, Informatika, dan Bisnis</option>
+                <option value="Jurusan Sains dan Analitika Data">Jurusan Sains dan Analitika Data</option>
+              </select>
+            </div>
+
+            <!-- Program Studi -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Program Studi <span class="text-rose-500">*</span></label>
+              <select 
+                v-model="formMhs.prodi"
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 cursor-pointer"
+              >
+                <option disabled value="">Pilih Prodi</option>
+                <option value="Informatika">Informatika</option>
+                <option value="Sistem Informasi">Sistem Informasi</option>
+                <option value="Teknik Elektro">Teknik Elektro</option>
+              </select>
+            </div>
+
+            <!-- Angkatan & Status TA -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Angkatan <span class="text-rose-500">*</span></label>
+                <input 
+                  v-model="formMhs.angkatan"
+                  type="text" 
+                  placeholder="mis. 2023"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
+              </div>
+
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Status Tugas Akhir</label>
+                <select 
+                  v-model="formMhs.statusTa"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 cursor-pointer"
+                >
+                  <option value="Aktif TA">Aktif TA</option>
+                  <option value="Sempro">Sempro</option>
+                  <option value="Bimbingan">Bimbingan Bab</option>
+                  <option value="Sidang Akhir">Sidang Akhir</option>
+                  <option value="Lulus">Lulus / Alumni</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Modal Action Buttons (Matches data_user_mahasiswa_tambah.png) -->
+          <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button 
+              @click="closeModalForm"
+              class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              Tutup
+            </button>
+            <button 
+              @click="saveMahasiswa"
+              :disabled="!isFormValid"
+              :class="[
+                isFormValid 
+                  ? 'bg-gradient-to-r from-brand-800 to-blue-600 hover:from-brand-900 hover:to-blue-700 text-white shadow-md active:scale-95' 
+                  : 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed',
+                'px-6 py-2.5 rounded-xl text-xs font-bold transition-all'
+              ]"
+            >
+              {{ isEditing ? 'Simpan Perubahan' : 'Submit' }}
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- MODAL IMPORT DATA MAHASISWA -->
+      <div 
+        v-if="isModalImportOpen" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
+      >
+        <div class="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-md w-full p-6 space-y-5 animate-scaleIn">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Import Data Mahasiswa</h3>
+            <button @click="isModalImportOpen = false" class="text-slate-400 hover:text-slate-600">✕</button>
+          </div>
+
+          <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 text-center space-y-2 hover:border-brand-500 transition-colors cursor-pointer bg-slate-50 dark:bg-slate-800/40">
+            <div class="text-3xl">📁</div>
+            <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Pilih berkas CSV atau Excel Mahasiswa</p>
+            <p class="text-[11px] text-slate-400">Kolom wajib: Nama, NIM, Angkatan, Jurusan, Prodi, Email, No Telpon</p>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-brand-600 dark:text-blue-400 font-semibold pt-1">
+            <a href="#" @click.prevent="showToast('Template berkas mahasiswa berhasil diunduh.')">📥 Unduh Template Mahasiswa</a>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button @click="isModalImportOpen = false" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500">Batal</button>
+            <button @click="processImport" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-md">
+              Mulai Import
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- REUSABLE CHATBOT COMPONENT -->
+      <app-chatbot></app-chatbot>
+
+    </div>
+  </div>
+
+  <!-- APPLICATION VUE SCRIPT -->
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    const app = createApp({
+      setup() {
+        const layout = useLayout();
+        const searchQuery = ref('');
+        const filterJurusan = ref('all');
+        const filterProdi = ref('all');
+        const filterAngkatan = ref('all');
+
+        // Main Student Dataset
+        const mahasiswaList = ref([...(window.MockData?.masterMahasiswaList || [])]);
+
+        // Pagination State
+        const currentPage = ref(1);
+        const pageSize = 10;
+
+        // Toast State
+        const toast = ref({
+          show: false,
+          message: '',
+          isError: false
+        });
+
+        const showToast = (message, isError = false) => {
+          toast.value = { show: true, message, isError };
+          setTimeout(() => {
+            toast.value.show = false;
+          }, 3500);
+        };
+
+        // Filtered Mahasiswa List
+        const filteredMahasiswaList = computed(() => {
+          return mahasiswaList.value.filter(m => {
+            // Search Query
+            const q = searchQuery.value.toLowerCase().trim();
+            const matchQuery = !q || 
+              m.nama.toLowerCase().includes(q) ||
+              m.nim.toLowerCase().includes(q) ||
+              m.email.toLowerCase().includes(q) ||
+              m.noTelpon.includes(q);
+
+            // Filter Jurusan
+            const matchJurusan = filterJurusan.value === 'all' || m.jurusan === filterJurusan.value;
+
+            // Filter Prodi
+            const matchProdi = filterProdi.value === 'all' || m.prodi === filterProdi.value;
+
+            // Filter Angkatan
+            const matchAngkatan = filterAngkatan.value === 'all' || m.angkatan === filterAngkatan.value;
+
+            return matchQuery && matchJurusan && matchProdi && matchAngkatan;
+          });
+        });
+
+        const hasActiveFilter = computed(() => {
+          return searchQuery.value !== '' || filterJurusan.value !== 'all' || filterProdi.value !== 'all' || filterAngkatan.value !== 'all';
+        });
+
+        // Pagination Computations
+        const totalPages = computed(() => Math.ceil(filteredMahasiswaList.value.length / pageSize) || 1);
+        const paginatedMahasiswaList = computed(() => {
+          const start = (currentPage.value - 1) * pageSize;
+          return filteredMahasiswaList.value.slice(start, start + pageSize);
+        });
+
+        const paginationStart = computed(() => {
+          if (filteredMahasiswaList.value.length === 0) return 0;
+          return (currentPage.value - 1) * pageSize + 1;
+        });
+
+        const paginationEnd = computed(() => {
+          return Math.min(currentPage.value * pageSize, filteredMahasiswaList.value.length);
+        });
+
+        // Summary Counts
+        const totalMhsCount = computed(() => mahasiswaList.value.length);
+        const aktifTaCount = computed(() => mahasiswaList.value.filter(m => m.statusTa === 'Aktif TA' || m.statusTa === 'Bimbingan').length);
+        const semproCount = computed(() => mahasiswaList.value.filter(m => m.statusTa === 'Sempro' || m.statusTa === 'Sidang Akhir').length);
+        const lulusCount = computed(() => mahasiswaList.value.filter(m => m.statusTa === 'Lulus').length);
+
+        const resetFilter = () => {
+          searchQuery.value = '';
+          filterJurusan.value = 'all';
+          filterProdi.value = 'all';
+          filterAngkatan.value = 'all';
+          currentPage.value = 1;
+        };
+
+        // Styling Badge Helpers
+        const getStatusBadgeClass = (status) => {
+          switch (status) {
+            case 'Lulus':
+              return 'badge-emerald';
+            case 'Sempro':
+              return 'badge-blue';
+            case 'Sidang Akhir':
+              return 'badge-purple';
+            case 'Aktif TA':
+              return 'badge-amber';
+            default:
+              return 'badge-slate';
+          }
+        };
+
+        // Form Modal State (Matches data_user_mahasiswa_tambah.png)
+        const isModalFormOpen = ref(false);
+        const isEditing = ref(false);
+        const editingId = ref(null);
+
+        const formMhs = ref({
+          nama: '',
+          nim: '',
+          email: '',
+          noTelpon: '',
+          jurusan: '',
+          prodi: '',
+          angkatan: '2023',
+          statusTa: 'Aktif TA'
+        });
+
+        const openModalTambah = () => {
+          isEditing.value = false;
+          editingId.value = null;
+          formMhs.value = {
+            nama: '',
+            nim: '',
+            email: '',
+            noTelpon: '',
+            jurusan: 'Jurusan Sains dan Analitika Data',
+            prodi: 'Informatika',
+            angkatan: '2023',
+            statusTa: 'Aktif TA'
+          };
+          isModalFormOpen.value = true;
+        };
+
+        const openModalEdit = (mhs) => {
+          isEditing.value = true;
+          editingId.value = mhs.id;
+          formMhs.value = {
+            nama: mhs.nama,
+            nim: mhs.nim,
+            email: mhs.email,
+            noTelpon: mhs.noTelpon,
+            jurusan: mhs.jurusan,
+            prodi: mhs.prodi,
+            angkatan: mhs.angkatan,
+            statusTa: mhs.statusTa || 'Aktif TA'
+          };
+          isModalFormOpen.value = true;
+        };
+
+        const closeModalForm = () => {
+          isModalFormOpen.value = false;
+        };
+
+        const isFormValid = computed(() => {
+          return formMhs.value.nama.trim() !== '' &&
+                 formMhs.value.nim.trim() !== '' &&
+                 formMhs.value.email.trim() !== '' &&
+                 formMhs.value.noTelpon.trim() !== '' &&
+                 formMhs.value.jurusan !== '' &&
+                 formMhs.value.prodi !== '' &&
+                 formMhs.value.angkatan.trim() !== '';
+        });
+
+        const saveMahasiswa = () => {
+          if (!isFormValid.value) return;
+
+          if (isEditing.value) {
+            const idx = mahasiswaList.value.findIndex(m => m.id === editingId.value);
+            if (idx !== -1) {
+              mahasiswaList.value[idx] = {
+                ...mahasiswaList.value[idx],
+                ...formMhs.value
+              };
+              showToast(`Data mahasiswa "${formMhs.value.nama}" berhasil diperbarui!`);
+            }
+          } else {
+            const newId = mahasiswaList.value.length ? Math.max(...mahasiswaList.value.map(m => m.id)) + 1 : 1;
+            const newMhs = {
+              id: newId,
+              nama: formMhs.value.nama,
+              nim: formMhs.value.nim,
+              email: formMhs.value.email,
+              noTelpon: formMhs.value.noTelpon,
+              jurusan: formMhs.value.jurusan,
+              prodi: formMhs.value.prodi,
+              angkatan: formMhs.value.angkatan,
+              statusTa: formMhs.value.statusTa || 'Aktif TA'
+            };
+            mahasiswaList.value.unshift(newMhs);
+            showToast(`Mahasiswa baru "${formMhs.value.nama}" berhasil ditambahkan!`);
+          }
+
+          closeModalForm();
+        };
+
+        const confirmDeleteMhs = (mhs) => {
+          if (confirm(`Apakah Anda yakin ingin menghapus data mahasiswa "${mhs.nama}"?`)) {
+            mahasiswaList.value = mahasiswaList.value.filter(m => m.id !== mhs.id);
+            showToast(`Mahasiswa "${mhs.nama}" berhasil dihapus.`);
+          }
+        };
+
+        // Modal Import State
+        const isModalImportOpen = ref(false);
+        const openModalImport = () => {
+          isModalImportOpen.value = true;
+        };
+
+        const processImport = () => {
+          isModalImportOpen.value = false;
+          showToast('Data mahasiswa dari berkas eksternal berhasil diimpor!');
+        };
+
+        return {
+          ...layout,
+          searchQuery,
+          filterJurusan,
+          filterProdi,
+          filterAngkatan,
+          hasActiveFilter,
+          mahasiswaList,
+          filteredMahasiswaList,
+          paginatedMahasiswaList,
+          currentPage,
+          pageSize,
+          totalPages,
+          paginationStart,
+          paginationEnd,
+          totalMhsCount,
+          aktifTaCount,
+          semproCount,
+          lulusCount,
+          resetFilter,
+          getStatusBadgeClass,
+          toast,
+          showToast,
+          isModalFormOpen,
+          isEditing,
+          formMhs,
+          openModalTambah,
+          openModalEdit,
+          closeModalForm,
+          isFormValid,
+          saveMahasiswa,
+          confirmDeleteMhs,
+          isModalImportOpen,
+          openModalImport,
+          processImport
+        };
+      }
+    });
+
+    registerComponents(app);
+    app.mount('#app');
+  </script>
+</body>
+</html>

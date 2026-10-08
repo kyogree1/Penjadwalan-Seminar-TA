@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Penentuan Jadwal & Plotting Penguji AI - SIPTA IF ITK</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c7d7fe', 300: '#a4bcfd',
+              400: '#7994fa', 500: '#4f68f3', 600: '#2b44e2', 700: '#1b32c6',
+              800: '#0b3084', 900: '#082361', 950: '#041235',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Custom Stylesheet & Shared Utilities -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/shared.js"></script>
+  <script src="../assets/js/mockData.js"></script>
+
+  <!-- Modular Reusable Components -->
+  <script src="../assets/js/components/sidebar.js"></script>
+  <script src="../assets/js/components/navbar.js"></script>
+  <script src="../assets/js/components/chatbot.js"></script>
+</head>
+
+<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased selection:bg-brand-600 selection:text-white">
+
+  <div id="app" v-cloak class="flex min-h-screen">
+
+    <!-- REUSABLE SIDEBAR COMPONENT -->
+    <app-sidebar 
+      :active-page="'plotting'" 
+      :is-collapsed="isSidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      :root-path="'../'"
+      @toggle-collapse="toggleDesktopSidebar"
+      @close-mobile="closeMobileSidebar"
+    ></app-sidebar>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="app-main-wrapper flex-1 flex flex-col min-w-0 transition-all duration-300 w-full min-h-screen">
+      <!-- REUSABLE NAVBAR COMPONENT -->
+      <app-navbar 
+        :is-dark="isDark"
+        @toggle-sidebar="toggleSidebar"
+        @toggle-theme="toggleTheme"
+        v-model="searchQuery"
+        search-placeholder="Cari mahasiswa, NIM, dosen, atau topik skripsi..."
+      ></app-navbar>
+
+      <!-- PAGE MAIN CONTENT -->
+      <main class="page-container space-y-6">
+        
+        <!-- Breadcrumb & Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-1">
+              <a href="../index.html" class="hover:text-brand-600">Home</a>
+              <span>›</span>
+              <a href="jadwal-sempro.html" class="hover:text-brand-600">Jadwal Sempro</a>
+              <span>›</span>
+              <span class="text-brand-700 dark:text-blue-400 font-semibold">Penentuan Jadwal dan Penguji</span>
+            </nav>
+            <div class="flex items-center gap-3">
+              <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+                Penentuan Jadwal dan Penguji
+              </h1>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-900/50 text-brand-800 dark:text-blue-300 border border-blue-300 dark:border-blue-700">
+                Gelombang 2 (Gasal 2026/2027)
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <a 
+              href="pengajuan-sempro.html"
+              class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-colors flex items-center gap-1.5"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+              </svg>
+              <span>Lihat Berkas Mahasiswa</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- AI OPTIMIZATION SUMMARY BANNER (HIGHLIGHT CAPSTONE AI) -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-brand-950 to-blue-950 p-5 md:p-6 text-white border border-brand-800/40 shadow-xl">
+          <div class="absolute -right-6 -bottom-8 w-56 h-56 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="space-y-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-bold">
+                <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
+                <span>✨ AI Genetic Algorithm Optimizer (Proposal Bab 3)</span>
+              </div>
+              <h2 class="text-lg md:text-xl font-extrabold tracking-tight">
+                Plotting Dosen Penguji Bebas Bentrok Jadwal
+              </h2>
+              <p class="text-xs md:text-sm text-slate-300 max-w-2xl leading-relaxed">
+                Algoritma Genetika secara otomatis mencocokkan bidang keahlian dosen (KBK) dengan topik skripsi, meratakan beban menguji, dan menyinkronkan waktu luang dosen 
+                <span class="text-amber-300 font-semibold">• Sesuai arahan pembimbing, batasan ruangan fisik ditiadakan</span>.
+              </p>
+            </div>
+
+            <!-- AI Engine Stats & Trigger Button -->
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="bg-white/10 backdrop-blur-md rounded-xl px-4 py-2 text-center border border-white/10">
+                <span class="block text-[10px] uppercase font-bold text-blue-200">Fitness Score</span>
+                <span class="text-lg font-black text-emerald-400">0.985</span>
+              </div>
+              <div class="bg-white/10 backdrop-blur-md rounded-xl px-4 py-2 text-center border border-white/10">
+                <span class="block text-[10px] uppercase font-bold text-blue-200">Konflik Waktu</span>
+                <span class="text-lg font-black text-emerald-400">0 Bentrok</span>
+              </div>
+              <button 
+                @click="openGaModal"
+                class="px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs md:text-sm font-extrabold rounded-xl shadow-lg shadow-blue-900/40 transition-all active:scale-95 flex items-center gap-2"
+              >
+                <svg class="w-4 h-4 text-amber-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                </svg>
+                <span>✨ Jalankan Optimasi AI (GA)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN TABLE CARD -->
+        <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden">
+          
+          <div class="p-5 border-b border-slate-100 dark:border-slate-800 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 class="text-base font-bold text-slate-900 dark:text-white">List Mahasiswa Pendaftar</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Daftar pendaftar sempro yang berkasnya telah tervalidasi dan siap diuji</p>
+              </div>
+
+              <!-- 4 Action Buttons -->
+              <div class="flex flex-wrap items-center gap-2">
+                <button @click="alertInfo('Melihat Riwayat Kelulusan Sempro Periode Lalu.')" class="px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 rounded-xl transition-colors flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  <span>Riwayat Kelulusan</span>
+                </button>
+                <button @click="exportExcel" class="px-3 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition-colors flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                  <span>Export Excel</span>
+                </button>
+                <button @click="alertInfo('Status Monitoring: Seluruh Mahasiswa Ter-plot Bebas Bentrok.')" class="px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 rounded-xl transition-colors flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                  <span>Monitoring Status</span>
+                </button>
+                <button @click="downloadJadwal" class="px-3 py-1.5 text-xs font-semibold text-brand-800 dark:text-blue-300 bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/40 rounded-xl transition-colors flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-brand-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                  <span>Download Jadwal</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Filter Toolbar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-slate-400 font-medium">Filter Angkatan:</span>
+                  <select 
+                    v-model="filterAngkatan"
+                    class="text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  >
+                    <option value="all">Semua Angkatan</option>
+                    <option value="2023">Angkatan 2023</option>
+                    <option value="2022">Angkatan 2022</option>
+                    <option value="2021">Angkatan 2021</option>
+                  </select>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-slate-400 font-medium">KBK:</span>
+                  <select 
+                    v-model="filterKbk"
+                    class="text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  >
+                    <option value="all">Semua KBK</option>
+                    <option value="AI & Data Science">AI & Data Science</option>
+                    <option value="Cybersecurity">Cybersecurity</option>
+                    <option value="Software Engineering">Software Engineering</option>
+                    <option value="IoT & Wireless">IoT & Wireless</option>
+                  </select>
+                </div>
+              </div>
+
+              <span class="text-xs text-slate-400 font-medium">
+                Menampilkan {{ filteredJadwalList.length }} dari {{ jadwalList.length }} mahasiswa
+              </span>
+            </div>
+          </div>
+
+          <!-- The Table (TANPA RUANGAN SESUAI ARAHAN DOSEN PEMBIMBING) -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th class="py-3.5 px-3 w-10 text-center">NO</th>
+                  <th class="py-3.5 px-4 min-w-[170px]">MAHASISWA</th>
+                  <th class="py-3.5 px-4 min-w-[280px]">JUDUL TUGAS AKHIR</th>
+                  <th class="py-3.5 px-3 min-w-[170px]">PEMBIMBING</th>
+                  <th class="py-3.5 px-3 min-w-[170px]">PENGUJI 1 (KETUA)</th>
+                  <th class="py-3.5 px-3 min-w-[170px]">PENGUJI 2</th>
+                  <th class="py-3.5 px-3 min-w-[120px]">HARI / TGL</th>
+                  <th class="py-3.5 px-3 min-w-[110px]">WAKTU</th>
+                  <!-- TANPA KOLOM RUANGAN -->
+                  <th class="py-3.5 px-3 text-center min-w-[100px]">PENGATURAN</th>
+                  <th class="py-3.5 px-3 text-center w-16">NILAI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                <tr 
+                  v-for="(row, index) in filteredJadwalList" 
+                  :key="row.id"
+                  class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <td class="py-4 px-3 text-center font-medium text-slate-500">{{ index + 1 }}.</td>
+                  
+                  <td class="py-4 px-4">
+                    <div class="flex flex-col">
+                      <span class="font-bold text-slate-900 dark:text-white uppercase leading-tight">{{ row.nama }}</span>
+                      <span class="font-mono text-[11px] text-slate-400 mt-0.5">{{ row.nim }}</span>
+                    </div>
+                  </td>
+
+                  <td class="py-4 px-4">
+                    <div class="space-y-1 max-w-sm">
+                      <p class="font-medium text-slate-800 dark:text-slate-200 leading-snug">
+                        {{ row.judul }}
+                      </p>
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-50 text-brand-800 dark:bg-brand-950 dark:text-blue-300">
+                          {{ row.kbk }}
+                        </span>
+                        <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
+                          ✓ Bebas Bentrok
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="py-4 px-3">
+                    <div class="space-y-1 text-[11px]">
+                      <div>
+                        <span class="text-slate-400 block text-[10px]">Pembimbing 1:</span>
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">{{ row.pembimbing1 }}</span>
+                      </div>
+                      <div v-if="row.pembimbing2">
+                        <span class="text-slate-400 block text-[10px]">Pembimbing 2:</span>
+                        <span class="font-medium text-slate-600 dark:text-slate-400">{{ row.pembimbing2 }}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="py-4 px-3">
+                    <div class="space-y-1">
+                      <span class="font-bold text-brand-900 dark:text-blue-300 block text-[11px] leading-tight">{{ row.penguji1 }}</span>
+                      <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60">
+                        <svg class="w-3 h-3 text-purple-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        <span>{{ row.penguji1MatchScore }}% Match KBK</span>
+                      </span>
+                    </div>
+                  </td>
+
+                  <td class="py-4 px-3">
+                    <div class="space-y-1">
+                      <span class="font-semibold text-slate-800 dark:text-slate-200 block text-[11px] leading-tight">{{ row.penguji2 }}</span>
+                      <span class="text-[10px] text-slate-400">Penguji Anggota</span>
+                    </div>
+                  </td>
+
+                  <td class="py-4 px-3">
+                    <div class="flex flex-col">
+                      <span class="font-bold text-slate-800 dark:text-slate-200">{{ row.hari }}</span>
+                      <span class="text-[11px] text-slate-400">{{ row.tanggal }}</span>
+                    </div>
+                  </td>
+
+                  <td class="py-4 px-3">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300">
+                      <span>{{ row.mulai }} - {{ row.selesai }}</span>
+                    </div>
+                  </td>
+
+                  <td class="py-4 px-3 text-center">
+                    <button 
+                      @click="openEditPlotting(row)"
+                      class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 mx-auto active:scale-95"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                      <span>Edit</span>
+                    </button>
+                  </td>
+
+                  <td class="py-4 px-3 text-center">
+                    <span v-if="row.nilai" class="font-bold text-emerald-600 dark:text-emerald-400">{{ row.nilai }}</span>
+                    <span v-else class="text-slate-400 font-bold">—</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="p-4 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+              <span>Model Rekomendasi: <strong>Genetic Algorithm (GA) v2.1 + Random Forest Topic Compatibility</strong></span>
+            </div>
+            <div class="text-[11px] text-slate-400">
+              Menampilkan 1 - {{ filteredJadwalList.length }} dari {{ jadwalList.length }} hasil
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- MODAL 1: AI GENETIC ALGORITHM OPTIMIZER -->
+    <div 
+      v-if="isGaModalOpen" 
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+    >
+      <div class="bg-white dark:bg-[#111827] rounded-3xl max-w-2xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
+        <div class="px-6 py-5 bg-gradient-to-r from-brand-900 to-blue-900 text-white flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center">
+              <svg class="w-6 h-6 text-amber-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-black">AI Schedule & Examiner Optimizer</h3>
+              <p class="text-xs text-blue-200">Algoritma Genetika (GA) Penjadwalan & Plotting Penguji Otomatis</p>
+            </div>
+          </div>
+          <button @click="isGaModalOpen = false" class="text-white/70 hover:text-white text-xl">✕</button>
+        </div>
+
+        <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+          <!-- Parameters -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Parameter Komputasi GA (Proposal Hal. 40)</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                <span class="text-[10px] text-slate-400 font-bold block uppercase">Ukuran Populasi</span>
+                <input v-model="gaParams.popSize" type="number" class="w-full bg-transparent font-black text-slate-800 dark:text-white text-sm focus:outline-none" />
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                <span class="text-[10px] text-slate-400 font-bold block uppercase">Maks. Generasi</span>
+                <input v-model="gaParams.maxGenerations" type="number" class="w-full bg-transparent font-black text-slate-800 dark:text-white text-sm focus:outline-none" />
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                <span class="text-[10px] text-slate-400 font-bold block uppercase">Crossover Rate</span>
+                <input v-model="gaParams.crossoverRate" type="text" class="w-full bg-transparent font-black text-slate-800 dark:text-white text-sm focus:outline-none" />
+              </div>
+              <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                <span class="text-[10px] text-slate-400 font-bold block uppercase">Mutasi Gen</span>
+                <input v-model="gaParams.mutationRate" type="text" class="w-full bg-transparent font-black text-slate-800 dark:text-white text-sm focus:outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Constraints -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Variabel Pembatas (Constraints Check)</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <label class="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40">
+                <input type="checkbox" checked disabled class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" />
+                <div>
+                  <span class="font-bold text-emerald-900 dark:text-emerald-200 block">Ketersediaan Waktu Dosen</span>
+                  <span class="text-[10px] text-emerald-700 dark:text-emerald-400">Pasti bebas bentrok jadwal mengajar & seminar lain</span>
+                </div>
+              </label>
+              
+              <label class="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40">
+                <input type="checkbox" checked disabled class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" />
+                <div>
+                  <span class="font-bold text-emerald-900 dark:text-emerald-200 block">Kesesuaian Bidang Keahlian (KBK)</span>
+                  <span class="text-[10px] text-emerald-700 dark:text-emerald-400">Model ML Random Forest Match Scoring</span>
+                </div>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40">
+                <input type="checkbox" checked disabled class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4" />
+                <div>
+                  <span class="font-bold text-emerald-900 dark:text-emerald-200 block">Pemerataan Kuota Menguji</span>
+                  <span class="text-[10px] text-emerald-700 dark:text-emerald-400">Beban menguji dibagi adil ke seluruh dosen</span>
+                </div>
+              </label>
+
+              <div class="flex items-center gap-2.5 p-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 opacity-60">
+                <input type="checkbox" disabled class="rounded text-slate-400 w-4 h-4" />
+                <div>
+                  <span class="font-bold text-slate-500 line-through block">Pengecekan Ruangan Fisik</span>
+                  <span class="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">Ditiadakan sesuai arahan Dosen Pembimbing</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GA Progress Logs -->
+          <div v-if="gaRunning || gaCompleted" class="p-4 rounded-2xl bg-slate-900 text-white space-y-3 font-mono text-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-blue-300 font-bold">Status Optimasi GA:</span>
+              <span v-if="gaRunning" class="text-amber-400 animate-pulse">Menghitung Generasi ke-{{ gaCurrentGen }} / {{ gaParams.maxGenerations }}...</span>
+              <span v-else class="text-emerald-400 font-bold">✓ Konvergen (Solusi Terbaik Ditemukan!)</span>
+            </div>
+
+            <div class="h-2.5 w-full bg-slate-800 rounded-full overflow-hidden">
+              <div 
+                class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all duration-100"
+                :style="{ width: gaProgress + '%' }"
+              ></div>
+            </div>
+
+            <div class="p-3 bg-black/40 rounded-xl space-y-1 text-[11px] text-slate-300 max-h-32 overflow-y-auto">
+              <div v-for="(log, lIdx) in gaLogs" :key="lIdx" class="leading-relaxed">
+                {{ log }}
+              </div>
+            </div>
+
+            <div v-if="gaCompleted" class="pt-2 flex items-center justify-between border-t border-slate-800 text-xs">
+              <span>Fitness Value: <strong class="text-emerald-400 text-sm">0.985</strong></span>
+              <span class="text-emerald-400 font-semibold">0 Bentrok • Rata-rata Match 94.3%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <button @click="isGaModalOpen = false" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors">
+            Tutup
+          </button>
+          <div class="flex items-center gap-3">
+            <button 
+              v-if="!gaRunning && !gaCompleted"
+              @click="startGaOptimization"
+              class="px-5 py-2.5 text-xs font-bold text-white bg-brand-800 hover:bg-brand-900 rounded-xl shadow-md transition-all flex items-center gap-2"
+            >
+              <svg class="w-4 h-4 text-amber-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+              <span>Mulai Optimasi GA</span>
+            </button>
+            <button 
+              v-if="gaCompleted"
+              @click="applyGaResults"
+              class="px-5 py-2.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition-all flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>Terapkan Hasil Rekomendasi ke Jadwal</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 2: EDIT PLOTTING -->
+    <div 
+      v-if="isEditModalOpen && selectedStudent" 
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+    >
+      <div class="bg-white dark:bg-[#111827] rounded-3xl max-w-xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Edit Plotting Dosen Penguji & Waktu Ujian</h3>
+            <p class="text-xs text-slate-400">Penyesuaian manual jadwal seminar proposal</p>
+          </div>
+          <button @click="isEditModalOpen = false" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+        </div>
+
+        <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+          <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-900 dark:text-white">{{ selectedStudent.nama }}</span>
+              <span class="text-xs font-mono text-slate-500 font-semibold">{{ selectedStudent.nim }}</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">{{ selectedStudent.judul }}</p>
+            <div class="pt-1 text-[11px] text-slate-400 flex items-center gap-3">
+              <span>KBK: <b class="text-brand-700 dark:text-blue-400">{{ selectedStudent.kbk }}</b></span>
+              <span>Pembimbing: <b class="text-slate-700 dark:text-slate-300">{{ selectedStudent.pembimbing1 }}</b></span>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Dosen Penguji 1 (Ketua Penguji)</label>
+            <select v-model="editForm.penguji1" class="w-full text-xs bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+              <option v-for="dosen in dosenListAll" :key="dosen" :value="dosen">{{ dosen }}</option>
+            </select>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Dosen Penguji 2 (Penguji Anggota)</label>
+            <select v-model="editForm.penguji2" class="w-full text-xs bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+              <option v-for="dosen in dosenListAll" :key="dosen" :value="dosen">{{ dosen }}</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Hari & Tanggal</label>
+              <input v-model="editForm.tanggal" type="text" class="w-full text-xs bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700" />
+            </div>
+            <div class="space-y-1.5">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Jam Pelaksanaan</label>
+              <div class="flex items-center gap-1.5">
+                <input v-model="editForm.mulai" type="text" class="w-full text-xs font-mono text-center bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700" />
+                <span class="text-xs text-slate-400">-</span>
+                <input v-model="editForm.selesai" type="text" class="w-full text-xs font-mono text-center bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700" />
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-200 dark:border-blue-900/40 text-[11px] text-brand-900 dark:text-blue-300 flex items-start gap-2">
+            <span class="text-base">💡</span>
+            <span><strong>Bebas Batasan Ruang:</strong> Jadwal hanya disinkronkan berdasarkan ketersediaan waktu dosen & mahasiswa tanpa alokasi ruangan fisik.</span>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+          <button @click="isEditModalOpen = false" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl">Batal</button>
+          <button @click="saveEditPlotting" class="px-4 py-2 text-xs font-bold text-white bg-brand-800 hover:bg-brand-900 rounded-xl shadow-md">Simpan Perubahan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REUSABLE FLOATING CHATBOT COMPONENT -->
+    <app-chatbot></app-chatbot>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    const app = createApp({
+      setup() {
+        const layout = useLayout();
+        const searchQuery = ref('');
+        const filterAngkatan = ref('all');
+        const filterKbk = ref('all');
+
+        const dosenListAll = ref(MockData.dosenNamesAll);
+
+        const jadwalList = ref([
+          {
+            id: 1,
+            nama: 'MUHAMMAD RAIHAN',
+            nim: '11211030',
+            angkatan: '2021',
+            judul: 'ANALISIS KERENTANAN APLIKASI WEB PORTAL KAMPUS DENGAN METODE OWASP TOP 10',
+            kbk: 'Cybersecurity',
+            pembimbing1: 'Dian Permata Sari, S.Kom., M.Kom.',
+            pembimbing2: 'Rian Kurniawan, S.Kom., M.Eng.',
+            penguji1: 'Ahmad Faisal Ridwan, Ph.D.',
+            penguji1MatchScore: 95,
+            penguji2: 'Rizki Pratama Nugraha, M.Han.',
+            hari: 'Senin',
+            tanggal: '28 Sep 2026',
+            mulai: '09:00',
+            selesai: '10:30',
+            nilai: null
+          },
+          {
+            id: 2,
+            nama: 'Siti Rahmawati',
+            nim: '11221068',
+            angkatan: '2022',
+            judul: 'Peramalan Kuantitas Penjualan Harian Produk Retail Menggunakan Hybrid ARIMA-LSTM',
+            kbk: 'AI & Data Science',
+            pembimbing1: 'Ahmad Faisal Ridwan, Ph.D.',
+            pembimbing2: 'Rizki Pratama Nugraha, M.Han.',
+            penguji1: 'Dr. Budi Wicaksono, M.Kom.',
+            penguji1MatchScore: 98,
+            penguji2: 'Dra. Nurul Rahmania, M.T.',
+            hari: 'Senin',
+            tanggal: '28 Sep 2026',
+            mulai: '10:45',
+            selesai: '12:15',
+            nilai: null
+          },
+          {
+            id: 3,
+            nama: 'Anisa Rahmadani',
+            nim: '11231010',
+            angkatan: '2023',
+            judul: 'Analisis Perbandingan Kinerja dan Generalisasi Model Computer Vision pada Edge Device',
+            kbk: 'AI & Data Science',
+            pembimbing1: 'Siti Rahmawati, S.Si., M.Sc.',
+            pembimbing2: 'Ahmad Faisal Ridwan, Ph.D.',
+            penguji1: 'Dian Permata Sari, S.Kom., M.Kom.',
+            penguji1MatchScore: 92,
+            penguji2: 'Dr. Budi Wicaksono, M.Kom.',
+            hari: 'Selasa',
+            tanggal: '29 Sep 2026',
+            mulai: '09:00',
+            selesai: '10:30',
+            nilai: null
+          },
+          {
+            id: 4,
+            nama: 'Ahmad Fauzan Pratama',
+            nim: '11231065',
+            angkatan: '2023',
+            judul: 'Analisis Ketahanan Model Countermeasure Terhadap Serangan Adversarial pada Citra Medis',
+            kbk: 'AI & Data Science',
+            pembimbing1: 'Dr. Budi Wicaksono, M.Kom.',
+            pembimbing2: 'Rizki Pratama Nugraha, M.Han.',
+            penguji1: 'Dra. Nurul Rahmania, M.T.',
+            penguji1MatchScore: 96,
+            penguji2: 'Rian Kurniawan, S.Kom., M.Eng.',
+            hari: 'Selasa',
+            tanggal: '29 Sep 2026',
+            mulai: '13:30',
+            selesai: '15:00',
+            nilai: null
+          },
+          {
+            id: 5,
+            nama: 'Dimas Wahyu Ramadhan',
+            nim: '11231071',
+            angkatan: '2023',
+            judul: 'RANCANG BANGUN SISTEM TIMEGRAPH DAN MONITORING BERKAS TERDISTRIBUSI',
+            kbk: 'Software Engineering',
+            pembimbing1: 'Rizki Pratama Nugraha, M.Han.',
+            pembimbing2: 'Hendri Wijaya, S.T., M.Kom.',
+            penguji1: 'Dian Permata Sari, S.Kom., M.Kom.',
+            penguji1MatchScore: 91,
+            penguji2: 'Siti Rahmawati, S.Si., M.Sc.',
+            hari: 'Rabu',
+            tanggal: '30 Sep 2026',
+            mulai: '09:00',
+            selesai: '10:30',
+            nilai: null
+          },
+          {
+            id: 6,
+            nama: 'Bayu Aditya Saputra',
+            nim: '11231089',
+            angkatan: '2023',
+            judul: 'RANCANG BANGUN SISTEM LOKALISASI INDOOR MENGGUNAKAN WIFI FINGERPRINTING',
+            kbk: 'IoT & Wireless',
+            pembimbing1: 'Rizki Pratama Nugraha, M.Han.',
+            pembimbing2: 'Dr. Ir. Wahyu Hidayat, M.T.',
+            penguji1: 'Rian Kurniawan, S.Kom., M.Eng.',
+            penguji1MatchScore: 94,
+            penguji2: 'Ahmad Faisal Ridwan, Ph.D.',
+            hari: 'Rabu',
+            tanggal: '30 Sep 2026',
+            mulai: '10:45',
+            selesai: '12:15',
+            nilai: null
+          }
+        ]);
+
+        const filteredJadwalList = computed(() => {
+          return jadwalList.value.filter(item => {
+            const query = searchQuery.value.toLowerCase().trim();
+            const matchSearch = !query || 
+              item.nama.toLowerCase().includes(query) ||
+              item.nim.includes(query) ||
+              item.judul.toLowerCase().includes(query) ||
+              item.penguji1.toLowerCase().includes(query) ||
+              item.penguji2.toLowerCase().includes(query);
+
+            const matchAngkatan = filterAngkatan.value === 'all' || item.angkatan === filterAngkatan.value;
+            const matchKbk = filterKbk.value === 'all' || item.kbk === filterKbk.value;
+
+            return matchSearch && matchAngkatan && matchKbk;
+          });
+        });
+
+        // AI GA Modal
+        const isGaModalOpen = ref(false);
+        const gaRunning = ref(false);
+        const gaCompleted = ref(false);
+        const gaProgress = ref(0);
+        const gaCurrentGen = ref(1);
+        const gaLogs = ref([]);
+        const gaParams = ref({ popSize: 50, maxGenerations: 100, crossoverRate: '0.80', mutationRate: '0.03' });
+
+        const openGaModal = () => {
+          isGaModalOpen.value = true;
+          gaRunning.value = false;
+          gaCompleted.value = false;
+          gaProgress.value = 0;
+          gaCurrentGen.value = 1;
+          gaLogs.value = [];
+        };
+
+        const startGaOptimization = () => {
+          gaRunning.value = true;
+          gaCompleted.value = false;
+          gaProgress.value = 0;
+          gaCurrentGen.value = 1;
+          gaLogs.value = [
+            `[00:01] Mengambil dataset seminar validasi (6 berkas tervalidasi).`,
+            `[00:01] Mengekstrak waktu luang & ketersediaan dosen penguji...`,
+            `[00:02] Menghitung Random Forest Topic Compatibility Score (.pkl model)...`,
+            `[00:02] Inisialisasi populasi awal (${gaParams.value.popSize} kromosom)...`
+          ];
+
+          let progress = 0;
+          let gen = 1;
+          const interval = setInterval(() => {
+            progress += 10;
+            gen += 10;
+            gaProgress.value = Math.min(progress, 100);
+            gaCurrentGen.value = Math.min(gen, gaParams.value.maxGenerations);
+
+            if (progress === 30) gaLogs.value.push(`[Generasi 25] Fitness: 0.742 | 2 bentrok waktu pada Penguji 1.`);
+            else if (progress === 60) gaLogs.value.push(`[Generasi 55] Two-Point Crossover & Mutasi (3%)... Fitness: 0.890.`);
+            else if (progress === 90) gaLogs.value.push(`[Generasi 85] Fitness: 0.985 | Zero Conflict Constraint terpenuhi 100%!`);
+
+            if (progress >= 100) {
+              clearInterval(interval);
+              gaRunning.value = false;
+              gaCompleted.value = true;
+              gaLogs.value.push(`[Konvergensi] Solusi optimal ditemukan pada Generasi ke-88 (Fitness: 0.985).`);
+              gaLogs.value.push(`[Selesai] 6/6 Mahasiswa berhasil di-plot bebas bentrok jadwal.`);
+            }
+          }, 250);
+        };
+
+        const applyGaResults = () => {
+          isGaModalOpen.value = false;
+          alert('Berhasil menerapkan jadwal dan plotting rekomendasi AI Genetika!');
+        };
+
+        // Edit Modal
+        const isEditModalOpen = ref(false);
+        const selectedStudent = ref(null);
+        const editForm = ref({ penguji1: '', penguji2: '', tanggal: '', mulai: '', selesai: '' });
+
+        const openEditPlotting = (student) => {
+          selectedStudent.value = student;
+          editForm.value = {
+            penguji1: student.penguji1,
+            penguji2: student.penguji2,
+            tanggal: student.tanggal,
+            mulai: student.mulai,
+            selesai: student.selesai
+          };
+          isEditModalOpen.value = true;
+        };
+
+        const saveEditPlotting = () => {
+          if (!selectedStudent.value) return;
+          if (editForm.value.penguji1 === editForm.value.penguji2) {
+            alert('Penguji 1 dan Penguji 2 tidak boleh dosen yang sama!');
+            return;
+          }
+          selectedStudent.value.penguji1 = editForm.value.penguji1;
+          selectedStudent.value.penguji2 = editForm.value.penguji2;
+          selectedStudent.value.tanggal = editForm.value.tanggal;
+          selectedStudent.value.mulai = editForm.value.mulai;
+          selectedStudent.value.selesai = editForm.value.selesai;
+          isEditModalOpen.value = false;
+          alert(`Plotting seminar untuk ${selectedStudent.value.nama} berhasil diperbarui!`);
+        };
+
+        const exportExcel = () => alert('Mengunduh Jadwal_Sempro_Gelombang2_Informatika.xlsx...');
+        const downloadJadwal = () => alert('Mengunduh Surat_Tugas_Dan_Jadwal_Sempro.pdf...');
+
+        return {
+          ...layout,
+          searchQuery,
+          filterAngkatan,
+          filterKbk,
+          jadwalList,
+          filteredJadwalList,
+          dosenListAll,
+          isGaModalOpen,
+          gaRunning,
+          gaCompleted,
+          gaProgress,
+          gaCurrentGen,
+          gaLogs,
+          gaParams,
+          openGaModal,
+          startGaOptimization,
+          applyGaResults,
+          isEditModalOpen,
+          selectedStudent,
+          editForm,
+          openEditPlotting,
+          saveEditPlotting,
+          exportExcel,
+          downloadJadwal,
+          alertInfo
+        };
+      }
+    });
+
+    registerComponents(app);
+    app.mount('#app');
+  </script>
+</body>
+</html>

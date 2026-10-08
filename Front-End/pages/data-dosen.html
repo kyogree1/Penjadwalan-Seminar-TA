@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data User Dosen - SIPTA IF ITK</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c7d7fe', 300: '#a4bcfd',
+              400: '#7994fa', 500: '#4f68f3', 600: '#2b44e2', 700: '#1b32c6',
+              800: '#0b3084', 900: '#082361', 950: '#041235',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Custom Stylesheet & Shared Utilities -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/shared.js"></script>
+  <script src="../assets/js/mockData.js"></script>
+
+  <!-- Modular Reusable Components -->
+  <script src="../assets/js/components/sidebar.js"></script>
+  <script src="../assets/js/components/navbar.js"></script>
+  <script src="../assets/js/components/chatbot.js"></script>
+</head>
+
+<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased selection:bg-brand-600 selection:text-white flex flex-col">
+
+  <div id="app" v-cloak class="flex min-h-screen flex-1 relative">
+
+    <!-- REUSABLE SIDEBAR COMPONENT -->
+    <app-sidebar 
+      :active-page="'dosen'" 
+      :is-collapsed="isSidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      :root-path="'../'"
+      @toggle-collapse="toggleDesktopSidebar"
+      @close-mobile="closeMobileSidebar"
+    ></app-sidebar>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="app-main-wrapper flex-1 flex flex-col min-w-0 transition-all duration-300 w-full min-h-screen">
+      <!-- REUSABLE NAVBAR COMPONENT -->
+      <app-navbar 
+        :is-dark="isDark"
+        @toggle-sidebar="toggleSidebar"
+        @toggle-theme="toggleTheme"
+        v-model="searchQuery"
+      ></app-navbar>
+
+      <!-- TOAST NOTIFICATION POPUP -->
+      <div 
+        v-if="toast.show" 
+        class="fixed top-24 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-md transition-all duration-300 animate-bounce"
+        :class="toast.isError ? 'bg-rose-50/95 dark:bg-rose-950/90 text-rose-800 dark:text-rose-200 border-rose-300 dark:border-rose-800' : 'bg-emerald-50/95 dark:bg-emerald-950/90 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800'"
+      >
+        <span class="text-lg">{{ toast.isError ? '⚠️' : '✅' }}</span>
+        <span class="text-xs sm:text-sm font-bold">{{ toast.message }}</span>
+      </div>
+
+      <!-- MAIN PAGE BODY -->
+      <main class="page-container space-y-6">
+        
+        <!-- BREADCRUMB & HEADER -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-1">
+              <a href="../index.html" class="hover:text-brand-600">Home</a>
+              <span>›</span>
+              <span class="text-slate-600 dark:text-slate-300">Data User</span>
+              <span>›</span>
+              <span class="text-brand-700 dark:text-blue-400 font-semibold">Data Dosen</span>
+            </nav>
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Data Master Dosen</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Kelola data dosen pembimbing & penguji, asal program studi/instansi, serta batas beban menguji untuk Algoritma Genetika.
+            </p>
+          </div>
+
+          <!-- Action Buttons (Matches data_user_dosen.png) -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <!-- Import Data Button -->
+            <button 
+              @click="openModalImport"
+              class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-emerald-900/10 flex items-center gap-2 transition-transform active:scale-95"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+              <span>Import Data</span>
+            </button>
+
+            <!-- + Tambah Dosen Button -->
+            <button 
+              @click="openModalTambah"
+              class="px-4 py-2.5 bg-gradient-to-r from-brand-800 to-blue-600 hover:from-brand-900 hover:to-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-brand-900/20 flex items-center gap-2 transition-transform active:scale-95"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              <span>+ Tambah Dosen</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI SUMMARY CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Total Dosen -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Dosen Terdata</p>
+              <p class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ totalDosenCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-brand-700 dark:text-blue-400 flex items-center justify-center font-bold">
+              👨‍🏫
+            </div>
+          </div>
+
+          <!-- Dosen Internal IF -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-blue-200/80 dark:border-blue-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-blue-600">Dosen Informatika ITK</p>
+              <p class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">{{ internalIfCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center font-bold">
+              💻
+            </div>
+          </div>
+
+          <!-- Dosen Luar / Eksternal -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-amber-200/80 dark:border-amber-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-amber-600">Dosen Lintas Prodi / Mitra</p>
+              <p class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">{{ externalCount }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center font-bold">
+              🏛️
+            </div>
+          </div>
+
+          <!-- Rata-rata Beban Menguji -->
+          <div class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Rata-rata Beban Uji (GA)</p>
+              <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{{ avgQuotaLoad }} <span class="text-xs font-normal text-slate-400">/ 10</span></p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center font-bold">
+              ⚖️
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN TABLE CARD -->
+        <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden space-y-0">
+          
+          <!-- Card Filters & Controls Bar -->
+          <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 space-y-3">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class="text-brand-600 dark:text-blue-400 font-bold">🎓</span>
+                <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Daftar Pengajar & Penguji</h2>
+                <span class="text-xs text-slate-400">({{ filteredDosenList.length }} data)</span>
+              </div>
+
+              <!-- Quick Prodi Filter Pills -->
+              <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 text-xs">
+                <button 
+                  @click="filterProdi = 'all'" 
+                  :class="filterProdi === 'all' ? 'bg-brand-800 text-white font-bold' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'"
+                  class="px-3 py-1.5 rounded-xl transition-all whitespace-nowrap"
+                >
+                  Semua Prodi
+                </button>
+                <button 
+                  @click="filterProdi = 'Informatika'" 
+                  :class="filterProdi === 'Informatika' ? 'bg-blue-600 text-white font-bold' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'"
+                  class="px-3 py-1.5 rounded-xl transition-all whitespace-nowrap"
+                >
+                  Informatika
+                </button>
+                <button 
+                  @click="filterProdi = 'lintas'" 
+                  :class="filterProdi === 'lintas' ? 'bg-amber-600 text-white font-bold' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'"
+                  class="px-3 py-1.5 rounded-xl transition-all whitespace-nowrap"
+                >
+                  Lintas Prodi / Eksternal
+                </button>
+              </div>
+            </div>
+
+            <!-- Search Bar & Secondary Dropdowns (Matches data_user_dosen.png) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+              <!-- Search Bar -->
+              <div class="relative sm:col-span-2">
+                <input 
+                  v-model="searchQuery" 
+                  type="text" 
+                  placeholder="Cari dosen berdasarkan nama, NIP, email, atau bidang..."
+                  class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 text-slate-800 dark:text-slate-100 placeholder-slate-400"
+                />
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </div>
+
+              <!-- Filter Jabatan Akademik -->
+              <select 
+                v-model="filterJabatan"
+                class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none cursor-pointer"
+              >
+                <option value="all">Semua Jabatan</option>
+                <option value="Lektor Kepala">Lektor Kepala</option>
+                <option value="Lektor">Lektor</option>
+                <option value="Asisten Ahli">Asisten Ahli</option>
+                <option value="Tenaga Pengajar">Tenaga Pengajar</option>
+                <option value="Praktisi Ahli">Praktisi Ahli</option>
+              </select>
+
+              <!-- Filter Role -->
+              <select 
+                v-model="filterRole"
+                class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-xl text-xs focus:outline-none cursor-pointer"
+              >
+                <option value="all">Semua Role</option>
+                <option value="Koorprodi">Koorprodi</option>
+                <option value="Tim KBK">Tim KBK</option>
+                <option value="Dosen Penguji">Dosen Penguji</option>
+                <option value="Penguji Eksternal">Penguji Eksternal</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- TABLE CONTENT (Exact columns matching data_user_dosen.png) -->
+          <div class="overflow-x-auto w-full">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50/90 dark:bg-slate-800/70 text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th class="py-3 px-3 text-center w-12">NO</th>
+                  <th class="py-3 px-3 min-w-[200px]">NAMA</th>
+                  <th class="py-3 px-3 font-mono min-w-[150px]">NIP</th>
+                  <th class="py-3 px-3 min-w-[140px]">PRODI / INSTANSI</th>
+                  <th class="py-3 px-3 min-w-[110px]">ROLE</th>
+                  <th class="py-3 px-3 min-w-[140px]">BEBAN MENGUJI (GA)</th>
+                  <th class="py-3 px-3 min-w-[180px]">EMAIL</th>
+                  <th class="py-3 px-3 text-center w-24">AKSI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                <tr 
+                  v-for="(dosen, idx) in paginatedDosenList" 
+                  :key="dosen.id"
+                  class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                >
+                  <!-- No -->
+                  <td class="py-3 px-3 text-center font-semibold text-slate-400">
+                    {{ (currentPage - 1) * pageSize + idx + 1 }}
+                  </td>
+
+                  <!-- Nama & Bidang Keahlian -->
+                  <td class="py-3 px-3">
+                    <p class="font-bold text-slate-900 dark:text-white leading-snug">{{ dosen.nama }}</p>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                      <span class="text-[10px] text-slate-400 font-medium">{{ dosen.jabatanAkademik }}</span>
+                      <span class="text-slate-300 dark:text-slate-600">•</span>
+                      <span class="text-[10px] text-brand-600 dark:text-blue-400 font-medium truncate max-w-[140px]" :title="dosen.bidangKeahlian">
+                        {{ dosen.bidangKeahlian }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <!-- NIP -->
+                  <td class="py-3 px-3 font-mono text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                    {{ dosen.nip }}
+                  </td>
+
+                  <!-- Prodi / Instansi Pill (Matches data_user_dosen.png) -->
+                  <td class="py-3 px-3">
+                    <span 
+                      :class="getProdiBadgeClass(dosen.prodi)"
+                      class="px-2.5 py-1 rounded-full text-[10px] font-extrabold inline-flex items-center gap-1.5"
+                    >
+                      <span class="w-1.5 h-1.5 rounded-full" :class="getProdiDotClass(dosen.prodi)"></span>
+                      <span>{{ dosen.prodi }}</span>
+                    </span>
+                  </td>
+
+                  <!-- Role Pill -->
+                  <td class="py-3 px-3">
+                    <span 
+                      v-if="dosen.role"
+                      :class="getRoleBadgeClass(dosen.role)"
+                      class="px-2 py-0.5 rounded-full text-[10px] font-extrabold inline-block"
+                    >
+                      {{ dosen.role }}
+                    </span>
+                    <span v-else class="text-slate-400 text-[11px]">—</span>
+                  </td>
+
+                  <!-- Beban Menguji & Quota Bar (Core for GA Algorithm) -->
+                  <td class="py-3 px-3">
+                    <div class="space-y-1">
+                      <div class="flex items-center justify-between text-[10px]">
+                        <span class="font-bold text-slate-700 dark:text-slate-300">{{ dosen.currentQuota }} / {{ dosen.maxQuota }} Mhs</span>
+                        <span :class="getQuotaStatusColor(dosen.currentQuota, dosen.maxQuota)" class="font-extrabold">
+                          {{ Math.round((dosen.currentQuota / dosen.maxQuota) * 100) }}%
+                        </span>
+                      </div>
+                      <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div 
+                          class="h-full rounded-full transition-all duration-300"
+                          :class="getQuotaBarColor(dosen.currentQuota, dosen.maxQuota)"
+                          :style="{ width: Math.min((dosen.currentQuota / dosen.maxQuota) * 100, 100) + '%' }"
+                        ></div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- Email -->
+                  <td class="py-3 px-3 text-slate-600 dark:text-slate-400 font-mono text-[11px]">
+                    <a :href="'mailto:' + dosen.email" class="hover:text-brand-600 dark:hover:text-blue-400 truncate block max-w-[200px]" :title="dosen.email">
+                      {{ dosen.email }}
+                    </a>
+                  </td>
+
+                  <!-- Aksi: Edit & Delete (Matches data_user_dosen.png buttons) -->
+                  <td class="py-3 px-3 text-center whitespace-nowrap">
+                    <div class="flex items-center justify-center gap-1.5">
+                      <!-- Edit Button (Blue) -->
+                      <button 
+                        @click="openModalEdit(dosen)"
+                        class="w-7 h-7 rounded-lg bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center transition-transform active:scale-90 shadow-sm"
+                        title="Edit Dosen"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                      </button>
+
+                      <!-- Delete Button (Red) -->
+                      <button 
+                        @click="confirmDeleteDosen(dosen)"
+                        class="w-7 h-7 rounded-lg bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center transition-transform active:scale-90 shadow-sm"
+                        title="Hapus Dosen"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Empty State -->
+                <tr v-if="filteredDosenList.length === 0">
+                  <td colspan="8" class="py-14 text-center">
+                    <div class="flex flex-col items-center justify-center space-y-3">
+                      <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800/80 text-slate-400 flex items-center justify-center text-2xl">
+                        🔍
+                      </div>
+                      <div class="space-y-1">
+                        <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Dosen Tidak Ditemukan</p>
+                        <p class="text-xs text-slate-400">Tidak ada pengajar yang cocok dengan kata kunci pencarian atau filter yang aktif.</p>
+                      </div>
+                      <button 
+                        @click="resetFilter"
+                        class="px-3.5 py-1.5 bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-blue-300 text-xs font-bold rounded-xl border border-brand-200 dark:border-brand-800 hover:bg-brand-100"
+                      >
+                        Reset Pencarian
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- TABLE FOOTER & PAGINATION (Matches data_user_dosen.png) -->
+          <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500">
+            <div>
+              Showing <b class="text-slate-800 dark:text-slate-200">{{ paginationStart }}</b> to <b class="text-slate-800 dark:text-slate-200">{{ paginationEnd }}</b> of <b class="text-slate-800 dark:text-slate-200">{{ filteredDosenList.length }}</b> results
+            </div>
+
+            <!-- Pagination Numbers -->
+            <div class="flex items-center gap-1 overflow-x-auto">
+              <button 
+                @click="currentPage--"
+                :disabled="currentPage === 1"
+                class="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                ‹
+              </button>
+
+              <button 
+                v-for="p in totalPages" 
+                :key="p"
+                @click="currentPage = p"
+                :class="currentPage === p ? 'bg-brand-800 text-white font-bold' : 'border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'"
+                class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-semibold transition-colors"
+              >
+                {{ p }}
+              </button>
+
+              <button 
+                @click="currentPage++"
+                :disabled="currentPage === totalPages"
+                class="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                ›
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- MODAL FORM: TAMBAH / EDIT DOSEN (Matches data_user_dosen_tambah.png) -->
+      <div 
+        v-if="isModalFormOpen" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
+      >
+        <div class="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-xl w-full p-6 space-y-5 animate-scaleIn">
+          
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">
+              {{ isEditing ? 'Edit Data Dosen' : 'Tambah Dosen' }}
+            </h3>
+            <button 
+              @click="closeModalForm"
+              class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Form Fields -->
+          <div class="space-y-4 text-xs">
+            
+            <!-- Nama Lengkap & Email -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Nama Lengkap <span class="text-rose-500">*</span></label>
+                <input 
+                  v-model="formDosen.nama"
+                  type="text" 
+                  placeholder="Masukkan Nama Lengkap beserta gelar"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
+              </div>
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Email Instansi <span class="text-rose-500">*</span></label>
+                <input 
+                  v-model="formDosen.email"
+                  type="email" 
+                  placeholder="contoh@lecturer.itk.ac.id"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
+              </div>
+            </div>
+
+            <!-- NIP & Jabatan Akademik -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">NIP/NUPTK/ID Karyawan <span class="text-rose-500">*</span></label>
+                <input 
+                  v-model="formDosen.nip"
+                  type="text" 
+                  placeholder="Masukkan NIP atau NUPTK"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
+                <p class="text-[10px] text-slate-400">Dosen internal: NIP ITK | Dosen eksternal: NUPTK/ID Karyawan</p>
+              </div>
+
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Jabatan Akademik <span class="text-rose-500">*</span></label>
+                <select 
+                  v-model="formDosen.jabatanAkademik"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                >
+                  <option disabled value="">Pilih Jabatan Akademik</option>
+                  <option value="Guru Besar">Guru Besar</option>
+                  <option value="Lektor Kepala">Lektor Kepala</option>
+                  <option value="Lektor">Lektor</option>
+                  <option value="Asisten Ahli">Asisten Ahli</option>
+                  <option value="Tenaga Pengajar">Tenaga Pengajar</option>
+                  <option value="Praktisi Ahli">Praktisi Ahli (Eksternal)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Info Box (Matches data_user_dosen_tambah.png) -->
+            <div class="p-3 bg-blue-50/80 dark:bg-blue-950/40 rounded-xl border border-blue-200/80 dark:border-blue-900/60 text-blue-900 dark:text-blue-300 space-y-1">
+              <div class="flex items-center gap-1.5 font-bold text-xs">
+                <span>ℹ️</span>
+                <span>Info:</span>
+              </div>
+              <p class="text-[11px] leading-relaxed">
+                <b>Dosen Internal ITK:</b> Pilih Program Studi + isi NIP resmi ITK.<br>
+                <b>Dosen Eksternal:</b> Isi Asal Instansi + NIP/NUPTK/ID Karyawan dari instansi asal.
+              </p>
+            </div>
+
+            <!-- Tipe Dosen Selection -->
+            <div class="flex items-center gap-4 pt-1">
+              <label class="inline-flex items-center gap-2 cursor-pointer font-semibold text-slate-700 dark:text-slate-300">
+                <input type="radio" value="Internal ITK" v-model="formDosen.tipe" class="text-brand-600 focus:ring-brand-500" />
+                <span>Dosen Internal ITK</span>
+              </label>
+              <label class="inline-flex items-center gap-2 cursor-pointer font-semibold text-slate-700 dark:text-slate-300">
+                <input type="radio" value="Dosen Eksternal" v-model="formDosen.tipe" class="text-brand-600 focus:ring-brand-500" />
+                <span>Dosen Eksternal</span>
+              </label>
+            </div>
+
+            <!-- Program Studi vs Asal Instansi -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">
+                  Program Studi <span class="text-slate-400 font-normal">(Internal ITK)</span>
+                </label>
+                <select 
+                  v-model="formDosen.prodi"
+                  :disabled="formDosen.tipe === 'Dosen Eksternal'"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                >
+                  <option value="Informatika">Informatika</option>
+                  <option value="Sistem Informasi">Sistem Informasi</option>
+                  <option value="Teknik Mesin">Teknik Mesin</option>
+                  <option value="Teknik Perkapalan">Teknik Perkapalan</option>
+                  <option value="Teknik Biomedis">Teknik Biomedis</option>
+                  <option value="Teknik Elektro">Teknik Elektro</option>
+                </select>
+              </div>
+
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">
+                  Asal Instansi <span class="text-slate-400 font-normal">(Eksternal)</span>
+                </label>
+                <input 
+                  v-model="formDosen.asalInstansi"
+                  :disabled="formDosen.tipe === 'Internal ITK'"
+                  type="text" 
+                  placeholder="Contoh: PT. Pertamina, Unmul, dll."
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
+              </div>
+            </div>
+
+            <!-- Role Tambahan & Kuota Beban Menguji (Core for Genetic Algorithm) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Role Tambahan</label>
+                <select 
+                  v-model="formDosen.role"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                >
+                  <option value="Dosen">Dosen Biasa</option>
+                  <option value="Koorprodi">Koordinator Program Studi (Koorprodi)</option>
+                  <option value="Tim KBK">Tim Kelompok Bidang Keahlian (KBK)</option>
+                  <option value="Dosen Penguji">Dosen Penguji</option>
+                  <option value="Penguji Eksternal">Penguji Eksternal</option>
+                </select>
+              </div>
+
+              <div class="space-y-1">
+                <label class="font-bold text-slate-700 dark:text-slate-300">Batas Kuota Menguji <span class="text-brand-600 dark:text-blue-400 font-normal">(Variabel Batas GA)</span></label>
+                <input 
+                  v-model.number="formDosen.maxQuota"
+                  type="number" 
+                  min="1" 
+                  max="25"
+                  class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                />
+              </div>
+            </div>
+
+            <!-- Bidang Keahlian -->
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">Bidang Keahlian / Minat Riset <span class="text-rose-500">*</span></label>
+              <input 
+                v-model="formDosen.bidangKeahlian"
+                type="text" 
+                placeholder="Contoh: Artificial Intelligence, Natural Language Processing, Software Eng."
+                class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              />
+            </div>
+
+          </div>
+
+          <!-- Modal Action Buttons (Matches data_user_dosen_tambah.png) -->
+          <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button 
+              @click="closeModalForm"
+              class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              Tutup
+            </button>
+            <button 
+              @click="saveDosen"
+              :disabled="!isFormValid"
+              :class="[
+                isFormValid 
+                  ? 'bg-gradient-to-r from-brand-800 to-blue-600 hover:from-brand-900 hover:to-blue-700 text-white shadow-md active:scale-95' 
+                  : 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed',
+                'px-6 py-2.5 rounded-xl text-xs font-bold transition-all'
+              ]"
+            >
+              {{ isEditing ? 'Simpan Perubahan' : 'Submit' }}
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- MODAL IMPORT DATA DOSEN -->
+      <div 
+        v-if="isModalImportOpen" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto"
+      >
+        <div class="bg-white dark:bg-[#111827] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-md w-full p-6 space-y-5 animate-scaleIn">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Import Data Dosen</h3>
+            <button @click="isModalImportOpen = false" class="text-slate-400 hover:text-slate-600">✕</button>
+          </div>
+
+          <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 text-center space-y-2 hover:border-brand-500 transition-colors cursor-pointer bg-slate-50 dark:bg-slate-800/40">
+            <div class="text-3xl">📄</div>
+            <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Pilih berkas CSV atau Excel (.xlsx)</p>
+            <p class="text-[11px] text-slate-400">Pastikan format kolom: Nama, NIP, Prodi, Email, Jabatan, Bidang</p>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-brand-600 dark:text-blue-400 font-semibold pt-1">
+            <a href="#" @click.prevent="showToast('Template CSV berhasil diunduh.')">📥 Unduh Template CSV</a>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button @click="isModalImportOpen = false" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500">Batal</button>
+            <button @click="processImport" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-md">
+              Mulai Import
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- REUSABLE CHATBOT COMPONENT -->
+      <app-chatbot></app-chatbot>
+
+    </div>
+  </div>
+
+  <!-- APPLICATION VUE SCRIPT -->
+  <script>
+    const { createApp, ref, computed } = Vue;
+
+    const app = createApp({
+      setup() {
+        const layout = useLayout();
+        const searchQuery = ref('');
+        const filterProdi = ref('all');
+        const filterJabatan = ref('all');
+        const filterRole = ref('all');
+
+        // Main Lecturer Dataset
+        const dosenList = ref([...(window.MockData?.masterDosenList || [])]);
+
+        // Pagination State
+        const currentPage = ref(1);
+        const pageSize = 8;
+
+        // Toast State
+        const toast = ref({
+          show: false,
+          message: '',
+          isError: false
+        });
+
+        const showToast = (message, isError = false) => {
+          toast.value = { show: true, message, isError };
+          setTimeout(() => {
+            toast.value.show = false;
+          }, 3500);
+        };
+
+        // Filtered Dosen List
+        const filteredDosenList = computed(() => {
+          return dosenList.value.filter(d => {
+            // Search Query
+            const q = searchQuery.value.toLowerCase().trim();
+            const matchQuery = !q || 
+              d.nama.toLowerCase().includes(q) ||
+              d.nip.toLowerCase().includes(q) ||
+              d.email.toLowerCase().includes(q) ||
+              (d.bidangKeahlian && d.bidangKeahlian.toLowerCase().includes(q));
+
+            // Filter Prodi
+            let matchProdi = true;
+            if (filterProdi.value === 'Informatika') {
+              matchProdi = d.prodi === 'Informatika';
+            } else if (filterProdi.value === 'lintas') {
+              matchProdi = d.prodi !== 'Informatika';
+            }
+
+            // Filter Jabatan
+            const matchJabatan = filterJabatan.value === 'all' || d.jabatanAkademik === filterJabatan.value;
+
+            // Filter Role
+            const matchRole = filterRole.value === 'all' || d.role === filterRole.value;
+
+            return matchQuery && matchProdi && matchJabatan && matchRole;
+          });
+        });
+
+        // Pagination Computations
+        const totalPages = computed(() => Math.ceil(filteredDosenList.value.length / pageSize) || 1);
+        const paginatedDosenList = computed(() => {
+          const start = (currentPage.value - 1) * pageSize;
+          return filteredDosenList.value.slice(start, start + pageSize);
+        });
+
+        const paginationStart = computed(() => {
+          if (filteredDosenList.value.length === 0) return 0;
+          return (currentPage.value - 1) * pageSize + 1;
+        });
+
+        const paginationEnd = computed(() => {
+          return Math.min(currentPage.value * pageSize, filteredDosenList.value.length);
+        });
+
+        // Summary Counts
+        const totalDosenCount = computed(() => dosenList.value.length);
+        const internalIfCount = computed(() => dosenList.value.filter(d => d.prodi === 'Informatika').length);
+        const externalCount = computed(() => dosenList.value.filter(d => d.prodi !== 'Informatika').length);
+        const avgQuotaLoad = computed(() => {
+          if (!dosenList.value.length) return 0;
+          const total = dosenList.value.reduce((acc, d) => acc + (d.currentQuota || 0), 0);
+          return (total / dosenList.value.length).toFixed(1);
+        });
+
+        const resetFilter = () => {
+          searchQuery.value = '';
+          filterProdi.value = 'all';
+          filterJabatan.value = 'all';
+          filterRole.value = 'all';
+          currentPage.value = 1;
+        };
+
+        // Styling Helpers matching data_user_dosen.png
+        const getProdiBadgeClass = (prodi) => {
+          switch (prodi) {
+            case 'Informatika':
+              return 'bg-blue-100/80 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900';
+            case 'Teknik Mesin':
+              return 'bg-amber-100/80 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-900';
+            case 'Teknik Perkapalan':
+              return 'bg-amber-100/80 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-900';
+            case 'Teknik Biomedis':
+              return 'bg-indigo-100/80 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-900';
+            default:
+              return 'bg-purple-100/80 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-900';
+          }
+        };
+
+        const getProdiDotClass = (prodi) => {
+          switch (prodi) {
+            case 'Informatika': return 'bg-blue-600';
+            case 'Teknik Mesin': return 'bg-amber-500';
+            case 'Teknik Perkapalan': return 'bg-amber-600';
+            case 'Teknik Biomedis': return 'bg-indigo-500';
+            default: return 'bg-purple-500';
+          }
+        };
+
+        const getRoleBadgeClass = (role) => {
+          switch (role) {
+            case 'Koorprodi':
+              return 'bg-blue-900 text-white dark:bg-blue-800';
+            case 'Tim KBK':
+              return 'bg-indigo-600 text-white';
+            case 'Penguji Eksternal':
+              return 'bg-amber-600 text-white';
+            default:
+              return 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
+          }
+        };
+
+        const getQuotaStatusColor = (current, max) => {
+          const pct = (current / max) * 100;
+          if (pct >= 90) return 'text-rose-600 dark:text-rose-400';
+          if (pct >= 70) return 'text-amber-600 dark:text-amber-400';
+          return 'text-emerald-600 dark:text-emerald-400';
+        };
+
+        const getQuotaBarColor = (current, max) => {
+          const pct = (current / max) * 100;
+          if (pct >= 90) return 'bg-rose-500';
+          if (pct >= 70) return 'bg-amber-500';
+          return 'bg-emerald-500';
+        };
+
+        // Form Modal State (Matches data_user_dosen_tambah.png)
+        const isModalFormOpen = ref(false);
+        const isEditing = ref(false);
+        const editingId = ref(null);
+
+        const formDosen = ref({
+          nama: '',
+          email: '',
+          nip: '',
+          jabatanAkademik: '',
+          tipe: 'Internal ITK',
+          prodi: 'Informatika',
+          asalInstansi: '',
+          role: 'Dosen',
+          bidangKeahlian: '',
+          maxQuota: 10
+        });
+
+        const openModalTambah = () => {
+          isEditing.value = false;
+          editingId.value = null;
+          formDosen.value = {
+            nama: '',
+            email: '',
+            nip: '',
+            jabatanAkademik: '',
+            tipe: 'Internal ITK',
+            prodi: 'Informatika',
+            asalInstansi: '',
+            role: 'Dosen',
+            bidangKeahlian: '',
+            maxQuota: 10
+          };
+          isModalFormOpen.value = true;
+        };
+
+        const openModalEdit = (dosen) => {
+          isEditing.value = true;
+          editingId.value = dosen.id;
+          formDosen.value = {
+            nama: dosen.nama,
+            email: dosen.email,
+            nip: dosen.nip,
+            jabatanAkademik: dosen.jabatanAkademik || '',
+            tipe: dosen.tipe || 'Internal ITK',
+            prodi: dosen.prodi || 'Informatika',
+            asalInstansi: dosen.asalInstansi || '',
+            role: dosen.role || 'Dosen',
+            bidangKeahlian: dosen.bidangKeahlian || '',
+            maxQuota: dosen.maxQuota || 10
+          };
+          isModalFormOpen.value = true;
+        };
+
+        const closeModalForm = () => {
+          isModalFormOpen.value = false;
+        };
+
+        const isFormValid = computed(() => {
+          return formDosen.value.nama.trim() !== '' &&
+                 formDosen.value.email.trim() !== '' &&
+                 formDosen.value.nip.trim() !== '' &&
+                 formDosen.value.jabatanAkademik !== '' &&
+                 formDosen.value.bidangKeahlian.trim() !== '';
+        });
+
+        const saveDosen = () => {
+          if (!isFormValid.value) return;
+
+          if (isEditing.value) {
+            const idx = dosenList.value.findIndex(d => d.id === editingId.value);
+            if (idx !== -1) {
+              dosenList.value[idx] = {
+                ...dosenList.value[idx],
+                ...formDosen.value
+              };
+              showToast(`Data dosen "${formDosen.value.nama}" berhasil diperbarui!`);
+            }
+          } else {
+            const newId = dosenList.value.length ? Math.max(...dosenList.value.map(d => d.id)) + 1 : 1;
+            const newDosen = {
+              id: newId,
+              nama: formDosen.value.nama,
+              email: formDosen.value.email,
+              nip: formDosen.value.nip,
+              jabatanAkademik: formDosen.value.jabatanAkademik,
+              tipe: formDosen.value.tipe,
+              prodi: formDosen.value.tipe === 'Dosen Eksternal' ? (formDosen.value.asalInstansi || 'Eksternal') : formDosen.value.prodi,
+              asalInstansi: formDosen.value.asalInstansi,
+              role: formDosen.value.role,
+              bidangKeahlian: formDosen.value.bidangKeahlian,
+              currentQuota: 0,
+              maxQuota: formDosen.value.maxQuota,
+              status: 'Aktif'
+            };
+            dosenList.value.unshift(newDosen);
+            showToast(`Dosen baru "${formDosen.value.nama}" berhasil ditambahkan!`);
+          }
+
+          closeModalForm();
+        };
+
+        const confirmDeleteDosen = (dosen) => {
+          if (confirm(`Apakah Anda yakin ingin menghapus data dosen "${dosen.nama}"?`)) {
+            dosenList.value = dosenList.value.filter(d => d.id !== dosen.id);
+            showToast(`Dosen "${dosen.nama}" berhasil dihapus.`);
+          }
+        };
+
+        // Modal Import State
+        const isModalImportOpen = ref(false);
+        const openModalImport = () => {
+          isModalImportOpen.value = true;
+        };
+
+        const processImport = () => {
+          isModalImportOpen.value = false;
+          showToast('Data dosen dari berkas eksternal berhasil diimpor!');
+        };
+
+        return {
+          ...layout,
+          searchQuery,
+          filterProdi,
+          filterJabatan,
+          filterRole,
+          dosenList,
+          filteredDosenList,
+          paginatedDosenList,
+          currentPage,
+          pageSize,
+          totalPages,
+          paginationStart,
+          paginationEnd,
+          totalDosenCount,
+          internalIfCount,
+          externalCount,
+          avgQuotaLoad,
+          resetFilter,
+          getProdiBadgeClass,
+          getProdiDotClass,
+          getRoleBadgeClass,
+          getQuotaStatusColor,
+          getQuotaBarColor,
+          toast,
+          showToast,
+          isModalFormOpen,
+          isEditing,
+          formDosen,
+          openModalTambah,
+          openModalEdit,
+          closeModalForm,
+          isFormValid,
+          saveDosen,
+          confirmDeleteDosen,
+          isModalImportOpen,
+          openModalImport,
+          processImport
+        };
+      }
+    });
+
+    registerComponents(app);
+    app.mount('#app');
+  </script>
+</body>
+</html>

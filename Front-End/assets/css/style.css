@@ -1,0 +1,700 @@
+/* ==========================================================================
+   SIPTA IF ITK - Global Unified Design System & Stylesheet
+   ========================================================================== */
+
+/* Vue Cloak to prevent flash of uncompiled templates */
+[v-cloak] {
+  display: none !important;
+}
+
+/* Custom Minimal Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Base Body Styles */
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   CORE LAYOUT & DESKTOP SIDE-BY-SIDE ARCHITECTURE
+   ========================================================================== */
+
+/* Universal SVG and Image constraints to prevent blowout */
+svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+aside svg {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  max-width: 1.25rem !important;
+  max-height: 1.25rem !important;
+  flex-shrink: 0 !important;
+}
+
+.brand-logo-box {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  min-width: 2.5rem !important;
+  min-height: 2.5rem !important;
+  max-width: 2.5rem !important;
+  max-height: 2.5rem !important;
+  overflow: hidden !important;
+}
+
+.brand-logo-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+}
+
+/* Side-by-Side Flex Layout on Desktop */
+@media (min-width: 1024px) {
+  #app {
+    display: flex !important;
+    flex-direction: row !important;
+    min-height: 100vh !important;
+    width: 100% !important;
+  }
+
+  .app-sidebar-aside {
+    position: sticky !important;
+    top: 0 !important;
+    height: 100vh !important;
+    flex-shrink: 0 !important;
+    z-index: 30 !important;
+  }
+
+  .app-sidebar-aside:not(.is-collapsed) {
+    width: 16rem !important;
+    min-width: 16rem !important;
+  }
+
+  .app-sidebar-aside.is-collapsed {
+    width: 5rem !important;
+    min-width: 5rem !important;
+  }
+
+  .app-main-wrapper {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    width: auto !important;
+    padding-left: 0 !important;
+  }
+}
+
+/* Unified Page Container across ALL Pages (Eliminates width jumping) */
+.page-container {
+  width: 100% !important;
+  max-width: 1440px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 1.5rem 1rem 6rem 1rem !important;
+  flex: 1 1 0% !important;
+}
+@media (min-width: 640px) {
+  .page-container {
+    padding: 1.75rem 1.5rem 6rem 1.5rem !important;
+  }
+}
+@media (min-width: 1024px) {
+  .page-container {
+    padding: 2rem 2rem 6rem 2rem !important;
+  }
+}
+
+/* ==========================================================================
+   UNIFIED TOP APP BAR / DESK BAR (100% Consistent Across Every Page)
+   ========================================================================== */
+.app-navbar-header {
+  height: 4.5rem !important; /* 72px */
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 1.25rem !important;
+  width: 100% !important;
+  background-color: rgba(17, 24, 39, 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+@media (min-width: 640px) {
+  .app-navbar-header {
+    padding: 0 1.75rem !important;
+  }
+}
+html:not(.dark) .app-navbar-header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.85) !important;
+}
+
+.navbar-left-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  flex: 1 1 0% !important;
+  max-width: 480px !important;
+}
+
+.navbar-search-wrapper {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.navbar-search-icon {
+  position: absolute !important;
+  left: 0.875rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  color: #94a3b8 !important;
+  pointer-events: none !important;
+}
+
+.navbar-search-input {
+  width: 100% !important;
+  padding: 0.55rem 0.875rem 0.55rem 2.4rem !important;
+  font-size: 0.8125rem !important;
+  border-radius: 0.75rem !important;
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(51, 65, 85, 0.8) !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+}
+.navbar-search-input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
+}
+html:not(.dark) .navbar-search-input {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.navbar-right-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  flex-shrink: 0 !important;
+}
+
+.semester-pill {
+  display: none !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.35rem 0.875rem !important;
+  border-radius: 9999px !important;
+  background-color: rgba(30, 58, 138, 0.25) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+@media (min-width: 640px) {
+  .semester-pill {
+    display: flex !important;
+  }
+}
+html:not(.dark) .semester-pill {
+  background-color: #eff6ff !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+.pulse-dot {
+  width: 0.5rem !important;
+  height: 0.5rem !important;
+  border-radius: 9999px !important;
+  background-color: #10b981 !important;
+}
+
+.semester-text {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  color: #93c5fd !important;
+}
+html:not(.dark) .semester-text {
+  color: #1d4ed8 !important;
+}
+
+.navbar-icon-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.5rem !important;
+  border-radius: 0.75rem !important;
+  background-color: #1e293b !important;
+  border: 1px solid rgba(51, 65, 85, 0.6) !important;
+  color: #94a3b8 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+.navbar-icon-btn:hover {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+}
+html:not(.dark) .navbar-icon-btn {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #475569 !important;
+}
+html:not(.dark) .navbar-icon-btn:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.navbar-user-profile {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding-left: 0.75rem !important;
+  border-left: 1px solid rgba(51, 65, 85, 0.6) !important;
+}
+html:not(.dark) .navbar-user-profile {
+  border-left: 1px solid #e2e8f0 !important;
+}
+
+.user-avatar-box {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  border-radius: 0.75rem !important;
+  background: linear-gradient(135deg, #1b32c6 0%, #2563eb 100%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.8125rem !important;
+  flex-shrink: 0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.user-info-text {
+  display: none !important;
+  flex-direction: column !important;
+}
+@media (min-width: 768px) {
+  .user-info-text {
+    display: flex !important;
+  }
+}
+
+.user-name {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #f8fafc !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+html:not(.dark) .user-name {
+  color: #0f172a !important;
+}
+
+.user-role {
+  font-size: 0.6875rem !important;
+  color: #94a3b8 !important;
+  line-height: 1.2 !important;
+}
+
+/* ==========================================================================
+   SIDEBAR NAVIGATION LINKS (Fixed Active State - No More White Pills)
+   ========================================================================== */
+.sidebar-nav-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  padding: 0.625rem 0.875rem !important;
+  border-radius: 0.75rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: #94a3b8 !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease-in-out !important;
+}
+.sidebar-nav-link:hover {
+  color: #f8fafc !important;
+  background-color: rgba(51, 65, 85, 0.35) !important;
+}
+.sidebar-nav-link.active {
+  background-color: rgba(37, 99, 235, 0.18) !important;
+  color: #60a5fa !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+}
+.sidebar-nav-link.active svg {
+  color: #60a5fa !important;
+}
+
+/* Light Mode Sidebar Overrides */
+html:not(.dark) .sidebar-nav-link {
+  color: #475569 !important;
+}
+html:not(.dark) .sidebar-nav-link:hover {
+  color: #0f172a !important;
+  background-color: #f1f5f9 !important;
+}
+html:not(.dark) .sidebar-nav-link.active {
+  background-color: #e0eaff !important;
+  color: #1b32c6 !important;
+  border: 1px solid #bfdbfe !important;
+}
+html:not(.dark) .sidebar-nav-link.active svg {
+  color: #1b32c6 !important;
+}
+
+/* ==========================================================================
+   PERMANENT FLOATING AI CHATBOT (Anchored Bottom-Right Always)
+   ========================================================================== */
+.sipta-chatbot-fixed-container {
+  position: fixed !important;
+  bottom: 1.5rem !important;
+  right: 1.5rem !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  pointer-events: auto !important;
+}
+
+.sipta-chatbot-trigger {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.625rem !important;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(135deg, #1b32c6 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 0.75rem !important;
+  box-shadow: 0 10px 25px -5px rgba(27, 50, 198, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.sipta-chatbot-trigger:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 14px 28px -5px rgba(27, 50, 198, 0.6) !important;
+}
+
+.pulse-indicator {
+  width: 0.5rem !important;
+  height: 0.5rem !important;
+  border-radius: 9999px !important;
+  background-color: #34d399 !important;
+  animation: pulse-subtle 1.5s infinite !important;
+}
+
+.sipta-chatbot-window {
+  margin-bottom: 0.75rem !important;
+  width: 360px !important;
+  max-width: calc(100vw - 2rem) !important;
+  height: 460px !important;
+  max-height: calc(100vh - 6rem) !important;
+  background-color: #111827 !important;
+  border: 1px solid rgba(51, 65, 85, 0.8) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+html:not(.dark) .sipta-chatbot-window {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15) !important;
+}
+
+.sipta-chatbot-header {
+  padding: 0.875rem 1rem !important;
+  background: linear-gradient(135deg, #1b32c6 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.sipta-chatbot-messages {
+  flex: 1 1 0% !important;
+  padding: 0.75rem !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.75rem !important;
+  background-color: #0b0f19 !important;
+}
+html:not(.dark) .sipta-chatbot-messages {
+  background-color: #f8fafc !important;
+}
+
+.chatbot-bubble-user {
+  background-color: #1b32c6 !important;
+  color: #ffffff !important;
+  padding: 0.625rem 0.875rem !important;
+  border-radius: 1rem !important;
+  border-top-right-radius: 0.25rem !important;
+  max-width: 82% !important;
+  font-size: 0.75rem !important;
+}
+
+.chatbot-bubble-bot {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(51, 65, 85, 0.6) !important;
+  padding: 0.625rem 0.875rem !important;
+  border-radius: 1rem !important;
+  border-top-left-radius: 0.25rem !important;
+  max-width: 85% !important;
+  font-size: 0.75rem !important;
+}
+html:not(.dark) .chatbot-bubble-bot {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+.sipta-chatbot-quick-prompts {
+  display: flex !important;
+  gap: 0.375rem !important;
+  padding: 0.5rem 0.75rem !important;
+  overflow-x: auto !important;
+  background-color: #111827 !important;
+  border-top: 1px solid rgba(51, 65, 85, 0.6) !important;
+}
+html:not(.dark) .sipta-chatbot-quick-prompts {
+  background-color: #f1f5f9 !important;
+  border-top-color: #e2e8f0 !important;
+}
+
+.quick-prompt-btn {
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.625rem !important;
+  border-radius: 0.5rem !important;
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(51, 65, 85, 0.8) !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+.quick-prompt-btn:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+html:not(.dark) .quick-prompt-btn {
+  background-color: #ffffff !important;
+  color: #334155 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.sipta-chatbot-input-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.625rem 0.75rem !important;
+  background-color: #111827 !important;
+  border-top: 1px solid rgba(51, 65, 85, 0.6) !important;
+}
+html:not(.dark) .sipta-chatbot-input-bar {
+  background-color: #ffffff !important;
+  border-top-color: #e2e8f0 !important;
+}
+
+.chatbot-input {
+  flex: 1 1 0% !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.75rem !important;
+  border-radius: 0.75rem !important;
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(51, 65, 85, 0.8) !important;
+  outline: none !important;
+}
+html:not(.dark) .chatbot-input {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.chatbot-send-btn {
+  padding: 0.5rem !important;
+  border-radius: 0.75rem !important;
+  background-color: #1b32c6 !important;
+  color: #ffffff !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+/* ==========================================================================
+   UNIFIED FILTER PILL BUTTONS (Fixes Invisible White Pills in Dark Mode)
+   ========================================================================== */
+.filter-btn-pill {
+  padding: 0.375rem 0.75rem !important;
+  border-radius: 0.75rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  border: 1px solid transparent !important;
+  background-color: #1e293b !important;
+  color: #94a3b8 !important;
+}
+.filter-btn-pill:hover {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+}
+.filter-btn-pill.active {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #3b82f6 !important;
+}
+html:not(.dark) .filter-btn-pill {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+}
+html:not(.dark) .filter-btn-pill:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+html:not(.dark) .filter-btn-pill.active {
+  background-color: #1b32c6 !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   HIGH-CONTRAST DATA BADGES (Fixes White-on-White Unreadable Text)
+   ========================================================================== */
+.dark .badge-emerald, .badge-emerald {
+  background-color: rgba(16, 185, 129, 0.18) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+.dark .badge-blue, .badge-blue {
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  color: #60a5fa !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+}
+.dark .badge-amber, .badge-amber {
+  background-color: rgba(245, 158, 11, 0.18) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+.dark .badge-purple, .badge-purple {
+  background-color: rgba(168, 85, 247, 0.18) !important;
+  color: #c084fc !important;
+  border: 1px solid rgba(168, 85, 247, 0.35) !important;
+}
+.dark .badge-rose, .badge-rose {
+  background-color: rgba(244, 63, 94, 0.18) !important;
+  color: #fb7185 !important;
+  border: 1px solid rgba(244, 63, 94, 0.35) !important;
+}
+.dark .badge-slate, .badge-slate {
+  background-color: rgba(100, 116, 139, 0.18) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(100, 116, 139, 0.35) !important;
+}
+
+/* Light Mode Badge Overrides */
+html:not(.dark) .badge-emerald {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border-color: #a7f3d0 !important;
+}
+html:not(.dark) .badge-blue {
+  background-color: #eff6ff !important;
+  color: #1e40af !important;
+  border-color: #bfdbfe !important;
+}
+html:not(.dark) .badge-amber {
+  background-color: #fffbeb !important;
+  color: #92400e !important;
+  border-color: #fde68a !important;
+}
+html:not(.dark) .badge-purple {
+  background-color: #faf5ff !important;
+  color: #6b21a8 !important;
+  border-color: #e9d5ff !important;
+}
+html:not(.dark) .badge-rose {
+  background-color: #fff1f2 !important;
+  color: #9f1239 !important;
+  border-color: #fecdd3 !important;
+}
+html:not(.dark) .badge-slate {
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Utility Animations */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ==========================================================================
+   SOLID FALLBACKS FOR COMMON DARK-MODE CONTAINERS (Fixes Tailwind CDN Play locally)
+   ========================================================================== */
+.dark [class*="dark:bg-slate-800/"] {
+  background-color: #1e293b !important;
+}
+.dark [class*="dark:bg-slate-900/"] {
+  background-color: #0f172a !important;
+}
+.dark [class*="dark:bg-brand-950/"] {
+  background-color: #0b193e !important;
+}
+.dark [class*="dark:bg-brand-900/"] {
+  background-color: #11286b !important;
+}
+.dark [class*="dark:bg-blue-950/"] {
+  background-color: #0c1e4a !important;
+}
+.dark [class*="dark:bg-amber-950/"] {
+  background-color: #451a03 !important;
+}
+.dark [class*="dark:bg-emerald-950/"] {
+  background-color: #022c22 !important;
+}
+.dark [class*="dark:bg-rose-950/"] {
+  background-color: #4c0519 !important;
+}
+.dark [class*="dark:bg-purple-950/"] {
+  background-color: #2e1065 !important;
+}
+.dark [class*="dark:border-slate-800/"] {
+  border-color: #1e293b !important;
+}
+.dark [class*="dark:border-slate-700/"] {
+  border-color: #334155 !important;
+}
+

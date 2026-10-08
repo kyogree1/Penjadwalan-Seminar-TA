@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>List Gelombang Seminar Proposal - SIPTA IF ITK</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c7d7fe', 300: '#a4bcfd',
+              400: '#7994fa', 500: '#4f68f3', 600: '#2b44e2', 700: '#1b32c6',
+              800: '#0b3084', 900: '#082361', 950: '#041235',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Custom Stylesheet & Shared Utilities -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../assets/js/shared.js"></script>
+  <script src="../assets/js/mockData.js"></script>
+
+  <!-- Modular Reusable Components -->
+  <script src="../assets/js/components/sidebar.js"></script>
+  <script src="../assets/js/components/navbar.js"></script>
+  <script src="../assets/js/components/chatbot.js"></script>
+</head>
+
+<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased selection:bg-brand-600 selection:text-white">
+
+  <div id="app" v-cloak class="flex min-h-screen">
+
+    <!-- REUSABLE SIDEBAR COMPONENT -->
+    <app-sidebar 
+      :active-page="'gelombang'" 
+      :is-collapsed="isSidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      :root-path="'../'"
+      @toggle-collapse="toggleDesktopSidebar"
+      @close-mobile="closeMobileSidebar"
+    ></app-sidebar>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="app-main-wrapper flex-1 flex flex-col min-w-0 transition-all duration-300 w-full min-h-screen">
+      <!-- REUSABLE NAVBAR COMPONENT -->
+      <app-navbar 
+        :show-search="false"
+        :is-dark="isDark"
+        @toggle-sidebar="toggleSidebar"
+        @toggle-theme="toggleTheme"
+      ></app-navbar>
+
+      <!-- PAGE BODY -->
+      <main class="page-container space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-1">
+              <a href="../index.html" class="hover:text-brand-600">Home</a>
+              <span>›</span>
+              <span class="text-slate-600 dark:text-slate-300">Jadwal</span>
+              <span>›</span>
+              <span class="text-brand-700 dark:text-blue-400 font-semibold">Jadwal Sempro</span>
+            </nav>
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Jadwal Sempro</h1>
+          </div>
+          <a href="penentuan-jadwal.html" class="px-4 py-2.5 bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-transform active:scale-95">
+            <span>Masuk ke Penentuan Jadwal (Gel. 2)</span>
+            <span>→</span>
+          </a>
+        </div>
+
+        <!-- List Gelombang Card -->
+        <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+              <span>List Gelombang Seminar Proposal</span>
+            </h2>
+            <span class="text-xs text-slate-400">Prodi Informatika ITK</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-100 dark:border-slate-800">
+                <tr>
+                  <th class="py-3.5 px-4 w-12 text-center">NO</th>
+                  <th class="py-3.5 px-4">PRODI</th>
+                  <th class="py-3.5 px-4">PERIODE</th>
+                  <th class="py-3.5 px-4">SEMESTER</th>
+                  <th class="py-3.5 px-4 text-center">GELOMBANG</th>
+                  <th class="py-3.5 px-4 text-center">JADWAL</th>
+                  <th class="py-3.5 px-4 text-center">STATUS</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+                  <td class="py-4 px-4 text-center font-medium text-slate-500">1.</td>
+                  <td class="py-4 px-4 font-bold text-slate-800 dark:text-slate-200">Informatika</td>
+                  <td class="py-4 px-4 text-slate-600 dark:text-slate-300 font-mono">2026/2027</td>
+                  <td class="py-4 px-4 text-slate-600 dark:text-slate-300">Gasal</td>
+                  <td class="py-4 px-4 text-center font-bold">1</td>
+                  <td class="py-4 px-4 text-center">
+                    <button class="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold transition-colors flex items-center gap-1.5 mx-auto">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      <span>Lihat Jadwal</span>
+                    </button>
+                  </td>
+                  <td class="py-4 px-4 text-center">
+                    <span class="badge-rose inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                      <span>Nonactive</span>
+                    </span>
+                  </td>
+                </tr>
+
+                <!-- Active Gelombang 2 -->
+                <tr class="bg-blue-50/40 dark:bg-blue-950/20 hover:bg-blue-50/70 dark:hover:bg-blue-950/30 transition-colors">
+                  <td class="py-4 px-4 text-center font-medium text-brand-800 dark:text-blue-300">2.</td>
+                  <td class="py-4 px-4 font-bold text-brand-900 dark:text-white">Informatika</td>
+                  <td class="py-4 px-4 text-slate-700 dark:text-slate-200 font-mono font-bold">2026/2027</td>
+                  <td class="py-4 px-4 text-slate-700 dark:text-slate-200 font-semibold">Gasal</td>
+                  <td class="py-4 px-4 text-center font-black text-brand-700 dark:text-blue-400">2</td>
+                  <td class="py-4 px-4 text-center">
+                    <a 
+                      href="penentuan-jadwal.html"
+                      class="px-3.5 py-1.5 bg-brand-800 hover:bg-brand-900 text-white rounded-xl font-bold transition-all shadow-sm flex items-center gap-1.5 mx-auto active:scale-95 w-fit"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      <span>Lihat Jadwal & Plotting</span>
+                    </a>
+                  </td>
+                  <td class="py-4 px-4 text-center">
+                    <span class="badge-emerald inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span>Active</span>
+                    </span>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+                  <td class="py-4 px-4 text-center font-medium text-slate-500">3.</td>
+                  <td class="py-4 px-4 font-bold text-slate-800 dark:text-slate-200">Informatika</td>
+                  <td class="py-4 px-4 text-slate-600 dark:text-slate-300 font-mono">Oktober Gasal 2026/2027</td>
+                  <td class="py-4 px-4 text-slate-600 dark:text-slate-300">Gasal</td>
+                  <td class="py-4 px-4 text-center font-bold">3</td>
+                  <td class="py-4 px-4 text-center">
+                    <button class="px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold transition-colors flex items-center gap-1.5 mx-auto">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      <span>Lihat Jadwal</span>
+                    </button>
+                  </td>
+                  <td class="py-4 px-4 text-center">
+                    <span class="badge-rose inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                      <span>Nonactive</span>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- REUSABLE FLOATING CHATBOT COMPONENT -->
+    <app-chatbot></app-chatbot>
+
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    const app = createApp({
+      setup() {
+        const layout = useLayout();
+
+        return {
+          ...layout
+        };
+      }
+    });
+
+    registerComponents(app);
+    app.mount('#app');
+  </script>
+</body>
+</html>

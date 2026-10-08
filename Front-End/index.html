@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIPTA Informatika - Sistem Informasi Tugas Akhir</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#e0eaff', 200: '#c7d7fe', 300: '#a4bcfd',
+              400: '#7994fa', 500: '#4f68f3', 600: '#2b44e2', 700: '#1b32c6',
+              800: '#0b3084', 900: '#082361', 950: '#041235',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Global Stylesheet -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- Shared Utilities & Mock Data -->
+  <script src="assets/js/shared.js"></script>
+  <script src="assets/js/mockData.js"></script>
+
+  <!-- Modular Reusable Components -->
+  <script src="assets/js/components/sidebar.js"></script>
+  <script src="assets/js/components/navbar.js"></script>
+  <script src="assets/js/components/chatbot.js"></script>
+</head>
+
+<body class="bg-[#f8fafc] dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased selection:bg-brand-600 selection:text-white">
+
+  <div id="app" v-cloak class="flex min-h-screen">
+
+    <!-- REUSABLE SIDEBAR COMPONENT -->
+    <app-sidebar 
+      :active-page="'dashboard'" 
+      :is-collapsed="isSidebarCollapsed" 
+      :is-mobile-open="isMobileSidebarOpen"
+      :root-path="''"
+      @toggle-collapse="toggleDesktopSidebar"
+      @close-mobile="closeMobileSidebar"
+    ></app-sidebar>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="app-main-wrapper flex-1 flex flex-col min-w-0 transition-all duration-300 w-full min-h-screen">
+      <!-- REUSABLE NAVBAR COMPONENT -->
+      <app-navbar 
+        :is-dark="isDark"
+        @toggle-sidebar="toggleSidebar"
+        @toggle-theme="toggleTheme"
+        v-model="searchQuery"
+      ></app-navbar>
+
+      <!-- DASHBOARD MAIN BODY -->
+      <main class="page-container space-y-6">
+        
+        <!-- HERO BANNER -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-800 via-brand-700 to-blue-600 p-6 md:p-8 text-white shadow-lg shadow-brand-900/15">
+          <div class="absolute -right-8 -bottom-12 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-semibold">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>Periode Gasal 2026/2027 • Gelombang 2</span>
+              </div>
+              <h1 class="text-xl md:text-2xl lg:text-3xl font-black tracking-tight">
+                Selamat Datang, Dra. Nurul Rahmania, M.T.
+              </h1>
+              <p class="text-xs md:text-sm text-blue-100 max-w-2xl leading-relaxed">
+                Platform SIPTA IF mengintegrasikan penjadwalan seminar proposal dan hasil dengan dukungan kecerdasan buatan (Algoritma Genetika) bebas bentrok jadwal.
+              </p>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="flex flex-wrap items-center gap-3">
+              <a 
+                href="pages/pengajuan-judul.html"
+                class="px-4 py-2.5 bg-brand-900/40 hover:bg-brand-900/60 border border-white/20 text-white text-xs md:text-sm font-semibold rounded-xl backdrop-blur-sm transition-all flex items-center gap-2"
+              >
+                <span>📝 Review Judul</span>
+                <span class="bg-amber-400 text-slate-900 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full">3</span>
+              </a>
+              <a 
+                href="pages/penentuan-jadwal.html"
+                class="px-4 py-2.5 bg-white text-brand-900 hover:bg-blue-50 text-xs md:text-sm font-bold rounded-xl shadow-md transition-all active:scale-95 flex items-center gap-2"
+              >
+                <svg class="w-4 h-4 text-brand-800" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>Plotting Penguji AI</span>
+              </a>
+              <a 
+                href="pages/pengajuan-sempro.html"
+                class="px-4 py-2.5 bg-brand-900/40 hover:bg-brand-900/60 border border-white/20 text-white text-xs md:text-sm font-semibold rounded-xl backdrop-blur-sm transition-all flex items-center gap-2"
+              >
+                <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <span>2 Berkas Perlu Validasi</span>
+              </a>
+              <a 
+                href="pages/katalog-ta.html"
+                class="px-4 py-2.5 bg-brand-900/40 hover:bg-brand-900/60 border border-white/20 text-white text-xs md:text-sm font-semibold rounded-xl backdrop-blur-sm transition-all flex items-center gap-2"
+              >
+                <span>📚 Katalog TA</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 KPI STAT CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+          
+          <a href="pages/data-mahasiswa.html" class="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:border-brand-500/50 transition-all group block">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:text-brand-600 transition-colors">Mahasiswa Aktif TA</span>
+              <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-brand-800 dark:text-blue-400 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              </div>
+            </div>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="text-3xl font-black text-slate-900 dark:text-white">48</span>
+              <span class="text-xs font-semibold text-emerald-600">Master Mahasiswa →</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+              <span>Sempro: <b>14</b></span>
+              <span>Sidang: <b>6</b></span>
+              <span>Lulus: <b>28</b></span>
+            </div>
+          </a>
+
+          <a href="pages/pengajuan-sempro.html" class="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-amber-200/80 dark:border-amber-900/50 shadow-sm transition-all hover:border-amber-500 block">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Validasi Berkas</span>
+              <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+            </div>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="text-3xl font-black text-amber-600">2</span>
+              <span class="text-xs font-medium text-amber-700 dark:text-amber-300">Draf Sempro Menunggu</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-brand-600 dark:text-blue-400 font-semibold">
+              <span>Buka Verifikasi Berkas →</span>
+              <span class="text-slate-400">Gelombang 2</span>
+            </div>
+          </a>
+
+          <a href="pages/penentuan-jadwal.html" class="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:border-brand-500/50 transition-all block">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Sempro Minggu Ini</span>
+              <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+            </div>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="text-3xl font-black text-slate-900 dark:text-white">6</span>
+              <span class="text-xs font-semibold text-purple-600">Ter-plot Bebas Bentrok</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-brand-600 dark:text-blue-400 font-semibold">
+              <span>Buka Jadwal & Plotting →</span>
+              <span class="text-emerald-500 font-bold">Fitness 0.985</span>
+            </div>                               
+          </a>
+
+          <a href="pages/data-dosen.html" class="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm group hover:border-emerald-500/50 transition-all block">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-600 transition-colors">Dosen Penguji & Pembimbing</span>
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              </div>
+            </div>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="text-3xl font-black text-slate-900 dark:text-white">12</span>
+              <span class="text-xs font-semibold text-emerald-600">Master Data Dosen →</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+              <span>Rata-rata Beban: <b>6.8 Mhs</b></span>
+              <span class="text-brand-600 dark:text-blue-400 font-bold">Maks. 10</span>
+            </div>
+          </a>
+
+        </div>
+
+        <!-- TA PIPELINE TRACKER -->
+        <div class="bg-white dark:bg-[#111827] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-5 md:p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 class="text-sm md:text-base font-bold text-slate-900 dark:text-white">Pipeline Kemajuan Tugas Akhir</h2>
+              <p class="text-xs text-slate-400">Distribusi tahapan mahasiswa prodi Informatika semester aktif</p>
+            </div>
+            <span class="text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full w-fit">Total 48 Mahasiswa</span>
+          </div>
+
+          <!-- Progress Bar Multi-Segment -->
+          <div class="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex shadow-inner">
+            <div 
+              v-for="stage in pipelineStages" 
+              :key="stage.id" 
+              :class="[stage.barColor, 'h-full transition-all duration-500']" 
+              :style="{ width: stage.percentage + '%' }"
+              :title="stage.name + ': ' + stage.count + ' mhs (' + stage.percentage + '%)'"
+            ></div>
+          </div>
+
+          <!-- Segment Legend -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-2">
+            <a 
+              v-for="stage in pipelineStages" 
+              :key="stage.id" 
+              :href="stage.id === 'judul' ? 'pages/pengajuan-judul.html' : (stage.id === 'sempro' ? 'pages/pengajuan-sempro.html' : (stage.id === 'bimbingan' ? 'pages/bimbingan.html' : (stage.id === 'sidang' ? 'pages/pengajuan-sidang.html' : '#')))"
+              class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 space-y-1 block hover:border-brand-500/50 hover:shadow-sm transition-all"
+            >
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full" :class="stage.barColor"></span>
+                <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 truncate">{{ stage.name }}</span>
+              </div>
+              <div class="flex items-baseline justify-between">
+                <span class="text-base font-bold text-slate-900 dark:text-white">{{ stage.count }}</span>
+                <span class="text-[10px] font-medium text-slate-400">{{ stage.percentage }}%</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- MAIN 2-COLUMN SECTION -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- LEFT 2 COLS: TABS DAFTAR PERLU TINDAKAN -->
+          <div class="lg:col-span-2 space-y-4">
+            
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+              <div class="flex items-center gap-3">
+                <button 
+                  @click="activeTab = 'pending'"
+                  :class="[activeTab === 'pending' ? 'border-b-2 border-brand-600 text-brand-700 dark:text-blue-400 font-bold' : 'text-slate-500 font-semibold', 'pb-2 text-xs md:text-sm transition-all flex items-center gap-2']"
+                >
+                  <span>Menunggu Verifikasi</span>
+                  <span class="px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 font-bold">{{ pendingActions.length }}</span>
+                </button>
+                <button 
+                  @click="activeTab = 'my-students'"
+                  :class="[activeTab === 'my-students' ? 'border-b-2 border-brand-600 text-brand-700 dark:text-blue-400 font-bold' : 'text-slate-500 font-semibold', 'pb-2 text-xs md:text-sm transition-all flex items-center gap-2']"
+                >
+                  <span>Bimbingan Saya</span>
+                  <span class="px-2 py-0.5 rounded-full text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">{{ myStudents.length }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Tab 1: Pending Actions -->
+            <div v-show="activeTab === 'pending'" class="space-y-3">
+              <div 
+                v-for="item in pendingActions" 
+                :key="item.id"
+                class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:border-brand-500/40 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              >
+                <div class="space-y-1.5 flex-1">
+                  <div class="flex items-center gap-2">
+                    <span :class="[item.badgeType, 'text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider']">{{ item.type }}</span>
+                    <span class="text-xs text-slate-400">{{ item.date }}</span>
+                  </div>
+                  <h3 class="text-sm font-bold text-slate-900 dark:text-white">{{ item.name }} <span class="text-xs font-mono font-normal text-slate-400">({{ item.nim }})</span></h3>
+                  <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-1">{{ item.title }}</p>
+                  <p class="text-[11px] text-slate-400">Pembimbing Usulan: <b class="text-slate-600 dark:text-slate-300">{{ item.pembimbing }}</b> • KBK: <b>{{ item.kbk }}</b></p>
+                </div>
+
+                <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                  <button @click="showDetail(item)" class="px-3 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 rounded-xl text-slate-700 dark:text-slate-200">Detail</button>
+                  <button @click="quickApprove(item)" class="px-3 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm">Setujui</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 2: My Students -->
+            <div v-show="activeTab === 'my-students'" class="space-y-3">
+              <div v-for="student in myStudents" :key="student.id" class="bg-white dark:bg-[#111827] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-2 flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-bold text-slate-900 dark:text-white">{{ student.name }}</span>
+                    <span class="text-xs text-slate-400 font-mono">({{ student.nim }})</span>
+                    <span class="ml-auto sm:ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-50 text-brand-800 dark:bg-brand-950 dark:text-blue-300 font-bold">{{ student.currentStage }}</span>
+                  </div>
+                  <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-1">{{ student.title }}</p>
+                  <div class="flex items-center gap-3 pt-1">
+                    <div class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div class="h-full bg-brand-600 rounded-full" :style="{ width: student.progress + '%' }"></div>
+                    </div>
+                    <span class="text-[11px] font-bold text-slate-600 dark:text-slate-300">{{ student.progress }}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COL: DOSEN QUOTA & DEADLINES -->
+          <div class="space-y-6">
+            <div class="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Kuota Bimbingan Dosen</h3>
+                <span class="text-[11px] font-bold text-brand-700 dark:text-blue-400">Maks. 10 Mhs</span>
+              </div>
+              <div class="space-y-3">
+                <div v-for="dosen in dosenList" :key="dosen.nip" class="space-y-1">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[180px]">{{ dosen.name }}</span>
+                    <span :class="[dosen.quotaClass, 'font-bold']">{{ dosen.current }} / {{ dosen.max }}</span>
+                  </div>
+                  <div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div :class="[dosen.barColor, 'h-full rounded-full transition-all']" :style="{ width: (dosen.current / dosen.max * 100) + '%' }"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-[#111827] p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="text-amber-500">📌</span>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Batas Waktu Periode Aktif</h3>
+              </div>
+              <ul class="space-y-2 text-xs">
+                <li class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                  <span class="text-slate-700 dark:text-slate-300">Batas Nilai Sempro Gel. 2</span>
+                  <span class="font-bold text-rose-600 dark:text-rose-400">25 Okt 2026</span>
+                </li>
+                <li class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                  <span class="text-slate-700 dark:text-slate-300">Penutupan Pendaftaran Sidang</span>
+                  <span class="font-bold text-amber-600 dark:text-amber-400">30 Okt 2026</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- DETAIL MODAL -->
+    <div v-if="activeModalItem" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+      <div class="bg-white dark:bg-[#111827] rounded-2xl max-w-lg w-full border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-4">
+        <div class="flex items-center justify-between border-b pb-3 border-slate-100 dark:border-slate-800">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Detail Pengajuan Tugas Akhir</h3>
+          <button @click="activeModalItem = null" class="text-slate-400 hover:text-slate-600">✕</button>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400">Mahasiswa</span>
+          <p class="text-sm font-bold text-slate-900 dark:text-white">{{ activeModalItem.name }} ({{ activeModalItem.nim }})</p>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400">Judul</span>
+          <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700">{{ activeModalItem.title }}</p>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button @click="activeModalItem = null" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 rounded-xl">Tutup</button>
+          <button @click="confirmApprove(activeModalItem)" class="px-4 py-2 text-xs font-bold text-white bg-emerald-600 rounded-xl">Setujui Pengajuan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REUSABLE FLOATING CHATBOT -->
+    <app-chatbot></app-chatbot>
+
+  </div>
+
+  <!-- VUE APPLICATION LOGIC -->
+  <script>
+    const { createApp, ref } = Vue;
+
+    const app = createApp({
+      setup() {
+        const layout = useLayout();
+        const searchQuery = ref('');
+        const activeTab = ref('pending');
+        const activeModalItem = ref(null);
+
+        const pipelineStages = ref(MockData.pipelineStages);
+        const dosenList = ref(MockData.dosenList);
+
+        const pendingActions = ref([
+          {
+            id: 1,
+            type: 'Pengajuan Judul',
+            badgeType: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800',
+            date: 'Hari ini, 08:20',
+            name: 'Ahmad Fauzan Pratama',
+            nim: '11231015',
+            title: 'Analisis Ketahanan Model Countermeasure Terhadap Serangan Adversarial pada Citra Medis',
+            pembimbing: 'Dr. Budi Wicaksono, M.Kom.',
+            kbk: 'AI & Data Science'
+          },
+          {
+            id: 2,
+            type: 'Draf Sempro',
+            badgeType: 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800',
+            date: 'Kemarin, 16:45',
+            name: 'Dimas Wahyu Ramadhan',
+            nim: '11231024',
+            title: 'Rancang Bangun Sistem Timegraph dan Monitoring Berkas Terdistribusi',
+            pembimbing: 'Rizki Pratama Nugraha, S.Si., M.Han.',
+            kbk: 'Software Engineering'
+          },
+          {
+            id: 3,
+            type: 'Pengajuan Judul',
+            badgeType: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800',
+            date: 'Kemarin, 14:10',
+            name: 'Siti Rahmawati',
+            nim: '11221038',
+            title: 'Peramalan Kuantitas Penjualan Harian Produk Retail Menggunakan Hybrid ARIMA-LSTM',
+            pembimbing: 'Ahmad Faisal Ridwan, Ph.D.',
+            kbk: 'AI & Data Science'
+          }
+        ]);
+
+        const myStudents = ref([
+          { id: 101, name: 'Anisa Rahmadani', nim: '11231010', currentStage: 'Menunggu Sempro', title: 'Analisis Perbandingan Kinerja Arsitektur Microservices pada Sistem Akademik', lastLog: '18 Sep 2026', totalLogs: 8, progress: 85 },
+          { id: 102, name: 'Bayu Aditya Saputra', nim: '11231089', currentStage: 'Penyusunan Bab 3', title: 'Rancang Bangun Sistem Lokalisasi Indoor Menggunakan WiFi Fingerprinting', lastLog: '15 Sep 2026', totalLogs: 5, progress: 60 },
+          { id: 103, name: 'Muhammad Raihan', nim: '11211030', currentStage: 'Revisi Sidang TA', title: 'Analisis Kerentanan Aplikasi Web Portal Kampus dengan Metode OWASP Top 10', lastLog: '12 Sep 2026', totalLogs: 14, progress: 95 }
+        ]);
+
+        const showDetail = (item) => activeModalItem.value = item;
+        const quickApprove = (item) => {
+          alert(`Pengajuan ${item.type} oleh ${item.name} berhasil disetujui!`);
+          pendingActions.value = pendingActions.value.filter(x => x.id !== item.id);
+        };
+        const confirmApprove = (item) => {
+          quickApprove(item);
+          activeModalItem.value = null;
+        };
+
+        return {
+          ...layout,
+          searchQuery,
+          activeTab,
+          activeModalItem,
+          pipelineStages,
+          pendingActions,
+          myStudents,
+          dosenList,
+          showDetail,
+          quickApprove,
+          confirmApprove
+        };
+      }
+    });
+
+    registerComponents(app);
+    app.mount('#app');
+  </script>
+</body>
+</html>
