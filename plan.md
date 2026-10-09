@@ -201,6 +201,8 @@ Acceptance: prohibited requests make no database changes; legitimate login, para
 
 ### R2 — Live data contracts and mutation behavior
 
+First slice implemented: Kaprodi dashboard now consumes required typed server props for registered account totals, pending submission counts, approved-title supervisor assignments, and pending title records. Removed fabricated quota, graduation, fitness, deadline, and lifecycle claims. Supervisor workload counts distinct students and remains separate from examiner duties; query-count regression guards against N+1 behavior. Parent reran backend tests (50 passed, 228 assertions), mounted-SFC frontend tests (2 passed, 14 assertions), type check, lint/format, and whitespace checks successfully. Other portal contracts and authenticated browser acceptance remain pending; this does not complete R2.
+
 - [ ] Inventory controller/page contracts and choose one canonical name/shape per portal; map persisted IDs, relations, dates, and optional fields explicitly.
 - [ ] Repair scheduling, lecturer, bimbingan, review, Tendik, and dashboard props; ensure empty server arrays remain empty rather than activating fixtures.
 - [ ] Hydrate props reactively after Inertia navigation/reload. Replace fake client IDs with returned persisted IDs.
