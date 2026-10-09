@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dosen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
+use App\Models\PengajuanJudul;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +63,17 @@ class BimbinganController extends Controller
             'keterangan' => ['nullable', 'string'],
             'catatan_dosen' => ['nullable', 'string'],
         ]);
+
+        $mahasiswa = User::findOrFail($validated['mahasiswa_id']);
+        $isSupervisee = PengajuanJudul::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'disetujui')
+            ->where(function ($query) use ($user) {
+                $query->where('pembimbing_1_id', $user->id)
+                    ->orWhere('pembimbing_2_id', $user->id);
+            })
+            ->exists();
+
+        abort_unless($mahasiswa->isMahasiswa() && $isSupervisee, 403);
 
         Bimbingan::create([
             'mahasiswa_id' => $validated['mahasiswa_id'],

@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Bimbingan;
 use App\Models\PengajuanJudul;
-use App\Models\Ruangan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -94,6 +93,14 @@ class PortalsBackendTest extends TestCase
     {
         $dosen = User::factory()->create(['role' => 'dosen']);
         $mahasiswa = User::factory()->create(['role' => 'mahasiswa']);
+
+        PengajuanJudul::create([
+            'mahasiswa_id' => $mahasiswa->id,
+            'judul_ta' => 'Optimasi Penjadwalan',
+            'bidang_penelitian' => 'Sistem Cerdas',
+            'pembimbing_1_id' => $dosen->id,
+            'status' => 'disetujui',
+        ]);
 
         // 1. Dosen creates session
         $storeResp = $this->actingAs($dosen)->post('/dosen/bimbingan/sesi', [

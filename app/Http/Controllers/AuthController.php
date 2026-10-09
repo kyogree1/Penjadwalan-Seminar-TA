@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,7 @@ class AuthController extends Controller
     /**
      * Display the login view or redirect if already authenticated.
      */
-    public function showLogin(): Response|\Illuminate\Http\RedirectResponse
+    public function showLogin(): Response|RedirectResponse
     {
         if (Auth::check()) {
             return $this->redirectBasedOnRole(Auth::user());
@@ -29,14 +30,17 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Support quick demo one-click login if 'demo_role' is passed
+        // Passwordless demo login is only available on explicitly local servers.
         if ($request->filled('demo_role')) {
+            abort_unless(app()->environment('local'), 403);
+
             $demoRole = $request->input('demo_role');
             $user = User::where('role', $demoRole)->first();
 
             if ($user) {
                 Auth::login($user, (bool) $request->input('remember', true));
                 $request->session()->regenerate();
+
                 return $this->redirectBasedOnRole($user);
             }
         }

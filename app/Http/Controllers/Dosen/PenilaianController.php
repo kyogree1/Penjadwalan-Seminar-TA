@@ -41,7 +41,10 @@ class PenilaianController extends Controller
             'catatan' => ['nullable', 'string'],
         ]);
 
-        $penjadwalan = Penjadwalan::findOrFail($id);
+        $penjadwalan = Penjadwalan::where(function ($query) use ($request) {
+            $query->where('penguji_1_id', $request->user()->id)
+                ->orWhere('penguji_2_id', $request->user()->id);
+        })->findOrFail($id);
         $penjadwalan->update([
             'catatan' => $validated['catatan'] ?? $penjadwalan->catatan,
             'status' => 'selesai',
