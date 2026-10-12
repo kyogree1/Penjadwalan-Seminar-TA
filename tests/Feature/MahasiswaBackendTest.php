@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\PengajuanJudul;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,6 +55,7 @@ class MahasiswaBackendTest extends TestCase
     {
         $mahasiswa = User::factory()->create(['role' => 'mahasiswa']);
         $dosen = User::factory()->create(['role' => 'dosen']);
+        PengajuanJudul::create(['mahasiswa_id' => $mahasiswa->id, 'judul_ta' => 'Approved logbook title', 'bidang_penelitian' => 'AI', 'status' => 'disetujui', 'pembimbing_1_id' => $dosen->id]);
 
         $response = $this->actingAs($mahasiswa)->post('/pendaftaran/bimbingan', [
             'tanggal' => now()->format('Y-m-d'),

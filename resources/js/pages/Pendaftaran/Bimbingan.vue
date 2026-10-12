@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import type { Auth } from '@/types/auth';
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import {
     Download,
@@ -18,19 +19,14 @@ import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 import ProfileHeaderCard from '@/Components/ProfileHeaderCard.vue';
 
 const page = usePage();
-const authUser = computed(() => (page.props.auth as any)?.user);
-const studentName = computed(
-    () => authUser.value?.name || 'Akmal Falah Maulana',
-);
+const authUser = computed(() => (page.props.auth as Auth | undefined)?.user);
+const studentName = computed(() => authUser.value?.name ?? '');
 const studentNim = computed(
-    () =>
-        authUser.value?.username ||
-        authUser.value?.nim_nip?.replace('NIM: ', '') ||
-        '11231006',
+    () => authUser.value?.nim_nip ?? 'NIM belum tersedia',
 );
 const studentProdi = computed(() => authUser.value?.prodi || 'Informatika');
 const studentInitials = computed(() => {
-    if (!authUser.value?.name) return 'AF';
+    if (!authUser.value?.name) return '';
     return authUser.value.name
         .split(' ')
         .filter(Boolean)
@@ -54,6 +50,9 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const feedback = computed(
+    () => (page.props.flash as { success?: string; error?: string }) ?? {},
+);
 
 interface BimbinganLog {
     id: number;
@@ -61,63 +60,12 @@ interface BimbinganLog {
     dosen: string;
     rangkuman: string;
     keterangan: string;
-    metode: 'online' | 'offline';
+    metode: 'online' | 'offline' | 'unavailable';
     tindakLanjut?: string;
     status: 'draft' | 'diajukan' | 'disetujui' | 'revisi' | 'ditolak';
     createdAt: string;
     updatedAt?: string;
 }
-
-const fallbackLogs: BimbinganLog[] = [
-    {
-        id: 1,
-        tanggal: '2026-05-13',
-        dosen: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        rangkuman:
-            'Diskusi arsitektur sistem & pemilihan algoritma genetika untuk penjadwalan tugas akhir',
-        keterangan: 'Lab Riset Informatika',
-        metode: 'offline',
-        tindakLanjut: 'Mengkaji paper GA scheduling, prepare dataset',
-        status: 'disetujui',
-        createdAt: '2026-05-13T10:00:00Z',
-    },
-    {
-        id: 2,
-        tanggal: '2026-06-15',
-        dosen: 'Rina Agustina, S.T., M.Kom.',
-        rangkuman:
-            'Penyusunan use case diagram dan activity diagram modul pendaftaran seminar',
-        keterangan: 'Google Meet',
-        metode: 'online',
-        tindakLanjut: 'Revisi ERD, prepare prototype UI',
-        status: 'disetujui',
-        createdAt: '2026-06-15T14:30:00Z',
-    },
-    {
-        id: 3,
-        tanggal: '2026-07-20',
-        dosen: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        rangkuman:
-            'Evaluasi integrasi Large Language Model dan format data training untuk layanan akademik',
-        keterangan: 'Ruang Dosen Gedung A',
-        metode: 'offline',
-        tindakLanjut: 'Test prompting, evaluasi hasil',
-        status: 'revisi',
-        createdAt: '2026-07-20T09:15:00Z',
-    },
-    {
-        id: 4,
-        tanggal: '2026-08-05',
-        dosen: 'Rina Agustina, S.T., M.Kom.',
-        rangkuman:
-            'Revisi instrumen pengujian blackbox dan definition skenario usability testing',
-        keterangan: 'Zoom Meeting',
-        metode: 'online',
-        tindakLanjut: 'Finalisasi test plan',
-        status: 'diajukan',
-        createdAt: '2026-08-05T16:45:00Z',
-    },
-];
 
 const parseInitialLogs = (): BimbinganLog[] => {
     if (props.bimbinganList && props.bimbinganList.length > 0) {
@@ -140,16 +88,17 @@ const parseInitialLogs = (): BimbinganLog[] => {
                 dosen: dosenName,
                 rangkuman: item.rangkuman,
                 keterangan: item.keterangan,
-                metode: 'offline',
+                metode: 'unavailable',
                 tindakLanjut: item.catatan_dosen || undefined,
                 status: mappedStatus,
                 createdAt: item.created_at || item.tanggal,
             };
         });
     }
-    return fallbackLogs;
+    return [];
 };
 
+const requestError = ref('');
 const showModal = ref(false);
 const selectedLog = ref<BimbinganLog | null>(null);
 const editingId = ref<number | null>(null);
@@ -157,17 +106,9 @@ const searchQuery = ref('');
 const entriesPerPage = ref(10);
 const currentPage = ref(1);
 
-const bimbinganList = ref<BimbinganLog[]>(parseInitialLogs());
+const bimbinganList = computed<BimbinganLog[]>(parseInitialLogs);
 
-const dosenOptions = computed(() => {
-    if (props.dosenList && props.dosenList.length > 0) {
-        return props.dosenList;
-    }
-    return [
-        { id: 1, name: 'Dr. Ir. Hendra Wijaya, M.Kom.' },
-        { id: 2, name: 'Rina Agustina, S.T., M.Kom.' },
-    ];
-});
+const dosenOptions = computed(() => props.dosenList ?? []);
 
 const form = useForm({
     tanggal: '',
@@ -192,19 +133,15 @@ const editLog = (log: BimbinganLog) => {
     form.dosen = log.dosen;
     form.rangkuman = log.rangkuman;
     form.keterangan = log.keterangan;
-    form.metode = log.metode;
+    form.metode = 'offline';
     form.tindakLanjut = log.tindakLanjut || '';
     showModal.value = true;
 };
 
-const deleteLog = (id: number) => {
-    const log = bimbinganList.value.find((l) => l.id === id);
-    if (!log || (log.status !== 'draft' && log.status !== 'revisi')) return;
-    if (!confirm('Hapus catatan bimbingan ini?')) return;
-    bimbinganList.value = bimbinganList.value.filter((l) => l.id !== id);
-};
+const deleteLog = (_id: number) => {};
 
 const closeModal = () => {
+    if (form.processing) return;
     showModal.value = false;
     editingId.value = null;
 };
@@ -219,6 +156,7 @@ const closeDetail = () => {
 
 const submitBimbingan = () => {
     if (
+        form.processing ||
         !form.tanggal ||
         !form.dosen ||
         !form.rangkuman.trim() ||
@@ -226,11 +164,30 @@ const submitBimbingan = () => {
     )
         return;
 
+    requestError.value = '';
     form.post('/pendaftaran/bimbingan', {
         preserveScroll: true,
-        onSuccess: () => {
-            closeModal();
-            form.reset();
+        onSuccess: (response) => {
+            const flash = response.props.flash as
+                | { success?: string; error?: string }
+                | undefined;
+            if (flash?.success && !flash.error) {
+                showModal.value = false;
+                editingId.value = null;
+                form.reset();
+            } else
+                requestError.value =
+                    flash?.error || 'Konfirmasi server belum diterima.';
+        },
+        onError: (errors) => {
+            requestError.value =
+                Object.values(errors).join(' ') || 'Permintaan gagal.';
+        },
+        onNetworkError: () => {
+            requestError.value = 'Koneksi gagal. Silakan coba kembali.';
+        },
+        onHttpException: () => {
+            requestError.value = 'Permintaan gagal diproses server.';
         },
     });
 };
@@ -253,11 +210,19 @@ const paginatedList = computed(() => {
 });
 
 const totalPages = computed(() =>
-    Math.ceil(filteredList.value.length / entriesPerPage.value),
+    Math.max(1, Math.ceil(filteredList.value.length / entriesPerPage.value)),
 );
+watch([searchQuery, entriesPerPage], () => {
+    currentPage.value = 1;
+});
+watch([totalPages, currentPage], () => {
+    currentPage.value = Math.min(
+        Math.max(1, currentPage.value),
+        totalPages.value,
+    );
+});
 
-const canEdit = (log: BimbinganLog) =>
-    log.status === 'draft' || log.status === 'revisi';
+const canEdit = (_log: BimbinganLog) => false;
 
 const formatTanggal = (tanggal: string) => {
     const d = new Date(tanggal);
@@ -278,12 +243,37 @@ const formatWaktu = (isoString: string) => {
         minute: '2-digit',
     });
 };
+const onKey = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+        if (selectedLog.value) closeDetail();
+        else if (showModal.value) closeModal();
+    }
+};
+onMounted(() => window.addEventListener('keydown', onKey));
+onUnmounted(() => window.removeEventListener('keydown', onKey));
 </script>
 
 <template>
     <Head title="Bimbingan Tugas Akhir - SIPTA IF" />
 
     <div class="mx-auto max-w-7xl space-y-6">
+        <p
+            v-if="feedback.success"
+            role="status"
+            class="text-sm text-emerald-700"
+        >
+            {{ feedback.success }}
+        </p>
+        <p v-if="feedback.error" role="alert" class="text-sm text-rose-700">
+            {{ feedback.error }}
+        </p>
+        <p
+            v-if="requestError"
+            role="alert"
+            class="text-sm text-rose-700 dark:text-rose-300"
+        >
+            {{ requestError }}
+        </p>
         <!-- 1. Header Box (Reusable Component) -->
         <PageHeaderBox title="Bimbingan" />
 
@@ -291,21 +281,22 @@ const formatWaktu = (isoString: string) => {
         <ProfileHeaderCard
             :name="studentName"
             :nim="studentNim"
-            angkatan="Akt 2023"
+            angkatan="Angkatan belum tersedia"
             :prodi="studentProdi"
             :avatar-initials="studentInitials"
         >
             <button
                 type="button"
+                disabled
                 class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#5246D2] px-5 py-3 text-xs font-bold text-white shadow-md shadow-indigo-600/30 transition-all hover:bg-indigo-700 active:scale-95"
             >
                 <Download class="h-4 w-4" />
-                <span>Unduh Lembar Monitoring Bimbingan (Form TA-04)</span>
+                <span>Unduh TA-04 belum tersedia</span>
             </button>
         </ProfileHeaderCard>
 
         <!-- 3. Pembimbing & Penguji Grid (Reusable Component) -->
-        <DosenTeamSection />
+        <DosenTeamSection :pembimbing-list="[]" :penguji-list="[]" />
 
         <!-- 4. Logbook Bimbingan -->
         <div
@@ -440,11 +431,7 @@ const formatWaktu = (isoString: string) => {
                                             : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
                                     ]"
                                 >
-                                    {{
-                                        item.metode === 'online'
-                                            ? 'Daring'
-                                            : 'Tatap Muka'
-                                    }}
+                                    {{ 'Metode belum tersedia' }}
                                 </span>
                             </td>
                             <td class="px-3 py-3.5 text-center">
@@ -524,11 +511,7 @@ const formatWaktu = (isoString: string) => {
                                     : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
                             ]"
                         >
-                            {{
-                                item.metode === 'online'
-                                    ? 'Daring'
-                                    : 'Tatap Muka'
-                            }}
+                            {{ 'Metode belum tersedia' }}
                         </span>
                         <span>•</span>
                         <span>{{ item.keterangan }}</span>
@@ -575,7 +558,7 @@ const formatWaktu = (isoString: string) => {
                 </span>
                 <button
                     type="button"
-                    :disabled="currentPage === totalPages"
+                    :disabled="currentPage >= totalPages"
                     class="rounded-lg border border-slate-300 px-3 py-1.5 font-medium transition-colors hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-40 dark:border-slate-700 dark:hover:bg-slate-800"
                     @click="currentPage++"
                 >
@@ -597,15 +580,17 @@ const formatWaktu = (isoString: string) => {
         >
             <div
                 v-if="showModal"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                v-dialog="'Bimbingan mahasiswa'"
+                class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4"
             >
                 <div
                     class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
+                    aria-label="Tutup formulir bimbingan"
                     @click="closeModal"
                 />
 
                 <div
-                    class="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-[#0E1626]"
+                    class="relative max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-[#0E1626]"
                 >
                     <h3
                         class="border-b border-slate-100 pb-3 text-base font-bold text-slate-900 dark:border-slate-800 dark:text-white"
@@ -617,13 +602,35 @@ const formatWaktu = (isoString: string) => {
                         class="mt-4 space-y-4"
                         @submit.prevent="submitBimbingan"
                     >
+                        <p
+                            v-if="requestError"
+                            role="alert"
+                            class="text-sm text-rose-700 dark:text-rose-300"
+                        >
+                            {{ requestError }}
+                        </p>
+                        <p
+                            v-for="error in form.errors"
+                            :key="error"
+                            role="alert"
+                            class="text-sm text-rose-700"
+                        >
+                            {{ error }}
+                        </p>
+                        <p class="text-xs text-slate-500">
+                            Metode, tindak lanjut mahasiswa, pengubahan,
+                            penghapusan, dan unduh TA-04 belum memiliki kontrak
+                            server.
+                        </p>
                         <div class="space-y-1">
                             <label
+                                for="logbook-tanggal"
                                 class="block text-sm font-bold text-slate-800 dark:text-slate-200"
                                 >Tanggal
                                 <span class="text-rose-500">*</span></label
                             >
                             <input
+                                id="logbook-tanggal"
                                 v-model="form.tanggal"
                                 type="date"
                                 required
@@ -633,11 +640,13 @@ const formatWaktu = (isoString: string) => {
 
                         <div class="space-y-1">
                             <label
+                                for="logbook-dosen"
                                 class="block text-sm font-bold text-slate-800 dark:text-slate-200"
                                 >Dosen Pembimbing
                                 <span class="text-rose-500">*</span></label
                             >
                             <select
+                                id="logbook-dosen"
                                 v-model="form.dosen"
                                 required
                                 class="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
@@ -657,11 +666,13 @@ const formatWaktu = (isoString: string) => {
 
                         <div class="space-y-1">
                             <label
+                                for="logbook-rangkuman"
                                 class="block text-sm font-bold text-slate-800 dark:text-slate-200"
                                 >Rangkuman Pembahasan
                                 <span class="text-rose-500">*</span></label
                             >
                             <textarea
+                                id="logbook-rangkuman"
                                 v-model="form.rangkuman"
                                 rows="3"
                                 placeholder="Jelaskan topik yang dibahas, keputusan utama, dan rekomendasi pembimbing"
@@ -682,6 +693,7 @@ const formatWaktu = (isoString: string) => {
                                 >
                                     <input
                                         v-model="form.metode"
+                                        disabled
                                         type="radio"
                                         value="online"
                                         class="h-3 w-3 text-blue-600 focus:ring-blue-500"
@@ -693,6 +705,7 @@ const formatWaktu = (isoString: string) => {
                                 >
                                     <input
                                         v-model="form.metode"
+                                        disabled
                                         type="radio"
                                         value="offline"
                                         class="h-3 w-3 text-blue-600 focus:ring-blue-500"
@@ -704,11 +717,13 @@ const formatWaktu = (isoString: string) => {
 
                         <div class="space-y-1">
                             <label
+                                for="logbook-keterangan"
                                 class="block text-sm font-bold text-slate-800 dark:text-slate-200"
                                 >Tempat/Lokasi atau Platform
                                 <span class="text-rose-500">*</span></label
                             >
                             <input
+                                id="logbook-keterangan"
                                 v-model="form.keterangan"
                                 type="text"
                                 placeholder='Contoh: "Ruang Dosen Gedung A" atau "Google Meet"'
@@ -719,11 +734,14 @@ const formatWaktu = (isoString: string) => {
 
                         <div class="space-y-1">
                             <label
+                                for="logbook-tindakLanjut"
                                 class="block text-sm font-bold text-slate-800 dark:text-slate-200"
                                 >Tindak Lanjut / Target Lainnya</label
                             >
                             <textarea
+                                id="logbook-tindakLanjut"
                                 v-model="form.tindakLanjut"
+                                disabled
                                 rows="2"
                                 placeholder="Langkah yang akan dilakukan sebelum bimbingan berikutnya (opsional)"
                                 class="w-full rounded-xl border border-slate-300 bg-slate-50/50 p-3 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
@@ -734,6 +752,7 @@ const formatWaktu = (isoString: string) => {
                             <button
                                 type="button"
                                 class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                                aria-label="Tutup formulir bimbingan"
                                 @click="closeModal"
                             >
                                 Tutup
@@ -763,15 +782,17 @@ const formatWaktu = (isoString: string) => {
         >
             <div
                 v-if="selectedLog"
-                class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                v-dialog="'Bimbingan mahasiswa'"
+                class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4"
             >
                 <div
                     class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
+                    aria-label="Tutup detail bimbingan"
                     @click="closeDetail"
                 />
 
                 <div
-                    class="relative w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-[#0E1626]"
+                    class="relative max-h-[calc(100dvh-2rem)] w-full max-w-2xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-[#0E1626]"
                 >
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex-1">
@@ -789,6 +810,7 @@ const formatWaktu = (isoString: string) => {
                         <button
                             type="button"
                             class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                            aria-label="Tutup detail bimbingan"
                             @click="closeDetail"
                         >
                             <X class="h-5 w-5" />
@@ -828,11 +850,7 @@ const formatWaktu = (isoString: string) => {
                                 <p
                                     class="mt-1 text-sm text-slate-900 dark:text-white"
                                 >
-                                    {{
-                                        selectedLog.metode === 'online'
-                                            ? 'Daring'
-                                            : 'Tatap Muka'
-                                    }}
+                                    {{ 'Metode belum tersedia' }}
                                 </p>
                             </div>
                             <div>

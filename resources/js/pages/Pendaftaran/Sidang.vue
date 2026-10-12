@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import type { Auth } from '@/types/auth';
+import { computed, watch } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 
 import CollapsibleCard from '@/Components/CollapsibleCard.vue';
@@ -25,21 +26,19 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const feedback = computed(
+    () => (page.props.flash as { success?: string; error?: string }) ?? {},
+);
 
 const page = usePage();
-const authUser = computed(() => (page.props.auth as any)?.user);
-const studentName = computed(
-    () => authUser.value?.name || 'Akmal Falah Maulana',
-);
+const authUser = computed(() => (page.props.auth as Auth | undefined)?.user);
+const studentName = computed(() => authUser.value?.name ?? '');
 const studentNim = computed(
-    () =>
-        authUser.value?.username ||
-        authUser.value?.nim_nip?.replace('NIM: ', '') ||
-        '11231006',
+    () => authUser.value?.nim_nip ?? 'NIM belum tersedia',
 );
 const studentProdi = computed(() => authUser.value?.prodi || 'Informatika');
 const studentInitials = computed(() => {
-    if (!authUser.value?.name) return 'AF';
+    if (!authUser.value?.name) return '';
     return authUser.value.name
         .split(' ')
         .filter(Boolean)
@@ -49,25 +48,32 @@ const studentInitials = computed(() => {
 });
 
 const form = useForm({
-    judul_ta:
-        props.sidang?.judul_ta ||
-        props.defaultJudul ||
-        'Sistem Penjadwalan Seminar dan Chatbot Layanan Akademik Menggunakan Algoritma Genetika dan Large Language Model',
+    judul_ta: props.sidang?.judul_ta || props.defaultJudul || '',
     skor_iaet: '' as number | string,
     lokasi_mitra: props.sidang?.lokasi_mitra || '',
     draft_laporan_file: null as File | null,
     turnitin_file: null as File | null,
 });
 
+watch(
+    () => [props.sidang, props.defaultJudul] as const,
+    ([record, title]) => {
+        form.judul_ta = record?.judul_ta ?? title ?? '';
+        form.lokasi_mitra = record?.lokasi_mitra ?? '';
+    },
+);
 const statusSidangConfig = computed(() => {
     if (!props.sidang) {
-        return { label: 'Belum Isi Formulir', bg: 'bg-[#FF7575] text-white' };
+        return {
+            label: 'Belum Isi Formulir',
+            bg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
+        };
     }
     switch (props.sidang.status) {
         case 'menunggu':
             return {
                 label: 'Diajukan (Menunggu Tendik)',
-                bg: 'bg-amber-500 text-white',
+                bg: 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200',
             };
         case 'verifikasi_tendik':
             return {
@@ -83,11 +89,14 @@ const statusSidangConfig = computed(() => {
             return { label: 'Sidang Selesai', bg: 'bg-emerald-700 text-white' };
         case 'ditolak':
             return {
-                label: 'Perlu Revisi / Ditolak',
+                label: 'Ditolak',
                 bg: 'bg-rose-600 text-white',
             };
         default:
-            return { label: 'Diajukan', bg: 'bg-amber-500 text-white' };
+            return {
+                label: 'Diajukan',
+                bg: 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200',
+            };
     }
 });
 
@@ -107,7 +116,7 @@ const riwayatItems = computed(() => {
     ];
 });
 
-const fileError = (file: File | null) => {
+const fileError = (file: File | null, limitMb = 10) => {
     if (!file) return 'Berkas wajib diunggah.';
     if (
         !/\.pdf$/i.test(file.name) ||
@@ -115,12 +124,13 @@ const fileError = (file: File | null) => {
     )
         return 'Berkas harus berupa PDF.';
     if (file.size === 0) return 'Berkas tidak boleh kosong.';
-    if (file.size > 10 * 1024 * 1024) return 'Ukuran berkas maksimal 10 MB.';
+    if (file.size > limitMb * 1024 * 1024)
+        return `Ukuran berkas maksimal ${limitMb} MB.`;
     return '';
 };
 const validationErrors = computed(() => ({
     draft_laporan_file: fileError(form.draft_laporan_file),
-    turnitin_file: fileError(form.turnitin_file),
+    turnitin_file: fileError(form.turnitin_file, 5),
     skor_iaet:
         form.skor_iaet !== '' &&
         (!Number.isFinite(Number(form.skor_iaet)) || Number(form.skor_iaet) < 0)
@@ -165,6 +175,16 @@ const submitSidang = () => {
     <Head title="Sidang Tugas Akhir - SIPTA IF" />
 
     <div class="mx-auto max-w-7xl space-y-6">
+        <p
+            v-if="feedback.success"
+            role="status"
+            class="text-sm text-emerald-700"
+        >
+            {{ feedback.success }}
+        </p>
+        <p v-if="feedback.error" role="alert" class="text-sm text-rose-700">
+            {{ feedback.error }}
+        </p>
         <!-- 1. Header Box (Reusable Component) -->
         <PageHeaderBox title="Sidang Tugas Akhir" />
 
@@ -172,7 +192,7 @@ const submitSidang = () => {
         <ProfileHeaderCard
             :name="studentName"
             :nim="studentNim"
-            angkatan="Akt 2023"
+            angkatan="Angkatan belum tersedia"
             :prodi="studentProdi"
             :avatar-initials="studentInitials"
         >
@@ -190,10 +210,22 @@ const submitSidang = () => {
         </ProfileHeaderCard>
 
         <!-- 3. Two Column Layout -->
+        <p
+            v-for="error in form.errors"
+            :key="error"
+            role="alert"
+            class="text-sm text-rose-700"
+        >
+            {{ error }}
+        </p>
+        <p class="text-sm text-slate-500">
+            Skor IAET numerik tidak disimpan oleh kontrak saat ini. Identitas
+            tim dosen belum tersedia pada halaman pendaftaran.
+        </p>
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
                 <!-- Dosen Pembimbing & Penguji (Reusable Component) -->
-                <DosenTeamSection />
+                <DosenTeamSection :pembimbing-list="[]" :penguji-list="[]" />
 
                 <TemplateDownloadCard
                     :templates="[
@@ -217,9 +249,11 @@ const submitSidang = () => {
                                 class="font-bold text-slate-800 dark:text-slate-200"
                                 >Judul TA:
                             </span>
-                            <span class="text-slate-600 dark:text-slate-400">{{
-                                form.judul_ta
-                            }}</span>
+                            <input
+                                v-model="form.judul_ta"
+                                placeholder="Judul TA"
+                                class="rounded border border-slate-300 p-2"
+                            />
                         </div>
 
                         <!-- Input Skor IAET Terbaru -->
@@ -233,6 +267,8 @@ const submitSidang = () => {
                             <input
                                 id="skor-iaet"
                                 v-model.number="form.skor_iaet"
+                                disabled
+                                title="Skor numerik belum memiliki kontrak penyimpanan"
                                 type="number"
                                 min="0"
                                 step="any"

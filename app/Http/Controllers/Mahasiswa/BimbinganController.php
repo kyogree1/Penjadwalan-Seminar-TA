@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
+use App\Models\PengajuanJudul;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -22,6 +24,7 @@ class BimbinganController extends Controller
             ->get();
 
         $dosenList = User::where('role', 'dosen')
+            ->whereIn('id', $this->supervisorIds($user->id))
             ->select('id', 'name')
             ->get();
 
@@ -29,6 +32,15 @@ class BimbinganController extends Controller
             'bimbinganList' => $bimbinganList,
             'dosenList' => $dosenList,
         ]);
+    }
+
+    // This is an assigned-supervisor logbook, not a pre-assignment consultation queue.
+    private function supervisorIds(int $studentId): array
+    {
+        return PengajuanJudul::where('mahasiswa_id', $studentId)->where('status', 'disetujui')
+            ->get(['pembimbing_1_id', 'pembimbing_2_id'])
+            ->flatMap(fn ($title) => [$title->pembimbing_1_id, $title->pembimbing_2_id])
+            ->filter()->unique()->values()->all();
     }
 
     public function store(Request $request)
@@ -43,13 +55,12 @@ class BimbinganController extends Controller
         $user = Auth::user();
 
         // Cari dosen
-        $dosenId = is_numeric($validated['dosen']) 
-            ? (int) $validated['dosen'] 
+        $dosenId = is_numeric($validated['dosen'])
+            ? (int) $validated['dosen']
             : User::where('role', 'dosen')->where('name', $validated['dosen'])->value('id');
 
-        if (!$dosenId) {
-            // Default ke dosen pertama jika tidak cocok
-            $dosenId = User::where('role', 'dosen')->value('id') ?? 1;
+        if (! $dosenId || ! in_array($dosenId, $this->supervisorIds($user->id)) || ! User::where('role', 'dosen')->whereKey($dosenId)->exists()) {
+            throw ValidationException::withMessages(['dosen' => 'Logbook hanya untuk pembimbing pada judul yang disetujui.']);
         }
 
         Bimbingan::create([

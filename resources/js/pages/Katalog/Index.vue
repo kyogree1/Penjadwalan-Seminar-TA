@@ -73,82 +73,7 @@ const filteredSkripsiList = computed(() => {
         });
 });
 
-const skripsiList = ref<SkripsiItem[]>([
-    {
-        id: 1,
-        tahun: '2024',
-        prodi: 'Teknik Informatika',
-        bidang: 'UI/UX & Human-Computer Interaction',
-        judul: 'Implementasi Augmented Reality (AR) Berbasis Web untuk Pembelajaran Interaktif Anatomi Organ Tubuh Manusia',
-        penulis: 'Claudia Stephanie Tan',
-        nim: '200411100233',
-        pembimbing_1: 'Dr. Dian Indah Permatasari, M.Kom.',
-        nip_pembimbing_1: '198402122010122004',
-        pembimbing_2: 'Rina Agustina, S.T., M.Kom.',
-        nip_pembimbing_2: '198607142012122001',
-        abstrak_id:
-            'Model anatomi fisik di laboratorium seringkali terbatas jumlahnya. Penelitian ini mengembangkan media WebAR markerless menggunakan WebXR API dan Three.js. Hasil pre-test dan post-test pada 45 siswa menunjukkan peningkatan pemahaman materi organ kardiovaskular sebesar 38.6%.',
-        abstrak_en:
-            'Physical anatomical models in laboratories are often limited in number. This study developed markerless WebAR media using WebXR API and Three.js. Pre-test and post-test results on 45 students showed an increase in understanding of cardiovascular organs by 38.6%.',
-        tags: [
-            '#WebAR',
-            '#Augmented Reality',
-            '#Three.js',
-            '#Media Pembelajaran',
-            '#Anatomi Manusia',
-        ],
-        metode: 'Prototyping & Field Testing',
-        tanggal_sidang: '22 Mei 2024',
-        doi: 'https://doi.org/10.14710/webar.2024.310',
-    },
-    {
-        id: 2,
-        tahun: '2024',
-        prodi: 'Teknik Informatika',
-        bidang: 'Kecerdasan Buatan (AI) & NLP',
-        judul: 'Rancang Bangun Chatbot Layanan Akademik Kampus Berbasis Fine-Tuned LLaMA-3 dan Retrieval-Augmented Generation (RAG)',
-        penulis: 'Muhammad Fadhil Ramadhan',
-        nim: '200411100189',
-        pembimbing_1: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        nip_pembimbing_1: '197903152005011002',
-        pembimbing_2: 'Ahmad Fauzi, S.Kom., M.T.',
-        nip_pembimbing_2: '198811052015041003',
-        abstrak_id:
-            'Layanan informasi akademik konvensional sering mengalami antrean respon yang lambat. Penelitian ini membangun sistem tanya jawab cerdas menggunakan model bahasa besar LLaMA-3 dengan teknik RAG untuk memitigasi halusinasi dan meningkatkan akurasi jawaban dokumen panduan akademik ITK.',
-        abstrak_en:
-            'Conventional academic information services often face slow response queues. This research develops an intelligent question-answering system using LLaMA-3 LLM with RAG techniques to mitigate hallucination and improve answer accuracy based on ITK academic guideline documents.',
-        tags: ['#LLM', '#RAG', '#LangChain', '#Academic Chatbot', '#VectorDB'],
-        metode: 'Experimental Research & Evaluation',
-        tanggal_sidang: '18 Juni 2024',
-        doi: 'https://doi.org/10.14710/rag.2024.412',
-    },
-    {
-        id: 3,
-        tahun: '2024',
-        prodi: 'Teknik Informatika',
-        bidang: 'Sistem Informasi & Optimasi',
-        judul: 'Optimasi Penjadwalan Sidang Tugas Akhir Multi-Ruangan Menggunakan Algoritma Genetika Hibrida (Studi Kasus: FSTI ITK)',
-        penulis: 'Akmal Falah Maulana',
-        nim: '11231006',
-        pembimbing_1: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        nip_pembimbing_1: '197903152005011002',
-        pembimbing_2: 'Rina Agustina, S.T., M.Kom.',
-        nip_pembimbing_2: '198607142012122001',
-        abstrak_id:
-            'Penyusunan jadwal seminar dan sidang yang melibatkan puluhan dosen dan ratusan mahasiswa merupakan masalah NP-hard. Penelitian ini mengimplementasikan algoritma genetika dengan penyesuaian penalti dinamis untuk menghasilkan jadwal bebas bentrok dan beban menguji yang proporsional.',
-        abstrak_en:
-            'Scheduling seminars and defenses involving dozens of lecturers and hundreds of students is an NP-hard problem. This study implements a hybrid genetic algorithm with dynamic penalty adjustment to generate conflict-free schedules with balanced examination workloads.',
-        tags: [
-            '#Algoritma Genetika',
-            '#Penjadwalan Otomatis',
-            '#Optimization',
-            '#Constraint Satisfaction',
-        ],
-        metode: 'Design Science Research (DSR)',
-        tanggal_sidang: '10 Juli 2024',
-        doi: 'https://doi.org/10.14710/ga.2024.509',
-    },
-]);
+const skripsiList = computed<SkripsiItem[]>(() => []);
 
 const openDetail = (item: SkripsiItem) => {
     selectedItem.value = item;
@@ -164,9 +89,15 @@ const closeDetail = () => {
     <Head title="Katalog Tugas Akhir - Repository Informatika ITK" />
 
     <div class="mx-auto max-w-7xl space-y-6">
+        <p
+            class="rounded-xl border border-amber-200 p-4 text-sm text-slate-600 dark:text-slate-300"
+        >
+            Katalog belum terhubung ke sumber publikasi tersimpan. Tidak ada
+            abstrak, DOI, atau dokumen yang tersedia dari server saat ini.
+        </p>
         <!-- Header Title Box -->
         <div
-            class="rounded-2xl border border-slate-200/80 bg-white px-6 py-4 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white px-6 py-4 shadow-xs dark:border-slate-800"
         >
             <h2
                 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
@@ -177,7 +108,7 @@ const closeDetail = () => {
 
         <!-- Status Kelayakan Katalog TA (Yellow Box Sesuai Mockup) -->
         <div
-            class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800"
         >
             <h3 class="mb-3 text-sm font-bold text-slate-900 dark:text-white">
                 Status Kelayakan Katalog TA
@@ -185,13 +116,13 @@ const closeDetail = () => {
             <div
                 class="rounded-xl border border-yellow-200 bg-[#FCFDE1] p-4 text-xs font-semibold text-slate-800 dark:border-yellow-900/50 dark:bg-yellow-950/30 dark:text-yellow-200"
             >
-                Anda belum menyelesaikan sidang TA atau sidang TA belum diterima
+                Kelayakan publikasi belum dapat ditentukan dari data server.
             </div>
         </div>
 
         <!-- Daftar Katalog TA yang sudah dipublikasikan -->
         <div
-            class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800"
         >
             <h3 class="mb-4 text-base font-bold text-slate-900 dark:text-white">
                 Daftar Katalog TA yang sudah dipublikasikan
@@ -368,7 +299,7 @@ const closeDetail = () => {
             </div>
             <div
                 v-else
-                class="mt-6 rounded-2xl border border-slate-200/80 bg-white p-12 text-center shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface mt-6 rounded-2xl border border-slate-200/80 bg-white p-12 text-center shadow-xs dark:border-slate-800"
             >
                 <div class="mx-auto max-w-md space-y-3">
                     <div
@@ -412,7 +343,7 @@ const closeDetail = () => {
                 />
 
                 <div
-                    class="relative w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-[#0E1626]"
+                    class="dark:bg-navy-surface relative w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800"
                 >
                     <!-- Modal Top Bar -->
                     <div

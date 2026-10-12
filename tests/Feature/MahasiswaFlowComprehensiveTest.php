@@ -3,9 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Bimbingan;
-use App\Models\PendaftaranSempro;
-use App\Models\PendaftaranSidang;
-use App\Models\PengajuanJudul;
+use App\Models\SchedulePeriod;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -62,8 +60,10 @@ class MahasiswaFlowComprehensiveTest extends TestCase
 
     public function test_mahasiswa_sempro_submission_flow(): void
     {
-        Storage::fake('public');
+        Storage::fake('local');
         $mahasiswa = User::factory()->create(['role' => 'mahasiswa']);
+
+        SchedulePeriod::create(['name' => 'Open wave', 'tipe' => 'sempro', 'gelombang' => 7, 'capacity' => 10, 'start_date' => '2026-11-01', 'end_date' => '2026-11-02', 'slots' => [], 'is_open' => true]);
 
         $file = UploadedFile::fake()->create('proposal.pdf', 1000, 'application/pdf');
 
@@ -84,8 +84,10 @@ class MahasiswaFlowComprehensiveTest extends TestCase
 
     public function test_mahasiswa_sidang_submission_flow(): void
     {
-        Storage::fake('public');
+        Storage::fake('local');
         $mahasiswa = User::factory()->create(['role' => 'mahasiswa']);
+
+        SchedulePeriod::create(['name' => 'Open wave', 'tipe' => 'sidang', 'gelombang' => 7, 'capacity' => 10, 'start_date' => '2026-11-01', 'end_date' => '2026-11-02', 'slots' => [], 'is_open' => true]);
 
         $file = UploadedFile::fake()->create('draft.pdf', 1000, 'application/pdf');
 

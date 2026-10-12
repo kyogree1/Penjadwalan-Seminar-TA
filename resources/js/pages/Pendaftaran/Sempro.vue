@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import type { Auth } from '@/types/auth';
+import { computed, ref, watch } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { AlertCircle, Send, X } from 'lucide-vue-next';
 
@@ -12,19 +13,14 @@ import StatusBadge from '@/Components/StatusBadge.vue';
 import TemplateDownloadCard from '@/Components/TemplateDownloadCard.vue';
 
 const page = usePage();
-const authUser = computed(() => (page.props.auth as any)?.user);
-const studentName = computed(
-    () => authUser.value?.name || 'Akmal Falah Maulana',
-);
+const authUser = computed(() => (page.props.auth as Auth | undefined)?.user);
+const studentName = computed(() => authUser.value?.name ?? '');
 const studentNim = computed(
-    () =>
-        authUser.value?.username ||
-        authUser.value?.nim_nip?.replace('NIM: ', '') ||
-        '11231006',
+    () => authUser.value?.nim_nip ?? 'NIM belum tersedia',
 );
 const studentProdi = computed(() => authUser.value?.prodi || 'Informatika');
 const studentInitials = computed(() => {
-    if (!authUser.value?.name) return 'AF';
+    if (!authUser.value?.name) return '';
     return authUser.value.name
         .split(' ')
         .filter(Boolean)
@@ -36,6 +32,10 @@ const studentInitials = computed(() => {
 interface Props {
     sempro?: {
         id?: number;
+        catatan?: string | null;
+        catatan_kaprodi?: string | null;
+        status_akademik?: string;
+        created_at?: string;
         judul_ta?: string;
         bentuk_ta?: string;
         lokasi_mitra?: string;
@@ -49,6 +49,9 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const feedback = computed(
+    () => (page.props.flash as { success?: string; error?: string }) ?? {},
+);
 
 type SemproStatus =
     | 'draft'
@@ -64,6 +67,11 @@ type FileField = 'lembar_kehadiran_file' | 'proposal_file' | 'turnitin_file';
 const initialStatus = (): SemproStatus => {
     if (!props.sempro) return 'draft';
     const s = props.sempro.status;
+    if (
+        !['terjadwal', 'selesai'].includes(s ?? '') &&
+        props.sempro.status_akademik === 'revisi'
+    )
+        return 'revisi';
     if (s === 'menunggu') return 'diajukan';
     if (s === 'verifikasi_tendik') return 'diverifikasi';
     if (s === 'terjadwal') return 'siap_jadwal';
@@ -72,20 +80,17 @@ const initialStatus = (): SemproStatus => {
     return 'draft';
 };
 
-const status = ref<SemproStatus>(initialStatus());
-const revisionNote = ref('');
+const status = computed<SemproStatus>(initialStatus);
+const revisionNote = computed(() => props.sempro?.catatan ?? '');
+const academicNote = computed(() => props.sempro?.catatan_kaprodi ?? '');
 const showRevisionNote = ref(false);
-const maxFileSize = 10 * 1024 * 1024;
+const maxFileSize = (field: FileField) =>
+    (field === 'proposal_file' ? 10 : 5) * 1024 * 1024;
 const fileErrors = ref<Partial<Record<FileField, string>>>({});
 
 const form = useForm({
-    judul_ta:
-        props.sempro?.judul_ta ||
-        props.defaultJudul ||
-        'Sistem Penjadwalan Seminar dan Chatbot Layanan Akademik Menggunakan Algoritma Genetika dan Large Language Model',
-    bentuk_ta:
-        props.sempro?.bentuk_ta ||
-        'Skripsi Reguler (Pengembangan Perangkat Lunak & AI)',
+    judul_ta: props.sempro?.judul_ta || props.defaultJudul || '',
+    bentuk_ta: props.sempro?.bentuk_ta || '',
     lembar_kehadiran_file: null as File | null,
     proposal_file: null as File | null,
     turnitin_file: null as File | null,
@@ -93,6 +98,14 @@ const form = useForm({
     skor_iaet: '' as number | '',
 });
 
+watch(
+    () => [props.sempro, props.defaultJudul] as const,
+    ([record, title]) => {
+        form.judul_ta = record?.judul_ta ?? title ?? '';
+        form.bentuk_ta = record?.bentuk_ta ?? '';
+        form.lokasi_mitra = record?.lokasi_mitra ?? '';
+    },
+);
 const statusLabel = computed(() => {
     const labels: Record<SemproStatus, string> = {
         draft: 'Belum Mengisi',
@@ -111,9 +124,9 @@ const canEdit = computed(
 );
 const requiredFiles = computed(
     () =>
-        !!form.lembar_kehadiran_file &&
-        !!form.proposal_file &&
-        !!form.turnitin_file,
+        !!(form.lembar_kehadiran_file || props.sempro?.lembar_kehadiran_file) &&
+        !!(form.proposal_file || props.sempro?.proposal_file) &&
+        !!(form.turnitin_file || props.sempro?.turnitin_file),
 );
 const isIaetValid = computed(
     () =>
@@ -158,8 +171,9 @@ const setFile = (field: FileField, event: Event) => {
         return;
     }
 
-    if (file.size > maxFileSize) {
-        fileErrors.value[field] = 'Ukuran file maksimal 10 MB.';
+    if (file.size > maxFileSize(field)) {
+        fileErrors.value[field] =
+            `Ukuran file maksimal ${field === 'proposal_file' ? 10 : 5} MB.`;
         form[field] = null;
         input.value = '';
         return;
@@ -177,11 +191,10 @@ const removeFile = (field: FileField, inputId: string) => {
 };
 
 const submitSempro = () => {
-    if (!canEdit.value || !isFormValid.value) return;
+    if (!canEdit.value || !isFormValid.value || form.processing) return;
     form.post('/pendaftaran/sempro', {
         preserveScroll: true,
         onSuccess: () => {
-            status.value = 'diajukan';
             showRevisionNote.value = false;
         },
     });
@@ -192,12 +205,22 @@ const submitSempro = () => {
     <Head title="Seminar Proposal TA - SIPTA IF" />
 
     <div class="mx-auto max-w-7xl space-y-6">
+        <p
+            v-if="feedback.success"
+            role="status"
+            class="text-sm text-emerald-700"
+        >
+            {{ feedback.success }}
+        </p>
+        <p v-if="feedback.error" role="alert" class="text-sm text-rose-700">
+            {{ feedback.error }}
+        </p>
         <PageHeaderBox title="Seminar Proposal TA" />
 
         <ProfileHeaderCard
             :name="studentName"
             :nim="studentNim"
-            angkatan="Akt 2023"
+            angkatan="Angkatan belum tersedia"
             :prodi="studentProdi"
             :avatar-initials="studentInitials"
         >
@@ -213,19 +236,39 @@ const submitSempro = () => {
         </ProfileHeaderCard>
 
         <div
-            v-if="status === 'revisi' && revisionNote"
+            v-if="academicNote"
+            role="note"
+            class="rounded-2xl border border-amber-200 p-4 text-sm"
+        >
+            <p class="font-bold">Catatan akademik Kaprodi</p>
+            <p class="mt-1">{{ academicNote }}</p>
+        </div>
+        <div
+            v-if="revisionNote"
             class="flex items-start gap-3 rounded-2xl border border-orange-200 bg-orange-50 p-4 text-sm text-orange-800 dark:border-orange-900 dark:bg-orange-950/30 dark:text-orange-200"
         >
             <AlertCircle class="mt-0.5 h-5 w-5 shrink-0" />
             <div>
-                <p class="font-bold">Catatan revisi</p>
+                <p class="font-bold">Catatan administrasi</p>
                 <p class="mt-1">{{ revisionNote }}</p>
             </div>
         </div>
 
+        <p
+            v-for="error in form.errors"
+            :key="error"
+            role="alert"
+            class="text-sm text-rose-700"
+        >
+            {{ error }}
+        </p>
+        <p class="text-sm text-slate-500">
+            Skor IAET numerik tidak disimpan oleh kontrak saat ini. Identitas
+            tim dosen belum tersedia pada halaman pendaftaran.
+        </p>
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
-                <DosenTeamSection />
+                <DosenTeamSection :pembimbing-list="[]" :penguji-list="[]" />
 
                 <TemplateDownloadCard
                     :templates="[
@@ -253,8 +296,12 @@ const submitSempro = () => {
                                 >
                                 <span
                                     class="ml-1 text-slate-600 dark:text-slate-400"
-                                    >{{ form.judul_ta }}</span
-                                >
+                                    ><input
+                                        v-model="form.judul_ta"
+                                        :disabled="!canEdit"
+                                        placeholder="Judul TA"
+                                        class="rounded border p-2"
+                                /></span>
                             </div>
                             <div>
                                 <span
@@ -263,8 +310,12 @@ const submitSempro = () => {
                                 >
                                 <span
                                     class="ml-1 text-slate-600 dark:text-slate-400"
-                                    >{{ form.bentuk_ta }}</span
-                                >
+                                    ><input
+                                        v-model="form.bentuk_ta"
+                                        :disabled="!canEdit"
+                                        placeholder="Bentuk TA"
+                                        class="rounded border p-2"
+                                /></span>
                             </div>
                         </div>
 
@@ -363,7 +414,14 @@ const submitSempro = () => {
                                             "
                                         />
                                         <span class="text-[11px] text-slate-400"
-                                            >PDF, maks. 10 MB</span
+                                            >PDF, maks.
+                                            {{
+                                                document.field ===
+                                                'proposal_file'
+                                                    ? 10
+                                                    : 5
+                                            }}
+                                            MB</span
                                         >
                                     </div>
                                 </div>
@@ -414,6 +472,8 @@ const submitSempro = () => {
                             <input
                                 id="skor_iaet"
                                 v-model.number="form.skor_iaet"
+                                disabled
+                                title="Skor numerik belum memiliki kontrak penyimpanan"
                                 type="number"
                                 min="0"
                                 step="any"
@@ -459,7 +519,9 @@ const submitSempro = () => {
                             >
                             <button
                                 type="submit"
-                                :disabled="!canEdit || !isFormValid"
+                                :disabled="
+                                    !canEdit || !isFormValid || form.processing
+                                "
                                 class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#8CE79B] px-6 py-2.5 text-xs font-bold text-slate-900 transition-all hover:bg-[#7BD68A] active:scale-95 disabled:pointer-events-none disabled:opacity-40"
                             >
                                 <Send class="h-3.5 w-3.5" />

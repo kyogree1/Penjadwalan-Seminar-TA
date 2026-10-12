@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { computed, watch } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import {
     AlertTriangle,
     CheckCircle2,
@@ -32,20 +32,12 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const feedback = computed(
+    () => (page.props.flash as { success?: string; error?: string }) ?? {},
+);
+const page = usePage();
 
-const fallbackDosenList = [
-    { id: '1', name: 'Dr. Ir. Hendra Wijaya, M.Kom.' },
-    { id: '2', name: 'Rina Agustina, S.T., M.Kom.' },
-    { id: '3', name: 'Dr. Dian Indah Permatasari, M.Kom.' },
-    { id: '4', name: 'Ahmad Fauzi, S.Kom., M.T.' },
-];
-
-const availableDosenList = computed(() => {
-    if (props.dosenList && props.dosenList.length > 0) {
-        return props.dosenList;
-    }
-    return fallbackDosenList;
-});
+const availableDosenList = computed(() => props.dosenList ?? []);
 
 const initialStatus = (): BadgeStatus => {
     if (!props.pengajuan) return 'draft';
@@ -57,19 +49,46 @@ const initialStatus = (): BadgeStatus => {
     return 'draft';
 };
 
-const applicationStatus = ref<BadgeStatus>(initialStatus());
+const applicationStatus = computed<BadgeStatus>(initialStatus);
 
+const supervisorId = (id?: number | null, related?: { id: number } | null) =>
+    id ?? related?.id;
+const supervisorValue = (
+    id?: number | null,
+    related?: { id: number } | null,
+) => {
+    const value = supervisorId(id, related);
+    return value == null ? '' : String(value);
+};
 const form = useForm({
     judul_ta: props.pengajuan?.judul_ta || '',
     bidang_penelitian: props.pengajuan?.bidang_penelitian || '',
-    pembimbing_1: props.pengajuan?.pembimbing_1_id
-        ? String(props.pengajuan.pembimbing_1_id)
-        : props.pengajuan?.pembimbing_1?.name || '',
-    pembimbing_2: props.pengajuan?.pembimbing_2_id
-        ? String(props.pengajuan.pembimbing_2_id)
-        : props.pengajuan?.pembimbing_2?.name || '',
+    pembimbing_1: supervisorValue(
+        props.pengajuan?.pembimbing_1_id,
+        props.pengajuan?.pembimbing_1,
+    ),
+    pembimbing_2: supervisorValue(
+        props.pengajuan?.pembimbing_2_id,
+        props.pengajuan?.pembimbing_2,
+    ),
     telah_konsultasi: Boolean(props.pengajuan?.telah_konsultasi),
 });
+watch(
+    () => props.pengajuan,
+    (record) => {
+        form.judul_ta = record?.judul_ta ?? '';
+        form.bidang_penelitian = record?.bidang_penelitian ?? '';
+        form.pembimbing_1 = supervisorValue(
+            record?.pembimbing_1_id,
+            record?.pembimbing_1,
+        );
+        form.pembimbing_2 = supervisorValue(
+            record?.pembimbing_2_id,
+            record?.pembimbing_2,
+        );
+        form.telah_konsultasi = Boolean(record?.telah_konsultasi);
+    },
+);
 const statusLabel = computed(() => {
     switch (applicationStatus.value) {
         case 'draft':
@@ -89,7 +108,8 @@ const statusLabel = computed(() => {
 const canEditForm = computed(
     () =>
         applicationStatus.value === 'draft' ||
-        applicationStatus.value === 'revisi',
+        applicationStatus.value === 'revisi' ||
+        applicationStatus.value === 'ditolak',
 );
 
 const isFormValid = computed(() => {
@@ -102,8 +122,7 @@ const isFormValid = computed(() => {
 });
 
 const submitForm = () => {
-    if (!canEditForm.value) return;
-    applicationStatus.value = 'diajukan';
+    if (!canEditForm.value || form.processing) return;
     form.post('/pendaftaran/judul', {
         preserveScroll: true,
     });
@@ -114,6 +133,24 @@ const submitForm = () => {
     <Head title="Pengajuan Judul Tugas Akhir - SIPTA IF" />
 
     <div class="mx-auto max-w-7xl space-y-6">
+        <p
+            v-if="feedback.success"
+            role="status"
+            class="text-sm text-emerald-700"
+        >
+            {{ feedback.success }}
+        </p>
+        <p v-if="feedback.error" role="alert" class="text-sm text-rose-700">
+            {{ feedback.error }}
+        </p>
+        <p
+            v-for="error in form.errors"
+            :key="error"
+            role="alert"
+            class="text-sm text-rose-700"
+        >
+            {{ error }}
+        </p>
         <!-- 1. Header Judul & Status Pill (Reusable Component) -->
         <PageHeaderBox title="Pengajuan Judul Tugas Akhir">
             <template #action>
@@ -147,10 +184,6 @@ const submitForm = () => {
                 class="mt-2 list-disc space-y-1 pl-5 text-xs text-slate-600 dark:text-slate-300"
             >
                 <li>
-                    Lengkapi e-TTD terlebih dahulu melalui menu Profil (pojok
-                    kanan atas)
-                </li>
-                <li>
                     Sudah konsultasi dengan dosen pembimbing yang dipilih dan
                     mereka menyetujui judul
                 </li>
@@ -164,9 +197,9 @@ const submitForm = () => {
             <div
                 class="mt-4 rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 text-xs font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-300"
             >
-                Setelah pengajuan dikirim, pembimbing yang dipilih TIDAK DAPAT
-                DIUBAH. Jika judul ditolak dosen, Anda tidak bisa mengubah
-                apapun lagi dan tidak bisa melakukan pengajuan lagi.
+                Pengajuan menunggu persetujuan atau disetujui dikunci. Jika
+                diminta revisi atau ditolak, perbaiki data dan ajukan kembali
+                untuk peninjauan ulang.
             </div>
         </div>
 
@@ -271,7 +304,7 @@ const submitForm = () => {
                             <option
                                 v-for="dosen in availableDosenList"
                                 :key="dosen.id"
-                                :value="dosen.name"
+                                :value="String(dosen.id)"
                             >
                                 {{ dosen.name }}
                             </option>
@@ -298,7 +331,7 @@ const submitForm = () => {
                             <option
                                 v-for="dosen in availableDosenList"
                                 :key="dosen.id"
-                                :value="dosen.name"
+                                :value="String(dosen.id)"
                             >
                                 {{ dosen.name }}
                             </option>

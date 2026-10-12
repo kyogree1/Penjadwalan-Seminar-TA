@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { Search } from 'lucide-vue-next';
+import type { ScheduleRecord } from '@/types/r2-read-contracts';
 
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 import PageTabs from '@/Components/PageTabs.vue';
@@ -40,126 +41,48 @@ type Registrant = {
 
 interface Props {
     registrantsData?: Registrant[];
-    jadwalSempro?: any[];
-    jadwalSidang?: any[];
+    jadwalSempro: ScheduleRecord[];
+    jadwalSidang: ScheduleRecord[];
 }
 
 const props = defineProps<Props>();
 
-const defaultRegistrants: Registrant[] = [
-    {
-        name: 'Akmal Falah Maulana',
-        nim: '11231006',
-        registered: '16 Sep 2026',
-        wave: '2',
-        status: 'Diterima',
-    },
-    {
-        name: 'Anisa Rahmadani',
-        nim: '11231010',
-        registered: '15 Sep 2026',
-        wave: '2',
-        status: 'Diterima',
-    },
-    {
-        name: 'Bayu Aditya Saputra',
-        nim: '11231089',
-        registered: '14 Sep 2026',
-        wave: '2',
-        status: 'Diterima',
-    },
-];
-
-const defaultSchedules: (ScheduleDetail & {
+type ScheduleList = (ScheduleDetail & {
     type: 'sempro' | 'sidang';
     period: string;
     wave: string;
     own?: boolean;
     name?: string;
     registered?: string;
-})[] = [
-    {
-        type: 'sempro',
-        period: 'Gasal 2026/2027',
-        wave: '2',
-        own: true,
-        studentName: 'Akmal Falah Maulana',
-        nim: '11231006',
-        title: 'Pengembangan Portal Tugas Akhir Informatika ITK Berbasis Inertia Vue 3',
-        date: '02 Oktober 2026',
-        time: '13.30 - 15.00 WITA',
-        room: 'Ruang Lab JSTI 2 / Gedung A',
-        supervisors: ['Dr. Ir. Hendra Wijaya, M.Kom.'],
-        examiners: [
-            'Prof. Dr. Agus Susanto, M.T.',
-            'Siti Nurhaliza, S.Kom., M.Cs.',
-        ],
-        status: 'Terjadwal',
-    },
-    {
-        type: 'sempro',
-        period: 'Gasal 2026/2027',
-        wave: '2',
-        studentName: 'Anisa Rahmadani',
-        nim: '11231010',
-        title: 'Analisis Perbandingan Kinerja Model Computer Vision pada Edge Device',
-        date: '02 Oktober 2026',
-        time: '09.00 - 10.30 WITA',
-        room: 'Ruang B-207',
-        supervisors: ['Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.'],
-        examiners: [
-            'Sri Wahyuni, S.Kom., M.T.',
-            'Gusti Ahmad Fanshuri, S.Kom., M.Cs.',
-        ],
-        status: 'Terjadwal',
-    },
-    {
-        type: 'sidang',
-        period: 'Gasal 2026/2027',
-        wave: '1',
-        studentName: 'Siti Nurhaliza Putri',
-        nim: '11211045',
-        title: 'Sistem Deteksi Retinopati Diabetik Menggunakan Vision Transformer',
-        date: '20 Oktober 2026',
-        time: '09.00 - 11.00 WITA',
-        room: 'Ruang Sidang Utama Informatika Lt. 3',
-        supervisors: ['Dr. Ir. Hendra Wijaya, M.Kom.'],
-        examiners: [
-            'Ir. Budi Santoso, M.Eng.',
-            'Siti Nurhaliza, S.Kom., M.Cs.',
-        ],
-        status: 'Terjadwal',
-    },
-];
+})[];
 
-const activeRegistrants = computed<Registrant[]>(() => {
-    if (props.registrantsData && props.registrantsData.length > 0) {
-        return props.registrantsData;
-    }
-    return defaultRegistrants;
-});
+const activeRegistrants = computed<Registrant[]>(
+    () => props.registrantsData ?? [],
+);
 
 const schedules = computed(() => {
-    const list: typeof defaultSchedules = [];
+    const list: ScheduleList = [];
     if (props.jadwalSempro && props.jadwalSempro.length > 0) {
         for (const item of props.jadwalSempro) {
             list.push({
                 type: 'sempro',
-                period: 'Gasal 2026/2027',
-                wave: String(item.gelombang || '1'),
+                period: 'Periode belum tersedia',
+                wave: String(item.gelombang),
                 studentName: item.mahasiswa?.name || 'Mahasiswa',
-                nim: item.mahasiswa?.username || '-',
-                title: item.judul || 'Seminar Proposal Tugas Akhir',
+                nim: item.mahasiswa?.nim_nip || '-',
+                title: 'Seminar Proposal Tugas Akhir',
                 date: item.tanggal || 'TBA',
                 time: item.jam_mulai
                     ? `${item.jam_mulai} - ${item.jam_selesai}`
-                    : '09.00 - 10.30 WITA',
-                room: item.ruangan?.nama_ruangan || 'Ruang Sidang',
-                supervisors: [item.pembimbing1?.name || 'Pembimbing 1'],
-                examiners: [
-                    item.penguji1?.name || 'Penguji 1',
-                    item.penguji2?.name || 'Penguji 2',
-                ].filter(Boolean),
+                    : 'Waktu belum tersedia',
+                room: item.ruangan?.nama_ruangan || 'Ruangan belum tersedia',
+                supervisors: [
+                    item.pembimbing1?.name,
+                    item.pembimbing2?.name,
+                ].filter((name): name is string => Boolean(name)),
+                examiners: [item.penguji1?.name, item.penguji2?.name].filter(
+                    (name): name is string => Boolean(name),
+                ),
                 status: 'Terjadwal',
             });
         }
@@ -168,27 +91,28 @@ const schedules = computed(() => {
         for (const item of props.jadwalSidang) {
             list.push({
                 type: 'sidang',
-                period: 'Gasal 2026/2027',
-                wave: String(item.gelombang || '1'),
+                period: 'Periode belum tersedia',
+                wave: String(item.gelombang),
                 studentName: item.mahasiswa?.name || 'Mahasiswa',
-                nim: item.mahasiswa?.username || '-',
-                title: item.judul || 'Sidang Tugas Akhir',
+                nim: item.mahasiswa?.nim_nip || '-',
+                title: 'Sidang Tugas Akhir',
                 date: item.tanggal || 'TBA',
                 time: item.jam_mulai
                     ? `${item.jam_mulai} - ${item.jam_selesai}`
-                    : '09.00 - 11.00 WITA',
-                room: item.ruangan?.nama_ruangan || 'Ruang Sidang',
-                supervisors: [item.pembimbing1?.name || 'Pembimbing 1'],
-                examiners: [
-                    item.penguji1?.name || 'Penguji 1',
-                    item.penguji2?.name || 'Penguji 2',
-                ].filter(Boolean),
+                    : 'Waktu belum tersedia',
+                room: item.ruangan?.nama_ruangan || 'Ruangan belum tersedia',
+                supervisors: [
+                    item.pembimbing1?.name,
+                    item.pembimbing2?.name,
+                ].filter((name): name is string => Boolean(name)),
+                examiners: [item.penguji1?.name, item.penguji2?.name].filter(
+                    (name): name is string => Boolean(name),
+                ),
                 status: 'Terjadwal',
             });
         }
     }
-    if (list.length > 0) return list;
-    return defaultSchedules;
+    return list;
 });
 
 const filteredRegistrants = computed(() => {
@@ -243,7 +167,7 @@ const openDetail = (item: ScheduleDetail) => {
                 class="rounded-xl border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
             >
                 <option>Semua</option>
-                <option>Gasal 2026/2027</option>
+                <option disabled>Periode belum tersedia</option>
             </select>
             <select
                 v-if="activeTab !== 'registrants'"

@@ -45,12 +45,12 @@ class DashboardController extends Controller
             ],
             [
                 'name' => 'Verifikasi',
-                'status' => match($sempro?->status) {
+                'status' => match ($sempro?->status) {
                     'verifikasi_tendik', 'terjadwal', 'selesai' => 'completed',
                     'menunggu' => 'in_progress',
                     default => 'pending',
                 },
-                'date' => match($sempro?->status) {
+                'date' => match ($sempro?->status) {
                     'verifikasi_tendik', 'terjadwal', 'selesai' => 'Diverifikasi',
                     'menunggu' => 'Antrean Tendik',
                     default => 'Menunggu pengajuan',
@@ -58,13 +58,13 @@ class DashboardController extends Controller
             ],
             [
                 'name' => 'Penilaian',
-                'status' => match($sempro?->status) {
+                'status' => match ($sempro?->status) {
                     'selesai' => 'completed',
                     'terjadwal' => 'in_progress',
                     default => 'pending',
                 },
-                'date' => match($sempro?->status) {
-                    'selesai' => 'Lulus',
+                'date' => match ($sempro?->status) {
+                    'selesai' => 'Selesai (nilai belum tersedia)',
                     'terjadwal' => 'Terjadwal',
                     default => 'Belum seminar',
                 },
@@ -85,12 +85,12 @@ class DashboardController extends Controller
             ],
             [
                 'name' => 'Verifikasi',
-                'status' => match($sidang?->status) {
+                'status' => match ($sidang?->status) {
                     'verifikasi_tendik', 'terjadwal', 'selesai' => 'completed',
                     'menunggu' => 'in_progress',
                     default => 'pending',
                 },
-                'date' => match($sidang?->status) {
+                'date' => match ($sidang?->status) {
                     'verifikasi_tendik', 'terjadwal', 'selesai' => 'Diverifikasi',
                     'menunggu' => 'Antrean Tendik',
                     default => 'Menunggu pengajuan',
@@ -98,13 +98,13 @@ class DashboardController extends Controller
             ],
             [
                 'name' => 'Penilaian',
-                'status' => match($sidang?->status) {
+                'status' => match ($sidang?->status) {
                     'selesai' => 'completed',
                     'terjadwal' => 'in_progress',
                     default => 'pending',
                 },
-                'date' => match($sidang?->status) {
-                    'selesai' => 'Lulus',
+                'date' => match ($sidang?->status) {
+                    'selesai' => 'Selesai (nilai belum tersedia)',
                     'terjadwal' => 'Terjadwal',
                     default => 'Belum sidang',
                 },

@@ -1,88 +1,52 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
-import {
-    CheckCircle2,
-    GraduationCap,
-    Info,
-    Mail,
-    PenTool,
-    Phone,
-    ShieldCheck,
-    User,
-} from 'lucide-vue-next';
-
+import { computed, watch } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Info, ShieldCheck } from 'lucide-vue-next';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
-import SignaturePadModal from '@/Components/SignaturePadModal.vue';
-
-interface Props {
-    user?: {
-        id: number;
-        name: string;
-        username?: string;
-        nim_nip?: string;
-        email: string;
-        role: string;
-        prodi?: string;
-        jabatan?: string;
-    };
+interface ProfileUser {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    nim_nip?: string | null;
+    prodi?: string | null;
 }
-
-const props = defineProps<Props>();
-
-const showSignatureModal = ref(false);
-const signaturePreview = ref<string | null>(
-    'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="80"><path d="M20 50 Q 60 10, 90 45 T 160 30" fill="none" stroke="%231E40AF" stroke-width="3"/></svg>',
+const props = defineProps<{ user: ProfileUser }>();
+const profile = computed(() => props.user);
+const page = usePage();
+const feedback = computed(
+    () => (page.props.flash as { success?: string; error?: string }) ?? {},
 );
-
-const form = useForm({
-    name: props.user?.name || 'Akmal Falah Maulana',
-    nim:
-        props.user?.nim_nip?.replace('NIM: ', '') ||
-        props.user?.username ||
-        '11231006',
-    email: props.user?.email || '11231006@student.itk.ac.id',
-    prodi: props.user?.prodi || 'S1 Teknik Informatika',
-    angkatan: '2023',
-    phone: '081234567890',
-});
-
-const userRoleBadge = computed(() => {
-    switch (props.user?.role) {
-        case 'kaprodi':
-            return 'Ketua Program Studi';
-        case 'dosen':
-            return 'Dosen Fakultas';
-        case 'tendik':
-            return 'Tenaga Kependidikan';
-        default:
-            return 'Akun Mahasiswa Aktif';
-    }
-});
-
-const userInitials = computed(() => {
-    return form.name
+const form = useForm({ name: props.user.name, email: props.user.email });
+watch(
+    () => props.user,
+    (user) => {
+        form.name = user.name;
+        form.email = user.email;
+    },
+);
+const userRoleBadge = computed(() =>
+    props.user.role === 'koordinator' ? 'kaprodi' : props.user.role,
+);
+const userInitials = computed(() =>
+    props.user.name
         .split(' ')
         .filter(Boolean)
         .slice(0, 2)
-        .map((w: string) => w[0]?.toUpperCase())
-        .join('');
-});
-
-const onSaveSignature = (dataUrl: string) => {
-    signaturePreview.value = dataUrl;
+        .map((word) => word[0]?.toUpperCase())
+        .join(''),
+);
+const submit = () => {
+    if (!form.processing) form.patch('/profile', { preserveScroll: true });
 };
 </script>
 
 <template>
-    <Head title="Profil Pengguna & e-TTD - SIPTA IF" />
+    <Head title="Profil Pengguna - SIPTA IF" />
 
     <div class="mx-auto max-w-5xl space-y-6">
         <!-- Header Box (Reusable Component) -->
-        <PageHeaderBox
-            title="Profil Pengguna & e-TTD"
-            subtitle="Data diri akademik dan tanda tangan digital resmi (e-TTD)"
-        />
+        <PageHeaderBox title="Profil Pengguna" subtitle="Data akun tersimpan" />
 
         <!-- Warning PENTING SOP SIPTA IF -->
         <div
@@ -97,19 +61,28 @@ const onSaveSignature = (dataUrl: string) => {
                         Ketentuan e-TTD & Data Akademik (SIPTA IF):
                     </p>
                     <p>
-                        • Pastikan e-TTD Anda sudah tersimpan. Tanda tangan ini
-                        secara otomatis dibubuhkan pada lembar bimbingan (Form
-                        TA-04) dan berita acara seminar/sidang.
-                    </p>
-                    <p>
-                        • Password akun mahasiswa menggunakan NIM dan tidak
-                        dapat diubah mandiri. Jika terkendala login, hubungi
-                        staf Tendik FSTI.
+                        Nama dan email dapat diperbarui melalui server.
+                        Angkatan, kontak telepon, dan e-TTD belum memiliki
+                        kontrak penyimpanan.
                     </p>
                 </div>
             </div>
         </div>
 
+        <p v-if="feedback.success" role="status" class="text-emerald-700">
+            {{ feedback.success }}
+        </p>
+        <p v-if="feedback.error" role="alert" class="text-rose-700">
+            {{ feedback.error }}
+        </p>
+        <p
+            v-for="error in form.errors"
+            :key="error"
+            role="alert"
+            class="text-rose-700"
+        >
+            {{ error }}
+        </p>
         <!-- Profile Data Grid -->
         <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
             <!-- Left: Avatar Card & Signature Status -->
@@ -128,7 +101,7 @@ const onSaveSignature = (dataUrl: string) => {
                         {{ form.name }}
                     </h3>
                     <p class="text-xs font-semibold text-slate-400">
-                        {{ form.nim }}
+                        {{ profile.nim_nip ?? 'Belum tersedia' }}
                     </p>
                     <span
                         class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
@@ -137,46 +110,10 @@ const onSaveSignature = (dataUrl: string) => {
                     </span>
                 </div>
 
-                <!-- e-TTD Preview Container -->
-                <div
-                    class="mt-6 border-t border-slate-100 pt-5 dark:border-slate-800"
-                >
-                    <div class="mb-2 flex items-center justify-between">
-                        <span
-                            class="text-xs font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            e-TTD Terdaftar:
-                        </span>
-                        <span
-                            class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400"
-                        >
-                            Terverifikasi
-                        </span>
-                    </div>
-
-                    <div
-                        class="flex h-24 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 p-2 dark:border-slate-800 dark:bg-slate-900"
-                    >
-                        <img
-                            v-if="signaturePreview"
-                            :src="signaturePreview"
-                            alt="Tanda Tangan Digital"
-                            class="max-h-full max-w-full object-contain"
-                        />
-                        <span v-else class="text-xs text-slate-400"
-                            >Belum ada e-TTD</span
-                        >
-                    </div>
-
-                    <button
-                        type="button"
-                        class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-50 py-2 text-xs font-bold text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300"
-                        @click="showSignatureModal = true"
-                    >
-                        <PenTool class="h-3.5 w-3.5" />
-                        <span>Perbarui e-TTD</span>
-                    </button>
-                </div>
+                <p class="mt-6 text-sm text-slate-500">
+                    e-TTD belum tersedia: belum ada kontrak penyimpanan tanda
+                    tangan.
+                </p>
             </div>
 
             <!-- Right: Biodata Detail Form (Span 2) -->
@@ -186,7 +123,7 @@ const onSaveSignature = (dataUrl: string) => {
                 <h3
                     class="border-b border-slate-100 pb-4 text-base font-bold text-slate-900 dark:border-slate-800 dark:text-white"
                 >
-                    Biodata Akademik Mahasiswa
+                    Biodata Pengguna
                 </h3>
 
                 <div class="mt-5 grid grid-cols-1 gap-4 text-xs sm:grid-cols-2">
@@ -196,8 +133,7 @@ const onSaveSignature = (dataUrl: string) => {
                             >Nama Lengkap</label
                         >
                         <input
-                            :value="form.name"
-                            readonly
+                            v-model="form.name"
                             class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-semibold text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
                         />
                     </div>
@@ -205,10 +141,10 @@ const onSaveSignature = (dataUrl: string) => {
                     <div class="space-y-1">
                         <label
                             class="font-bold text-slate-500 dark:text-slate-400"
-                            >Nomor Induk Mahasiswa (NIM)</label
+                            >Nomor Induk (NIM / NIP)</label
                         >
                         <input
-                            :value="form.nim"
+                            :value="profile.nim_nip ?? 'Belum tersedia'"
                             readonly
                             class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-semibold text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
                         />
@@ -220,19 +156,7 @@ const onSaveSignature = (dataUrl: string) => {
                             >Program Studi</label
                         >
                         <input
-                            :value="form.prodi"
-                            readonly
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-semibold text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-                        />
-                    </div>
-
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-500 dark:text-slate-400"
-                            >Tahun Angkatan</label
-                        >
-                        <input
-                            :value="form.angkatan"
+                            :value="profile.prodi ?? 'Belum tersedia'"
                             readonly
                             class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-semibold text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
                         />
@@ -244,20 +168,8 @@ const onSaveSignature = (dataUrl: string) => {
                             >Email Kampus ITK</label
                         >
                         <input
-                            :value="form.email"
-                            readonly
+                            v-model="form.email"
                             class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-semibold text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
-                        />
-                    </div>
-
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-500 dark:text-slate-400"
-                            >Nomor WhatsApp / HP Aktif</label
-                        >
-                        <input
-                            v-model="form.phone"
-                            class="w-full rounded-xl border border-slate-300 bg-white p-2.5 font-semibold text-slate-800 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                         />
                     </div>
                 </div>
@@ -265,19 +177,14 @@ const onSaveSignature = (dataUrl: string) => {
                 <div class="mt-6 flex justify-end">
                     <button
                         type="button"
+                        :disabled="form.processing"
+                        @click="submit"
                         class="rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-blue-700"
                     >
-                        Simpan Perubahan Kontak
+                        Simpan Nama &amp; Email
                     </button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Reusable Signature Pad Modal -->
-    <SignaturePadModal
-        :show="showSignatureModal"
-        @close="showSignatureModal = false"
-        @save="onSaveSignature"
-    />
 </template>
