@@ -10,6 +10,11 @@ class ArsipController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Tendik/Arsip');
+        return Inertia::render('Tendik/Arsip', [
+            'archiveCapabilities' => [
+                'persistence' => false,
+                'printing' => false,
+            ],
+        ]);
     }
 }

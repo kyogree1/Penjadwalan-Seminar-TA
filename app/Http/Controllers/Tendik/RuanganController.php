@@ -12,7 +12,9 @@ class RuanganController extends Controller
 {
     public function index(): Response
     {
-        $ruanganList = Ruangan::all();
+        $ruanganList = Ruangan::orderBy('nama_ruangan')->orderBy('id')->get([
+            'id', 'nama_ruangan', 'gedung', 'lantai', 'kapasitas', 'status', 'keterangan',
+        ]);
 
         return Inertia::render('Tendik/Ruangan', [
             'dbRuanganList' => $ruanganList,

@@ -23,6 +23,8 @@ class DashboardController extends Controller
         return Inertia::render('Tendik/Dashboard', [
             'stats' => [
                 'antreanVerifikasi' => $antreanSempro + $antreanSidang,
+                'antreanSempro' => $antreanSempro,
+                'antreanSidang' => $antreanSidang,
                 'totalRuangan' => $totalRuangan,
                 'ruanganTersedia' => $ruanganTersedia,
                 'totalMahasiswa' => $totalMahasiswa,
