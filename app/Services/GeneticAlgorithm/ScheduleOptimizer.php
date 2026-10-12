@@ -2,300 +2,165 @@
 
 namespace App\Services\GeneticAlgorithm;
 
-/**
- * Genetic Algorithm (GA) Schedule Optimizer for Seminar Proposal & Sidang TA.
- * Formulated per SIPTA IF Thesis specifications:
- * - Constraint Satisfaction Problem (CSP) formulation.
- * - Soft constraints: Topic/KBK matching & examiner workload equilibrium.
- * - Hard constraints: No lecturer double-booking, examiner1 != examiner2, examiners cannot be supervisors.
- * - Room-free allocation per supervisor's directive.
+/** Tournament selection k=3; two-point crossover; integer random-reset mutation.
+ * Hard constraints are enforced by decoding, not finite fitness penalties.
  */
 class ScheduleOptimizer
 {
-    protected int $populationSize;
-    protected int $maxGenerations;
-    protected float $crossoverRate;
-    protected float $mutationRate;
+    public function __construct(protected int $populationSize = 50, protected int $maxGenerations = 100, protected float $crossoverRate = .8, protected float $mutationRate = .03) {}
 
-    public function __construct(
-        int $populationSize = 50,
-        int $maxGenerations = 100,
-        float $crossoverRate = 0.80,
-        float $mutationRate = 0.03
-    ) {
-        $this->populationSize = $populationSize;
-        $this->maxGenerations = $maxGenerations;
-        $this->crossoverRate = $crossoverRate;
-        $this->mutationRate = $mutationRate;
-    }
-
-    /**
-     * Run the Genetic Algorithm optimization over candidates and available lecturers.
-     *
-     * @param array $candidates Array of student candidates needing scheduling
-     * @param array $lecturers Array of eligible lecturers with KBK and quota
-     * @param array $availableSlots Array of dates and time slots
-     * @return array Optimal schedule and convergence telemetry
-     */
-    public function optimize(array $candidates, array $lecturers, array $availableSlots): array
+    public function optimize(array $candidates, array $lecturers, array $availableSlots, array $bookings = []): array
     {
-        if (empty($candidates) || empty($lecturers) || empty($availableSlots)) {
-            return [
-                'success' => false,
-                'fitness' => 0.0,
-                'generations' => 0,
-                'schedule' => [],
-                'logs' => ['Kandidat, dosen, atau slot waktu tidak boleh kosong.'],
-            ];
-        }
-
-        $logs = [];
-        $logs[] = sprintf(
-            '[Inisialisasi] Memulai populasi awal (%d kromosom) untuk %d mahasiswa.',
-            $this->populationSize,
-            count($candidates)
-        );
-
-        // 1. Initial Population
+        $best = [];
+        $score = -1;
+        $generations = 0;
         $population = [];
-        for ($i = 0; $i < $this->populationSize; $i++) {
-            $population[] = $this->generateRandomChromosome($candidates, $lecturers, $availableSlots);
-        }
-
-        $bestChromosome = null;
-        $bestFitness = -1.0;
-        $convergenceGen = 1;
-
-        // 2. Generational Evolution Loop
-        for ($gen = 1; $gen <= $this->maxGenerations; $gen++) {
-            // Evaluate fitness
-            $fitnessScores = [];
-            foreach ($population as $idx => $chromosome) {
-                $score = $this->calculateFitness($chromosome, $candidates);
-                $fitnessScores[$idx] = $score;
-
-                if ($score > $bestFitness) {
-                    $bestFitness = $score;
-                    $bestChromosome = $chromosome;
-                    $convergenceGen = $gen;
+        if ($candidates && count($lecturers) >= 2 && $availableSlots) {
+            for ($i = 0; $i < $this->populationSize; $i++) {
+                $population[] = array_map(fn () => [mt_rand(0, count($availableSlots) - 1), mt_rand(0, count($lecturers) - 1), mt_rand(0, count($lecturers) - 1)], $candidates);
+            }
+            for ($generations = 1; $generations <= $this->maxGenerations; $generations++) {
+                $scores = [];
+                foreach ($population as $i => $genes) {
+                    $rows = $this->decode($genes, $candidates, $lecturers, $availableSlots, $bookings);
+                    $scores[$i] = count($rows) + $this->metrics($rows, $lecturers)['fitness'] / 2;
+                    if ($scores[$i] > $score) {
+                        $score = $scores[$i];
+                        $best = $rows;
+                        $elite = $genes;
+                    }
                 }
-            }
-
-            // Check milestone logs
-            if ($gen === 25 || $gen === 55 || $gen === 85) {
-                $logs[] = sprintf(
-                    '[Generasi %d] Best Fitness: %.3f | Mutasi: %.1f%%',
-                    $gen,
-                    $bestFitness,
-                    $this->mutationRate * 100
-                );
-            }
-
-            // Ideal convergence reached (Fitness >= 0.98 with zero hard conflicts)
-            if ($bestFitness >= 0.985) {
-                break;
-            }
-
-            // 3. Selection & Reproduction
-            $newPopulation = [];
-            while (count($newPopulation) < $this->populationSize) {
-                $parentA = $this->tournamentSelect($population, $fitnessScores);
-                $parentB = $this->tournamentSelect($population, $fitnessScores);
-
-                // Crossover
-                if ((mt_rand() / mt_getrandmax()) < $this->crossoverRate) {
-                    [$childA, $childB] = $this->twoPointCrossover($parentA, $parentB);
-                } else {
-                    $childA = $parentA;
-                    $childB = $parentB;
+                $next = [$elite];
+                while (count($next) < $this->populationSize) {
+                    $a = $this->select($population, $scores);
+                    $b = $this->select($population, $scores);
+                    if (count($a) > 1 && mt_rand() / mt_getrandmax() < $this->crossoverRate) {
+                        $start = mt_rand(0, count($a) - 2);
+                        $end = mt_rand($start + 1, count($a) - 1);
+                        for ($j = $start; $j <= $end; $j++) {
+                            $a[$j] = $b[$j];
+                        }
+                    }
+                    foreach ($a as &$gene) {
+                        foreach ($gene as $field => &$value) {
+                            if (mt_rand() / mt_getrandmax() < $this->mutationRate) {
+                                $value = mt_rand(0, ($field === 0 ? count($availableSlots) : count($lecturers)) - 1);
+                            }
+                        }unset($value);
+                    }unset($gene);
+                    $next[] = $a;
                 }
-
-                // Mutation
-                $this->mutate($childA, $lecturers, $availableSlots);
-                $this->mutate($childB, $lecturers, $availableSlots);
-
-                $newPopulation[] = $childA;
-                if (count($newPopulation) < $this->populationSize) {
-                    $newPopulation[] = $childB;
-                }
+                $population = $next;
             }
-
-            $population = $newPopulation;
+            $generations = $this->maxGenerations;
         }
+        $keys = array_map(fn ($r) => $r['tipe'].':'.$r['pendaftaran_id'], $best);
+        $unscheduled = array_values(array_filter($candidates, fn ($r) => ! in_array($r['tipe'].':'.$r['pendaftaran_id'], $keys, true)));
+        $outcome = ! $best ? 'infeasible' : ($unscheduled ? 'partial' : 'complete');
 
-        $logs[] = sprintf(
-            '[Konvergensi] Solusi optimal tercapai pada Generasi ke-%d (Fitness: %.3f).',
-            $convergenceGen,
-            $bestFitness
-        );
-        $logs[] = sprintf(
-            '[Selesai] %d/%d Mahasiswa berhasil dijadwalkan bebas konflik.',
-            count($candidates),
-            count($candidates)
-        );
-
-        return [
-            'success' => true,
-            'fitness' => round($bestFitness, 3),
-            'generations' => $convergenceGen,
-            'schedule' => $this->formatScheduleResult($bestChromosome, $candidates),
-            'logs' => $logs,
-        ];
+        return array_merge($this->metrics($best, $lecturers), ['success' => $outcome === 'complete', 'outcome' => $outcome, 'generations' => $generations, 'schedule' => $best, 'unscheduled' => $unscheduled, 'logs' => [count($best).'/'.count($candidates).' dijadwalkan; '.$outcome.'. Pencarian terbatas, bukan bukti optimalitas global.']]);
     }
 
-    protected function generateRandomChromosome(array $candidates, array $lecturers, array $availableSlots): array
+    private function select(array $population, array $scores): array
     {
-        $genes = [];
-        foreach ($candidates as $cand) {
-            $slot = $availableSlots[array_rand($availableSlots)];
-            $p1 = $lecturers[array_rand($lecturers)];
-            $p2 = $lecturers[array_rand($lecturers)];
-
-            $genes[] = [
-                'candidate_id' => $cand['id'],
-                'slot' => $slot,
-                'penguji1_id' => $p1['id'],
-                'penguji2_id' => $p2['id'],
-            ];
+        $winner = array_rand($population);
+        for ($i = 1; $i < 3; $i++) {
+            $j = array_rand($population);
+            if ($scores[$j] > $scores[$winner]) {
+                $winner = $j;
+            }
         }
-        return $genes;
+
+        return $population[$winner];
     }
 
-    protected function calculateFitness(array $chromosome, array $candidates): float
+    private function decode(array $genes, array $candidates, array $lecturers, array $slots, array $bookings): array
     {
-        $penalty = 0;
-        $bonus = 0;
-
-        $lecturerSlotBookings = [];
-        $candidatesMap = [];
-        foreach ($candidates as $c) {
-            $candidatesMap[$c['id']] = $c;
-        }
-
-        foreach ($chromosome as $gene) {
-            $cand = $candidatesMap[$gene['candidate_id']] ?? null;
-            if (!$cand) continue;
-
-            $slotKey = $gene['slot']['tanggal'] . '_' . $gene['slot']['jam_mulai'];
-
-            // Hard Constraint 1: Penguji 1 != Penguji 2
-            if ($gene['penguji1_id'] === $gene['penguji2_id']) {
-                $penalty += 50;
-            }
-
-            // Hard Constraint 2: Penguji cannot be supervisor
-            $supervisors = $cand['supervisors'] ?? [];
-            if (in_array($gene['penguji1_id'], $supervisors)) {
-                $penalty += 40;
-            }
-            if (in_array($gene['penguji2_id'], $supervisors)) {
-                $penalty += 40;
-            }
-
-            // Hard Constraint 3: Double booking check
-            $p1BookingKey = $gene['penguji1_id'] . '@' . $slotKey;
-            $p2BookingKey = $gene['penguji2_id'] . '@' . $slotKey;
-
-            if (isset($lecturerSlotBookings[$p1BookingKey])) {
-                $penalty += 35;
-            } else {
-                $lecturerSlotBookings[$p1BookingKey] = true;
-            }
-
-            if (isset($lecturerSlotBookings[$p2BookingKey])) {
-                $penalty += 35;
-            } else {
-                $lecturerSlotBookings[$p2BookingKey] = true;
-            }
-
-            // Soft Constraint: Topic / KBK Matching bonus
-            $candKbk = $cand['kbk'] ?? '';
-            $bonus += 10;
-        }
-
-        $rawScore = $bonus - $penalty;
-        return max(0.01, 1.0 / (1.0 + abs($penalty) * 0.1));
-    }
-
-    protected function tournamentSelect(array $population, array $fitnessScores): array
-    {
-        $k = 3;
-        $bestIdx = null;
-        $bestVal = -1.0;
-
-        for ($i = 0; $i < $k; $i++) {
-            $randIdx = array_rand($population);
-            if ($fitnessScores[$randIdx] > $bestVal) {
-                $bestVal = $fitnessScores[$randIdx];
-                $bestIdx = $randIdx;
-            }
-        }
-
-        return $population[$bestIdx];
-    }
-
-    protected function twoPointCrossover(array $parentA, array $parentB): array
-    {
-        $length = count($parentA);
-        if ($length <= 2) {
-            return [$parentA, $parentB];
-        }
-
-        $point1 = rand(0, $length - 2);
-        $point2 = rand($point1 + 1, $length - 1);
-
-        $childA = $parentA;
-        $childB = $parentB;
-
-        for ($i = $point1; $i <= $point2; $i++) {
-            $childA[$i] = $parentB[$i];
-            $childB[$i] = $parentA[$i];
-        }
-
-        return [$childA, $childB];
-    }
-
-    protected function mutate(array &$chromosome, array $lecturers, array $availableSlots): void
-    {
-        foreach ($chromosome as &$gene) {
-            if ((mt_rand() / mt_getrandmax()) < $this->mutationRate) {
-                // Mutate time slot or examiners
-                $coin = rand(1, 2);
-                if ($coin === 1) {
-                    $gene['slot'] = $availableSlots[array_rand($availableSlots)];
-                } else {
-                    $gene['penguji1_id'] = $lecturers[array_rand($lecturers)]['id'];
+        $rows = [];
+        $loads = [];
+        foreach ($bookings as $booking) {
+            foreach (['penguji_1_id', 'penguji_2_id'] as $field) {
+                if (! empty($booking[$field])) {
+                    $loads[$booking[$field]] = ($loads[$booking[$field]] ?? 0) + 1;
                 }
             }
         }
+        foreach ($candidates as $index => $candidate) {
+            [$offset,$first,$second] = $genes[$index];
+            $found = false;
+            for ($s = 0; $s < count($slots) && ! $found; $s++) {
+                $slot = $slots[($offset + $s) % count($slots)];
+                for ($p = 0; $p < count($lecturers) && ! $found; $p++) {
+                    for ($q = 0; $q < count($lecturers) && ! $found; $q++) {
+                        $a = $lecturers[($first + $p) % count($lecturers)];
+                        $b = $lecturers[($second + $q) % count($lecturers)];
+                        $row = array_merge($candidate, $slot, ['penguji_1_id' => $a['id'], 'penguji_2_id' => $b['id']]);
+                        if (! $this->conflicts($row, array_merge($bookings, $rows)) && $this->available($a, $slot, $loads) && $this->available($b, $slot, $loads)) {
+                            $rows[] = $row;
+                            $loads[$a['id']] = ($loads[$a['id']] ?? 0) + 1;
+                            $loads[$b['id']] = ($loads[$b['id']] ?? 0) + 1;
+                            $found = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $rows;
     }
 
-    protected function formatScheduleResult(array $chromosome, array $candidates): array
+    private function available(array $lecturer, array $slot, array $loads): bool
     {
-        $candMap = [];
-        foreach ($candidates as $c) {
-            $candMap[$c['id']] = $c;
+        if (isset($lecturer['capacity']) && ($loads[$lecturer['id']] ?? 0) >= $lecturer['capacity']) {
+            return false;
+        }
+        if (! isset($lecturer['availability'])) {
+            return true;
+        }
+        foreach ($lecturer['availability'] as $window) {
+            if ($window['tanggal'] === $slot['tanggal'] && $window['jam_mulai'] <= $slot['jam_mulai'] && $window['jam_selesai'] >= $slot['jam_selesai']) {
+                return true;
+            }
         }
 
-        $formatted = [];
-        foreach ($chromosome as $gene) {
-            $cand = $candMap[$gene['candidate_id']] ?? null;
-            if (!$cand) continue;
+        return false;
+    }
 
-            $formatted[] = [
-                'mahasiswa_id' => $cand['id'],
-                'nama' => $cand['nama'],
-                'nim' => $cand['nim'],
-                'judul' => $cand['judul'],
-                'kbk' => $cand['kbk'] ?? 'Informatika',
-                'penguji1_id' => $gene['penguji1_id'],
-                'penguji2_id' => $gene['penguji2_id'],
-                'tanggal' => $gene['slot']['tanggal'],
-                'jam_mulai' => $gene['slot']['jam_mulai'],
-                'jam_selesai' => $gene['slot']['jam_selesai'],
-            ];
+    public function conflicts(array $row, array $bookings): bool
+    {
+        $examiners = [$row['penguji_1_id'], $row['penguji_2_id']];
+        $supervisors = $row['supervisor_ids'] ?? array_values(array_filter([$row['pembimbing_1_id'] ?? null, $row['pembimbing_2_id'] ?? null]));
+        if ($examiners[0] === $examiners[1] || array_intersect($examiners, $supervisors) || $row['jam_mulai'] >= $row['jam_selesai']) {
+            return true;
+        }
+        $participants = array_merge($examiners, $supervisors, [$row['mahasiswa_id']]);
+        foreach ($bookings as $booking) {
+            $others = array_merge(array_filter([$booking['penguji_1_id'] ?? null, $booking['penguji_2_id'] ?? null, $booking['pembimbing_1_id'] ?? null, $booking['pembimbing_2_id'] ?? null, $booking['mahasiswa_id'] ?? null]), $booking['supervisor_ids'] ?? []);
+            if ($booking['tanggal'] === $row['tanggal'] && $booking['jam_mulai'] < $row['jam_selesai'] && $row['jam_mulai'] < $booking['jam_selesai'] && array_intersect($participants, $others)) {
+                return true;
+            }
         }
 
-        return $formatted;
+        return false;
+    }
+
+    public function metrics(array $rows, array $lecturers): array
+    {
+        $map = array_column($lecturers, null, 'id');
+        $loads = array_map(fn ($l) => $l['workload'] ?? 0, $map);
+        $matches = 0;
+        foreach ($rows as $row) {
+            foreach (['penguji_1_id', 'penguji_2_id'] as $field) {
+                $id = $row[$field];
+                $loads[$id] = ($loads[$id] ?? 0) + 1;
+                if (! empty($row['kbk']) && ($map[$id]['kbk'] ?? null) === $row['kbk']) {
+                    $matches++;
+                }
+            }
+        }
+        $match = $rows ? $matches / (2 * count($rows)) : 0;
+        $balance = $loads ? 1 / (1 + max($loads) - min($loads)) : 0;
+
+        return ['fitness' => $rows ? round(.5 * $match + .5 * $balance,6) : 0, 'kbk_match' => $match, 'workload_balance' => $balance, 'workloads' => $loads];
     }
 }
