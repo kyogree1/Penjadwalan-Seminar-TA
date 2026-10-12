@@ -18,20 +18,20 @@ class ScheduleOptimizerTest extends TestCase
 
         $candidates = [
             [
-                'id' => 1,
+                'pendaftaran_id' => 1, 'mahasiswa_id' => 101, 'tipe' => 'sempro',
                 'nama' => 'Muhammad Raihan',
                 'nim' => '11211030',
                 'judul' => 'Analisis Kerentanan Web',
                 'kbk' => 'Cybersecurity',
-                'supervisors' => [10],
+                'supervisor_ids' => [10],
             ],
             [
-                'id' => 2,
+                'pendaftaran_id' => 2, 'mahasiswa_id' => 102, 'tipe' => 'sempro',
                 'nama' => 'Siti Rahmawati',
                 'nim' => '11221068',
                 'judul' => 'Peramalan Penjualan Harian',
                 'kbk' => 'AI & Data Science',
-                'supervisors' => [11],
+                'supervisor_ids' => [11],
             ],
         ];
 
@@ -58,7 +58,7 @@ class ScheduleOptimizerTest extends TestCase
 
     public function test_ga_optimizer_handles_empty_inputs_gracefully(): void
     {
-        $optimizer = new ScheduleOptimizer();
+        $optimizer = new ScheduleOptimizer;
         $result = $optimizer->optimize([], [], []);
 
         $this->assertFalse($result['success']);

@@ -41,6 +41,7 @@ class PortalsBackendTest extends TestCase
         // 2. Update Dosen
         $updateResp = $this->actingAs($kaprodi)->put("/kaprodi/dosen/{$dosen->id}", [
             'name' => 'Prof. Dr. Budi Santoso, M.Kom.',
+            'nip' => '198506152015041009',
             'email' => 'budi.santoso@lecturer.itk.ac.id',
             'prodi' => 'Informatika',
             'jabatan' => 'Guru Besar',

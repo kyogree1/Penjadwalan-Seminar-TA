@@ -68,7 +68,7 @@ class KaprodiDashboardTest extends TestCase
     {
         $kaprodi = User::factory()->create(['role' => 'kaprodi']);
         $dosen = User::factory()->create(['role' => 'dosen', 'name' => 'Dosen Aktual', 'nim_nip' => '123']);
-        $idle = User::factory()->create(['role' => 'dosen']);
+        $idle = User::factory()->create(['role' => 'dosen', 'name' => 'Z Dosen Tanpa Bimbingan']);
         $student = User::factory()->create(['role' => 'mahasiswa', 'nim_nip' => '456']);
         $other = User::factory()->create(['role' => 'mahasiswa']);
         $title = ['mahasiswa_id' => $student->id, 'judul_ta' => 'Judul Aktual', 'bidang_penelitian' => 'Informatika'];
