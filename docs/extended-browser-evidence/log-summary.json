@@ -1,0 +1,88 @@
+{
+    "pageerrors": [],
+    "harnesserrors": [
+        {
+            "label": "01-student",
+            "kind": "harnesserror",
+            "text": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button').filter({ hasText: 'Mahasiswa' }).last()\u001b[22m\n"
+        },
+        {
+            "label": "05-review-open",
+            "kind": "harnesserror",
+            "text": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Review', exact: true })\u001b[22m\n"
+        },
+        {
+            "label": "09-upload-sempro",
+            "kind": "harnesserror",
+            "text": "locator.setInputFiles: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[type=file]').nth(2)\u001b[22m\n"
+        },
+        {
+            "label": "10-sempro-review",
+            "kind": "harnesserror",
+            "text": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Sempro (1)', exact: true })\u001b[22m\n"
+        },
+        {
+            "label": "12-sempro-modal",
+            "kind": "harnesserror",
+            "text": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Review Sempro', exact: true })\u001b[22m\n"
+        },
+        {
+            "label": "17-admin-modal",
+            "kind": "harnesserror",
+            "text": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Verifikasi', exact: true })\u001b[22m\n"
+        },
+        {
+            "label": "26-edit-modal",
+            "kind": "harnesserror",
+            "text": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Edit', exact: true })\u001b[22m\n"
+        },
+        {
+            "label": "37-sidang-upload",
+            "kind": "harnesserror",
+            "text": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Ajukan Pendaftaran Sidang', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" class=\"w-full rounded-xl bg-[#8CE79B] px-6 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-[#7BD68A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto\"> Ajukan Pendaftaran Sidang </button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    56 \u00d7 waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n"
+        },
+        {
+            "label": "43-sidang-retained-correction",
+            "kind": "harnesserror",
+            "text": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[type=text]').nth(1)\u001b[22m\n"
+        },
+        {
+            "label": "51-forgot-page",
+            "kind": "harnesserror",
+            "text": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Log Out', exact: true })\u001b[22m\n"
+        },
+        {
+            "label": "52-forgot-request",
+            "kind": "harnesserror",
+            "text": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[type=email]')\u001b[22m\n"
+        }
+    ],
+    "documents": [
+        {
+            "label": "34-document",
+            "kind": "document",
+            "status": 200,
+            "headers": {
+                "cache-control": "no-store, private",
+                "content-disposition": "inline; filename=proposal_file.pdf",
+                "content-security-policy": "sandbox; default-src 'none'",
+                "content-type": "application/pdf",
+                "x-content-type-options": "nosniff"
+            },
+            "sha256": "7be8eb1b5f6defb0e6c0baa2e37ae074f955e143064deef8f413f2a626042425"
+        },
+        {
+            "label": "48-latest-document",
+            "kind": "document",
+            "status": 200,
+            "headers": {
+                "cache-control": "no-store, private",
+                "content-disposition": "inline; filename=proposal_file.pdf",
+                "content-security-policy": "sandbox; default-src 'none'",
+                "content-type": "application/pdf",
+                "x-content-type-options": "nosniff"
+            },
+            "sha256": "3e3a4d427dd6b93ece5ca3f2094c892bb7e9cd3cad13a9201985a47c92506217"
+        }
+    ]
+}

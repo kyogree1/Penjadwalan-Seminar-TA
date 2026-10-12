@@ -1,0 +1,43 @@
+{
+    "label": "54-forgot-submitted",
+    "url": "http://127.0.0.1:8898/forgot-password",
+    "body": "Akses pertama / Lupa password\n\nGunakan email terdaftar. Tautan pribadi berlaku 60 menit. Jika tidak memiliki akses email, hubungi pengelola untuk verifikasi identitas.\n\nEmail terdaftar\nMemproses...\nKembali ke login",
+    "controls": [
+        {
+            "tag": "INPUT",
+            "type": "email",
+            "text": "",
+            "placeholder": "",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "akmal.falah@student.itk.ac.id"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "submit",
+            "text": "Kirim tautan password",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Kembali ke login",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/login"
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": false,
+        "focus": "BODY null Akses pertama / Lupa password\n\nGunakan email terdaftar. Tautan pribadi berlaku 60 menit. Jika tidak memiliki akses email"
+    }
+}

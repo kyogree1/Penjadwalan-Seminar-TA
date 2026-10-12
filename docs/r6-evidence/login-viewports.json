@@ -1,0 +1,62 @@
+[
+    {
+        "page": "login",
+        "width": 360,
+        "theme": "light",
+        "screenshot": "login-360-light.png",
+        "dimensions": {
+            "viewport": 360,
+            "scrollWidth": 360
+        }
+    },
+    {
+        "page": "login",
+        "width": 360,
+        "theme": "dark",
+        "screenshot": "login-360-dark.png",
+        "dimensions": {
+            "viewport": 360,
+            "scrollWidth": 360
+        }
+    },
+    {
+        "page": "login",
+        "width": 768,
+        "theme": "light",
+        "screenshot": "login-768-light.png",
+        "dimensions": {
+            "viewport": 768,
+            "scrollWidth": 768
+        }
+    },
+    {
+        "page": "login",
+        "width": 768,
+        "theme": "dark",
+        "screenshot": "login-768-dark.png",
+        "dimensions": {
+            "viewport": 768,
+            "scrollWidth": 768
+        }
+    },
+    {
+        "page": "login",
+        "width": 1440,
+        "theme": "light",
+        "screenshot": "login-1440-light.png",
+        "dimensions": {
+            "viewport": 1440,
+            "scrollWidth": 1440
+        }
+    },
+    {
+        "page": "login",
+        "width": 1440,
+        "theme": "dark",
+        "screenshot": "login-1440-dark.png",
+        "dimensions": {
+            "viewport": 1440,
+            "scrollWidth": 1440
+        }
+    }
+]

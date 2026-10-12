@@ -1,0 +1,253 @@
+{
+    "label": "20-admin-modal",
+    "url": "http://127.0.0.1:8898/tendik/verifikasi",
+    "body": "Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Tendik\nDashboard Tendik\nVerifikasi Berkas\nJadwal Ruangan\nBerita Acara & SK\nKelola Mahasiswa\nPanduan Website\nDashboard\nTenaga Kependidikan & Admin\nLight mode\nSN\nSiti Nurhaliza, S.Kom.\nNIP: 199208192018032001\nLog Out\nVerifikasi Persyaratan Seminar Proposal & Sidang TA\nBerkas Pendaftaran Masuk\n\nData pendaftaran tersimpan; kelengkapan dan keaslian dokumen belum dinilai.\n\nSidang Akhir TA (0)\nSeminar Proposal (1)\nNAMA MAHASISWA\tTIPE PENDAFTARAN\tJUDUL TUGAS AKHIR\tTANGGAL UNGGAH\tSTATUS VERIFIKASI\tAKSI\n\n\nAkmal Falah Maulana\n\nNIM: NIM: 11231006\n\n\tSeminar Proposal\t\n\nExtended isolated thesis\n\n\t2026-10-12T05:31:26.000000Z\t\nMenunggu Verifikasi\tPeriksa Berkas\nPanduan Layanan\n•\nSOP & Prosedur TA\n\n© 2026 Program Studi Informatika ITK • SIPTA IF\n\nPanduan layanan akademik\nBerkas Pendaftaran\n\nAkmal Falah Maulana (NIM: 11231006) • Seminar Proposal\n\nLembar Kehadiran\n\ndokumen/sempro/1/8sWCGIbcO5McHstqnkCb1EzKerdQJHJ4lSJ0AWak.pdf\n\nProposal\n\ndokumen/sempro/1/DHdR9m7REzY2FLQUrOcy0KnAMlZZpFc2fZspbVsu.pdf\n\nTurnitin\n\ndokumen/sempro/1/GYCAKhDtgud99BlpGPhsMYlN4f0diwj8x5qqYQer.pdf\n\nSkor IAET\n\nBelum tersedia\n\nCatatan Petugas Tendik (Opsional):\n\nPath berkas adalah data tersimpan, bukan bukti dokumen telah diperiksa. Pratinjau dokumen belum tersedia.\n\nTolak Berkas\nVerifikasi Berkas",
+    "controls": [
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lewati ke konten utama",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "#main-content"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SIPTA IF\n\nInformatika ITK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "Tutup Sidebar",
+            "aria": "Ringkas navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Dashboard Tendik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/dashboard"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Verifikasi Berkas",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/verifikasi"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Jadwal Ruangan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/ruangan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Berita Acara & SK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/arsip"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Kelola Mahasiswa",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/mahasiswa"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Website",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Buka navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Light mode",
+            "name": "",
+            "title": "",
+            "aria": "Beralih ke mode gelap",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SN\nSiti Nurhaliza, S.Kom.\nNIP: 199208192018032001",
+            "name": "",
+            "title": "",
+            "aria": "Profil akun",
+            "href": "/profile"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Log Out",
+            "name": "",
+            "title": "Keluar (Log Out)",
+            "aria": "Keluar (Log Out)",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "INPUT",
+            "type": "text",
+            "text": "",
+            "placeholder": "Cari nama, NIM, atau judul...",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Sidang Akhir TA (0)",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Seminar Proposal (1)",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Periksa Berkas",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Layanan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SOP & Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan layanan akademik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Tutup dialog",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Tutup",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "TEXTAREA",
+            "type": "textarea",
+            "text": "",
+            "placeholder": "",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Tolak Berkas",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Verifikasi Berkas",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": false,
+        "focus": "BUTTON Tutup dialog "
+    }
+}

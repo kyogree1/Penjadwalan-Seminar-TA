@@ -201,7 +201,7 @@ Acceptance: prohibited requests make no database changes; legitimate login, para
 
 ### R2 — Live data contracts and mutation behavior
 
-First slice implemented: Kaprodi dashboard now consumes required typed server props for registered account totals, pending submission counts, approved-title supervisor assignments, and pending title records. Removed fabricated quota, graduation, fitness, deadline, and lifecycle claims. Supervisor workload counts distinct students and remains separate from examiner duties; query-count regression guards against N+1 behavior. Parent reran backend tests (50 passed, 228 assertions), mounted-SFC frontend tests (2 passed, 14 assertions), type check, lint/format, and whitespace checks successfully. Other portal contracts and authenticated browser acceptance remain pending; this does not complete R2.
+First slice implemented: Kaprodi dashboard now consumes required typed server props for registered account totals, pending submission counts, approved-title supervisor assignments, and pending title records. Removed fabricated quota, graduation, fitness, deadline, and lifecycle claims. Supervisor workload counts distinct students and remains separate from examiner duties; query-count regression guards against N+1 behavior. Parent reran backend tests (50 passed, 228 assertions), mounted-SFC frontend tests (2 passed, 14 assertions), type check, lint/format, and whitespace checks successfully. Second slice implemented: Kaprodi lecturer directory consumes reactive `dosenList` server records and calls existing create/update/delete routes with persisted IDs, processing guards, validation/network feedback, and success only after confirmation. NIP uniqueness covers username and nim_nip; unsupported quotas/metadata are not fabricated, and import is explicitly unavailable pending R5. Filters reset pages and shorter server results clamp pagination. Parent verification: 54 backend tests passed with 303 assertions, 5 actual-SFC tests passed with 47 assertions, and types/lint/whitespace checks passed. Third slice implemented: Dosen Bimbingan uses typed reactive advisee/session props and persisted IDs, includes approved-title supervisees without sessions, and restricts records to the current lecturer. Create/review/paraf wait for server confirmation, retain forms on failures, prevent duplicate requests, and expose errors. Approved-session counts use the persisted delivered status; an eligibility threshold is explicitly unavailable because the inspected backend does not define it. Parent verification: 58 backend tests passed with 354 assertions, 9 frontend tests passed with 90 assertions, and types/lint/whitespace checks passed. Fourth slice implemented: Tendik student directory uses reactive typed `dbStudents` without fixtures, distinguishes persisted NIM from username, and invokes the existing reset endpoint with real IDs, duplicate-request guards, server-confirmed feedback, and modal errors. The legacy username-based reset policy remains unchanged; missing/blank usernames fail without altering passwords, and reset values are no longer disclosed in flash or previews. Parent verification: 62 backend tests passed with 435 assertions, 11 frontend tests passed with 117 assertions, and types/lint/whitespace checks passed. Secure reset-token policy and browser end-to-end testing remain separate work. Fifth slice implemented: Tendik verification consumes reactive typed pengajuan records, distinguishes sempro/sidang records with overlapping IDs, and waits for confirmed verification/rejection responses. Removed fake completeness/PDF controls and misleading revision wording; stored document paths do not prove files exist or are valid. Added duplicate-request guards and modal errors. Parent reran tests: 65 backend tests passed with 645 assertions, 13 frontend tests passed with 186 assertions, and type/lint checks passed. Lifecycle transition restrictions and secure document delivery remain pending. Sixth slice implemented: Kaprodi review consumes reactive typed dbJudul/dbSempro/dbSidang and lecturer options, preserves selected type/ID, sends validated persisted supervisor IDs for title approval, and aligns title/academic note fields. Academic note saving preserves the existing status rather than granting administrative verification. Success waits for confirmation with request guards and visible errors. Unsupported revision/SK/eligibility controls are unavailable pending their implementation. Parent verification: 68 backend tests passed with 723 assertions, 16 frontend tests passed with 226 assertions, and types/lint/whitespace checks passed. R3 transition/concurrency/audit policy and browser acceptance remain pending. Other portal contracts and authenticated browser acceptance remain pending; this does not complete R2.
 
 - [ ] Inventory controller/page contracts and choose one canonical name/shape per portal; map persisted IDs, relations, dates, and optional fields explicitly.
 - [ ] Repair scheduling, lecturer, bimbingan, review, Tendik, and dashboard props; ensure empty server arrays remain empty rather than activating fixtures.
@@ -210,6 +210,14 @@ First slice implemented: Kaprodi dashboard now consumes required typed server pr
 - [ ] Add contract tests with nonempty and empty records and browser refresh checks for each repaired page.
 
 Acceptance: live records and options reach the correct UI, failed saves never announce success, and reloads preserve server-confirmed state.
+
+### R2 consolidated checkpoint
+
+Supported non-GA data-contract repairs are implemented across the reviewed portals: Tendik rooms now use live records and persisted CRUD; Tendik dashboard uses supported database totals; archive explicitly reports unsupported persistence/printing. Mahasiswa dashboard/registration/logbook, profile updates, Dosen dashboard/assessment reads, catalogue, and shell were reconciled with available server data. Empty/refreshed results do not resurrect fixtures. Unsupported scores, catalogue publications, notifications, signature/contact fields, and document issuance are not presented as persisted functionality.
+
+Parent consolidated verification: `php artisan test` passed 78 tests / 954 assertions; `bun test tests/frontend` passed 34 tests / 323 assertions; type check, lint/format, and `git diff --check` passed. The implementation batch also passed production build. Earlier transient concurrent-test failures were resolved before the consolidated run.
+
+Phase disposition: advance to R3 for lifecycle/score persistence. Scheduling generation/read contracts remain explicitly assigned to R4, not accepted as complete R2 work. Browser-based acceptance, secure document delivery, import/export/archive capability, and unsupported data definitions remain in their respective downstream gates. This checkpoint closes the bounded supported non-GA repair batch, not every original R2 acceptance checkbox or whole-project readiness. All accumulated changes remain uncommitted.
 
 ### R3 — Review lifecycle and assessment persistence
 
@@ -220,6 +228,14 @@ Acceptance: live records and options reach the correct UI, failed saves never an
 - [ ] Test score reloads, notes, supervisor assignment, rejected transitions, and re-verification of changed approved fields.
 
 Acceptance: all persisted review/score values match displayed state; permissions and schema enforce the same lifecycle rules.
+
+### R3 consolidated checkpoint
+
+Review lifecycle and persisted assessment contracts implemented and verified on SQLite (foreign keys on, `:memory:` tests). Academic review now uses `status_akademik` separated from administrative/exam lifecycle status; academic notes standardized to `catatan_kaprodi` (legacy `catatan` academic writes map there without clobbering administrative notes). Title revise/reject without approval stamps, validated distinct supervisor IDs, resubmission clears review/verification state, and scheduled/completed registrations cannot be reopened. Scores persist per `(penjadwalan_id, dosen_id)` with enforced examiner scope, duplicate-submission and precision/range triggers; completion requires both examiner scores and stores the equal-weight mean rounded to 2 dp, updating only the matching registration type/student. Assessment UI reflects server-confirmed scores/notes/counts/aggregates.
+
+Parent verification: `php artisan test` passed 91 tests / 1068 assertions; `bun test tests/frontend` passed 36 tests / 336 assertions; types/check/build/git diff --check passed. The two new migrations remain unapplied (dev DB untouched, per policy). Historical shared registration notes untouched. Academic approval wiring into scheduling eligibility remains R4. Rubrics, pass thresholds, certificates, browser acceptance remain unverified.
+
+Phase disposition: advance to R4 (scheduling + GA correctness). All accumulated changes remain uncommitted.
 
 ### R4 — Scheduling and GA correctness
 
@@ -233,6 +249,14 @@ Acceptance: all persisted review/score values match displayed state; permissions
 
 Acceptance: generated results satisfy the save contract, invalid schedules are rejected, and every success claim has computed evidence and persisted results.
 
+### R4 consolidated checkpoint
+
+Scheduling identity and GA contracts implemented and verified on SQLite with foreign keys (`:memory:`). Contracts now use distinct `pendaftaran_id`/`mahasiswa_id`, `tipe=sempro|sidang`, authoritative supervisor IDs, student identity/title/research field; readiness = administrative `verifikasi_tendik` + academic `disetujui` + matching period type/wave + valid student role + approved title with valid supervisors. GA result contract carries `period_id`, `outcome=complete|partial|infeasible`, computed fitness components, generations, logs. Algorithm: tournament selection k=3, two-point crossover, integer random-reset mutation covering slots and both examiners, elitism, feasibility decoding — feasibility dominates equally weighted KBK-match and workload-balance fitness. Publication is transactional, repeat-publication idempotent, validates readiness, examiner roles/distinctness, supervisor exclusion, interval overlaps, existing bookings, slots, and capacity; completed or assessed schedules cannot change. Frontend wires generate/preview/apply/save to real requests with computed metrics and cleanup.
+
+Parent verification: `php artisan test` passed 102 tests / 1145 assertions; `bun test tests/frontend` passed 39 tests / 360 assertions; types/lint/build/git diff --check passed. Migration `2026_10_11_000003_create_schedule_periods` added but NOT applied to dev DB (per policy). Remaining blockers, explicit and unfabricated: lecturer schema lacks persisted KBK/availability/quota (fitness inputs supported and tested, but production has no storage contract); delete/reopen policy for period; Excel/PDF exports and graduation history pending R5; authenticated browser acceptance and non-SQLite concurrency unverified. Periods with saved schedules immutable in this bounded slice.
+
+Phase disposition: advance to R5 (management actions and real outputs). All accumulated changes remain uncommitted.
+
 ### R5 — Management actions and real outputs
 
 - [ ] Wire lecturer CRUD, student reset, room actions, and available archive actions; normalize pagination when filters change.
@@ -242,6 +266,14 @@ Acceptance: generated results satisfy the save contract, invalid schedules are r
 - [ ] Verify malformed imports, invalid saves, reset authorization, file contents, and refresh persistence.
 
 Acceptance: each active control performs its advertised action; unsupported actions are clearly unavailable and never report false completion.
+
+### R5 consolidated checkpoint
+
+Management actions and real outputs implemented and verified. Real lecturer CSV import (server-side parse, preview, row-level errors, transaction create-only, duplicate NIP/username/email checks across existing accounts and repeated file rows, invalid files persist nothing) with actual `template-dosen.csv` download preserving text NIPs and leading zeroes. Real period-scoped `jadwal.csv` export from persisted schedules with formula-cell protection and valid header-only empty export. Lecturer CRUD persists with filter pagination reset/clamp; student reset calls its endpoint with Tendik actor + mahasiswa target enforcement, preserves username semantics, never echoes defaults; room CRUD persists with tersedia as administrative availability; archive reports unsupported persistence/printing with no simulated success.
+
+Parent verification: `php artisan test` passed 106 tests / 1211 assertions; `bun test tests/frontend` passed 41 tests / 383 assertions; types/lint/build/git diff --check passed. No new migration, dev DB untouched. Explicit scope decisions: XLSX and generated PDF unavailable (no verified composer libs; CSV advertised as CSV); archive issuance/printing/templates/graduation history lack persistence contracts; hybrid links live on `penjadwalan.link_online` not rooms; imported passwords random and undisclosed; authenticated browser/file-open acceptance and non-SQLite concurrency unverified.
+
+Phase disposition: advance to R6 (ANTISLOP-UI audit + implementation). All accumulated changes remain uncommitted.
 
 ### R6 — ANTISLOP-UI audit and implementation
 
@@ -257,6 +289,14 @@ Run the UI audit after the functional audit; apply its changes after relevant re
 
 Acceptance: important actions have clear hierarchy, no invented telemetry remains, all audited workflows work with keyboard and target viewports, and findings are fixed or explicitly deferred. Preserve Indonesian application terminology where already part of the product; write audit reports in English.
 
+### R6 consolidated checkpoint
+
+ANTISLOP-UI audit executed and bounded repairs implemented; audit register at `docs/r6-antislop-ui.md` (register + dispositions), evidence at `docs/r6-evidence/` (login at 360/768/1440px light/dark, six PNGs + viewport json). Removed invented data — fixture auth calendar, invented appointments/attendance, Realtime Sync claim, Monitoring invented students/totals/Turnitin/eligibility/deadlines/dead export, simulated chatbot answers, fabricated quotas/deadlines/greeting. Shared dialog.ts adds focus init, Tab/Shift+Tab trap, focus recovery, opener restoration, scroll lock applied to Modal/MobileNav/student-logbook dialogs; visible focus, reduced-motion, skip-nav, contrast/rejected-wording fixes. Deferred: catalogue/quota layout, authenticated browser walkthrough, generic modal caller names, wholesale normalization.
+
+Parent verification: `php artisan test` passed 106 tests / 1211 assertions; `bun test tests/frontend` passed 46 tests / 421 assertions; types/lint/build/git diff --check passed. Blockers: authenticated browser save/reload walkthrough + portal human acceptance remain unverified (deferred to R8). No schema/route/backend changes, dev DB untouched, all changes uncommitted.
+
+Phase disposition: advance to R7 (anti-slop code review + cleanup).
+
 ### R7 — Anti-slop code review and cleanup
 
 Perform behavior-preserving cleanup after regression tests and functional fixes are green, with a focused review after each repair slice and a consolidated pass before Track H. Scope reviews to changed code and necessary sibling paths, not a repository-wide rewrite.
@@ -270,6 +310,14 @@ Perform behavior-preserving cleanup after regression tests and functional fixes 
 - [ ] Re-run targeted regression tests and types/lint/build after changes; document skipped low-confidence suggestions and remaining debt.
 
 Acceptance: code is simpler without contract regressions, duplicate bug patterns are addressed at their shared cause, and no broad refactor is justified solely by stylistic preference.
+
+### R7 consolidated checkpoint
+
+Behavior-preserving anti-slop cleanup applied; full register at `docs/r7-code-review.md` (all four review angles with path/line evidence, confidence, risk, dispositions, skipped suggestions, remaining debt). Replaced four auth `any` casts with the existing Auth contract; batched scheduling existence lookups (five-candidate schedule queries 7→3); fixed shared scheduling callbacks to retain forms/previews when success confirmation is missing; added generic fetch-failure feedback and request-owned abort/result handling; removed misleading status-registry commentary without changing exports/permissions.
+
+Parent verification (post whitespace fix): `git diff --check` clean; `php artisan test` passed 107 tests / 1213 assertions; `bun test tests/frontend` passed 46 tests / 425 assertions; types/check/build passed. Remaining debt: separate profiling for lookup/publication query optimization; duplicated academic review validation + collation-safe CSV uniqueness deferred; unreferenced fixture/timer siblings retained for public exports; authenticated browser acceptance and non-SQLite concurrency unverified (R8).
+
+Phase disposition: advance to R8 (pre-H release gate). All changes uncommitted.
 
 ### R8 — Pre-H release gate
 
@@ -291,6 +339,14 @@ Execution order: R0 audit/tests → R1 access control → R2 contracts → R3 li
 6. Re-run type, lint, build, backend tests, then authenticated browser acceptance. Reopen historical boxes or mark them accepted only with evidence. Begin Track H only after blockers are closed or explicitly deferred with a documented scope decision.
 
 ---
+
+### R8 consolidated checkpoint
+
+Pre-H release gate executed; report at `docs/r8-release-gate.md`, gate outputs `docs/r8-{backend,frontend,types,check,build,whitespace}-gate.txt`, browser evidence `docs/r8-evidence/` (21 DOM proofs covering student save/reload, review, tendik verification, room CRUD, reset, GA preview/publication, logbook, assessment, catalog empty, shell, logout). All P0/P1 prerequisites verified closed with controller line ranges + regression test pointers: server-local demo auth, examiner-scoped persisted scores, logbook ownership, live contracts, review statuses/supervisor IDs/notes, GA feasibility + transactional publication, lecturer CSV/import/reset/room/export, bounded R6/R7 registers. Authenticated browser walkthrough against a separate seeded SQLite DB (real local demo-role login, four seeded accounts): persisted title submission/review, tendik verification + room CRUD, GA preview + publication, owned logbook paraf, score 88.25 + note, real CSV response; denied paths returned 401/403/404/422. Process tree + disposable DB cleaned up, endpoint unreachable, dev DB untouched.
+
+Parent verification: `php artisan test` 107/1213, `bun test tests/frontend` 46/425, types/check/build/git diff --check passed. Explicit deferrals (with evidence, not invented closure): R8-UI-01 student title instructions/scarce signature prereq messaging; R8-BROWSER-01 full button-walkthrough/password-login/console-log/human-accessibility acceptance (several mutations via authenticated fetch, PATCH/PUT/DELETE redirect follow-ups 405 though reloads confirmed persistence, scratch examiner fixture adjusted for score entry); non-SQLite enum/concurrency/collation; XLSX/PDF/archive/graduation; persisted KBK/availability/quota; catalogue publications, notifications, unsupported academic/profile contracts; standing R6/R7 visual/optimization debt.
+
+Phase disposition: R8 accepted with documented deferrals. ALL accumulated changes remain uncommitted. Begin Track H friend-branch (`origin/frontend_dosenkooer`) integration applying the same functional/UI/code gates.
 
 ## Track H: Friend Branch Integration (frontend_dosenkooer) — Corrected Analysis & Execution Plan
 
@@ -326,10 +382,10 @@ Verified corrections to the initial analysis:
 ### H.2 — Phase 1: Correct and complete the inventory
 
 - [x] Correct student counts, dashboard coverage, and unsupported completion claims in Track H.
-- [ ] Compare every prototype page against its compiled equivalent at interaction level.
-- [ ] Classify each difference as already present, visual improvement, missing interaction, or backend dependency.
-- [ ] Record actual endpoints, props, and acceptance checks for each selected feature.
-- [ ] Establish current type-check, lint, build, and relevant test baselines before application changes.
+- [x] Compare every prototype page against its compiled equivalent at interaction level.
+- [x] Classify each difference as already present, visual improvement, missing interaction, or backend dependency.
+- [x] Record actual endpoints, props, and acceptance checks for each selected feature.
+- [x] Establish current type-check, lint, build, and relevant test baselines before application changes.
 
 Acceptance: no feature is classified as missing solely from a keyword search; each selected task has source/target paths and an observable success condition.
 
@@ -337,26 +393,81 @@ Acceptance: no feature is classified as missing solely from a keyword search; ea
 
 Audit both `origin/frontend_dosenkooer` and the current compiled frontend. The earlier source inspection is partial; no full browser audit has been completed. The inventory above is a starting point, not a completed audit report.
 
-- [ ] Record the exact source and target commit IDs plus local modifications so findings remain reproducible.
-- [ ] Inspect all 10 prototype pages and their compiled counterparts, including shared sidebar, navbar, theme behavior, and chatbot. Read handlers and dependencies, not just markup or keyword matches.
-- [ ] List each visible action and trace it to its handler, request endpoint, controller, validation, persistence, and response. Label purely local or simulated behavior explicitly.
-- [ ] Compare props, field names, identifiers, status values, permission rules, and date/time formats across frontend and backend.
+- [x] Record the exact source and target commit IDs plus local modifications so findings remain reproducible.
+- [x] Inspect all 10 prototype pages and their compiled counterparts, including shared sidebar, navbar, theme behavior, and chatbot. Read handlers and dependencies, not just markup or keyword matches.
+- [x] List each visible action and trace it to its handler, request endpoint, controller, validation, persistence, and response. Label purely local or simulated behavior explicitly.
+- [x] Compare props, field names, identifiers, status values, permission rules, and date/time formats across frontend and backend.
 - [ ] Run both interfaces in a browser where available. Check primary interactions, navigation, console errors, failed requests, mobile layout, light/dark mode, keyboard access, and modal focus behavior.
-- [ ] Test empty datasets, invalid input, duplicate imports, rejected requests, zero quotas, and refresh-after-save behavior using isolated test data.
-- [ ] Establish type-check, lint, build, and backend-test baselines. Record actual failures without claiming they were introduced by integration.
-- [ ] Produce a per-page comparison and a prioritized finding register in this plan before choosing application changes.
+- [x] Test empty datasets, invalid input, duplicate imports, rejected requests, zero quotas, and refresh-after-save behavior using isolated test data.
+- [x] Establish type-check, lint, build, and backend-test baselines. Record actual failures without claiming they were introduced by integration.
+- [x] Produce a per-page comparison and a prioritized finding register in this plan before choosing application changes.
 
-Finding register format:
+Audit report and artifacts delivered: `docs/track-h-audit.md` (17 unique findings), `docs/track-h-action-inventory.json` (all 10 pages traced), `docs/track-h-local-state.json`, `docs/track-h-prototype-runtime.json`.
+Baseline verified: types pass, check passes (144 files formatted / 101 linted), build passes, backend passes 107 tests / 1213 assertions, frontend passes 46 tests / 425 assertions.
+Audit-recommended reorder applied: skip redundant dashboard rewiring (already live in R2); prioritize student recovery (H-A01–A03), provisioning security (H-A06), and wave policy (H-A11) before catalogue or visual work. Resolve H-A05 / H-A15 role boundaries before porting combined screens. Real lexical similarity (H-A12) requires real corpus (H-A09) first.
 
-| ID      | Source / target paths and lines | Observed evidence                         | Classification                                                                  | Priority | Proposed change           | Verification                | State                                            |
-| ------- | ------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------- | -------- | ------------------------- | --------------------------- | ------------------------------------------------ |
-| Pending | Populate during the audit       | Include actual source or runtime evidence | Already present / visual improvement / missing interaction / backend dependency | P0-P3    | Specific integration task | Observable acceptance check | Confirmed / needs verification / blocked / fixed |
+Finding register summary (see `docs/track-h-audit.md` for full table with paths and evidence):
 
-Priority definitions: P0 = broken core flow or data/permission defect; P1 = important missing or non-persistent interaction; P2 = meaningful UX/accessibility improvement; P3 = optional polish or fixture cleanup. Assess actual impact before assigning priority.
+- P1: H-A01 (rejected title recovery locked in UI while supported in backend)
+- P1: H-A02 (false signature prerequisite in title instructions)
+- P1: H-A03 (Sempro correction locked; ignores academic revision note)
+- P1: H-A05 (student bimbingan can pick any lecturer vs supervisor constraint)
+- P1: H-A06 (manual lecturer create uses shared default password vs random in CSV)
+- P1: H-A07 (no student CRUD/import persistence routes for Tendik)
+- P1: H-A09 (catalogue has no real publication corpus or routes)
+- P1: H-A11 (hardcoded Sempro wave2 / Sidang wave1 in student registration)
+- P1: H-A15 (lecturer document inspection / secure delivery unestablished)
+- P1: H-A17 (browser acceptance blocked on isolated environment)
+- P2: H-A04 (student logbook pagination clamp/reset)
+- P2: H-A08 (student directory missing pagination)
+- P2: H-A12 (catalogue similarity is local lexical token overlap; needs real corpus)
+- P2: H-A13 (false student eligibility claim on catalogue for non-student roles)
+- P2: H-A14 (stale dashboard labels on periods/SK)
+- P3: H-A10 (scheduling already real in R4/R5; do not port prototype simulation)
+- P3: H-A16 (chatbot already replaced with accessible help; do not revert)
 
-Audit completion gate: every prototype page has a comparison entry; confirmed findings have evidence and an acceptance check; runtime checks not performed are marked blocked or unverified with a reason. Do not label a feature absent from the compiled app based only on its presence in the prototype. Reorder Phases 2-6 if confirmed higher-priority defects justify it.
+Phase disposition: Phase 1 (Audit) complete. Proceed with Track H implementation following recommended priority order (student recovery & account security first). All changes remain uncommitted.
+
+### Track H consolidated checkpoint 1 — audit + prioritized integration slice (H-A01/A02/A03/A04/A06/A11/A13/A14)
+
+Implementation slice complete. Rejected title submissions can retry; unsupported e-signature and irreversible copy removed; regression proves approval stamps cleared on resubmission. Sempro shows academic notes separately, allows academic revision with retained uploads, keeps scheduled/completed locked. Manual lecturer creation uses random credentials matching CSV provisioning, without disclosure. Sempro/Sidang waves use the matching type's single open SchedulePeriod; missing/ambiguous periods reject new submissions; closed-period corrections retain existing wave. Logbook pagination resets filters/page and clamps results. Removed false catalogue eligibility and stale dashboard period/SK claims.
+
+- [x] Compare every prototype page against its compiled equivalent at interaction level (audit)
+- [x] Classify each difference (audit)
+- [x] Record actual endpoints, props, and acceptance checks (audit + this slice)
+- [x] Establish baseline gates for the repair work above (types/check/build/tests pass)
+
+Remaining Track H findings: P1 H-A15 (lecturer document inspection + secure delivery), H-A07 (student management routes), H-A05 (consultation vs assigned-supervisor boundary), H-A09 (catalogue corpus), P2 H-A08 (Tendik directory pagination), H-A12 (similarity needs corpus), P1 H-A17 (full browser acceptance). P3 H-A10/H-A16 already present — no port.
+
+Parent verification: `php artisan test` 111 / 1247; `bun test tests/frontend` 50 / 445; types pass; `bunx vp fmt plan.md` + `bun run check` pass (144 formatted / 101 linted); build passes; `git diff --check` clean. All changes uncommitted.
+
+### Track H consolidated checkpoint 2 — remaining boundary slice (H-A05/A07/A08/A15/A09/A17)
+
+Slice complete. H-A05: student logbook options and POST now require approved-title supervisor assignment; unassigned requests fail without writes. H-A07: Tendik-only name/email CRUD + atomic create-only CSV import routes added (random undisclosed credentials, cross-role edits denied, deletion blocked where academic history exists); management UI and CSV preview/template explicitly deferred. H-A08: eight-row directory pagination with search reset, refresh clamp, correct empty boundaries. H-A15: new uploads use private storage; authorized examiner PDF streaming + real document links on Penilaian (checks assignment, schedule status, type, registration/student identity, safe existing paths); legacy public-file relocation remains an operator rollout prerequisite. H-A09/H-A12: evidenced deferral — approved/completed examinations and published schedules are not manuscript publication; no confirmed publication/consent/final-document corpus exists, so catalogue similarity stays unbuilt. H-A17: honest browser evidence matrix created; authenticated browser checks remain unverified, no fabricated screenshots.
+
+New files: `app/Http/Controllers/ExamDocumentController.php`, `tests/Feature/TrackHBoundaryTest.php`, `docs/track-h-remaining-contracts.md`, `docs/track-h-browser-acceptance.md`; modified controllers/routes, two SFCs, schedule type, regression tests.
+
+Parent verification: `php artisan test` passed 118 / 1342 assertions; `bun test tests/frontend` passed 52 / 460; types pass; `bunx vp fmt plan.md` + `bun run check`, `bun run build`, `git diff --check` all pass (only nonblocking optional fontaine warning). All changes remain uncommitted; dev DB untouched.
+
+### Track H consolidated checkpoint 3 — final pass and completion record
+
+Track H closed (bounded implementation completion with explicit deferrals; not full browser/release acceptance). Completion record at `docs/track-h-completion.md` (all 17 findings, scheduling/visual evidence tables, integration decisions, actual gates, deferrals). GA generation/conflicts/save-reload proven by R4 tests + R8 browser artifacts; period-scoped persisted CSV proven by R5 + R8; controller-bound GA parameter validation confirmed (exhaustive invalid-boundary tests not present). Manual supervisor override rejection proven; successful examiner/time override acceptance not established by existing tests/artifacts (deferred). Visual alignment: five catalogue navy literals replaced with `navy-surface` (TDD RED/GREEN + `tests/frontend/r6-ui.test.js` semantic-token regression); shared dialog focus trap/restoration tests green. H.8 decisions confirmed: compiled Laravel/Inertia/Vue base retained, prototype preserved as history, shared shell kept, no CDN global port.
+
+Parent verification: `php artisan test` 118 / 1342; `bun test tests/frontend` 53 / 462; types pass; `bun run check` 147 formatted / 101 linted; build passes (optional fontaine only); `git diff --check` clean. Only two intended source/test changes in hash readback of 161 dirty files.
+
+Deferrals retained: H-A09 publication corpus + H-A12 corpus-based similarity; H-A17 authenticated browser/file-open/theme/viewport/focus acceptance; successful examiner/time override + exhaustive invalid GA-boundary acceptance; non-SQLite concurrency + production rollout; XLSX/generated PDF; legacy public-file relocation operator rollout; H-A07 management UI + CSV preview/template + separate account provisioning; standing R6/R7 visual/optimization debt incl. latent catalogue dialog wiring until corpus active.
+
+## Track H — Bounded implementation complete; release acceptance open
+
+The historical R0-R8 remediation and Track H integration reached bounded implementation completion with documented deferrals. This does not mean every original feature, browser acceptance criterion, or production rollout is complete. The implementation records are `docs/track-h-completion.md`, `docs/track-h-audit.md`, and `docs/r8-release-gate.md`.
+
+The follow-up batch authorized on 2026-10-12 is in progress: scheduling acceptance regressions and review repairs, full Tendik student management UI with CSV preview/template, isolated authenticated browser acceptance, secure first-access password reset, and rollout rehearsal/tooling. Evidence is recorded in `docs/scheduling-acceptance-followup.md`, `docs/student-management-followup.md`, and `docs/rollout-readiness.md`; final browser/account reports and consolidated gates must be reviewed before closure.
+
+Production-engine concurrency, production mail delivery, legacy public-file retirement, catalogue publication/consent and similarity, XLSX/generated PDF, and remaining visual/optimization debt must remain explicitly open unless separately verified. Commits are authorized for this follow-up; pushing is not authorized. Do not treat historical passing gates as current release signoff.
 
 ### H.3 — Phase 2: Dashboard data wiring (first implementation slice)
+
+Note: original H.3–H.7 phase checklists below are superseded by the R-track work and the audit-driven Track H slices, per the H.2.1 reordering. Each line maps to completed R-track behavior or an explicit deferral listed in the consolidated checkpoints above. Left as historical reference, not as outstanding work.
 
 - [ ] Trace dashboard controller queries, model fields, existing props, and rendered KPI values.
 - [ ] Define a typed contract for stats, lecturer workload, pipeline stages, and deadlines where supported by backend data.
@@ -427,4 +538,4 @@ Acceptance: scheduling outcomes are persisted and validated, downloaded files op
 6. Read `package.json` to confirm available scripts; run `bun run types:check`, `bun run check`, and `bun run build`, plus relevant backend tests. Apply targeted formatting fixes as needed rather than unrelated repository-wide edits.
 7. Record actual results and outstanding blockers. Mark tasks complete only when their acceptance checks pass, not when markup or a modal exists.
 
-Current scope: this revision corrects the plan only. Application integration tasks above remain unchecked and have not been implemented by this documentation update.
+Historical scope note: the original revision below was a planning-only update. Its checklists are retained for traceability and are superseded by the consolidated implementation checkpoints and current follow-up status above; unchecked historical boxes are not a reliable current backlog.

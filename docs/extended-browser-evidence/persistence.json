@@ -1,0 +1,208 @@
+{
+    "pengajuan_judul": [
+        {
+            "id": 2,
+            "mahasiswa_id": 1,
+            "judul_ta": "Real UI submitted title",
+            "bidang_penelitian": "Web",
+            "pembimbing_1_id": 5,
+            "pembimbing_2_id": null,
+            "telah_konsultasi": 1,
+            "status": "disetujui",
+            "catatan_kaprodi": "Reviewer after actual title submission",
+            "disetujui_oleh": 3,
+            "disetujui_at": "2026-10-12 05:41:56",
+            "created_at": "2026-10-12 05:41:41",
+            "updated_at": "2026-10-12 05:41:56"
+        }
+    ],
+    "bimbingan": [
+        {
+            "id": 1,
+            "mahasiswa_id": 1,
+            "dosen_id": 5,
+            "tanggal": "2026-10-12 00:00:00",
+            "rangkuman": "Extended UI logbook topic",
+            "keterangan": "Lab",
+            "status": "delivered",
+            "catatan_dosen": "Disetujui pembimbing",
+            "created_at": "2026-10-12 05:37:36",
+            "updated_at": "2026-10-12 05:38:26"
+        }
+    ],
+    "pendaftaran_sempro": [
+        {
+            "id": 1,
+            "mahasiswa_id": 1,
+            "judul_ta": "Extended isolated thesis",
+            "bentuk_ta": "Skripsi",
+            "lokasi_mitra": null,
+            "lembar_kehadiran_file": "dokumen/sempro/1/8sWCGIbcO5McHstqnkCb1EzKerdQJHJ4lSJ0AWak.pdf",
+            "proposal_file": "dokumen/sempro/1/DHdR9m7REzY2FLQUrOcy0KnAMlZZpFc2fZspbVsu.pdf",
+            "turnitin_file": "dokumen/sempro/1/GYCAKhDtgud99BlpGPhsMYlN4f0diwj8x5qqYQer.pdf",
+            "iaet_file": null,
+            "gelombang": 1,
+            "status": "selesai",
+            "catatan": "UI administrative decision; not human document inspection",
+            "created_at": "2026-10-12 05:31:26",
+            "updated_at": "2026-10-12 05:39:54",
+            "status_akademik": "disetujui",
+            "catatan_kaprodi": "Sempro UI academic approval"
+        }
+    ],
+    "pendaftaran_sidang": [
+        {
+            "id": 1,
+            "mahasiswa_id": 1,
+            "judul_ta": "Real UI submitted title",
+            "lokasi_mitra": null,
+            "skor_iaet_file": null,
+            "draft_laporan_file": "dokumen/sidang/1/INdU4d45kVFQzP4Yf9QfOn32uY3Qw7peNeckGWht.pdf",
+            "turnitin_file": "dokumen/sidang/1/QyCazzTcB7vUOA80xFqrOJ51qinhMXoyMBt9yLTw.pdf",
+            "gelombang": 1,
+            "status": "selesai",
+            "catatan": null,
+            "created_at": "2026-10-12 05:42:13",
+            "updated_at": "2026-10-12 05:45:20",
+            "status_akademik": "disetujui",
+            "catatan_kaprodi": "Corrected; approved academic"
+        }
+    ],
+    "penjadwalan": [
+        {
+            "id": 1,
+            "tipe": "sempro",
+            "pendaftaran_id": 1,
+            "mahasiswa_id": 1,
+            "ruangan_id": null,
+            "pembimbing_1_id": 5,
+            "pembimbing_2_id": null,
+            "penguji_1_id": 2,
+            "penguji_2_id": 6,
+            "tanggal": "2026-11-02 00:00:00",
+            "jam_mulai": "10:00:00",
+            "jam_selesai": "11:00:00",
+            "mode": "offline",
+            "link_online": null,
+            "gelombang": 1,
+            "status": "selesai",
+            "catatan": null,
+            "dibuat_oleh": 3,
+            "created_at": "2026-10-12 05:36:42",
+            "updated_at": "2026-10-12 05:39:54",
+            "period_id": 1
+        },
+        {
+            "id": 2,
+            "tipe": "sidang",
+            "pendaftaran_id": 1,
+            "mahasiswa_id": 1,
+            "ruangan_id": null,
+            "pembimbing_1_id": 5,
+            "pembimbing_2_id": null,
+            "penguji_1_id": 6,
+            "penguji_2_id": 2,
+            "tanggal": "2026-11-01 00:00:00",
+            "jam_mulai": "09:00:00",
+            "jam_selesai": "10:00:00",
+            "mode": "offline",
+            "link_online": null,
+            "gelombang": 1,
+            "status": "selesai",
+            "catatan": null,
+            "dibuat_oleh": 3,
+            "created_at": "2026-10-12 05:44:15",
+            "updated_at": "2026-10-12 05:45:20",
+            "period_id": 2
+        }
+    ],
+    "penilaian": [
+        {
+            "id": 1,
+            "penjadwalan_id": 1,
+            "dosen_id": 2,
+            "nilai": 88.25,
+            "catatan": "First UI examiner",
+            "created_at": "2026-10-12 05:39:22",
+            "updated_at": "2026-10-12 05:39:22"
+        },
+        {
+            "id": 2,
+            "penjadwalan_id": 1,
+            "dosen_id": 6,
+            "nilai": 91.75,
+            "catatan": "Second UI examiner",
+            "created_at": "2026-10-12 05:39:54",
+            "updated_at": "2026-10-12 05:39:54"
+        },
+        {
+            "id": 3,
+            "penjadwalan_id": 2,
+            "dosen_id": 6,
+            "nilai": 84,
+            "catatan": "Sidang second examiner",
+            "created_at": "2026-10-12 05:45:03",
+            "updated_at": "2026-10-12 05:45:03"
+        },
+        {
+            "id": 4,
+            "penjadwalan_id": 2,
+            "dosen_id": 2,
+            "nilai": 86,
+            "catatan": "Sidang first examiner",
+            "created_at": "2026-10-12 05:45:20",
+            "updated_at": "2026-10-12 05:45:20"
+        }
+    ],
+    "schedule_periods": [
+        {
+            "id": 1,
+            "name": "Extended sempro",
+            "tipe": "sempro",
+            "gelombang": 1,
+            "capacity": 10,
+            "start_date": "2026-11-01",
+            "end_date": "2026-11-02",
+            "slots": "[{\"tanggal\": \"2026-11-01\", \"jam_mulai\": \"09:00:00\", \"jam_selesai\": \"10:00:00\"}, {\"tanggal\": \"2026-11-02\", \"jam_mulai\": \"10:00:00\", \"jam_selesai\": \"11:00:00\"}]",
+            "is_open": 1,
+            "created_at": null,
+            "updated_at": null
+        },
+        {
+            "id": 2,
+            "name": "Extended sidang",
+            "tipe": "sidang",
+            "gelombang": 1,
+            "capacity": 10,
+            "start_date": "2026-11-01",
+            "end_date": "2026-11-02",
+            "slots": "[{\"tanggal\": \"2026-11-01\", \"jam_mulai\": \"09:00:00\", \"jam_selesai\": \"10:00:00\"}, {\"tanggal\": \"2026-11-02\", \"jam_mulai\": \"10:00:00\", \"jam_selesai\": \"11:00:00\"}]",
+            "is_open": 1,
+            "created_at": null,
+            "updated_at": null
+        }
+    ],
+    "upload_sha256": "794abaa4f6f06fc519895c22944a0ab43ad02b4fb32bdefa1952ce81613cb47b",
+    "stored_files": [
+        {
+            "path": "dokumen/sidang/1/INdU4d45kVFQzP4Yf9QfOn32uY3Qw7peNeckGWht.pdf",
+            "sha256": "794abaa4f6f06fc519895c22944a0ab43ad02b4fb32bdefa1952ce81613cb47b"
+        },
+        {
+            "path": "dokumen/sidang/1/QyCazzTcB7vUOA80xFqrOJ51qinhMXoyMBt9yLTw.pdf",
+            "sha256": "794abaa4f6f06fc519895c22944a0ab43ad02b4fb32bdefa1952ce81613cb47b"
+        },
+        {
+            "path": "dokumen/sempro/1/8sWCGIbcO5McHstqnkCb1EzKerdQJHJ4lSJ0AWak.pdf",
+            "sha256": "794abaa4f6f06fc519895c22944a0ab43ad02b4fb32bdefa1952ce81613cb47b"
+        },
+        {
+            "path": "dokumen/sempro/1/DHdR9m7REzY2FLQUrOcy0KnAMlZZpFc2fZspbVsu.pdf",
+            "sha256": "794abaa4f6f06fc519895c22944a0ab43ad02b4fb32bdefa1952ce81613cb47b"
+        },
+        {
+            "path": "dokumen/sempro/1/GYCAKhDtgud99BlpGPhsMYlN4f0diwj8x5qqYQer.pdf",
+            "sha256": "794abaa4f6f06fc519895c22944a0ab43ad02b4fb32bdefa1952ce81613cb47b"
+        }
+    ]
+}

@@ -1,0 +1,924 @@
+[
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "05-review-open",
+        "actions": [
+            {
+                "text": "Review",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "06-review-list",
+        "actions": []
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "07-title-review-modal",
+        "actions": [
+            {
+                "text": "Review Judul",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "08-title-approved",
+        "actions": [
+            {
+                "text": "Review Judul",
+                "click": true
+            },
+            {
+                "selector": "textarea",
+                "fill": "Isolated fixture reviewed"
+            },
+            {
+                "text": "Setujui Judul",
+                "click": true
+            },
+            {
+                "reload": true
+            },
+            {
+                "assertText": "disetujui"
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/sempro",
+        "label": "09-upload-sempro",
+        "actions": [
+            {
+                "selector": "input[placeholder=\"Judul TA\"]",
+                "fill": "Extended isolated thesis"
+            },
+            {
+                "selector": "input[placeholder=\"Bentuk TA\"]",
+                "fill": "Skripsi"
+            },
+            {
+                "selector": "input[type=file]",
+                "nth": 0,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "selector": "input[type=file]",
+                "nth": 1,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "selector": "input[type=file]",
+                "nth": 2,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "text": "Ajukan Seminar Proposal",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "10-sempro-review",
+        "actions": [
+            {
+                "text": "Sempro (1)",
+                "click": true
+            },
+            {
+                "text": "Review Sempro",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/sempro",
+        "label": "11-upload-sempro",
+        "actions": [
+            {
+                "selector": "input[placeholder=\"Judul TA\"]",
+                "fill": "Extended isolated thesis"
+            },
+            {
+                "selector": "input[placeholder=\"Bentuk TA\"]",
+                "fill": "Skripsi"
+            },
+            {
+                "selector": "input[type=file]",
+                "nth": 0,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "selector": "input[type=file]",
+                "nth": 0,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "selector": "input[type=file]",
+                "nth": 0,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "text": "Ajukan Seminar Proposal",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "12-sempro-modal",
+        "actions": [
+            {
+                "text": "Sempro (1)",
+                "click": true
+            },
+            {
+                "text": "Review Sempro",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "13-sempro-list",
+        "actions": [
+            {
+                "text": "Sempro (1)",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "tendik",
+        "route": "/tendik/verifikasi",
+        "label": "14-verification-list",
+        "actions": []
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/penjadwalan",
+        "label": "15-periods",
+        "actions": [
+            {
+                "selector": "select",
+                "select": "1"
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "16-academic-modal",
+        "actions": [
+            {
+                "text": "Sempro (1)",
+                "click": true
+            },
+            {
+                "text": "Tinjau",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "tendik",
+        "route": "/tendik/verifikasi",
+        "label": "17-admin-modal",
+        "actions": [
+            {
+                "text": "Seminar Proposal (1)",
+                "click": true
+            },
+            {
+                "text": "Verifikasi",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "18-academic-approved",
+        "actions": [
+            {
+                "text": "Sempro (1)",
+                "click": true
+            },
+            {
+                "text": "Tinjau",
+                "click": true
+            },
+            {
+                "selector": "textarea",
+                "fill": "Sempro UI academic approval"
+            },
+            {
+                "text": "Setujui Akademik",
+                "click": true
+            },
+            {
+                "reload": true
+            },
+            {
+                "text": "Sempro (1)",
+                "click": true
+            },
+            {
+                "assertText": "Akademik: disetujui"
+            }
+        ]
+    },
+    {
+        "role": "tendik",
+        "route": "/tendik/verifikasi",
+        "label": "19-admin-list",
+        "actions": [
+            {
+                "text": "Seminar Proposal (1)",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "tendik",
+        "route": "/tendik/verifikasi",
+        "label": "20-admin-modal",
+        "actions": [
+            {
+                "text": "Seminar Proposal (1)",
+                "click": true
+            },
+            {
+                "text": "Periksa Berkas",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/bimbingan",
+        "label": "21-bimbingan",
+        "actions": []
+    },
+    {
+        "role": "tendik",
+        "route": "/tendik/verifikasi",
+        "label": "22-admin-verified",
+        "actions": [
+            {
+                "text": "Seminar Proposal (1)",
+                "click": true
+            },
+            {
+                "text": "Periksa Berkas",
+                "click": true
+            },
+            {
+                "selector": "textarea",
+                "fill": "UI administrative decision; not human document inspection"
+            },
+            {
+                "text": "Verifikasi Berkas",
+                "click": true
+            },
+            {
+                "reload": true
+            },
+            {
+                "text": "Seminar Proposal (1)",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/penjadwalan",
+        "label": "23-ga-preview",
+        "actions": [
+            {
+                "selector": "select",
+                "select": "1"
+            },
+            {
+                "text": "Generate",
+                "click": true,
+                "wait": 2000
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/bimbingan",
+        "label": "24-log-modal",
+        "actions": [
+            {
+                "text": "Tambah Baru",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/penjadwalan",
+        "label": "25-published",
+        "actions": [
+            {
+                "selector": "select",
+                "select": "1"
+            },
+            {
+                "text": "Generate",
+                "click": true,
+                "wait": 1500
+            },
+            {
+                "text": "Publikasikan preview",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/penjadwalan?period_id=1",
+        "label": "26-edit-modal",
+        "actions": [
+            {
+                "text": "Edit",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/bimbingan",
+        "label": "27-log-created",
+        "actions": [
+            {
+                "text": "Tambah Baru",
+                "click": true
+            },
+            {
+                "selector": "input[type=date]",
+                "fill": "2026-10-12"
+            },
+            {
+                "selector": "select",
+                "nth": 1,
+                "select": "Fixture Supervisor"
+            },
+            {
+                "selector": "textarea",
+                "nth": 0,
+                "fill": "Extended UI logbook topic"
+            },
+            {
+                "selector": "input[type=text]",
+                "nth": 1,
+                "fill": "Lab"
+            },
+            {
+                "text": "Ajukan Logbook",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/penjadwalan?period_id=1",
+        "label": "28-edit-modal",
+        "actions": [
+            {
+                "text": "Edit jadwal",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "dosen",
+        "route": "/dosen/bimbingan",
+        "label": "29-supervisor",
+        "actions": []
+    },
+    {
+        "role": "dosen",
+        "route": "/dosen/bimbingan",
+        "label": "30-paraf",
+        "actions": [
+            {
+                "text": "Paraf",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/penjadwalan?period_id=1",
+        "label": "31-manual-edit",
+        "actions": [
+            {
+                "text": "Edit jadwal",
+                "click": true
+            },
+            {
+                "selector": "select",
+                "nth": 1,
+                "select": "2"
+            },
+            {
+                "selector": "select",
+                "nth": 2,
+                "select": "6"
+            },
+            {
+                "selector": "select",
+                "nth": 3,
+                "select": "1"
+            },
+            {
+                "text": "Simpan penyesuaian",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "dosen",
+        "route": "/dosen/penilaian",
+        "label": "32-examiner",
+        "actions": []
+    },
+    {
+        "role": "dosen",
+        "route": "/dosen/penilaian",
+        "label": "33-first-score",
+        "actions": [
+            {
+                "text": "Isi Nilai",
+                "click": true
+            },
+            {
+                "selector": "input[type=number]",
+                "fill": "88.25"
+            },
+            {
+                "selector": "textarea",
+                "fill": "First UI examiner"
+            },
+            {
+                "text": "Simpan Nilai",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "dosen",
+        "route": "/dosen/penilaian",
+        "label": "34-document",
+        "actions": [
+            {
+                "role": "link",
+                "text": "Buka proposal file",
+                "document": "uploaded-proposal.pdf"
+            }
+        ]
+    },
+    {
+        "role": "dosen",
+        "route": "/dosen/penilaian",
+        "label": "35-second-score",
+        "actions": [
+            {
+                "text": "Isi Nilai",
+                "click": true
+            },
+            {
+                "selector": "input[type=number]",
+                "fill": "91.75"
+            },
+            {
+                "selector": "textarea",
+                "fill": "Second UI examiner"
+            },
+            {
+                "text": "Simpan Nilai",
+                "click": true
+            },
+            {
+                "reload": true
+            },
+            {
+                "assertText": "Status: selesai"
+            },
+            {
+                "assertText": "Penilaian tersimpan: 2/2"
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/sidang",
+        "label": "36-sidang",
+        "actions": []
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/sidang",
+        "label": "37-sidang-upload",
+        "actions": [
+            {
+                "selector": "input[type=file]",
+                "nth": 0,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "selector": "input[type=file]",
+                "nth": 0,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "text": "Ajukan Pendaftaran Sidang",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/judul",
+        "label": "38-fixed-title-form",
+        "actions": []
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/judul",
+        "label": "39-fixed-title-submitted",
+        "actions": [
+            {
+                "selector": "textarea",
+                "fill": "Real UI submitted title"
+            },
+            {
+                "selector": "input[type=text]",
+                "fill": "Web"
+            },
+            {
+                "selector": "select",
+                "nth": 0,
+                "select": "5"
+            },
+            {
+                "selector": "input[type=checkbox]",
+                "click": true
+            },
+            {
+                "text": "Ajukan Judul",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "40-fixed-title-approved",
+        "actions": [
+            {
+                "text": "Review Judul",
+                "click": true
+            },
+            {
+                "selector": "textarea",
+                "fill": "Reviewer after actual title submission"
+            },
+            {
+                "text": "Setujui Judul",
+                "click": true
+            },
+            {
+                "reload": true
+            },
+            {
+                "assertText": "disetujui"
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/sidang",
+        "label": "41-sidang-upload",
+        "actions": [
+            {
+                "selector": "input[placeholder=\"Judul TA\"]",
+                "fill": "Real UI submitted title"
+            },
+            {
+                "selector": "input[type=file]",
+                "nth": 0,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "selector": "input[type=file]",
+                "nth": 1,
+                "upload": "C:/Users/Tenma/AppData/Local/hermes/profiles/redmess/cache/scratch/extended-browser/upload.pdf"
+            },
+            {
+                "text": "Ajukan Pendaftaran Sidang",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "42-sidang-revision",
+        "actions": [
+            {
+                "text": "Sidang TA (1)",
+                "click": true
+            },
+            {
+                "text": "Tinjau",
+                "click": true
+            },
+            {
+                "selector": "textarea",
+                "fill": "Correct research location; retain uploaded PDFs"
+            },
+            {
+                "text": "Minta Revisi",
+                "click": true
+            },
+            {
+                "reload": true
+            },
+            {
+                "text": "Sidang TA (1)",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/sidang",
+        "label": "43-sidang-retained-correction",
+        "actions": [
+            {
+                "selector": "input[type=text]",
+                "nth": 1,
+                "fill": "Corrected isolated research location"
+            },
+            {
+                "text": "Ajukan Pendaftaran Sidang",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/persetujuan",
+        "label": "44-sidang-approved",
+        "actions": [
+            {
+                "text": "Sidang TA (1)",
+                "click": true
+            },
+            {
+                "text": "Tinjau",
+                "click": true
+            },
+            {
+                "selector": "textarea",
+                "fill": "Corrected; approved academic"
+            },
+            {
+                "text": "Setujui Akademik",
+                "click": true
+            },
+            {
+                "reload": true
+            },
+            {
+                "text": "Sidang TA (1)",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "tendik",
+        "route": "/tendik/verifikasi",
+        "label": "45-sidang-verified",
+        "actions": [
+            {
+                "text": "Periksa Berkas",
+                "click": true
+            },
+            {
+                "text": "Verifikasi Berkas",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "kaprodi",
+        "route": "/kaprodi/penjadwalan",
+        "label": "46-sidang-published",
+        "actions": [
+            {
+                "selector": "select",
+                "select": "2"
+            },
+            {
+                "text": "Generate",
+                "click": true,
+                "wait": 1500
+            },
+            {
+                "text": "Publikasikan preview",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/pendaftaran/sempro",
+        "label": "47-completed-sempro",
+        "actions": []
+    },
+    {
+        "role": "dosen",
+        "route": "/dosen/penilaian",
+        "label": "48-latest-document",
+        "actions": [
+            {
+                "role": "link",
+                "text": "Buka proposal file",
+                "document": "uploaded-proposal-latest.pdf"
+            }
+        ]
+    },
+    {
+        "role": "dosen",
+        "route": "/dosen/penilaian",
+        "label": "49-sidang-second-examiner",
+        "actions": [
+            {
+                "text": "Isi Nilai",
+                "click": true
+            },
+            {
+                "selector": "input[type=number]",
+                "fill": "84"
+            },
+            {
+                "selector": "textarea",
+                "fill": "Sidang second examiner"
+            },
+            {
+                "text": "Simpan Nilai",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "dosen",
+        "route": "/dosen/penilaian",
+        "label": "50-sidang-completed",
+        "actions": [
+            {
+                "text": "Isi Nilai",
+                "click": true
+            },
+            {
+                "selector": "input[type=number]",
+                "fill": "86"
+            },
+            {
+                "selector": "textarea",
+                "fill": "Sidang first examiner"
+            },
+            {
+                "text": "Simpan Nilai",
+                "click": true
+            },
+            {
+                "reload": true
+            },
+            {
+                "assertText": "Nilai akhir: 85"
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/login",
+        "label": "51-forgot-page",
+        "actions": [
+            {
+                "text": "Log Out",
+                "click": true
+            },
+            {
+                "role": "link",
+                "text": "Akses pertama / Lupa password?",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "mahasiswa",
+        "route": "/forgot-password",
+        "label": "52-forgot-request",
+        "actions": [
+            {
+                "selector": "input[type=email]",
+                "fill": "akmal.falah@student.itk.ac.id"
+            },
+            {
+                "text": "Kirim tautan reset",
+                "click": true
+            },
+            {
+                "reload": true
+            }
+        ]
+    },
+    {
+        "role": "guest",
+        "route": "/login",
+        "label": "53-forgot-navigation",
+        "actions": [
+            {
+                "role": "link",
+                "text": "Akses pertama / Lupa password?",
+                "click": true
+            }
+        ]
+    },
+    {
+        "role": "guest",
+        "route": "/forgot-password",
+        "label": "54-forgot-submitted",
+        "actions": [
+            {
+                "selector": "input[type=email]",
+                "fill": "akmal.falah@student.itk.ac.id"
+            },
+            {
+                "text": "Kirim tautan password",
+                "click": true
+            }
+        ]
+    }
+]

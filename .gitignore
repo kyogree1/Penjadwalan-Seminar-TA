@@ -41,3 +41,26 @@ yarn-error.log
 /boost.json
 /opencode.json
 /opencode.jsonc
+
+# Local environment variants (keep the shared example)
+.env.*
+!.env.example
+
+# OS metadata and editor temporary files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+*.tsbuildinfo
+
+# Generated test and browser reports
+/coverage/
+/playwright-report/
+/test-results/
+
+# Reproducible gate output and machine-local audit snapshots
+/docs/r8-*-gate.txt
+/docs/r8-isolation.txt
+/docs/track-h-local-state.json

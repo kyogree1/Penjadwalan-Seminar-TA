@@ -1,0 +1,213 @@
+{
+    "label": "30-paraf",
+    "url": "http://127.0.0.1:8898/dosen/bimbingan",
+    "body": "Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Dosen\nDashboard Dosen\nBimbingan (TA-04)\nLembar Penilaian\nKatalog TA\nPanduan Website\nDashboard\nDosen Pembimbing & Penguji\nLight mode\nFS\nFixture Supervisor\nfixture-supervisor\nLog Out\nBimbingan & Verifikasi Logbook (TA-04)\nCetak Lembar Kendali\nCatat Sesi Baru\n\nHanya sesi dosen ini untuk penugasan judul disetujui. Ambang kelayakan belum tersedia; sesi disetujui bukan penetapan kelayakan sidang.\n\nTOTAL SESI BIMBINGAN\n\n1 Sesi\n\nSESI DISETUJUI DOSEN INI\n\n1 Sesi\n\nMENUNGGU PARAF DOSEN\n\n0 Sesi\n\nRATA-RATA KONSULTASI\n\n1.0 / Mhs\n\nDaftar Mahasiswa Bimbingan\n1 Mahasiswa\n\nAkmal Falah Maulana\n\nNIM: NIM: 11231006\n\nPembimbing 1\n\nExtended isolated thesis\n\n1 sesi disetujui • 1 sesi tercatat\n\nAkmal Falah Maulana\n\nNIM: NIM: 11231006 • Peran: Pembimbing 1\n\nTambah Sesi\nJudul Tugas Akhir:\n\nExtended isolated thesis\n\nPembimbing 1: Fixture Supervisor\n\nRIWAYAT LOGBOOK BIMBINGAN (FORMULIR TA-04)\n1\nLab\n•\n2026-10-12\nDiparaf Dosen\nEdit Arahan\nRangkuman Pembahasan Mahasiswa:\n\nExtended UI logbook topic\n\nArahan / Catatan Pembimbing:\n\nDisetujui pembimbing\n\nPanduan Layanan\n•\nSOP & Prosedur TA\n\n© 2026 Program Studi Informatika ITK • SIPTA IF\n\nPanduan layanan akademik",
+    "controls": [
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lewati ke konten utama",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "#main-content"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SIPTA IF\n\nInformatika ITK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dosen/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "Tutup Sidebar",
+            "aria": "Ringkas navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Dashboard Dosen",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dosen/dashboard"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Bimbingan (TA-04)",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dosen/bimbingan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lembar Penilaian",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dosen/penilaian"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Katalog TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/katalog"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Website",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Buka navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Light mode",
+            "name": "",
+            "title": "",
+            "aria": "Beralih ke mode gelap",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "FS\nFixture Supervisor\nfixture-supervisor",
+            "name": "",
+            "title": "",
+            "aria": "Profil akun",
+            "href": "/profile"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Log Out",
+            "name": "",
+            "title": "Keluar (Log Out)",
+            "aria": "Keluar (Log Out)",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Cetak Lembar Kendali",
+            "name": "",
+            "title": "Cetak lembar kendali belum tersedia",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Catat Sesi Baru",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "INPUT",
+            "type": "text",
+            "text": "",
+            "placeholder": "Cari nama, NIM, atau judul...",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Akmal Falah Maulana\n\nNIM: NIM: 11231006\n\nPembimbing 1\n\nExtended isolated thesis\n\n1 sesi disetujui • 1 sesi tercatat",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Tambah Sesi",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Edit Arahan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Layanan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SOP & Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan layanan akademik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": false,
+        "focus": "BODY null Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Dosen\nDashboard Dosen\nBimbingan (TA-04)\nLembar Penilaian\nKatalo"
+    }
+}

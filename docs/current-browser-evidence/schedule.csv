@@ -1,0 +1,2 @@
+id,period_id,tipe,pendaftaran_id,mahasiswa_id,mahasiswa,nim,tanggal,jam_mulai,jam_selesai,pembimbing_1,pembimbing_2,penguji_1,penguji_2,ruangan,mode,link_online,status
+1,1,sempro,1,1,"Akmal Falah Maulana","NIM: 11231006",2026-11-01,09:00:00,10:00:00,"Acceptance Supervisor",,"Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.","Acceptance Examiner","Ruang Lab Riset Multimedia",offline,,terpublikasi
