@@ -22,6 +22,8 @@ class PendaftaranSidang extends Model
         'gelombang',
         'status',
         'catatan',
+        'status_akademik',
+        'catatan_kaprodi',
     ];
 
     public function mahasiswa(): BelongsTo

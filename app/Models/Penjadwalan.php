@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Penjadwalan extends Model
 {
@@ -14,6 +15,7 @@ class Penjadwalan extends Model
 
     protected $fillable = [
         'tipe',
+        'period_id',
         'pendaftaran_id',
         'mahasiswa_id',
         'ruangan_id',
@@ -35,6 +37,16 @@ class Penjadwalan extends Model
     protected $casts = [
         'tanggal' => 'date',
     ];
+
+    public function penilaian(): HasMany
+    {
+        return $this->hasMany(Penilaian::class, 'penjadwalan_id');
+    }
+
+    public function examinerIds(): array
+    {
+        return array_values(array_unique(array_filter([$this->penguji_1_id, $this->penguji_2_id])));
+    }
 
     public function mahasiswa(): BelongsTo
     {

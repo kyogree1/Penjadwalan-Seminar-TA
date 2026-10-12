@@ -36,15 +36,17 @@ class DosenAssessmentAuthorizationTest extends TestCase
     public function test_each_assigned_examiner_can_update_assessment(string $assignment): void
     {
         $dosen = User::factory()->create(['role' => 'dosen']);
-        $schedule = $this->schedule([$assignment => $dosen->id]);
+        $other = User::factory()->create(['role' => 'dosen']);
+        $schedule = $this->schedule(['penguji_1_id' => $assignment === 'penguji_1_id' ? $dosen->id : $other->id, 'penguji_2_id' => $assignment === 'penguji_2_id' ? $dosen->id : $other->id]);
 
         $this->actingAs($dosen)->post("/dosen/penilaian/{$schedule->id}", [
             'nilai' => 80,
             'catatan' => 'Authorized evaluation',
         ])->assertRedirect();
 
+        $this->assertDatabaseHas('penilaian', ['penjadwalan_id' => $schedule->id, 'dosen_id' => $dosen->id, 'nilai' => 80, 'catatan' => 'Authorized evaluation']);
         $this->assertDatabaseHas('penjadwalan', [
-            'id' => $schedule->id, 'status' => 'selesai', 'catatan' => 'Authorized evaluation',
+            'id' => $schedule->id, 'status' => 'terpublikasi', 'catatan' => 'Original evaluation',
         ]);
     }
 
