@@ -1,11 +1,4 @@
-/**
- * Single source of truth for status → (label, badge) across the app.
- *
- * StatusBadge stays a dumb renderer: it accepts a `variant` + `text`, so this
- * module is the only place that decides what a status looks like. Killing the
- * inline `status === 'verified' ? ... : ...` switches in Verifikasi,
- * Persetujuan and Bimbingan.
- */
+/** Shared presentation for legacy submissions and administrative verification. */
 import type { BadgeVariant } from '@/Components/StatusBadge.vue';
 import type { Role, StatusPengajuan } from '@/types/models';
 
@@ -82,6 +75,17 @@ export function hasilEdit(
 }
 
 export const STATUS_LABEL_PENGAJUAN = STATUS_PENGAJUAN;
+
+export const STATUS_VERIFIKASI: Record<
+    import('@/types/tendik-verifikasi').VerificationStatus,
+    StatusConfig
+> = {
+    menunggu: { label: 'Menunggu Verifikasi', variant: 'amber' },
+    verifikasi_tendik: { label: 'Terverifikasi Tendik', variant: 'emerald' },
+    terjadwal: { label: 'Terjadwal', variant: 'blue' },
+    selesai: { label: 'Selesai', variant: 'emerald' },
+    ditolak: { label: 'Ditolak', variant: 'rose' },
+};
 
 /**
  * Resolve any status value to badge props, tolerating legacy strings during

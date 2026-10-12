@@ -85,6 +85,9 @@ const isPengajuanActive = computed(
                     type="button"
                     class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
                     :title="collapsed ? 'Buka Sidebar' : 'Tutup Sidebar'"
+                    :aria-label="
+                        collapsed ? 'Perluas navigasi' : 'Ringkas navigasi'
+                    "
                     @click="emit('toggle-collapse')"
                 >
                     <ChevronLeft
@@ -372,7 +375,7 @@ const isPengajuanActive = computed(
                         ]"
                     >
                         <GraduationCap class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Data Dosen & Kuota</span>
+                        <span v-if="!collapsed">Data Dosen</span>
                     </Link>
 
                     <Link

@@ -1,12 +1,10 @@
 <script setup lang="ts">
+import type { Auth } from '@/types/auth';
 import { computed, ref } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     AlertCircle,
-    Calendar as CalendarIcon,
     Check,
-    ChevronLeft,
-    ChevronRight,
     Clock,
     Download,
     Eye,
@@ -14,20 +12,21 @@ import {
     FileSpreadsheet,
     FileText,
     GraduationCap,
-    Info,
-    MapPin,
-    User,
     X,
 } from 'lucide-vue-next';
 
 import Modal from '@/Components/Modal.vue';
+import type {
+    RegistrationRecord,
+    ScheduleRecord,
+} from '@/types/r2-read-contracts';
 
 const page = usePage();
-const authUser = computed(() => (page.props.auth as any)?.user);
-const studentName = computed(
-    () => authUser.value?.name || 'Akmal Falah Maulana',
+const authUser = computed(() => (page.props.auth as Auth | undefined)?.user);
+const studentName = computed(() => authUser.value?.name ?? '');
+const studentNim = computed(
+    () => authUser.value?.nim_nip ?? 'NIM belum tersedia',
 );
-const studentNim = computed(() => authUser.value?.nim_nip || 'NIM: 11231006');
 const studentProdi = computed(() => authUser.value?.prodi || 'S1 Informatika');
 
 // ==========================================
@@ -51,42 +50,7 @@ interface ActivePeriod {
     };
 }
 
-const activePeriods = ref<ActivePeriod[]>([
-    {
-        id: 'p-sempro',
-        type: 'sempro',
-        title: 'SEMINAR PROPOSAL',
-        semester: 'Gasal',
-        academicYear: '2026/2027',
-        gelombang: '2 (Dua)',
-        startDate: '01 Okt 2026',
-        endDate: '15 Okt 2026',
-        colorTheme: {
-            bg: 'bg-lime-100 dark:bg-lime-950/40',
-            badgeBg: 'bg-lime-200 dark:bg-lime-900/60',
-            text: 'text-slate-900 dark:text-lime-200',
-            accentText: 'text-lime-800 dark:text-lime-300',
-            border: 'border-lime-300/80 dark:border-lime-700/50',
-        },
-    },
-    {
-        id: 'p-sidang',
-        type: 'sidang',
-        title: 'SIDANG TUGAS AKHIR',
-        semester: 'Gasal',
-        academicYear: '2026/2027',
-        gelombang: '1 (Satu)',
-        startDate: '08 Okt 2026',
-        endDate: '24 Okt 2026',
-        colorTheme: {
-            bg: 'bg-indigo-100 dark:bg-indigo-950/40',
-            badgeBg: 'bg-indigo-200 dark:bg-indigo-900/60',
-            text: 'text-slate-900 dark:text-indigo-200',
-            accentText: 'text-indigo-800 dark:text-indigo-300',
-            border: 'border-indigo-300/80 dark:border-indigo-700/50',
-        },
-    },
-]);
+const activePeriods = computed<ActivePeriod[]>(() => []);
 
 // ==========================================
 // 2. ROADMAP & STATUS TUGAS AKHIR (Status Dinamis)
@@ -101,44 +65,20 @@ interface RoadmapStep {
 }
 
 interface Props {
-    dbJudul?: any;
-    dbSempro?: any;
-    dbSidang?: any;
+    dbJudul: RegistrationRecord | null;
+    dbSempro: RegistrationRecord | null;
+    dbSidang: RegistrationRecord | null;
     dbTotalBimbinganAcc?: number;
-    dbJadwal?: any;
+    dbJadwal: ScheduleRecord | null;
     dbSemproSteps?: RoadmapStep[];
     dbSidangSteps?: RoadmapStep[];
 }
 
 const props = defineProps<Props>();
 
-const defaultSemproSteps: RoadmapStep[] = [
-    { name: 'Pengajuan', status: 'completed', date: '10 Sep 2026' },
-    { name: 'Verifikasi', status: 'completed', date: '14 Sep 2026' },
-    { name: 'Penilaian', status: 'in_progress', date: 'Sedang Berjalan' },
-    { name: 'Hasil Seminar', status: 'pending' },
-];
+const semproSteps = computed<RoadmapStep[]>(() => props.dbSemproSteps ?? []);
 
-const defaultSidangSteps: RoadmapStep[] = [
-    { name: 'Pengajuan', status: 'completed', date: '20 Sep 2026' },
-    { name: 'Verifikasi', status: 'in_progress', date: 'Dalam Review' },
-    { name: 'Penilaian', status: 'pending' },
-    { name: 'Hasil Sidang', status: 'pending' },
-];
-
-const semproSteps = computed<RoadmapStep[]>(() => {
-    if (props.dbSemproSteps && props.dbSemproSteps.length > 0) {
-        return props.dbSemproSteps;
-    }
-    return defaultSemproSteps;
-});
-
-const sidangSteps = computed<RoadmapStep[]>(() => {
-    if (props.dbSidangSteps && props.dbSidangSteps.length > 0) {
-        return props.dbSidangSteps;
-    }
-    return defaultSidangSteps;
-});
+const sidangSteps = computed<RoadmapStep[]>(() => props.dbSidangSteps ?? []);
 
 const getStepNodeClasses = (status: StepStatus) => {
     switch (status) {
@@ -179,186 +119,26 @@ interface CurrentStatusCard {
     badgeText: string;
 }
 
-const currentStatusCards = ref<CurrentStatusCard[]>([
-    {
-        id: 'cs-1',
-        title: 'Progress Proposal TA',
-        stage: 'Tahap Penilaian & Revisi',
-        description:
-            'Telah melaksanakan seminar, menunggu input revisi tim dosen.',
-        type: 'progress-sempro',
-        linkUrl: '/pendaftaran/sempro',
-        badgeText: 'Bab 1 - 3 Disetujui',
-    },
-    {
-        id: 'cs-2',
-        title: 'Progress Sidang TA',
-        stage: 'Verifikasi Berkas Akhir',
-        description:
-            'Berkas dan naskah lengkap sedang dalam antrean verifikasi Tendik.',
-        type: 'progress-sidang',
-        linkUrl: '/pendaftaran/sidang',
-        badgeText: 'Menunggu ACC',
-    },
-    {
-        id: 'cs-3',
-        title: 'Mendekati Seminar Proposal',
-        stage: 'Jadwal: 02 Oktober 2026',
-        description:
-            'Waktu tersisa 2 hari lagi. Siapkan slide presentasi dan berkas cetak.',
-        type: 'alert-sempro',
-        daysLeft: 2,
-        linkUrl: '/pendaftaran/sempro',
-        badgeText: 'H-2 Seminar',
-    },
-    {
-        id: 'cs-4',
-        title: 'Mendekati Sidang TA',
-        stage: 'Estimasi: 09 Oktober 2026',
-        description:
-            'Batas pendaftaran berkas dan penutupan slot tinggal 6 hari lagi.',
-        type: 'alert-sidang',
-        daysLeft: 6,
-        linkUrl: '/pendaftaran/sidang',
-        badgeText: 'H-6 Sidang',
-    },
-]);
-
-// ==========================================
-// 4. KALENDER PERSONAL MAHASISWA & AGENDA MODAL
-// ==========================================
-interface StudentCalendarAgenda {
-    id: string;
-    date: number;
-    fullDateString: string;
-    title: string;
-    type: 'sempro' | 'sidang' | 'bimbingan' | 'pendaftaran';
-    time: string;
-    location?: string;
-    pembimbingPenguji?: string[];
-    notes?: string;
-    badgeColor: string;
-}
-
-const currentMonth = ref('Oktober 2026');
-
-const studentAgendas = ref<StudentCalendarAgenda[]>([
-    {
-        id: 'ag-1',
-        date: 2,
-        fullDateString: 'Jumat, 02 Oktober 2026',
-        title: 'Seminar Proposal TA (Saya)',
-        type: 'sempro',
-        time: '13.30 - 15.00 WITA',
-        location: 'Ruang Lab JSTI 2 / Gedung A',
-        pembimbingPenguji: [
-            'Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.',
-            'Penguji 1: Prof. Dr. Agus Susanto, M.T.',
-            'Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.',
-        ],
-        notes: 'Wajib membawa jas almamater, lembar berita acara, dan presentasi 15 menit.',
-        badgeColor: 'bg-lime-500',
-    },
-    {
-        id: 'ag-2',
-        date: 7,
-        fullDateString: 'Rabu, 07 Oktober 2026',
-        title: 'Bimbingan Pasca Sempro',
-        type: 'bimbingan',
-        time: '10.00 - 11.30 WITA',
-        location: 'Ruang Dosen Gedung B / Lab Riset',
-        pembimbingPenguji: ['Dr. Ir. Hendra Wijaya, M.Kom.'],
-        notes: 'Membahas catatan revisi dewan penguji terkait perbaikan dataset pengujian.',
-        badgeColor: 'bg-blue-500',
-    },
-    {
-        id: 'ag-3',
-        date: 9,
-        fullDateString: 'Jumat, 09 Oktober 2026',
-        title: 'Batas Pendaftaran Sidang Gelombang 1',
-        type: 'pendaftaran',
-        time: 'Tutup 23.59 WITA',
-        location: 'Portal Daring SIPTA IF',
-        notes: 'Pastikan minimal 8 kali bimbingan dan skor Turnitin di bawah 20%.',
-        badgeColor: 'bg-amber-500',
-    },
-    {
-        id: 'ag-4',
-        date: 20,
-        fullDateString: 'Selasa, 20 Oktober 2026',
-        title: 'Sidang Tugas Akhir (Terjadwal)',
-        type: 'sidang',
-        time: '09.00 - 11.00 WITA',
-        location: 'Ruang Sidang Utama Informatika Lt. 3',
-        pembimbingPenguji: [
-            'Ketua Penguji: Ir. Budi Santoso, M.Eng.',
-            'Penguji 2: Siti Nurhaliza, S.Kom., M.Cs.',
-            'Pembimbing 1: Dr. Ir. Hendra Wijaya, M.Kom.',
-        ],
-        notes: 'Ujian komprehensif tertutup. Menyiapkan prototipe software/alat.',
-        badgeColor: 'bg-indigo-500',
-    },
-]);
-
-const calendarGrid = [
-    { day: 28, currentMonth: false },
-    { day: 29, currentMonth: false },
-    { day: 30, currentMonth: false },
-    { day: 1, currentMonth: true },
-    { day: 2, currentMonth: true },
-    { day: 3, currentMonth: true },
-    { day: 4, currentMonth: true },
-    { day: 5, currentMonth: true },
-    { day: 6, currentMonth: true },
-    { day: 7, currentMonth: true },
-    { day: 8, currentMonth: true },
-    { day: 9, currentMonth: true },
-    { day: 10, currentMonth: true },
-    { day: 11, currentMonth: true },
-    { day: 12, currentMonth: true },
-    { day: 13, currentMonth: true },
-    { day: 14, currentMonth: true, isToday: true },
-    { day: 15, currentMonth: true },
-    { day: 16, currentMonth: true },
-    { day: 17, currentMonth: true },
-    { day: 18, currentMonth: true },
-    { day: 19, currentMonth: true },
-    { day: 20, currentMonth: true },
-    { day: 21, currentMonth: true },
-    { day: 22, currentMonth: true },
-    { day: 23, currentMonth: true },
-    { day: 24, currentMonth: true },
-    { day: 25, currentMonth: true },
-    { day: 26, currentMonth: true },
-    { day: 27, currentMonth: true },
-    { day: 28, currentMonth: true },
-    { day: 29, currentMonth: true },
-    { day: 30, currentMonth: true },
-    { day: 31, currentMonth: true },
-    { day: 1, currentMonth: false },
-];
-
-const selectedAgenda = ref<StudentCalendarAgenda | null>(null);
-const showAgendaModal = ref(false);
-
-const getAgendasForDay = (day: number, currentMonth: boolean) => {
-    if (!currentMonth) return [];
-    return studentAgendas.value.filter((ag) => ag.date === day);
-};
-
-const handleDayClick = (day: number, currentMonth: boolean) => {
-    if (!currentMonth) return;
-    const items = getAgendasForDay(day, currentMonth);
-    if (items.length > 0) {
-        selectedAgenda.value = items[0];
-        showAgendaModal.value = true;
+const currentStatusCards = computed<CurrentStatusCard[]>(() => {
+    const cards: CurrentStatusCard[] = [];
+    for (const [type, record] of [
+        ['sempro', props.dbSempro],
+        ['sidang', props.dbSidang],
+    ] as const) {
+        if (!record) continue;
+        cards.push({
+            id: `${type}-${record.id}`,
+            title:
+                type === 'sempro' ? 'Seminar Proposal' : 'Sidang Tugas Akhir',
+            stage: record.status,
+            description: record.judul_ta,
+            type: type === 'sempro' ? 'progress-sempro' : 'progress-sidang',
+            linkUrl: `/pendaftaran/${type}`,
+            badgeText: record.status,
+        });
     }
-};
-
-const openAgendaDetail = (agenda: StudentCalendarAgenda) => {
-    selectedAgenda.value = agenda;
-    showAgendaModal.value = true;
-};
+    return cards;
+});
 
 // ==========================================
 // 5. DETAIL HASIL PENILAIAN DENGAN POPUP MODAL
@@ -377,80 +157,7 @@ interface AssessmentDetail {
     examinerNotes: { by: string; note: string }[];
 }
 
-const assessments = ref<AssessmentDetail[]>([
-    {
-        id: 'ass-1',
-        title: 'Sidang Tugas Akhir',
-        period: 'Gasal 2026/2027 • Gelombang 1',
-        pembimbing: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        penguji: [
-            'Ir. Budi Santoso, M.Eng. (Ketua)',
-            'Siti Nurhaliza, S.Kom., M.Cs. (Anggota)',
-        ],
-        status: 'Lulus dengan Revisi',
-        variant: 'neutral',
-        finalScore: 84.5,
-        grade: 'A-',
-        revisionDeadline: '14 Hari (s.d. 16 Oktober 2026)',
-        examinerNotes: [
-            {
-                by: 'Ketua Penguji - Ir. Budi Santoso, M.Eng.',
-                note: 'Perbaiki penjelasan arsitektur Genetic Algorithm pada bab 3 dan tambahkan perbandingan fitness value awal vs akhir.',
-            },
-            {
-                by: 'Penguji 2 - Siti Nurhaliza, S.Kom., M.Cs.',
-                note: 'Format sitasi IEEE harus dicek kembali pada daftar pustaka. Lampirkan hasil uji usability pengujian user.',
-            },
-            {
-                by: 'Pembimbing - Dr. Ir. Hendra Wijaya, M.Kom.',
-                note: 'Sudah cukup baik secara konsep, selesaikan revisi sebelum deadline agar lembar pengesahan bisa ditandatangani.',
-            },
-        ],
-    },
-    {
-        id: 'ass-2',
-        title: 'Seminar Proposal Tugas Akhir',
-        period: 'Gasal 2026/2027 • Gelombang 2',
-        pembimbing: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        penguji: [
-            'Prof. Dr. Agus Susanto, M.T.',
-            'Siti Nurhaliza, S.Kom., M.Cs.',
-        ],
-        status: 'Lulus dengan Revisi',
-        variant: 'neutral',
-        finalScore: 81.0,
-        grade: 'A-',
-        revisionDeadline: '7 Hari (s.d. 09 Oktober 2026)',
-        examinerNotes: [
-            {
-                by: 'Prof. Dr. Agus Susanto, M.T.',
-                note: 'Fokuskan batasan masalah hanya pada penjadwalan seminar informatika ITK.',
-            },
-            {
-                by: 'Siti Nurhaliza, S.Kom., M.Cs.',
-                note: 'Perjelas parameter mutasi dan crossover yang digunakan pada rancangan algoritma.',
-            },
-        ],
-    },
-    {
-        id: 'ass-3',
-        title: 'Seminar Proposal Tugas Akhir (Gelombang 1)',
-        period: 'Genap 2025/2026 • Gelombang 1',
-        pembimbing: 'Dr. Ir. Hendra Wijaya, M.Kom.',
-        penguji: ['Prof. Dr. Agus Susanto, M.T.', 'Ir. Budi Santoso, M.Eng.'],
-        status: 'Tidak Lulus',
-        variant: 'danger',
-        finalScore: 54.0,
-        grade: 'D',
-        revisionDeadline: 'Silakan daftar ulang pada Gelombang berikutnya',
-        examinerNotes: [
-            {
-                by: 'Dewan Penguji',
-                note: 'Metodologi belum matang dan rumusan masalah belum menunjukkan urgensi penelitian yang kuat.',
-            },
-        ],
-    },
-]);
+const assessments = computed<AssessmentDetail[]>(() => []);
 
 const selectedAssessment = ref<AssessmentDetail | null>(null);
 const showAssessmentModal = ref(false);
@@ -839,271 +546,33 @@ const openAssessmentModal = (item: AssessmentDetail) => {
             </div>
         </div>
 
-        <!-- 4. Statistik Bimbingan & Kalender Personal -->
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <!-- Statistik Bimbingan diperlebar setelah Status TA dihapus -->
-            <div
-                class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 shadow-xs lg:col-span-2 dark:border-slate-800 dark:bg-slate-900/60"
+        <section
+            class="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"
+        >
+            <h3 class="font-bold">
+                Bimbingan disetujui: {{ dbTotalBimbinganAcc ?? 0 }}
+            </h3>
+            <p class="text-sm text-slate-500">
+                Jumlah sesi delivered, bukan syarat kelayakan sidang.
+            </p>
+            <Link href="/pendaftaran/bimbingan" class="text-blue-600"
+                >Lihat logbook</Link
             >
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3
-                            class="text-sm font-bold text-slate-900 dark:text-white"
-                        >
-                            Statistik Bimbingan
-                        </h3>
-                        <p
-                            class="mt-1 text-xs text-slate-500 dark:text-slate-400"
-                        >
-                            Ringkasan pembimbing, sesi selesai, dan tindak
-                            lanjut terbaru.
-                        </p>
-                    </div>
-                    <span
-                        class="rounded-lg bg-blue-100 px-2.5 py-1 text-[10px] font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-                    >
-                        10 Sesi
-                    </span>
-                </div>
-                <div class="mt-4 grid gap-3 sm:grid-cols-2">
-                    <div
-                        class="flex items-center gap-3 rounded-xl border border-slate-200/90 bg-white p-3 shadow-2xs dark:border-slate-800 dark:bg-slate-900"
-                    >
-                        <div
-                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-950 dark:text-blue-400"
-                        >
-                            D1
-                        </div>
-                        <div class="min-w-0">
-                            <p
-                                class="truncate text-xs font-bold text-slate-900 dark:text-white"
-                            >
-                                Dr. Ir. Hendra Wijaya, M.Kom.
-                            </p>
-                            <p
-                                class="text-[11px] text-slate-500 dark:text-slate-400"
-                            >
-                                Pembimbing 1 · 6 sesi selesai
-                            </p>
-                            <p
-                                class="mt-1 text-[10px] font-semibold text-emerald-600"
-                            >
-                                Bimbingan terakhir: 15 Sep 2026
-                            </p>
-                        </div>
-                    </div>
-                    <div
-                        class="flex items-center gap-3 rounded-xl border border-slate-200/90 bg-white p-3 shadow-2xs dark:border-slate-800 dark:bg-slate-900"
-                    >
-                        <div
-                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-xs font-bold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400"
-                        >
-                            D2
-                        </div>
-                        <div class="min-w-0">
-                            <p
-                                class="truncate text-xs font-bold text-slate-900 dark:text-white"
-                            >
-                                Rina Agustina, S.T., M.Kom.
-                            </p>
-                            <p
-                                class="text-[11px] text-slate-500 dark:text-slate-400"
-                            >
-                                Pembimbing 2 · 4 sesi selesai
-                            </p>
-                            <p
-                                class="mt-1 text-[10px] font-semibold text-amber-600"
-                            >
-                                Tindak lanjut revisi Bab 3
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="mt-6 border-t border-slate-200/80 pt-4 dark:border-slate-800"
-                >
-                    <div class="mb-3 flex items-center justify-between">
-                        <span
-                            class="text-xs font-bold text-slate-800 dark:text-slate-200"
-                            >Riwayat Bimbingan Terakhir</span
-                        >
-                        <Link
-                            href="/pendaftaran/bimbingan"
-                            class="text-[11px] font-semibold text-blue-600 hover:underline dark:text-blue-400"
-                            >Lihat Semua &gt;</Link
-                        >
-                    </div>
-                    <div class="grid gap-2">
-                        <div
-                            class="rounded-xl border border-slate-200/80 bg-white p-2.5 text-xs dark:border-slate-800 dark:bg-slate-900"
-                        >
-                            <p
-                                class="font-semibold text-slate-900 dark:text-white"
-                            >
-                                Diskusi arsitektur sistem & algoritma
-                            </p>
-                            <p class="mt-0.5 text-[10px] text-slate-400">
-                                15 Sep 2026 · Pembimbing 1
-                            </p>
-                        </div>
-                        <div
-                            class="rounded-xl border border-slate-200/80 bg-white p-2.5 text-xs dark:border-slate-800 dark:bg-slate-900"
-                        >
-                            <p
-                                class="font-semibold text-slate-900 dark:text-white"
-                            >
-                                Revisi metodologi penelitian BAB 3
-                            </p>
-                            <p class="mt-0.5 text-[10px] text-slate-400">
-                                08 Sep 2026 · Pembimbing 2
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Kalender personal -->
-            <div
-                class="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 dark:border-slate-800 dark:bg-slate-900/60"
+            <h3 class="mt-4 font-bold">Jadwal terpublikasi terbaru</h3>
+            <p v-if="dbJadwal">
+                {{ dbJadwal.tipe }} — {{ dbJadwal.tanggal.slice(0, 10) }} •
+                {{ dbJadwal.jam_mulai }} – {{ dbJadwal.jam_selesai }} •
+                {{ dbJadwal.ruangan?.nama_ruangan ?? 'Ruangan belum tersedia' }}
+            </p>
+            <p v-else class="text-slate-500">Belum ada jadwal terpublikasi.</p>
+            <Link href="/pendaftaran/jadwal" class="text-blue-600"
+                >Lihat seluruh jadwal</Link
             >
-                <div class="flex items-center justify-between">
-                    <h3
-                        class="text-sm font-bold text-slate-900 dark:text-white"
-                    >
-                        Kalender Agenda Saya
-                    </h3>
-                    <span class="text-[10px] font-medium text-slate-500"
-                        >Klik tanggal bertitik</span
-                    >
-                </div>
-
-                <div
-                    class="mt-4 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-2xs transition-colors dark:border-slate-800 dark:bg-slate-900"
-                >
-                    <div
-                        class="flex items-center justify-between border-b border-slate-100 pb-3 text-xs font-bold dark:border-slate-800"
-                    >
-                        <span
-                            class="flex items-center gap-2 text-slate-900 dark:text-white"
-                        >
-                            <CalendarIcon
-                                class="h-3.5 w-3.5 text-blue-600 dark:text-blue-400"
-                            />
-                            {{ currentMonth }}
-                        </span>
-                        <div class="flex items-center gap-1">
-                            <button
-                                type="button"
-                                class="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400"
-                                title="Bulan Sebelumnya"
-                            >
-                                <ChevronLeft class="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                                type="button"
-                                class="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400"
-                                title="Bulan Berikutnya"
-                            >
-                                <ChevronRight class="h-3.5 w-3.5" />
-                            </button>
-                        </div>
-                    </div>
-
-                    <div
-                        class="grid grid-cols-7 pt-3 text-center text-[10px] font-bold tracking-wider text-slate-400 uppercase dark:text-slate-500"
-                    >
-                        <span>Mo</span><span>Tu</span><span>We</span
-                        ><span>Th</span><span>Fr</span><span>Sa</span
-                        ><span>Su</span>
-                    </div>
-
-                    <div
-                        class="mt-2 grid grid-cols-7 gap-1 text-center text-xs"
-                    >
-                        <div
-                            v-for="(item, idx) in calendarGrid.slice(0, 28)"
-                            :key="idx"
-                            class="relative mx-auto flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-[11px] transition-all"
-                            :class="[
-                                item.isToday
-                                    ? 'bg-blue-600 font-bold text-white shadow-md ring-2 shadow-blue-600/30 ring-blue-600/20'
-                                    : item.currentMonth
-                                      ? 'font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-400'
-                                      : 'text-slate-300 hover:text-slate-400 dark:text-slate-600 dark:hover:text-slate-500',
-                                getAgendasForDay(item.day, item.currentMonth)
-                                    .length > 0 && !item.isToday
-                                    ? 'font-extrabold ring-1 ring-blue-400 dark:ring-blue-500'
-                                    : '',
-                            ]"
-                            @click="handleDayClick(item.day, item.currentMonth)"
-                        >
-                            {{ item.day }}
-                            <!-- Dot indicator for agenda -->
-                            <span
-                                v-if="
-                                    getAgendasForDay(
-                                        item.day,
-                                        item.currentMonth,
-                                    ).length > 0
-                                "
-                                class="absolute -bottom-0.5 h-1.5 w-1.5 rounded-full"
-                                :class="
-                                    item.isToday
-                                        ? 'bg-amber-300'
-                                        : getAgendasForDay(
-                                              item.day,
-                                              item.currentMonth,
-                                          )[0].badgeColor
-                                "
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Agenda Mahasiswa List -->
-                <div
-                    class="mt-6 border-t border-slate-200/80 pt-4 dark:border-slate-800"
-                >
-                    <h4
-                        class="mb-3 text-xs font-bold text-slate-800 dark:text-slate-200"
-                    >
-                        Agenda Mahasiswa Terdekat
-                    </h4>
-
-                    <div class="space-y-2.5">
-                        <div
-                            v-for="agenda in studentAgendas.slice(0, 3)"
-                            :key="agenda.id"
-                            class="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200/80 bg-white p-3 shadow-2xs transition-colors hover:border-blue-400 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-blue-500"
-                            @click="openAgendaDetail(agenda)"
-                        >
-                            <div class="flex items-center gap-2.5">
-                                <div
-                                    class="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white"
-                                    :class="agenda.badgeColor"
-                                >
-                                    {{ agenda.date }}
-                                </div>
-                                <div>
-                                    <p
-                                        class="text-xs font-bold text-slate-900 dark:text-white"
-                                    >
-                                        {{ agenda.title }}
-                                    </p>
-                                    <p class="text-[10px] text-slate-400">
-                                        {{ agenda.fullDateString }}
-                                    </p>
-                                </div>
-                            </div>
-                            <span
-                                class="text-[11px] font-bold text-blue-600 dark:text-blue-400"
-                            >
-                                {{ agenda.time.split(' ')[0] }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <p class="mt-3 text-sm text-slate-500">
+                Periode pendaftaran belum tersedia. Nilai, kelulusan, dan
+                dokumen hasil menunggu kontrak penilaian R3.
+            </p>
+        </section>
 
         <!-- 5. HASIL PENILAIAN CARD DENGAN KLIK DETAIL POPUP MODAL -->
         <div
@@ -1178,108 +647,6 @@ const openAssessmentModal = (item: AssessmentDetail) => {
     <!-- ========================================== -->
     <!-- POPUP MODAL 1: DETAIL AGENDA MAHASISWA     -->
     <!-- ========================================== -->
-    <Modal
-        :show="showAgendaModal"
-        max-width="lg"
-        title="Rincian Agenda Akademik"
-        @close="showAgendaModal = false"
-    >
-        <div v-if="selectedAgenda" class="space-y-4">
-            <div class="rounded-xl bg-slate-50 p-4 dark:bg-slate-800/60">
-                <div class="flex items-center gap-2">
-                    <span
-                        class="h-3 w-3 rounded-full"
-                        :class="selectedAgenda.badgeColor"
-                    />
-                    <span
-                        class="text-xs font-bold text-slate-500 uppercase dark:text-slate-400"
-                    >
-                        {{ selectedAgenda.type.toUpperCase() }}
-                    </span>
-                </div>
-                <h4
-                    class="mt-1 text-base font-extrabold text-slate-900 dark:text-white"
-                >
-                    {{ selectedAgenda.title }}
-                </h4>
-                <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">
-                    {{ selectedAgenda.fullDateString }} •
-                    {{ selectedAgenda.time }}
-                </p>
-            </div>
-
-            <div class="space-y-2 text-xs">
-                <div
-                    v-if="selectedAgenda.location"
-                    class="flex items-start gap-2"
-                >
-                    <MapPin class="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
-                    <div>
-                        <span
-                            class="font-bold text-slate-800 dark:text-slate-200"
-                            >Lokasi / Ruangan:</span
-                        >
-                        <p class="text-slate-600 dark:text-slate-400">
-                            {{ selectedAgenda.location }}
-                        </p>
-                    </div>
-                </div>
-
-                <div
-                    v-if="selectedAgenda.pembimbingPenguji?.length"
-                    class="mt-2 flex items-start gap-2"
-                >
-                    <User class="mt-0.5 h-4 w-4 shrink-0 text-indigo-600" />
-                    <div>
-                        <span
-                            class="font-bold text-slate-800 dark:text-slate-200"
-                            >Dosen Pembimbing & Penguji:</span
-                        >
-                        <ul
-                            class="mt-0.5 list-inside list-disc space-y-0.5 text-slate-600 dark:text-slate-400"
-                        >
-                            <li
-                                v-for="(
-                                    dos, dIdx
-                                ) in selectedAgenda.pembimbingPenguji"
-                                :key="dIdx"
-                            >
-                                {{ dos }}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div
-                    v-if="selectedAgenda.notes"
-                    class="mt-2 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/50 dark:bg-amber-950/40"
-                >
-                    <Info
-                        class="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400"
-                    />
-                    <div>
-                        <span
-                            class="font-bold text-amber-900 dark:text-amber-200"
-                            >Catatan Mahasiswa:</span
-                        >
-                        <p class="mt-0.5 text-amber-800 dark:text-amber-300">
-                            {{ selectedAgenda.notes }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <template #footer>
-            <button
-                type="button"
-                class="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                @click="showAgendaModal = false"
-            >
-                Tutup
-            </button>
-        </template>
-    </Modal>
 
     <!-- ========================================== -->
     <!-- POPUP MODAL 2: DETAIL HASIL PENILAIAN/SIDANG -->

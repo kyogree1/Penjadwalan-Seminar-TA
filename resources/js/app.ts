@@ -6,6 +6,7 @@ import { createApp, type DefineComponent, h } from 'vue';
 
 import { initializeTheme } from './composables/useTheme';
 import AppLayout from './Layouts/AppLayout.vue';
+import { dialog } from './lib/dialog';
 
 const appName = import.meta.env.VITE_APP_NAME || 'SIPTA IF';
 
@@ -25,6 +26,7 @@ void createInertiaApp({
         initializeTheme();
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .directive('dialog', dialog)
             .mount(el);
     },
     progress: {

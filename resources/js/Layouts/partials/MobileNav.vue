@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue';
+import { dialog as vDialog } from '@/lib/dialog';
 import { Link, router } from '@inertiajs/vue3';
 import {
     Award,
@@ -27,7 +29,7 @@ import {
 import { useAuth } from '@/composables/useAuth';
 import { useTheme } from '@/composables/useTheme';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
 }>();
 
@@ -42,6 +44,11 @@ const handleLogout = () => {
     emit('close');
     router.post('/logout');
 };
+const onKey = (event: KeyboardEvent) => {
+    if (event.key === 'Escape' && props.open) emit('close');
+};
+onMounted(() => window.addEventListener('keydown', onKey));
+onUnmounted(() => window.removeEventListener('keydown', onKey));
 </script>
 
 <template>
@@ -51,7 +58,8 @@ const handleLogout = () => {
         @click="emit('close')"
     >
         <div
-            class="flex h-full w-72 flex-col justify-between overflow-y-auto bg-[#0E1626] p-5 shadow-2xl"
+            v-dialog="'Navigasi portal'"
+            class="flex h-full w-72 max-w-[calc(100vw-2rem)] flex-col justify-between overflow-y-auto bg-[#0E1626] p-5 shadow-2xl"
             @click.stop
         >
             <div>
@@ -70,6 +78,7 @@ const handleLogout = () => {
                     </div>
                     <button
                         type="button"
+                        aria-label="Tutup navigasi"
                         class="cursor-pointer p-1 text-slate-400 hover:text-white"
                         @click="emit('close')"
                     >
@@ -206,7 +215,7 @@ const handleLogout = () => {
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <GraduationCap class="h-4 w-4" /> Data Dosen & Kuota
+                            <GraduationCap class="h-4 w-4" /> Data Dosen
                         </Link>
                         <Link
                             href="/kaprodi/persetujuan"

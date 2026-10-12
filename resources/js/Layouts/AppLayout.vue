@@ -21,8 +21,13 @@ const sidebarCollapsed = ref(false);
 
 <template>
     <div
-        class="flex h-screen w-full overflow-hidden bg-[#F4F6FA] font-sans text-slate-800 antialiased transition-colors duration-200 dark:bg-[#080D1A] dark:text-slate-100"
+        class="bg-app-bg dark:bg-navy-bg flex h-screen w-full overflow-hidden font-sans text-slate-800 antialiased transition-colors duration-200 dark:text-slate-100"
     >
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:rounded-lg focus:bg-white focus:p-3 focus:text-blue-700"
+            >Lewati ke konten utama</a
+        >
         <!-- 1. DESKTOP SIDEBAR -->
         <Sidebar
             :collapsed="sidebarCollapsed"
@@ -45,7 +50,11 @@ const sidebarCollapsed = ref(false);
                 class="flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-auto"
             >
                 <!-- MAIN PAGE CONTENT BODY -->
-                <main class="flex-1 p-4 lg:p-8">
+                <main
+                    id="main-content"
+                    tabindex="-1"
+                    class="min-w-0 flex-1 p-4 lg:p-8"
+                >
                     <slot />
                 </main>
 

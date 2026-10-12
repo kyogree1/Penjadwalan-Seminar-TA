@@ -9,9 +9,9 @@ defineProps<Props>();
 
 <template>
     <div
-        class="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white px-6 py-4 shadow-xs sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:bg-[#0E1626]"
+        class="flex flex-col gap-3 border-b border-slate-200/80 pb-4 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800"
     >
-        <div>
+        <div class="min-w-0">
             <h2
                 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
             >
@@ -25,7 +25,7 @@ defineProps<Props>();
             </p>
         </div>
 
-        <div v-if="$slots.action" class="flex items-center gap-3">
+        <div v-if="$slots.action" class="flex flex-wrap items-center gap-3">
             <slot name="action" />
         </div>
     </div>

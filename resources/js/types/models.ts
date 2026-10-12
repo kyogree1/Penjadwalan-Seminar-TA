@@ -14,6 +14,30 @@
  * record back to menunggu_ulang; editing anything else leaves it standing.
  */
 
+// Persisted contracts; the legacy StatusPengajuan below is mock-only.
+export type TitleReviewStatus =
+    | 'draft'
+    | 'menunggu'
+    | 'disetujui'
+    | 'revisi'
+    | 'ditolak';
+export type AcademicReviewStatus =
+    | 'menunggu'
+    | 'disetujui'
+    | 'revisi'
+    | 'ditolak';
+export type RegistrationLifecycleStatus =
+    | 'menunggu'
+    | 'verifikasi_tendik'
+    | 'terjadwal'
+    | 'selesai'
+    | 'ditolak';
+export type ExamLifecycleStatus =
+    | 'draft'
+    | 'terpublikasi'
+    | 'selesai'
+    | 'dibatalkan';
+
 export type Role = 'mahasiswa' | 'dosen' | 'kaprodi' | 'tendik';
 
 /**

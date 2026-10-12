@@ -16,3 +16,25 @@
     --color-accent-green: #8ce79b;
     --color-accent-rose: #ff7575;
 }
+
+/* Keyboard focus must remain visible even on legacy outline-hidden controls. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid #1d4ed8;
+    outline-offset: 3px;
+}
+.dark :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline-color: #93c5fd;
+}
+main table {
+    min-width: 40rem;
+}
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
+import { dialog as vDialog } from '@/lib/dialog';
 import { X } from 'lucide-vue-next';
 
 interface Props {
@@ -31,24 +32,12 @@ const handleKeyDown = (event: KeyboardEvent) => {
     }
 };
 
-watch(
-    () => props.show,
-    (isOpen) => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-    },
-);
-
 onMounted(() => {
     window.addEventListener('keydown', handleKeyDown);
 });
 
 onUnmounted(() => {
     window.removeEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = '';
 });
 
 const maxWidthClass = {
@@ -82,7 +71,8 @@ const maxWidthClass = {
 
                 <!-- Dialog Box -->
                 <div
-                    class="relative w-full transform overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-xl transition-all sm:w-full dark:border-slate-800 dark:bg-slate-900"
+                    v-dialog="title || 'Dialog akademik'"
+                    class="relative max-h-[calc(100dvh-3rem)] w-full transform overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-xl transition-all sm:w-full dark:border-slate-800 dark:bg-slate-900"
                     :class="maxWidthClass"
                 >
                     <!-- Header -->
@@ -100,6 +90,7 @@ const maxWidthClass = {
 
                         <button
                             v-if="closeable"
+                            aria-label="Tutup dialog"
                             type="button"
                             class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                             @click="close"
