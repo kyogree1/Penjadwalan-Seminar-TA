@@ -2,228 +2,183 @@
 import { computed, ref } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import {
-    Award,
     Check,
     CheckCircle2,
     Clock,
-    FileCheck,
     FileText,
-    Filter,
-    MessageSquare,
     PenTool,
     Plus,
     Printer,
     Search,
-    UserCheck,
     Users,
     X,
 } from 'lucide-vue-next';
-
 import Button from '@/Components/Button.vue';
 import Card from '@/Components/Card.vue';
 import Modal from '@/Components/Modal.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
-import StatCard from '@/Components/StatCard.vue';
-import StatusBadge from '@/Components/StatusBadge.vue';
-import { mockDosenAdvisees } from '@/data/dosen/bimbingan';
-import type { BimbinganSesi, DosenAdvisee } from '@/types/models';
-
-const props = withDefaults(
-    defineProps<{
-        advisees?: DosenAdvisee[];
-    }>(),
-    {
-        advisees: () => mockDosenAdvisees,
-    },
-);
-
-const advisees = ref<DosenAdvisee[]>([...props.advisees]);
-
+import type {
+    LiveBimbinganSession,
+    LiveAdvisee,
+    LogbookProps,
+} from '@/types/dosen-bimbingan';
+const props = defineProps<LogbookProps>();
+const advisees = computed(() => props.advisees);
 const searchQuery = ref('');
-const selectedAdviseeId = ref(1);
-
-const filteredAdvisees = computed(() => {
-    const q = searchQuery.value.toLowerCase().trim();
-    if (!q) return advisees.value;
-    return advisees.value.filter(
-        (a) =>
-            a.nama.toLowerCase().includes(q) ||
-            a.nim.includes(q) ||
-            a.judul.toLowerCase().includes(q),
-    );
-});
-
+const selectedAdviseeId = ref<number | null>(null);
+const filteredAdvisees = computed(() =>
+    advisees.value.filter((a) =>
+        [a.nama, a.nim ?? '', a.judul].some((v) =>
+            v.toLowerCase().includes(searchQuery.value.trim().toLowerCase()),
+        ),
+    ),
+);
 const selectedAdvisee = computed(
     () =>
-        advisees.value.find((a) => a.id === selectedAdviseeId.value) ||
+        filteredAdvisees.value.find((a) => a.id === selectedAdviseeId.value) ??
         filteredAdvisees.value[0],
 );
-
-// KPI Stats
+const approvedCount = (a: LiveAdvisee) =>
+    a.sesiList.filter((s) => s.status === 'delivered').length;
 const totalSesiGlobal = computed(() =>
-    advisees.value.reduce((acc, a) => acc + a.sesiList.length, 0),
+    advisees.value.reduce((n, a) => n + a.sesiList.length, 0),
 );
-const mhsEligibleCount = computed(
-    () => advisees.value.filter((a) => a.sesiList.length >= 8).length,
+const approvedGlobal = computed(() =>
+    advisees.value.reduce((n, a) => n + approvedCount(a), 0),
 );
 const pendingParafCount = computed(() =>
     advisees.value.reduce(
-        (acc, a) =>
-            acc +
-            a.sesiList.filter((s) => s.statusParaf !== 'Disetujui').length,
+        (n, a) => n + a.sesiList.filter((s) => s.status === 'process').length,
         0,
     ),
 );
-const avgSesiCount = computed(() => {
-    if (advisees.value.length === 0) return 0;
-    return (totalSesiGlobal.value / advisees.value.length).toFixed(1);
-});
-
-// Toast / Notice
+const avgSesiCount = computed(() =>
+    advisees.value.length
+        ? (totalSesiGlobal.value / advisees.value.length).toFixed(1)
+        : '0',
+);
 const toast = ref('');
-const showToast = (msg: string) => {
-    toast.value = msg;
-    setTimeout(() => {
-        toast.value = '';
-    }, 3500);
-};
-
-// Review / Paraf Modal State
+const errors = ref<Record<string, string>>({});
+const processing = ref(false);
 const showApprovalModal = ref(false);
-const activeLogbook = ref<BimbinganSesi | null>(null);
+const activeLogbookId = ref<number | null>(null);
 const feedbackInput = ref('');
 const isAccBimbingan = ref(true);
-
-const openReviewModal = (logbook: BimbinganSesi) => {
-    activeLogbook.value = logbook;
-    feedbackInput.value = logbook.catatanDosen || '';
-    isAccBimbingan.value = true;
+const isModalTambahOpen = ref(false);
+const formStudentId = ref<number | null>(null);
+const blankForm = () => ({
+    tanggal: new Date().toISOString().split('T')[0],
+    bab: 'Bab 1 - Pendahuluan',
+    rangkuman: '',
+    catatanDosen: '',
+});
+const formSesi = ref(blankForm());
+const requestOptions = (close?: () => void) => ({
+    preserveScroll: true,
+    onSuccess: (page: { props: Record<string, unknown> }) => {
+        const flash = page.props.flash as LogbookProps['flash'] | undefined;
+        toast.value =
+            flash?.error ||
+            flash?.success ||
+            'Konfirmasi penyimpanan dari server belum tersedia.';
+        if (flash?.success && !flash.error) close?.();
+    },
+    onError: (values: Record<string, string>) => {
+        errors.value = values;
+        toast.value = 'Permintaan gagal. Periksa pesan kesalahan.';
+    },
+    onNetworkError: () => {
+        toast.value = 'Koneksi gagal. Data belum dikonfirmasi tersimpan.';
+        return false;
+    },
+    onHttpException: () => {
+        toast.value =
+            'Server tidak dapat memproses permintaan. Data belum dikonfirmasi tersimpan.';
+        return false;
+    },
+    onFinish: () => {
+        processing.value = false;
+    },
+});
+const beginRequest = () => {
+    processing.value = true;
+    errors.value = {};
+    toast.value = '';
+};
+const openReviewModal = (log: LiveBimbinganSession) => {
+    if (processing.value) return;
+    activeLogbookId.value = log.id;
+    feedbackInput.value = log.catatanDosen ?? '';
+    isAccBimbingan.value = log.status === 'delivered';
+    errors.value = {};
     showApprovalModal.value = true;
 };
-
 const submitReview = () => {
-    if (activeLogbook.value) {
-        const id = activeLogbook.value.id;
-        const statusParaf = isAccBimbingan.value ? 'delivered' : 'process';
-        const catatan = feedbackInput.value;
-
-        activeLogbook.value.catatanDosen = catatan;
-        activeLogbook.value.statusParaf = isAccBimbingan.value
-            ? 'Disetujui'
-            : 'Perlu Revisi';
-        activeLogbook.value.tglParaf = 'Hari ini';
-
-        router.patch(
-            `/dosen/bimbingan/${id}/paraf`,
-            {
-                status: statusParaf,
-                catatan_dosen: catatan,
-            },
-            {
-                preserveScroll: true,
-                onError: () => {},
-            },
-        );
-
-        showToast(
-            `Catatan dan paraf digital berhasil disimpan untuk sesi "${activeLogbook.value.bab}".`,
-        );
-    }
-    showApprovalModal.value = false;
+    if (
+        processing.value ||
+        !selectedAdvisee.value?.sesiList.some(
+            (s) => s.id === activeLogbookId.value,
+        )
+    )
+        return;
+    beginRequest();
+    router.patch(
+        `/dosen/bimbingan/${activeLogbookId.value}/paraf`,
+        {
+            status: isAccBimbingan.value ? 'delivered' : 'process',
+            catatan_dosen: feedbackInput.value,
+        },
+        requestOptions(() => {
+            showApprovalModal.value = false;
+        }),
+    );
 };
-
-// One-click quick paraf action
-const quickParafSesi = (sesi: BimbinganSesi) => {
-    sesi.statusParaf = 'Disetujui';
-    sesi.tglParaf = 'Hari ini';
-
+const quickParafSesi = (sesi: LiveBimbinganSession) => {
+    if (processing.value) return;
+    beginRequest();
     router.patch(
         `/dosen/bimbingan/${sesi.id}/paraf`,
         {
             status: 'delivered',
-            catatan_dosen: 'Disetujui pembimbing',
+            catatan_dosen: sesi.catatanDosen ?? 'Disetujui pembimbing',
         },
-        {
-            preserveScroll: true,
-            onError: () => {},
-        },
-    );
-
-    showToast(
-        `Sesi ke-${sesi.no} (${sesi.bab}) berhasil diparaf dan disetujui!`,
+        requestOptions(),
     );
 };
-
-// Modal Tambah Sesi Bimbingan
-const isModalTambahOpen = ref(false);
-const formSesi = ref({
-    tanggal: new Date().toISOString().split('T')[0],
-    pembimbing: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
-    bab: 'Bab 3 - Metodologi Penelitian & Desain',
-    rangkuman: '',
-    catatanDosen: '',
-});
-
 const openModalTambahSesi = () => {
-    formSesi.value = {
-        tanggal: new Date().toISOString().split('T')[0],
-        pembimbing:
-            selectedAdvisee.value?.pembimbing1 ||
-            'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
-        bab: 'Bab 3 - Metodologi Penelitian & Desain',
-        rangkuman: '',
-        catatanDosen: '',
-    };
+    if (processing.value || !selectedAdvisee.value) return;
+    formStudentId.value = selectedAdvisee.value.id;
+    formSesi.value = blankForm();
+    errors.value = {};
     isModalTambahOpen.value = true;
 };
-
-const isFormSesiValid = computed(() => {
-    return (
-        formSesi.value.tanggal !== '' &&
-        formSesi.value.pembimbing !== '' &&
-        formSesi.value.bab !== '' &&
-        formSesi.value.rangkuman.trim() !== ''
-    );
-});
-
+const isFormSesiValid = computed(
+    () =>
+        !!formSesi.value.tanggal &&
+        !!formSesi.value.bab &&
+        !!formSesi.value.rangkuman.trim(),
+);
 const saveSesiBimbingan = () => {
-    if (!isFormSesiValid.value || !selectedAdvisee.value) return;
-
-    const nextNo = selectedAdvisee.value.sesiList.length + 1;
-    const newSesi: BimbinganSesi = {
-        id: Date.now(),
-        no: nextNo,
-        tanggal: formSesi.value.tanggal,
-        pembimbing: formSesi.value.pembimbing,
-        bab: formSesi.value.bab,
-        rangkuman: formSesi.value.rangkuman,
-        catatanDosen:
-            formSesi.value.catatanDosen || 'Disetujui oleh dosen pembimbing.',
-        statusParaf: 'Disetujui',
-        tglParaf: 'Hari ini',
-    };
-
-    selectedAdvisee.value.sesiList.push(newSesi);
-    isModalTambahOpen.value = false;
-
+    if (
+        processing.value ||
+        !isFormSesiValid.value ||
+        !advisees.value.some((a) => a.id === formStudentId.value)
+    )
+        return;
+    beginRequest();
     router.post(
         '/dosen/bimbingan/sesi',
         {
-            mahasiswa_id: selectedAdvisee.value.id,
+            mahasiswa_id: formStudentId.value,
             tanggal: formSesi.value.tanggal,
-            rangkuman: `${formSesi.value.bab}: ${formSesi.value.rangkuman}`,
-            keterangan: 'Sesi bimbingan resmi portal dosen',
-            catatan_dosen:
-                formSesi.value.catatanDosen ||
-                'Disetujui oleh dosen pembimbing.',
+            rangkuman: formSesi.value.rangkuman,
+            keterangan: formSesi.value.bab,
+            catatan_dosen: formSesi.value.catatanDosen,
         },
-        {
-            preserveScroll: true,
-            onError: () => {},
-        },
+        requestOptions(() => {
+            isModalTambahOpen.value = false;
+        }),
     );
-
-    showToast(`Sesi bimbingan ke-${nextNo} berhasil dicatat dan diparaf!`);
 };
 </script>
 
@@ -241,11 +196,8 @@ const saveSesiBimbingan = () => {
                     <Button
                         variant="outline"
                         size="sm"
-                        @click="
-                            showToast(
-                                'Mencetak Lembar Kendali Bimbingan TA-04 format PDF...',
-                            )
-                        "
+                        :disabled="true"
+                        title="Cetak lembar kendali belum tersedia"
                     >
                         <Printer class="mr-1.5 h-4 w-4" />
                         Cetak Lembar Kendali
@@ -254,6 +206,7 @@ const saveSesiBimbingan = () => {
                         variant="primary"
                         size="sm"
                         @click="openModalTambahSesi"
+                        :disabled="processing || !selectedAdvisee"
                     >
                         <Plus class="mr-1.5 h-4 w-4" />
                         Catat Sesi Baru
@@ -270,6 +223,19 @@ const saveSesiBimbingan = () => {
             {{ toast }}
         </div>
 
+        <p class="text-xs text-slate-500">
+            Hanya sesi dosen ini untuk penugasan judul disetujui. Ambang
+            kelayakan belum tersedia; sesi disetujui bukan penetapan kelayakan
+            sidang.
+        </p>
+        <p
+            v-for="(message, field) in errors"
+            :key="field"
+            role="alert"
+            class="text-xs text-rose-700"
+        >
+            {{ message }}
+        </p>
         <!-- 4 Metric Cards -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card class="flex items-center justify-between p-4">
@@ -299,12 +265,12 @@ const saveSesiBimbingan = () => {
                     <p
                         class="text-[11px] font-bold tracking-wider text-emerald-600 uppercase"
                     >
-                        Memenuhi Syarat (≥ 8x)
+                        Sesi Disetujui Dosen Ini
                     </p>
                     <p
                         class="mt-1 text-2xl font-black text-emerald-600 dark:text-emerald-400"
                     >
-                        {{ mhsEligibleCount }} Mhs
+                        {{ approvedGlobal }} Sesi
                     </p>
                 </div>
                 <div
@@ -391,6 +357,16 @@ const saveSesiBimbingan = () => {
                     />
                 </div>
 
+                <p
+                    v-if="!filteredAdvisees.length"
+                    class="text-xs text-slate-500"
+                >
+                    {{
+                        searchQuery
+                            ? 'Pencarian tidak menemukan mahasiswa.'
+                            : 'Belum ada mahasiswa bimbingan dengan judul disetujui.'
+                    }}
+                </p>
                 <div class="space-y-2">
                     <button
                         v-for="mhs in filteredAdvisees"
@@ -412,8 +388,7 @@ const saveSesiBimbingan = () => {
                                     {{ mhs.nama }}
                                 </p>
                                 <p class="text-[10px] text-slate-500">
-                                    NIM: {{ mhs.nim }} • Angkatan
-                                    {{ mhs.angkatan }}
+                                    NIM: {{ mhs.nim ?? '—' }}
                                 </p>
                             </div>
                             <span
@@ -434,48 +409,10 @@ const saveSesiBimbingan = () => {
                             {{ mhs.judul }}
                         </p>
 
-                        <!-- Progress Sesi Bar -->
-                        <div class="mt-3 space-y-1">
-                            <div
-                                class="flex items-center justify-between text-[10px]"
-                            >
-                                <span class="font-bold text-slate-500">
-                                    Progress: {{ mhs.sesiList.length }} / 8 Sesi
-                                </span>
-                                <span
-                                    class="font-extrabold"
-                                    :class="
-                                        mhs.sesiList.length >= 8
-                                            ? 'text-emerald-600 dark:text-emerald-400'
-                                            : 'text-amber-600 dark:text-amber-400'
-                                    "
-                                >
-                                    {{
-                                        Math.min(
-                                            Math.round(
-                                                (mhs.sesiList.length / 8) * 100,
-                                            ),
-                                            100,
-                                        )
-                                    }}%
-                                </span>
-                            </div>
-                            <div
-                                class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
-                            >
-                                <div
-                                    class="h-full rounded-full transition-all duration-300"
-                                    :class="
-                                        mhs.sesiList.length >= 8
-                                            ? 'bg-emerald-500'
-                                            : 'bg-amber-500'
-                                    "
-                                    :style="{
-                                        width: `${Math.min((mhs.sesiList.length / 8) * 100, 100)}%`,
-                                    }"
-                                />
-                            </div>
-                        </div>
+                        <p class="mt-3 text-xs text-slate-500">
+                            {{ approvedCount(mhs) }} sesi disetujui •
+                            {{ mhs.sesiList.length }} sesi tercatat
+                        </p>
                     </button>
                 </div>
             </div>
@@ -494,16 +431,6 @@ const saveSesiBimbingan = () => {
                                 >
                                     {{ selectedAdvisee.nama }}
                                 </h2>
-                                <span
-                                    class="rounded-full px-2 py-0.5 text-[10px] font-bold"
-                                    :class="[
-                                        selectedAdvisee.sesiList.length >= 8
-                                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300'
-                                            : 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
-                                    ]"
-                                >
-                                    {{ selectedAdvisee.statusSyarat }}
-                                </span>
                             </div>
                             <p class="mt-1 text-xs text-slate-500">
                                 NIM: {{ selectedAdvisee.nim }} • Peran:
@@ -516,6 +443,7 @@ const saveSesiBimbingan = () => {
                                 size="sm"
                                 variant="outline"
                                 @click="openModalTambahSesi"
+                                :disabled="processing || !selectedAdvisee"
                             >
                                 <Plus class="mr-1 h-3.5 w-3.5" />
                                 Tambah Sesi
@@ -558,7 +486,7 @@ const saveSesiBimbingan = () => {
                             :key="log.id"
                             class="relative rounded-2xl border p-4 transition-all"
                             :class="[
-                                log.statusParaf !== 'Disetujui'
+                                log.status !== 'delivered'
                                     ? 'border-amber-300 bg-amber-50/40 dark:border-amber-800/60 dark:bg-amber-950/20'
                                     : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0E1626]',
                             ]"
@@ -576,7 +504,7 @@ const saveSesiBimbingan = () => {
                                         <span
                                             class="text-xs font-extrabold text-slate-900 dark:text-white"
                                         >
-                                            {{ log.bab }}
+                                            {{ log.keterangan }}
                                         </span>
                                         <span class="text-xs text-slate-400"
                                             >•</span
@@ -591,24 +519,29 @@ const saveSesiBimbingan = () => {
 
                                 <div class="flex items-center gap-2">
                                     <span
-                                        v-if="log.statusParaf === 'Disetujui'"
+                                        v-if="log.status === 'delivered'"
                                         class="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
                                     >
                                         <Check class="h-3 w-3" /> Diparaf Dosen
-                                        ({{ log.tglParaf }})
                                     </span>
                                     <span
                                         v-else
                                         class="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-950 dark:text-amber-300"
                                     >
-                                        <Clock class="h-3 w-3" /> Menunggu Paraf
+                                        <Clock class="h-3 w-3" />
+                                        {{
+                                            log.status === 'ditolak'
+                                                ? 'Ditolak'
+                                                : 'Menunggu Konfirmasi'
+                                        }}
                                     </span>
 
                                     <Button
-                                        v-if="log.statusParaf !== 'Disetujui'"
+                                        v-if="log.status !== 'delivered'"
                                         size="sm"
                                         variant="primary"
                                         @click="quickParafSesi(log)"
+                                        :disabled="processing"
                                     >
                                         <PenTool class="mr-1 h-3 w-3" />
                                         Paraf
@@ -668,9 +601,20 @@ const saveSesiBimbingan = () => {
     <Modal
         :show="showApprovalModal"
         max-width="lg"
-        @close="showApprovalModal = false"
+        @close="!processing && (showApprovalModal = false)"
     >
         <div class="p-6">
+            <p v-if="toast" role="status" class="text-xs text-slate-700">
+                {{ toast }}
+            </p>
+            <p
+                v-for="(message, field) in errors"
+                :key="field"
+                role="alert"
+                class="text-xs text-rose-700"
+            >
+                {{ message }}
+            </p>
             <div
                 class="flex items-center justify-between border-b border-slate-200 pb-3 dark:border-slate-800"
             >
@@ -680,7 +624,7 @@ const saveSesiBimbingan = () => {
                 <button
                     type="button"
                     class="cursor-pointer text-slate-400 hover:text-slate-600"
-                    @click="showApprovalModal = false"
+                    @click="!processing && (showApprovalModal = false)"
                 >
                     <X class="h-4 w-4" />
                 </button>
@@ -725,7 +669,7 @@ const saveSesiBimbingan = () => {
                     <label
                         class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                     >
-                        Catatan & Arahan Pembimbing (Wajib)
+                        Catatan & Arahan Pembimbing (Opsional)
                     </label>
                     <textarea
                         v-model="feedbackInput"
@@ -737,10 +681,17 @@ const saveSesiBimbingan = () => {
             </div>
 
             <div class="mt-6 flex justify-end gap-2">
-                <Button variant="secondary" @click="showApprovalModal = false">
+                <Button
+                    variant="secondary"
+                    @click="!processing && (showApprovalModal = false)"
+                >
                     Batal
                 </Button>
-                <Button variant="primary" @click="submitReview">
+                <Button
+                    variant="primary"
+                    @click="submitReview"
+                    :disabled="processing"
+                >
                     Simpan & Beri Paraf Digital
                 </Button>
             </div>
@@ -751,9 +702,20 @@ const saveSesiBimbingan = () => {
     <Modal
         :show="isModalTambahOpen"
         max-width="lg"
-        @close="isModalTambahOpen = false"
+        @close="!processing && (isModalTambahOpen = false)"
     >
         <div class="space-y-4 p-6">
+            <p v-if="toast" role="status" class="text-xs text-slate-700">
+                {{ toast }}
+            </p>
+            <p
+                v-for="(message, field) in errors"
+                :key="field"
+                role="alert"
+                class="text-xs text-rose-700"
+            >
+                {{ message }}
+            </p>
             <div
                 class="flex items-center justify-between border-b border-slate-200 pb-3 dark:border-slate-800"
             >
@@ -763,7 +725,7 @@ const saveSesiBimbingan = () => {
                 <button
                     type="button"
                     class="cursor-pointer text-slate-400 hover:text-slate-600"
-                    @click="isModalTambahOpen = false"
+                    @click="!processing && (isModalTambahOpen = false)"
                 >
                     <X class="h-4 w-4" />
                 </button>
@@ -781,19 +743,6 @@ const saveSesiBimbingan = () => {
                         <input
                             v-model="formSesi.tanggal"
                             type="date"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        />
-                    </div>
-
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            Dosen Pembimbing
-                        </label>
-                        <input
-                            v-model="formSesi.pembimbing"
-                            type="text"
                             class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         />
                     </div>
@@ -858,12 +807,15 @@ const saveSesiBimbingan = () => {
             <div
                 class="flex justify-end gap-2 border-t border-slate-200 pt-3 dark:border-slate-800"
             >
-                <Button variant="outline" @click="isModalTambahOpen = false">
+                <Button
+                    variant="outline"
+                    @click="!processing && (isModalTambahOpen = false)"
+                >
                     Batal
                 </Button>
                 <Button
                     variant="primary"
-                    :disabled="!isFormSesiValid"
+                    :disabled="processing || !isFormSesiValid"
                     @click="saveSesiBimbingan"
                 >
                     Simpan Sesi

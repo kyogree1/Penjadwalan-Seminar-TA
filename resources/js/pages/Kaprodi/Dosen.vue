@@ -1,14 +1,8 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import {
-    Award,
     Building2,
-    Check,
-    Download,
     Edit3,
-    FileSpreadsheet,
-    FileText,
-    Filter,
     GraduationCap,
     Laptop,
     Plus,
@@ -16,302 +10,194 @@ import {
     Search,
     Trash2,
     Upload,
-    Users,
-    X,
 } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-
+import { computed, ref, watch } from 'vue';
 import Button from '@/Components/Button.vue';
 import Card from '@/Components/Card.vue';
 import Modal from '@/Components/Modal.vue';
+import LecturerCsvImport from '@/Components/LecturerCsvImport.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
-import { mockMasterDosenList } from '@/data/kaprodi/dosen';
-import type { MasterDosen } from '@/types/models';
+import type {
+    LecturerDirectoryEntry,
+    LecturerDirectoryProps,
+} from '@/types/kaprodi-dosen';
 
-const props = withDefaults(
-    defineProps<{
-        dosenList?: MasterDosen[];
-    }>(),
-    {
-        dosenList: () => mockMasterDosenList,
-    },
-);
-
-const dosenList = ref<MasterDosen[]>([...props.dosenList]);
-
+const props = defineProps<LecturerDirectoryProps>();
+const dosenList = computed(() => props.dosenList);
 const searchQuery = ref('');
 const filterProdi = ref('all');
 const filterJabatan = ref('all');
-const filterRole = ref('all');
-
-const filteredDosenList = computed(() => {
-    return dosenList.value.filter((dosen) => {
-        const query = searchQuery.value.toLowerCase().trim();
-        const matchSearch =
-            !query ||
-            dosen.nama.toLowerCase().includes(query) ||
-            dosen.nip.toLowerCase().includes(query) ||
-            dosen.email.toLowerCase().includes(query) ||
-            dosen.bidangKeahlian.toLowerCase().includes(query);
-
-        let matchProdi = true;
-        if (filterProdi.value === 'Informatika') {
-            matchProdi =
-                dosen.prodi === 'Informatika' && dosen.tipe === 'Internal ITK';
-        } else if (filterProdi.value === 'lintas') {
-            matchProdi =
-                dosen.prodi !== 'Informatika' ||
-                dosen.tipe === 'Dosen Eksternal';
-        }
-
-        const matchJabatan =
-            filterJabatan.value === 'all' ||
-            dosen.jabatanAkademik === filterJabatan.value;
-        const matchRole =
-            filterRole.value === 'all' || dosen.role === filterRole.value;
-
-        return matchSearch && matchProdi && matchJabatan && matchRole;
-    });
-});
-
-// Pagination
+const prodiOptions = computed(() =>
+    [...new Set(dosenList.value.map((d) => d.prodi))].sort(),
+);
+const jabatanOptions = computed(() =>
+    [
+        ...new Set(
+            dosenList.value.flatMap((d) => (d.jabatan ? [d.jabatan] : [])),
+        ),
+    ].sort(),
+);
+const filteredDosenList = computed(() =>
+    dosenList.value.filter((d) => {
+        const query = searchQuery.value.trim().toLowerCase();
+        return (
+            [d.name, d.nip, d.email].some((value) =>
+                (value ?? '').toLowerCase().includes(query),
+            ) &&
+            (filterProdi.value === 'all' || d.prodi === filterProdi.value) &&
+            (filterJabatan.value === 'all' || d.jabatan === filterJabatan.value)
+        );
+    }),
+);
 const currentPage = ref(1);
 const pageSize = 8;
 const totalPages = computed(() =>
     Math.max(1, Math.ceil(filteredDosenList.value.length / pageSize)),
 );
-const paginatedDosenList = computed(() => {
-    const start = (currentPage.value - 1) * pageSize;
-    return filteredDosenList.value.slice(start, start + pageSize);
-});
+watch(
+    [searchQuery, filterProdi, filterJabatan],
+    () => {
+        currentPage.value = 1;
+    },
+    { flush: 'sync' },
+);
+watch(
+    totalPages,
+    (pages) => {
+        currentPage.value = Math.min(currentPage.value, pages);
+    },
+    { flush: 'sync' },
+);
+const paginatedDosenList = computed(() =>
+    filteredDosenList.value.slice(
+        (currentPage.value - 1) * pageSize,
+        currentPage.value * pageSize,
+    ),
+);
 const paginationStart = computed(() =>
-    filteredDosenList.value.length === 0
-        ? 0
-        : (currentPage.value - 1) * pageSize + 1,
+    filteredDosenList.value.length ? (currentPage.value - 1) * pageSize + 1 : 0,
 );
 const paginationEnd = computed(() =>
     Math.min(currentPage.value * pageSize, filteredDosenList.value.length),
 );
-
-// KPI Stats
 const totalDosenCount = computed(() => dosenList.value.length);
-const internalIfCount = computed(
-    () =>
-        dosenList.value.filter(
-            (d) => d.prodi === 'Informatika' && d.tipe === 'Internal ITK',
-        ).length,
+const prodiCount = computed(() => prodiOptions.value.length);
+const jabatanCount = computed(
+    () => dosenList.value.filter((d) => d.jabatan).length,
 );
-const externalCount = computed(
-    () =>
-        dosenList.value.filter(
-            (d) => d.prodi !== 'Informatika' || d.tipe === 'Dosen Eksternal',
-        ).length,
-);
-const avgQuotaLoad = computed(() => {
-    if (dosenList.value.length === 0) return 0;
-    const sum = dosenList.value.reduce((acc, d) => acc + d.currentQuota, 0);
-    return (sum / dosenList.value.length).toFixed(1);
-});
-
 const resetFilter = () => {
     searchQuery.value = '';
     filterProdi.value = 'all';
     filterJabatan.value = 'all';
-    filterRole.value = 'all';
     currentPage.value = 1;
 };
-
-// Styling Helpers
-const getProdiBadgeClass = (prodi: string) => {
-    if (prodi === 'Informatika')
-        return 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800';
-    if (prodi.includes('Industri') || prodi.includes('Migas'))
-        return 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800';
-    return 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800';
-};
-
-const getRoleBadgeClass = (role: string) => {
-    if (role === 'Koorprodi')
-        return 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300';
-    if (role === 'Tim KBK')
-        return 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300';
-    if (role === 'Penguji Eksternal')
-        return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300';
-    return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
-};
-
-const getQuotaStatusColor = (current: number, max: number) => {
-    const ratio = current / max;
-    if (ratio >= 1) return 'text-rose-600 dark:text-rose-400';
-    if (ratio >= 0.8) return 'text-amber-600 dark:text-amber-400';
-    return 'text-emerald-600 dark:text-emerald-400';
-};
-
-const getQuotaBarColor = (current: number, max: number) => {
-    const ratio = current / max;
-    if (ratio >= 1) return 'bg-rose-500';
-    if (ratio >= 0.8) return 'bg-amber-500';
-    return 'bg-emerald-500';
-};
-
-// Toast
-const toast = ref('');
-const showToast = (msg: string) => {
-    toast.value = msg;
-    setTimeout(() => {
-        toast.value = '';
-    }, 3500);
-};
-
-// Modal Tambah / Edit
+const showImport = ref(false);
 const isModalFormOpen = ref(false);
-const isEditing = ref(false);
 const editingDosenId = ref<number | null>(null);
-
-const formDosen = ref<{
-    nama: string;
-    email: string;
-    nip: string;
-    jabatanAkademik: string;
-    tipe: 'Internal ITK' | 'Dosen Eksternal';
-    prodi: string;
-    asalInstansi: string;
-    role: string;
-    maxQuota: number;
-    bidangKeahlian: string;
-}>({
-    nama: '',
+const isEditing = computed(() => editingDosenId.value !== null);
+const blankForm = () => ({
+    name: '',
     email: '',
     nip: '',
-    jabatanAkademik: '',
-    tipe: 'Internal ITK',
-    prodi: 'Informatika',
-    asalInstansi: '',
-    role: 'Dosen',
-    maxQuota: 10,
-    bidangKeahlian: '',
+    prodi: '',
+    jabatan: '',
 });
-
+const formDosen = ref(blankForm());
+const errors = ref<Record<string, string>>({});
+const processing = ref(false);
+const feedback = ref('');
+const feedbackError = ref(false);
 const openModalTambah = () => {
-    isEditing.value = false;
+    if (processing.value) return;
     editingDosenId.value = null;
-    formDosen.value = {
-        nama: '',
-        email: '',
-        nip: '',
-        jabatanAkademik: 'Lektor',
-        tipe: 'Internal ITK',
-        prodi: 'Informatika',
-        asalInstansi: '',
-        role: 'Dosen',
-        maxQuota: 10,
-        bidangKeahlian: '',
-    };
+    formDosen.value = blankForm();
+    errors.value = {};
+    feedback.value = '';
     isModalFormOpen.value = true;
 };
-
-const openModalEdit = (dosen: MasterDosen) => {
-    isEditing.value = true;
+const openModalEdit = (dosen: LecturerDirectoryEntry) => {
+    if (processing.value) return;
     editingDosenId.value = dosen.id;
     formDosen.value = {
-        nama: dosen.nama,
+        name: dosen.name,
         email: dosen.email,
-        nip: dosen.nip,
-        jabatanAkademik: dosen.jabatanAkademik,
-        tipe: dosen.tipe,
+        nip: dosen.nip ?? '',
         prodi: dosen.prodi,
-        asalInstansi: dosen.asalInstansi || '',
-        role: dosen.role,
-        maxQuota: dosen.maxQuota,
-        bidangKeahlian: dosen.bidangKeahlian,
+        jabatan: dosen.jabatan ?? '',
     };
+    errors.value = {};
+    feedback.value = '';
     isModalFormOpen.value = true;
 };
-
 const closeModalForm = () => {
-    isModalFormOpen.value = false;
+    if (!processing.value) isModalFormOpen.value = false;
 };
-
-const isFormValid = computed(() => {
-    return (
-        formDosen.value.nama.trim() !== '' &&
-        formDosen.value.email.trim() !== '' &&
-        formDosen.value.nip.trim() !== '' &&
-        formDosen.value.jabatanAkademik !== '' &&
-        formDosen.value.bidangKeahlian.trim() !== ''
-    );
+const isFormValid = computed(() =>
+    ['name', 'email', 'nip', 'prodi'].every((key) =>
+        formDosen.value[key as keyof typeof formDosen.value].trim(),
+    ),
+);
+const requestOptions = (closeForm = false) => ({
+    preserveScroll: true,
+    onSuccess: (page: { props: Record<string, unknown> }) => {
+        const flash = page.props.flash as
+            | LecturerDirectoryProps['flash']
+            | undefined;
+        feedback.value =
+            flash?.error ||
+            flash?.success ||
+            'Konfirmasi penyimpanan dari server belum tersedia.';
+        feedbackError.value = !flash?.success || !!flash?.error;
+        if (closeForm && flash?.success && !flash?.error)
+            isModalFormOpen.value = false;
+    },
+    onError: (serverErrors: Record<string, string>) => {
+        errors.value = serverErrors;
+        feedbackError.value = true;
+        feedback.value =
+            'Permintaan gagal. Periksa pesan kesalahan dan coba lagi.';
+    },
+    onNetworkError: () => {
+        feedbackError.value = true;
+        feedback.value = 'Koneksi gagal. Data belum dikonfirmasi tersimpan.';
+        return false;
+    },
+    onHttpException: () => {
+        feedbackError.value = true;
+        feedback.value =
+            'Server tidak dapat memproses permintaan. Data belum dikonfirmasi tersimpan.';
+        return false;
+    },
+    onFinish: () => {
+        processing.value = false;
+    },
 });
-
 const saveDosen = () => {
-    if (!isFormValid.value) return;
-
-    if (isEditing.value && editingDosenId.value !== null) {
-        const idx = dosenList.value.findIndex(
-            (d) => d.id === editingDosenId.value,
+    if (processing.value || !isFormValid.value) return;
+    processing.value = true;
+    errors.value = {};
+    feedback.value = '';
+    const payload = { ...formDosen.value };
+    if (editingDosenId.value !== null)
+        router.put(
+            `/kaprodi/dosen/${editingDosenId.value}`,
+            payload,
+            requestOptions(true),
         );
-        if (idx !== -1) {
-            dosenList.value[idx] = {
-                ...dosenList.value[idx],
-                nama: formDosen.value.nama,
-                email: formDosen.value.email,
-                nip: formDosen.value.nip,
-                jabatanAkademik: formDosen.value.jabatanAkademik,
-                tipe: formDosen.value.tipe,
-                prodi:
-                    formDosen.value.tipe === 'Dosen Eksternal'
-                        ? formDosen.value.asalInstansi || 'Eksternal'
-                        : formDosen.value.prodi,
-                asalInstansi: formDosen.value.asalInstansi,
-                role: formDosen.value.role,
-                maxQuota: formDosen.value.maxQuota,
-                bidangKeahlian: formDosen.value.bidangKeahlian,
-            };
-            showToast(
-                `Data dosen "${formDosen.value.nama}" berhasil diperbarui!`,
-            );
-        }
-    } else {
-        const newDosen: MasterDosen = {
-            id: Math.max(0, ...dosenList.value.map((d) => d.id)) + 1,
-            nama: formDosen.value.nama,
-            email: formDosen.value.email,
-            nip: formDosen.value.nip,
-            jabatanAkademik: formDosen.value.jabatanAkademik,
-            tipe: formDosen.value.tipe,
-            prodi:
-                formDosen.value.tipe === 'Dosen Eksternal'
-                    ? formDosen.value.asalInstansi || 'Eksternal'
-                    : formDosen.value.prodi,
-            asalInstansi: formDosen.value.asalInstansi,
-            role: formDosen.value.role,
-            bidangKeahlian: formDosen.value.bidangKeahlian,
-            currentQuota: 0,
-            maxQuota: formDosen.value.maxQuota,
-            status: 'Aktif',
-        };
-        dosenList.value.unshift(newDosen);
-        showToast(`Dosen baru "${formDosen.value.nama}" berhasil ditambahkan!`);
-    }
-    closeModalForm();
+    else router.post('/kaprodi/dosen', payload, requestOptions(true));
 };
-
-const confirmDeleteDosen = (dosen: MasterDosen) => {
+const confirmDeleteDosen = (dosen: LecturerDirectoryEntry) => {
     if (
-        confirm(`Apakah Anda yakin ingin menghapus data dosen "${dosen.nama}"?`)
-    ) {
-        dosenList.value = dosenList.value.filter((d) => d.id !== dosen.id);
-        showToast(`Dosen "${dosen.nama}" berhasil dihapus.`);
-    }
-};
-
-// Modal Import
-const isModalImportOpen = ref(false);
-const openModalImport = () => {
-    isModalImportOpen.value = true;
-};
-const processImport = () => {
-    isModalImportOpen.value = false;
-    showToast('Data dosen dari berkas eksternal berhasil diimpor!');
+        processing.value ||
+        !confirm(
+            `Apakah Anda yakin ingin menghapus data dosen "${dosen.name}"?`,
+        )
+    )
+        return;
+    processing.value = true;
+    errors.value = {};
+    feedback.value = '';
+    router.delete(`/kaprodi/dosen/${dosen.id}`, requestOptions());
 };
 </script>
 
@@ -319,25 +205,28 @@ const processImport = () => {
     <Head title="Data Master Dosen • Kaprodi IF ITK" />
 
     <div class="space-y-6">
+        <LecturerCsvImport v-if="showImport" />
         <PageHeaderBox
             badge="Manajemen Data Pengajar & Penguji"
-            title="Data Master Dosen & Kuota Beban Menguji"
-            description="Kelola data dosen pembimbing & penguji, asal program studi/instansi, serta batas beban menguji untuk optimasi Algoritma Genetika."
+            title="Data Master Dosen"
+            description="Kelola identitas, program studi, email, dan jabatan dosen yang tersimpan."
         >
             <template #action>
                 <div class="flex items-center gap-2">
                     <Button
                         variant="outline"
                         size="sm"
-                        @click="openModalImport"
+                        :disabled="processing"
+                        @click="showImport = !showImport"
                     >
                         <Upload class="mr-1.5 h-4 w-4" />
-                        Import Data
+                        Import CSV
                     </Button>
                     <Button
                         variant="primary"
                         size="sm"
                         @click="openModalTambah"
+                        :disabled="processing"
                     >
                         <Plus class="mr-1.5 h-4 w-4" />
                         Tambah Dosen
@@ -348,13 +237,23 @@ const processImport = () => {
 
         <!-- Toast Notice -->
         <div
-            v-if="toast"
+            v-if="feedback || flash.error || flash.success"
+            role="status"
+            :class="
+                (feedback ? feedbackError : !!flash.error)
+                    ? 'text-rose-700'
+                    : 'text-emerald-800'
+            "
             class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/60 dark:text-emerald-300"
         >
-            {{ toast }}
+            {{ feedback || flash.error || flash.success }}
         </div>
 
-        <!-- 4 KPI SUMMARY CARDS -->
+        <p class="text-xs text-slate-500">
+            XLSX, kuota menguji, bidang keahlian, dan metadata instansi
+            eksternal belum tersedia.
+        </p>
+        <!-- Summary of persisted directory fields -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <!-- Total Dosen -->
             <Card class="flex items-center justify-between p-4">
@@ -385,12 +284,12 @@ const processImport = () => {
                     <p
                         class="text-[11px] font-bold tracking-wider text-blue-600 uppercase"
                     >
-                        Dosen Informatika ITK
+                        Program Studi Terdata
                     </p>
                     <p
                         class="mt-1 text-2xl font-black text-blue-600 dark:text-blue-400"
                     >
-                        {{ internalIfCount }}
+                        {{ prodiCount }}
                     </p>
                 </div>
                 <div
@@ -408,12 +307,12 @@ const processImport = () => {
                     <p
                         class="text-[11px] font-bold tracking-wider text-amber-600 uppercase"
                     >
-                        Lintas Prodi / Mitra
+                        Jabatan Terisi
                     </p>
                     <p
                         class="mt-1 text-2xl font-black text-amber-600 dark:text-amber-400"
                     >
-                        {{ externalCount }}
+                        {{ jabatanCount }}
                     </p>
                 </div>
                 <div
@@ -431,15 +330,12 @@ const processImport = () => {
                     <p
                         class="text-[11px] font-bold tracking-wider text-emerald-600 uppercase"
                     >
-                        Rata-rata Beban Uji (GA)
+                        Kuota Menguji
                     </p>
                     <p
                         class="mt-1 text-2xl font-black text-emerald-600 dark:text-emerald-400"
                     >
-                        {{ avgQuotaLoad }}
-                        <span class="text-xs font-normal text-slate-400"
-                            >/ 10</span
-                        >
+                        Belum tersedia
                     </p>
                 </div>
                 <div
@@ -468,48 +364,6 @@ const processImport = () => {
                             ({{ filteredDosenList.length }} data terfilter)
                         </span>
                     </div>
-
-                    <!-- Prodi Filter Pills -->
-                    <div
-                        class="flex items-center gap-1.5 overflow-x-auto text-xs"
-                    >
-                        <button
-                            type="button"
-                            class="cursor-pointer rounded-xl px-3 py-1.5 font-bold whitespace-nowrap transition-all"
-                            :class="[
-                                filterProdi === 'all'
-                                    ? 'bg-blue-600 text-white shadow-2xs'
-                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300',
-                            ]"
-                            @click="filterProdi = 'all'"
-                        >
-                            Semua Prodi
-                        </button>
-                        <button
-                            type="button"
-                            class="cursor-pointer rounded-xl px-3 py-1.5 font-bold whitespace-nowrap transition-all"
-                            :class="[
-                                filterProdi === 'Informatika'
-                                    ? 'bg-blue-600 text-white shadow-2xs'
-                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300',
-                            ]"
-                            @click="filterProdi = 'Informatika'"
-                        >
-                            Informatika
-                        </button>
-                        <button
-                            type="button"
-                            class="cursor-pointer rounded-xl px-3 py-1.5 font-bold whitespace-nowrap transition-all"
-                            :class="[
-                                filterProdi === 'lintas'
-                                    ? 'bg-amber-600 text-white shadow-2xs'
-                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300',
-                            ]"
-                            @click="filterProdi = 'lintas'"
-                        >
-                            Lintas Prodi / Eksternal
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Search Bar & Dropdowns -->
@@ -523,35 +377,37 @@ const processImport = () => {
                         <input
                             v-model="searchQuery"
                             type="text"
-                            placeholder="Cari dosen berdasarkan nama, NIP, email, atau bidang..."
+                            placeholder="Cari dosen berdasarkan nama, NIP, atau email..."
                             class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-9 text-xs text-slate-800 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
                         />
                     </div>
 
                     <select
-                        v-model="filterJabatan"
-                        class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                        v-model="filterProdi"
+                        aria-label="Filter program studi"
+                        class="rounded-xl border border-slate-200 p-2 text-xs dark:border-slate-700 dark:bg-slate-800"
                     >
-                        <option value="all">Semua Jabatan Akademik</option>
-                        <option value="Guru Besar">Guru Besar</option>
-                        <option value="Lektor Kepala">Lektor Kepala</option>
-                        <option value="Lektor">Lektor</option>
-                        <option value="Asisten Ahli">Asisten Ahli</option>
-                        <option value="Tenaga Pengajar">Tenaga Pengajar</option>
-                        <option value="Praktisi Ahli">Praktisi Ahli</option>
+                        <option value="all">Semua Prodi</option>
+                        <option
+                            v-for="prodi in prodiOptions"
+                            :key="prodi"
+                            :value="prodi"
+                        >
+                            {{ prodi }}
+                        </option>
                     </select>
-
                     <select
-                        v-model="filterRole"
-                        class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                        v-model="filterJabatan"
+                        aria-label="Filter jabatan"
+                        class="rounded-xl border border-slate-200 p-2 text-xs dark:border-slate-700 dark:bg-slate-800"
                     >
-                        <option value="all">Semua Role</option>
-                        <option value="Koorprodi">Koorprodi</option>
-                        <option value="Tim KBK">Tim KBK</option>
-                        <option value="Dosen">Dosen Biasa</option>
-                        <option value="Dosen Penguji">Dosen Penguji</option>
-                        <option value="Penguji Eksternal">
-                            Penguji Eksternal
+                        <option value="all">Semua Jabatan</option>
+                        <option
+                            v-for="jabatan in jabatanOptions"
+                            :key="jabatan"
+                            :value="jabatan"
+                        >
+                            {{ jabatan }}
                         </option>
                     </select>
                 </div>
@@ -570,12 +426,10 @@ const processImport = () => {
                                 NIP
                             </th>
                             <th class="min-w-[140px] px-3 py-3.5">
-                                PRODI / INSTANSI
+                                PROGRAM STUDI
                             </th>
-                            <th class="min-w-[110px] px-3 py-3.5">ROLE</th>
-                            <th class="min-w-[140px] px-3 py-3.5">
-                                BEBAN MENGUJI (GA)
-                            </th>
+
+                            <th class="min-w-[140px] px-3 py-3.5">JABATAN</th>
                             <th class="min-w-[180px] px-3 py-3.5">EMAIL</th>
                             <th class="w-24 px-3 py-3.5 text-center">AKSI</th>
                         </tr>
@@ -598,31 +452,18 @@ const processImport = () => {
                                 <p
                                     class="leading-snug font-bold text-slate-900 dark:text-white"
                                 >
-                                    {{ dosen.nama }}
+                                    {{ dosen.name }}
                                 </p>
-                                <div
-                                    class="mt-0.5 flex items-center gap-1.5 text-[10px] text-slate-400"
-                                >
-                                    <span>{{ dosen.jabatanAkademik }}</span>
-                                    <span>•</span>
-                                    <span
-                                        class="max-w-[150px] truncate font-medium text-blue-600 dark:text-blue-400"
-                                        :title="dosen.bidangKeahlian"
-                                    >
-                                        {{ dosen.bidangKeahlian }}
-                                    </span>
-                                </div>
                             </td>
 
                             <td
                                 class="px-3 py-3.5 font-mono whitespace-nowrap text-slate-600 dark:text-slate-400"
                             >
-                                {{ dosen.nip }}
+                                {{ dosen.nip ?? 'Belum tersedia' }}
                             </td>
 
                             <td class="px-3 py-3.5">
                                 <span
-                                    :class="getProdiBadgeClass(dosen.prodi)"
                                     class="inline-block rounded-full px-2.5 py-1 text-[10px] font-bold"
                                 >
                                     {{ dosen.prodi }}
@@ -630,60 +471,7 @@ const processImport = () => {
                             </td>
 
                             <td class="px-3 py-3.5">
-                                <span
-                                    :class="getRoleBadgeClass(dosen.role)"
-                                    class="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold"
-                                >
-                                    {{ dosen.role }}
-                                </span>
-                            </td>
-
-                            <td class="px-3 py-3.5">
-                                <div class="space-y-1">
-                                    <div
-                                        class="flex items-center justify-between text-[10px]"
-                                    >
-                                        <span
-                                            class="font-bold text-slate-700 dark:text-slate-300"
-                                        >
-                                            {{ dosen.currentQuota }} /
-                                            {{ dosen.maxQuota }} Mhs
-                                        </span>
-                                        <span
-                                            :class="
-                                                getQuotaStatusColor(
-                                                    dosen.currentQuota,
-                                                    dosen.maxQuota,
-                                                )
-                                            "
-                                            class="font-black"
-                                        >
-                                            {{
-                                                Math.round(
-                                                    (dosen.currentQuota /
-                                                        dosen.maxQuota) *
-                                                        100,
-                                                )
-                                            }}%
-                                        </span>
-                                    </div>
-                                    <div
-                                        class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
-                                    >
-                                        <div
-                                            class="h-full rounded-full transition-all duration-300"
-                                            :class="
-                                                getQuotaBarColor(
-                                                    dosen.currentQuota,
-                                                    dosen.maxQuota,
-                                                )
-                                            "
-                                            :style="{
-                                                width: `${Math.min((dosen.currentQuota / dosen.maxQuota) * 100, 100)}%`,
-                                            }"
-                                        />
-                                    </div>
-                                </div>
+                                {{ dosen.jabatan ?? 'Belum tersedia' }}
                             </td>
 
                             <td
@@ -708,6 +496,7 @@ const processImport = () => {
                                         type="button"
                                         class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg bg-blue-600 text-white shadow-2xs transition-transform hover:bg-blue-500 active:scale-90"
                                         title="Edit Dosen"
+                                        :disabled="processing"
                                         @click="openModalEdit(dosen)"
                                     >
                                         <Edit3 class="h-3.5 w-3.5" />
@@ -716,6 +505,7 @@ const processImport = () => {
                                         type="button"
                                         class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg bg-rose-600 text-white shadow-2xs transition-transform hover:bg-rose-500 active:scale-90"
                                         title="Hapus Dosen"
+                                        :disabled="processing"
                                         @click="confirmDeleteDosen(dosen)"
                                     >
                                         <Trash2 class="h-3.5 w-3.5" />
@@ -725,7 +515,7 @@ const processImport = () => {
                         </tr>
 
                         <tr v-if="filteredDosenList.length === 0">
-                            <td colspan="8" class="p-12 text-center">
+                            <td colspan="7" class="p-12 text-center">
                                 <div
                                     class="flex flex-col items-center justify-center space-y-3"
                                 >
@@ -738,7 +528,11 @@ const processImport = () => {
                                         <p
                                             class="text-sm font-bold text-slate-800 dark:text-slate-200"
                                         >
-                                            Dosen Tidak Ditemukan
+                                            {{
+                                                dosenList.length
+                                                    ? 'Dosen Tidak Ditemukan'
+                                                    : 'Belum ada dosen terdaftar'
+                                            }}
                                         </p>
                                         <p class="text-xs text-slate-400">
                                             Tidak ada pengajar yang cocok dengan
@@ -818,285 +612,82 @@ const processImport = () => {
         </Card>
     </div>
 
-    <!-- MODAL TAMBAH / EDIT DOSEN -->
     <Modal :show="isModalFormOpen" max-width="xl" @close="closeModalForm">
-        <div class="space-y-4 overflow-hidden p-6">
+        <form class="space-y-4 p-6" @submit.prevent="saveDosen">
+            <h3 class="text-base font-bold">
+                {{ isEditing ? 'Edit Data Dosen' : 'Tambah Data Dosen' }}
+            </h3>
+            <p class="text-xs text-slate-500">
+                NIP juga digunakan sebagai username akun dosen.
+            </p>
             <div
-                class="flex items-center justify-between border-b border-slate-200 pb-3 dark:border-slate-800"
+                v-for="field in [
+                    'name',
+                    'email',
+                    'nip',
+                    'prodi',
+                    'jabatan',
+                ] as const"
+                :key="field"
+                class="space-y-1"
             >
-                <h3 class="text-base font-bold text-slate-900 dark:text-white">
-                    {{ isEditing ? 'Edit Data Dosen' : 'Tambah Data Dosen' }}
-                </h3>
-                <button
-                    type="button"
-                    class="cursor-pointer text-slate-400 hover:text-slate-600"
-                    @click="closeModalForm"
+                <label
+                    :for="`dosen-${field}`"
+                    class="block text-xs font-bold"
+                    >{{
+                        {
+                            name: 'Nama Lengkap beserta Gelar',
+                            email: 'Email Akademik',
+                            nip: 'NIP',
+                            prodi: 'Program Studi',
+                            jabatan: 'Jabatan (opsional)',
+                        }[field]
+                    }}</label
                 >
-                    <X class="h-4 w-4" />
-                </button>
+                <input
+                    :id="`dosen-${field}`"
+                    v-model="formDosen[field]"
+                    :type="field === 'email' ? 'email' : 'text'"
+                    :required="field !== 'jabatan'"
+                    :maxlength="
+                        field === 'nip'
+                            ? 50
+                            : field === 'prodi' || field === 'jabatan'
+                              ? 100
+                              : 255
+                    "
+                    :disabled="processing"
+                    :aria-invalid="!!errors[field]"
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs dark:border-slate-700 dark:bg-slate-800"
+                />
+                <p
+                    v-if="errors[field]"
+                    role="alert"
+                    class="text-xs text-rose-600"
+                >
+                    {{ errors[field] }}
+                </p>
             </div>
-
-            <div class="space-y-4 text-xs">
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            Nama Lengkap beserta Gelar
-                            <span class="text-rose-500">*</span>
-                        </label>
-                        <input
-                            v-model="formDosen.nama"
-                            type="text"
-                            placeholder="Contoh: Dr. Budi Santoso, M.Kom."
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        />
-                    </div>
-
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            Email Akademik / Instansi
-                            <span class="text-rose-500">*</span>
-                        </label>
-                        <input
-                            v-model="formDosen.email"
-                            type="email"
-                            placeholder="contoh@lecturer.itk.ac.id"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            NIP / NUPTK / ID Eksternal
-                            <span class="text-rose-500">*</span>
-                        </label>
-                        <input
-                            v-model="formDosen.nip"
-                            type="text"
-                            placeholder="Masukkan NIP atau NUPTK"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-mono text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        />
-                    </div>
-
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            Jabatan Akademik
-                            <span class="text-rose-500">*</span>
-                        </label>
-                        <select
-                            v-model="formDosen.jabatanAkademik"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        >
-                            <option value="Guru Besar">Guru Besar</option>
-                            <option value="Lektor Kepala">Lektor Kepala</option>
-                            <option value="Lektor">Lektor</option>
-                            <option value="Asisten Ahli">Asisten Ahli</option>
-                            <option value="Tenaga Pengajar">
-                                Tenaga Pengajar
-                            </option>
-                            <option value="Praktisi Ahli">Praktisi Ahli</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Tipe Dosen Selection -->
-                <div class="flex items-center gap-4 pt-1">
-                    <label
-                        class="inline-flex cursor-pointer items-center gap-2 font-semibold text-slate-700 dark:text-slate-300"
-                    >
-                        <input
-                            v-model="formDosen.tipe"
-                            type="radio"
-                            value="Internal ITK"
-                            class="text-blue-600 focus:ring-blue-500"
-                        />
-                        <span>Dosen Internal ITK</span>
-                    </label>
-                    <label
-                        class="inline-flex cursor-pointer items-center gap-2 font-semibold text-slate-700 dark:text-slate-300"
-                    >
-                        <input
-                            v-model="formDosen.tipe"
-                            type="radio"
-                            value="Dosen Eksternal"
-                            class="text-blue-600 focus:ring-blue-500"
-                        />
-                        <span>Dosen Lintas Prodi / Eksternal</span>
-                    </label>
-                </div>
-
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            Program Studi (Internal)
-                        </label>
-                        <select
-                            v-model="formDosen.prodi"
-                            :disabled="formDosen.tipe === 'Dosen Eksternal'"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden disabled:opacity-40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        >
-                            <option value="Informatika">Informatika</option>
-                            <option value="Sistem Informasi">
-                                Sistem Informasi
-                            </option>
-                            <option value="Teknik Mesin">Teknik Mesin</option>
-                            <option value="Teknik Perkapalan">
-                                Teknik Perkapalan
-                            </option>
-                            <option value="Teknik Biomedis">
-                                Teknik Biomedis
-                            </option>
-                            <option value="Teknik Elektro">
-                                Teknik Elektro
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            Asal Instansi (Eksternal)
-                        </label>
-                        <input
-                            v-model="formDosen.asalInstansi"
-                            :disabled="formDosen.tipe === 'Internal ITK'"
-                            type="text"
-                            placeholder="Contoh: PT. Pertamina, Unmul, dll."
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden disabled:opacity-40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            Role Akademik
-                        </label>
-                        <select
-                            v-model="formDosen.role"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        >
-                            <option value="Dosen">Dosen Biasa</option>
-                            <option value="Koorprodi">Koorprodi</option>
-                            <option value="Tim KBK">Tim KBK</option>
-                            <option value="Dosen Penguji">Dosen Penguji</option>
-                            <option value="Penguji Eksternal">
-                                Penguji Eksternal
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-1">
-                        <label
-                            class="font-bold text-slate-700 dark:text-slate-300"
-                        >
-                            Batas Kuota Menguji
-                            <span
-                                class="font-normal text-blue-600 dark:text-blue-400"
-                                >(Variabel GA)</span
-                            >
-                        </label>
-                        <input
-                            v-model.number="formDosen.maxQuota"
-                            type="number"
-                            min="1"
-                            max="25"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-mono text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        />
-                    </div>
-                </div>
-
-                <div class="space-y-1">
-                    <label class="font-bold text-slate-700 dark:text-slate-300">
-                        Bidang Keahlian / KBK
-                        <span class="text-rose-500">*</span>
-                    </label>
-                    <input
-                        v-model="formDosen.bidangKeahlian"
-                        type="text"
-                        placeholder="Contoh: Artificial Intelligence, Cyber Security, Software Engineering"
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                    />
-                </div>
-            </div>
-
-            <div
-                class="flex justify-end gap-2 border-t border-slate-200 pt-3 dark:border-slate-800"
-            >
-                <Button variant="outline" @click="closeModalForm">
-                    Batal
-                </Button>
+            <div class="flex justify-end gap-2">
+                <Button
+                    variant="outline"
+                    :disabled="processing"
+                    @click="closeModalForm"
+                    >Batal</Button
+                >
                 <Button
                     variant="primary"
-                    :disabled="!isFormValid"
+                    :disabled="processing || !isFormValid"
                     @click="saveDosen"
+                    >{{
+                        processing
+                            ? 'Menyimpan...'
+                            : isEditing
+                              ? 'Simpan Perubahan'
+                              : 'Tambah Dosen'
+                    }}</Button
                 >
-                    {{ isEditing ? 'Simpan Perubahan' : 'Tambah Dosen' }}
-                </Button>
             </div>
-        </div>
-    </Modal>
-
-    <!-- MODAL IMPORT DATA DOSEN -->
-    <Modal
-        :show="isModalImportOpen"
-        max-width="md"
-        @close="isModalImportOpen = false"
-    >
-        <div class="space-y-4 p-6">
-            <div
-                class="flex items-center justify-between border-b border-slate-200 pb-3 dark:border-slate-800"
-            >
-                <h3 class="text-base font-bold text-slate-900 dark:text-white">
-                    Import Data Dosen
-                </h3>
-                <button
-                    type="button"
-                    class="cursor-pointer text-slate-400 hover:text-slate-600"
-                    @click="isModalImportOpen = false"
-                >
-                    <X class="h-4 w-4" />
-                </button>
-            </div>
-
-            <div
-                class="cursor-pointer space-y-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center transition-colors hover:border-blue-500 dark:border-slate-700 dark:bg-slate-800/40"
-                @click="processImport"
-            >
-                <div class="flex justify-center">
-                    <FileSpreadsheet class="h-10 w-10 text-emerald-600" />
-                </div>
-                <p class="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    Pilih berkas CSV atau Excel (.xlsx)
-                </p>
-                <p class="text-[11px] text-slate-400">
-                    Format kolom: Nama, NIP, Prodi, Email, Jabatan, Bidang,
-                    Kuota
-                </p>
-            </div>
-
-            <div class="flex justify-end gap-2 pt-2">
-                <Button variant="outline" @click="isModalImportOpen = false">
-                    Tutup
-                </Button>
-                <Button variant="primary" @click="processImport">
-                    Proses Import
-                </Button>
-            </div>
-        </div>
+        </form>
     </Modal>
 </template>

@@ -100,8 +100,8 @@ const queues = computed(() => [
                     v-if="props.deadlines === null"
                     class="mt-4 text-xs text-slate-500"
                 >
-                    Data batas waktu periode belum tersedia. Sistem belum
-                    menyimpan periode akademik dan tenggat pendaftaran.
+                    Data batas waktu periode belum tersedia di dashboard ini.
+                    Kelola periode penjadwalan melalui menu Penjadwalan.
                 </p>
             </Card>
         </div>
@@ -120,7 +120,7 @@ const queues = computed(() => [
                     },
                     {
                         href: '/kaprodi/persetujuan',
-                        title: 'Validasi Judul & SK Pembimbing',
+                        title: 'Review Judul & Pembimbing',
                         icon: ShieldCheck,
                     },
                 ]"

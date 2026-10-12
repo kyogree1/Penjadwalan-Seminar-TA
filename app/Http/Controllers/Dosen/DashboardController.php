@@ -16,8 +16,8 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         // Cari sesi bimbingan menunggu paraf
-        $pendingBimbingan = Bimbingan::where('pembimbing_id', $user->id)
-            ->where('status_paraf', 'menunggu')
+        $pendingBimbingan = Bimbingan::where('dosen_id', $user->id)
+            ->where('status', 'process')
             ->count();
 
         // Cari jadwal menguji mendatang
@@ -25,6 +25,7 @@ class DashboardController extends Controller
             $q->where('penguji_1_id', $user->id)
                 ->orWhere('penguji_2_id', $user->id);
         })
+            ->where('status', 'terpublikasi')
             ->where('tanggal', '>=', now()->toDateString())
             ->count();
 
