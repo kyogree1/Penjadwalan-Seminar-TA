@@ -13,6 +13,10 @@ Laravel 13 + Inertia + Vue 3 + Tailwind 4 + MySQL.
 
 ## Setup pertama kali
 
+> Kalau database `seminar_ta` + `seminar_ta_test` dan user `seminar` sudah ada
+> (misal mesin ini dipakai sebelumnya), lewati bagian buat-DB di bawah —
+> langsung ke `composer setup`.
+
 ### Linux
 
 ```bash
