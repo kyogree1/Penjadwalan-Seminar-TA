@@ -142,6 +142,32 @@ class CsvRealDataSeeder extends Seeder
                 'catatan' => 'Seminar proposal dijadwalkan secara resmi.',
             ]
         );
+
+        // 5. Jadwal Sidang Akmal (Terjadwal & Terpublikasi)
+        $u3 = User::where('role', 'dosen')->whereNotIn('id', array_filter([$p1?->id, $p2?->id, $u1?->id, $u2?->id]))->first() ?? $u1;
+        $u4 = User::where('role', 'dosen')->whereNotIn('id', array_filter([$p1?->id, $p2?->id, $u1?->id, $u2?->id, $u3?->id]))->first() ?? $u2;
+
+        Penjadwalan::updateOrCreate(
+            [
+                'tipe' => 'sidang',
+                'pendaftaran_id' => $sidang->id,
+                'mahasiswa_id' => $akmal->id,
+            ],
+            [
+                'ruangan_id' => $ruang?->id,
+                'pembimbing_1_id' => $p1?->id,
+                'pembimbing_2_id' => $p2?->id,
+                'penguji_1_id' => $u3?->id,
+                'penguji_2_id' => $u4?->id,
+                'tanggal' => now()->addDays(12)->toDateString(),
+                'jam_mulai' => '13:00:00',
+                'jam_selesai' => '15:00:00',
+                'mode' => 'offline',
+                'gelombang' => 1,
+                'status' => 'terpublikasi',
+                'catatan' => 'Sidang tugas akhir dijadwalkan secara resmi.',
+            ]
+        );
     }
 
     private function seedFixedRoles(): void

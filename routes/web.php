@@ -11,6 +11,7 @@ use App\Http\Controllers\Kaprodi\PenjadwalanController as KaprodiPenjadwalanCont
 use App\Http\Controllers\Kaprodi\PersetujuanController as KaprodiPersetujuanController;
 use App\Http\Controllers\Kaprodi\ScheduleExportController;
 use App\Http\Controllers\Mahasiswa\BimbinganController;
+use App\Http\Controllers\KatalogController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJadwalController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJudulController;
@@ -41,7 +42,7 @@ Route::middleware('guest')->group(function () {
 // 2. Authenticated Routes
 Route::middleware('auth')->group(function () {
     // Common academic references
-    Route::inertia('/katalog', 'Katalog/Index')->name('katalog');
+    Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog');
     Route::inertia('/panduan', 'Panduan/Index')->name('panduan');
     Route::inertia('/prosedur', 'Prosedur/Index')->name('prosedur');
 

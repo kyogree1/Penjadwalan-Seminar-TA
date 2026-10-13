@@ -56,16 +56,16 @@ const isPengajuanActive = computed(
         <div class="flex min-h-0 flex-1 flex-col">
             <!-- Brand Header -->
             <div
-                class="flex h-16 shrink-0 items-center justify-between border-b border-slate-800/80 px-4"
+                class="flex h-16 shrink-0 items-center justify-between border-b border-slate-800/80 px-3"
             >
                 <Link
                     :href="roleInfo.homePath"
-                    class="flex items-center gap-3 overflow-hidden"
+                    class="flex items-center gap-2.5 overflow-hidden"
                 >
                     <div
                         class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/30"
                     >
-                        <GraduationCap class="h-5 w-5" />
+                        <GraduationCap class="h-5 w-5 shrink-0" />
                     </div>
                     <div v-if="!collapsed" class="min-w-0">
                         <h1
@@ -83,7 +83,7 @@ const isPengajuanActive = computed(
 
                 <button
                     type="button"
-                    class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+                    class="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
                     :title="collapsed ? 'Buka Sidebar' : 'Tutup Sidebar'"
                     :aria-label="
                         collapsed ? 'Perluas navigasi' : 'Ringkas navigasi'
@@ -95,16 +95,6 @@ const isPengajuanActive = computed(
                         :class="{ 'rotate-180': collapsed }"
                     />
                 </button>
-            </div>
-
-            <!-- Role Badge -->
-            <div v-if="!collapsed" class="shrink-0 px-4 pt-3 pb-1">
-                <div
-                    class="rounded-xl border px-3 py-1.5 text-center text-[10px] font-bold"
-                    :class="roleInfo.color"
-                >
-                    {{ roleInfo.title }}
-                </div>
             </div>
 
             <!-- Navigation Links -->

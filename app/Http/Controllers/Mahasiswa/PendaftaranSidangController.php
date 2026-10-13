@@ -94,7 +94,7 @@ class PendaftaranSidangController extends Controller
         $validated = $request->validate([
             'judul_ta' => ['required', 'string', 'max:255'],
             'lokasi_mitra' => ['nullable', 'string', 'max:255'],
-            'skor_iaet' => ['nullable'],
+            'skor_iaet' => ['required', 'numeric', 'min:0'],
             'skor_iaet_file' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
             'draft_laporan_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'turnitin_file' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
@@ -127,6 +127,7 @@ class PendaftaranSidangController extends Controller
             array_merge([
                 'judul_ta' => $validated['judul_ta'],
                 'lokasi_mitra' => $validated['lokasi_mitra'] ?? null,
+                'skor_iaet' => $validated['skor_iaet'] ?? null,
                 'gelombang' => $wave,
                 'status' => 'menunggu',
                 'status_akademik' => 'menunggu',

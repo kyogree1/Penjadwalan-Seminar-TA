@@ -12,8 +12,6 @@ import ScheduleDetailModal, {
 
 const activeTab = ref('registrants');
 const search = ref('');
-const period = ref('Semua');
-const wave = ref('Semua');
 const selectedSchedule = ref<ScheduleDetail | null>(null);
 const showDetail = ref(false);
 
@@ -127,8 +125,6 @@ const filteredSchedules = computed(() => {
     return schedules.value.filter((item) => {
         return (
             item.type === activeTab.value &&
-            (period.value === 'Semua' || item.period === period.value) &&
-            (wave.value === 'Semua' || item.wave === wave.value) &&
             (!query ||
                 `${item.studentName} ${item.nim} ${item.title}`
                     .toLowerCase()
@@ -157,27 +153,10 @@ const openDetail = (item: ScheduleDetail) => {
                     class="absolute top-2.5 left-3 h-4 w-4 text-slate-400"
                 /><input
                     v-model="search"
-                    placeholder="Cari nama, NIM, atau judul"
-                    class="w-full rounded-xl border border-slate-300 py-2 pr-3 pl-9 text-sm dark:border-slate-700 dark:bg-slate-900"
+                    placeholder="Cari nama, NIM, atau judul tugas akhir..."
+                    class="w-full rounded-xl border border-slate-300 py-2.5 pr-3 pl-9 text-sm dark:border-slate-700 dark:bg-slate-900"
                 />
             </div>
-            <select
-                v-if="activeTab !== 'registrants'"
-                v-model="period"
-                class="rounded-xl border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
-            >
-                <option>Semua</option>
-                <option disabled>Periode belum tersedia</option>
-            </select>
-            <select
-                v-if="activeTab !== 'registrants'"
-                v-model="wave"
-                class="rounded-xl border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
-            >
-                <option>Semua</option>
-                <option>1</option>
-                <option>2</option>
-            </select>
         </div>
         <div
             class="overflow-x-auto rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0E1626]"
@@ -203,7 +182,6 @@ const openDetail = (item: ScheduleDetail) => {
                             }}
                         </th>
                         <th class="p-4">Status</th>
-                        <th class="p-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -212,10 +190,19 @@ const openDetail = (item: ScheduleDetail) => {
                             ? filteredRegistrants
                             : filteredSchedules"
                         :key="item.nim"
-                        :class="
+                        :class="[
+                            'transition-colors',
+                            activeTab !== 'registrants'
+                                ? 'cursor-pointer hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
+                                : '',
                             'own' in item && item.own
                                 ? 'bg-blue-50/50 dark:bg-blue-950/20'
-                                : ''
+                                : '',
+                        ]"
+                        @click="
+                            activeTab !== 'registrants'
+                                ? openDetail(item as ScheduleDetail)
+                                : undefined
                         "
                     >
                         <template v-if="activeTab === 'registrants'"
@@ -235,10 +222,7 @@ const openDetail = (item: ScheduleDetail) => {
                                     >{{ item.status }}</span
                                 >
                             </td>
-                            <td class="p-4 text-slate-500">
-                                Data pendaftaran
-                            </td></template
-                        >
+                        </template>
                         <template v-else
                             ><td class="p-4">
                                 <p
@@ -278,16 +262,7 @@ const openDetail = (item: ScheduleDetail) => {
                                     >{{ item.status }}</span
                                 >
                             </td>
-                            <td class="p-4">
-                                <button
-                                    type="button"
-                                    class="font-semibold text-blue-600 hover:underline"
-                                    @click="openDetail(item as ScheduleDetail)"
-                                >
-                                    Detail
-                                </button>
-                            </td></template
-                        >
+                        </template>
                     </tr>
                     <tr
                         v-if="
@@ -297,7 +272,7 @@ const openDetail = (item: ScheduleDetail) => {
                             ).length === 0
                         "
                     >
-                        <td colspan="5" class="p-10 text-center text-slate-500">
+                        <td colspan="4" class="p-10 text-center text-slate-500">
                             Tidak ada data yang sesuai.
                         </td>
                     </tr>

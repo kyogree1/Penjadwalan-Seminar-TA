@@ -15,6 +15,7 @@ interface Props {
         id?: number;
         judul_ta?: string;
         lokasi_mitra?: string;
+        skor_iaet?: number | string | null;
         status?: string;
         skor_iaet_file?: string;
         draft_laporan_file?: string;
@@ -68,7 +69,7 @@ const studentInitials = computed(() => {
 
 const form = useForm({
     judul_ta: props.sidang?.judul_ta || props.defaultJudul || '',
-    skor_iaet: '' as number | string,
+    skor_iaet: (props.sidang?.skor_iaet ?? '') as number | string,
     lokasi_mitra: props.sidang?.lokasi_mitra || '',
     draft_laporan_file: null as File | null,
     turnitin_file: null as File | null,
@@ -78,6 +79,7 @@ watch(
     () => [props.sidang, props.defaultJudul] as const,
     ([record, title]) => {
         form.judul_ta = record?.judul_ta ?? title ?? '';
+        form.skor_iaet = record?.skor_iaet ?? '';
         form.lokasi_mitra = record?.lokasi_mitra ?? '';
     },
 );
@@ -176,10 +178,12 @@ const validationErrors = computed(() => ({
     draft_laporan_file: fileError(form.draft_laporan_file),
     turnitin_file: fileError(form.turnitin_file, 5),
     skor_iaet:
-        form.skor_iaet !== '' &&
-        (!Number.isFinite(Number(form.skor_iaet)) || Number(form.skor_iaet) < 0)
-            ? 'Skor IAET harus berupa angka nol atau lebih.'
-            : '',
+        form.skor_iaet === '' || form.skor_iaet === null
+            ? 'Skor IAET wajib diisi.'
+            : !Number.isFinite(Number(form.skor_iaet)) ||
+                Number(form.skor_iaet) < 0
+              ? 'Skor IAET harus berupa angka nol atau lebih.'
+              : '',
 }));
 const isFormValid = computed(() =>
     Object.values(validationErrors.value).every((error) => !error),
@@ -199,12 +203,16 @@ const submitSidang = () => {
         return;
     }
     if (
-        form.skor_iaet !== '' &&
-        (!Number.isFinite(Number(form.skor_iaet)) || Number(form.skor_iaet) < 0)
+        form.skor_iaet === '' ||
+        form.skor_iaet === null ||
+        !Number.isFinite(Number(form.skor_iaet)) ||
+        Number(form.skor_iaet) < 0
     ) {
         form.setError(
             'skor_iaet',
-            'Skor IAET harus berupa angka nol atau lebih.',
+            form.skor_iaet === '' || form.skor_iaet === null
+                ? 'Skor IAET wajib diisi.'
+                : 'Skor IAET harus berupa angka nol atau lebih.',
         );
         return;
     }
@@ -312,25 +320,39 @@ const submitSidang = () => {
                                 for="skor-iaet"
                                 class="block text-sm font-bold text-slate-800 dark:text-slate-200"
                             >
-                                Skor IAET Terbaru (Opsional)
+                                Skor IAET Terbaru
+                                <span class="text-rose-500">*</span>
                             </label>
                             <input
                                 id="skor-iaet"
-                                v-model.number="form.skor_iaet"
-                                disabled
-                                title="Skor numerik belum memiliki kontrak penyimpanan"
-                                type="number"
-                                min="0"
-                                step="any"
-                                placeholder="Masukkan skor IAET"
-                                class="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                                :aria-invalid="!!form.errors.skor_iaet"
+                                v-model="form.skor_iaet"
+                                type="text"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                placeholder="Masukkan skor IAET (contoh: 450)"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                :aria-invalid="
+                                    !!form.errors.skor_iaet ||
+                                    !!validationErrors.skor_iaet
+                                "
+                                @input="
+                                    (e: any) =>
+                                        (form.skor_iaet =
+                                            e.target.value.replace(/\D/g, ''))
+                                "
                             />
                             <p
-                                v-if="form.errors.skor_iaet"
+                                v-if="
+                                    form.errors.skor_iaet ||
+                                    (form.skor_iaet !== '' &&
+                                        validationErrors.skor_iaet)
+                                "
                                 class="text-xs text-rose-600"
                             >
-                                {{ form.errors.skor_iaet }}
+                                {{
+                                    form.errors.skor_iaet ||
+                                    validationErrors.skor_iaet
+                                }}
                             </p>
                         </div>
 
@@ -430,9 +452,8 @@ const submitSidang = () => {
                             class="rounded-xl bg-blue-50 p-3 text-sm text-blue-800 dark:bg-blue-950/30 dark:text-blue-200"
                             role="status"
                         >
-                            Lengkapi berkas bertanda * dengan PDF yang valid
-                            (maksimal 10 MB) sebelum mengajukan. Skor IAET dan
-                            lokasi penelitian opsional.
+                            Lengkapi skor IAET dan berkas bertanda * dengan PDF
+                            yang valid (maksimal 10 MB) sebelum mengajukan.
                         </p>
                         <!-- Submit Button -->
                         <div class="flex justify-end pt-2">

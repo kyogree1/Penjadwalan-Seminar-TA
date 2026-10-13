@@ -101,7 +101,11 @@ class TrackHBoundaryTest extends TestCase
         $student = User::factory()->create(['role' => 'mahasiswa']);
         foreach (['sempro' => 'proposal_file', 'sidang' => 'draft_laporan_file'] as $type => $field) {
             SchedulePeriod::create(['name' => 'Upload wave', 'tipe' => $type, 'gelombang' => 1, 'capacity' => 10, 'start_date' => '2026-11-01', 'end_date' => '2026-11-02', 'slots' => [], 'is_open' => true]);
-            $this->actingAs($student)->post('/pendaftaran/'.$type, ['judul_ta' => 'Private draft', 'bentuk_ta' => 'Skripsi', $field => UploadedFile::fake()->create('document.pdf', 10, 'application/pdf')])->assertSessionHas('success');
+            $payload = ['judul_ta' => 'Private draft', 'bentuk_ta' => 'Skripsi', $field => UploadedFile::fake()->create('document.pdf', 10, 'application/pdf')];
+            if ($type === 'sidang') {
+                $payload['skor_iaet'] = 500;
+            }
+            $this->actingAs($student)->post('/pendaftaran/'.$type, $payload)->assertSessionHas('success');
             $model = $type === 'sempro' ? PendaftaranSempro::class : PendaftaranSidang::class;
             $path = $model::firstOrFail()->{$field};
             Storage::disk('local')->assertExists($path);

@@ -34,6 +34,12 @@ interface SkripsiItem {
     doi: string;
 }
 
+interface Props {
+    items?: SkripsiItem[];
+}
+
+const props = defineProps<Props>();
+
 const selectedItem = ref<SkripsiItem | null>(null);
 const activeTab = ref<'id' | 'en'>('id');
 const searchQuery = ref('');
@@ -42,6 +48,40 @@ const filterBidang = ref('');
 const filterProdi = ref('');
 const filterMetode = ref('');
 const sortBy = ref('terbaru');
+const onlyBookmarks = ref(false);
+const bookmarkedIds = ref<number[]>([]);
+
+// Muat bookmark dari localStorage
+if (typeof window !== 'undefined') {
+    try {
+        const saved = localStorage.getItem('katalog_bookmarks');
+        if (saved) {
+            bookmarkedIds.value = JSON.parse(saved);
+        }
+    } catch {
+        bookmarkedIds.value = [];
+    }
+}
+
+const toggleBookmark = (id: number) => {
+    if (bookmarkedIds.value.includes(id)) {
+        bookmarkedIds.value = bookmarkedIds.value.filter((item) => item !== id);
+    } else {
+        bookmarkedIds.value.push(id);
+    }
+    if (typeof window !== 'undefined') {
+        try {
+            localStorage.setItem(
+                'katalog_bookmarks',
+                JSON.stringify(bookmarkedIds.value),
+            );
+        } catch {
+            // ignore
+        }
+    }
+};
+
+const isBookmarked = (id: number) => bookmarkedIds.value.includes(id);
 
 const filteredSkripsiList = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
@@ -58,6 +98,7 @@ const filteredSkripsiList = computed(() => {
                 .join(' ')
                 .toLowerCase();
             return (
+                (!onlyBookmarks.value || isBookmarked(item.id)) &&
                 (!query || searchable.includes(query)) &&
                 (!filterTahun.value || item.tahun === filterTahun.value) &&
                 (!filterBidang.value || item.bidang === filterBidang.value) &&
@@ -73,7 +114,7 @@ const filteredSkripsiList = computed(() => {
         });
 });
 
-const skripsiList = computed<SkripsiItem[]>(() => []);
+const skripsiList = computed<SkripsiItem[]>(() => props.items ?? []);
 
 const openDetail = (item: SkripsiItem) => {
     selectedItem.value = item;
@@ -191,7 +232,29 @@ const closeDetail = () => {
                 <div
                     class="flex items-center justify-between pt-1 text-[11px] text-slate-500"
                 >
-                    <span>Menampilkan seluruh katalog publik</span>
+                    <div class="flex items-center gap-2">
+                        <button
+                            type="button"
+                            :class="[
+                                'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold transition-all',
+                                onlyBookmarks
+                                    ? 'bg-amber-500 text-white shadow-xs'
+                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
+                            ]"
+                            @click="onlyBookmarks = !onlyBookmarks"
+                        >
+                            <Bookmark
+                                class="h-3.5 w-3.5"
+                                :class="{ 'fill-current': onlyBookmarks }"
+                            />
+                            <span>Tersimpan ({{ bookmarkedIds.length }})</span>
+                        </button>
+                        <span>{{
+                            onlyBookmarks
+                                ? 'Menampilkan referensi tersimpan'
+                                : 'Menampilkan seluruh katalog publik'
+                        }}</span>
+                    </div>
                     <span
                         >Menampilkan {{ filteredSkripsiList.length }} dari
                         {{ skripsiList.length }} tugas akhir</span
@@ -221,10 +284,25 @@ const closeDetail = () => {
                             </span>
                             <button
                                 type="button"
-                                class="rounded-full bg-white/20 p-1.5 backdrop-blur-md hover:bg-white/40"
-                                title="Simpan Bookmark"
+                                :class="[
+                                    'rounded-full p-1.5 backdrop-blur-md transition-all',
+                                    isBookmarked(item.id)
+                                        ? 'bg-amber-500 text-white shadow-sm'
+                                        : 'bg-white/20 text-white hover:bg-white/40',
+                                ]"
+                                :title="
+                                    isBookmarked(item.id)
+                                        ? 'Hapus dari Tersimpan'
+                                        : 'Simpan Bookmark'
+                                "
+                                @click.stop="toggleBookmark(item.id)"
                             >
-                                <Bookmark class="h-4 w-4" />
+                                <Bookmark
+                                    class="h-4 w-4"
+                                    :class="{
+                                        'fill-current': isBookmarked(item.id),
+                                    }"
+                                />
                             </button>
                         </div>
                     </div>
@@ -487,7 +565,7 @@ const closeDetail = () => {
                                     <p
                                         class="font-bold text-slate-900 dark:text-white"
                                     >
-                                        S1 {{ selectedItem.prodi }}
+                                        {{ selectedItem.prodi }}
                                     </p>
                                     <p class="text-[10px] text-slate-500">
                                         Fakultas Sains & Teknologi Informasi

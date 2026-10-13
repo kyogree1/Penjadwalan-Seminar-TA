@@ -16,6 +16,7 @@ class PendaftaranSidang extends Model
         'mahasiswa_id',
         'judul_ta',
         'lokasi_mitra',
+        'skor_iaet',
         'skor_iaet_file',
         'draft_laporan_file',
         'turnitin_file',

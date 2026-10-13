@@ -17,6 +17,7 @@ class PendaftaranSempro extends Model
         'judul_ta',
         'bentuk_ta',
         'lokasi_mitra',
+        'skor_iaet',
         'lembar_kehadiran_file',
         'proposal_file',
         'turnitin_file',
