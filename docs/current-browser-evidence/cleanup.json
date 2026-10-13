@@ -1,0 +1,9 @@
+{
+    "serverStopped": true,
+    "port": 8897,
+    "disposableDatabaseRemoved": true,
+    "privateDocumentsRemoved": true,
+    "sessionsRemoved": true,
+    "browserStorageStatesRemoved": true,
+    "remainingScratch": ["node_modules", "package-lock.json", "package.json"]
+}

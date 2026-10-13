@@ -7,6 +7,7 @@ use App\Models\PengajuanJudul;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -37,21 +38,15 @@ class PendaftaranJudulController extends Controller
         $validated = $request->validate([
             'judul_ta' => ['required', 'string', 'max:255'],
             'bidang_penelitian' => ['required', 'string', 'max:100'],
-            'pembimbing_1' => ['nullable'],
-            'pembimbing_2' => ['nullable'],
+            'pembimbing_1' => ['nullable', 'integer', Rule::exists('users', 'id')->where('role', 'dosen')],
+            'pembimbing_2' => ['nullable', 'integer', 'different:pembimbing_1', Rule::exists('users', 'id')->where('role', 'dosen')],
             'telah_konsultasi' => ['boolean'],
         ]);
 
         $user = Auth::user();
 
-        // Cari ID dosen jika dikirim nama atau ID
-        $pemb1Id = is_numeric($validated['pembimbing_1'] ?? null) 
-            ? (int) $validated['pembimbing_1'] 
-            : User::where('role', 'dosen')->where('name', $validated['pembimbing_1'] ?? '')->value('id');
-
-        $pemb2Id = is_numeric($validated['pembimbing_2'] ?? null) 
-            ? (int) $validated['pembimbing_2'] 
-            : User::where('role', 'dosen')->where('name', $validated['pembimbing_2'] ?? '')->value('id');
+        $pemb1Id = $validated['pembimbing_1'] ?? null;
+        $pemb2Id = $validated['pembimbing_2'] ?? null;
 
         PengajuanJudul::updateOrCreate(
             ['mahasiswa_id' => $user->id],
@@ -62,6 +57,8 @@ class PendaftaranJudulController extends Controller
                 'pembimbing_2_id' => $pemb2Id,
                 'telah_konsultasi' => $validated['telah_konsultasi'] ?? false,
                 'status' => 'menunggu',
+                'disetujui_oleh' => null,
+                'disetujui_at' => null,
             ]
         );
 

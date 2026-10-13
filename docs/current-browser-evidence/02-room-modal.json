@@ -1,0 +1,336 @@
+{
+    "label": "02-room-modal",
+    "url": "http://127.0.0.1:8897/tendik/ruangan",
+    "body": "Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Tendik\nDashboard Tendik\nVerifikasi Berkas\nJadwal Ruangan\nBerita Acara & SK\nKelola Mahasiswa\nPanduan Website\nDashboard\nTenaga Kependidikan & Admin\nLight mode\nSN\nSiti Nurhaliza, S.Kom.\nNIP: 199208192018032001\nLog Out\nKelola Ruangan\nTambah Ruangan\n\nFasilitas terstruktur dan agenda pemakaian harian tidak tersedia pada halaman ini. Manajemen link hybrid ruangan belum tersedia; link online tersimpan per jadwal, bukan per ruangan.\n\nRuang Lab Jaringan & Keamanan Siber\n\nGedung: Gedung B • Lantai: Lantai 3\n\nKapasitas: 25\n\nTersedia\n\nCatatan: —\n\nEdit\nHapus\nRuang Lab Riset Multimedia\n\nGedung: Gedung A • Lantai: Lantai 2\n\nKapasitas: 30\n\nTersedia\n\nCatatan: —\n\nEdit\nHapus\nRuang Sidang Utama Informatika\n\nGedung: Gedung A • Lantai: Lantai 3\n\nKapasitas: 40\n\nTersedia\n\nCatatan: —\n\nEdit\nHapus\nPanduan Layanan\n•\nSOP & Prosedur TA\n\n© 2026 Program Studi Informatika ITK • SIPTA IF\n\nPanduan layanan akademik\nTambah Ruangan\nNama ruangan\nGedung\nLantai\nKapasitas\nStatus\nTersedia\nTidak tersedia\nCatatan\nBatal\nSimpan",
+    "controls": [
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lewati ke konten utama",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "#main-content"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SIPTA IF\n\nInformatika ITK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "Tutup Sidebar",
+            "aria": "Ringkas navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Dashboard Tendik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/dashboard"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Verifikasi Berkas",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/verifikasi"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Jadwal Ruangan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/ruangan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Berita Acara & SK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/arsip"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Kelola Mahasiswa",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/mahasiswa"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Website",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Buka navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Light mode",
+            "name": "",
+            "title": "",
+            "aria": "Beralih ke mode gelap",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SN\nSiti Nurhaliza, S.Kom.\nNIP: 199208192018032001",
+            "name": "",
+            "title": "",
+            "aria": "Profil akun",
+            "href": "/profile"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Log Out",
+            "name": "",
+            "title": "Keluar (Log Out)",
+            "aria": "Keluar (Log Out)",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Tambah Ruangan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Edit",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Hapus",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Edit",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Hapus",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Edit",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Hapus",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Layanan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SOP & Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan layanan akademik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Tutup dialog",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "INPUT",
+            "type": "text",
+            "text": "",
+            "placeholder": "",
+            "name": "nama_ruangan",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "INPUT",
+            "type": "text",
+            "text": "",
+            "placeholder": "",
+            "name": "gedung",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "INPUT",
+            "type": "text",
+            "text": "",
+            "placeholder": "",
+            "name": "lantai",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "INPUT",
+            "type": "number",
+            "text": "",
+            "placeholder": "",
+            "name": "kapasitas",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "30"
+        },
+        {
+            "tag": "SELECT",
+            "type": "select-one",
+            "text": "Tersedia\nTidak tersedia",
+            "name": "status",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "tersedia",
+            "options": [
+                {
+                    "value": "tersedia",
+                    "text": "Tersedia"
+                },
+                {
+                    "value": "tidak_tersedia",
+                    "text": "Tidak tersedia"
+                }
+            ]
+        },
+        {
+            "tag": "TEXTAREA",
+            "type": "textarea",
+            "text": "",
+            "placeholder": "",
+            "name": "keterangan",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Batal",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Simpan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": false,
+        "focus": "BUTTON Tutup dialog "
+    }
+}

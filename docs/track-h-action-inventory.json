@@ -1,0 +1,2005 @@
+{
+    "pages": [
+        {
+            "source": "index.html",
+            "targets": ["Kaprodi/Dashboard.vue"],
+            "bindings": {
+                "Front-End/index.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "assets/css/style.css"
+                    },
+                    {
+                        "line": 59,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 60,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 68,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 69,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 97,
+                        "event": "href",
+                        "expression": "pages/pengajuan-judul.html"
+                    },
+                    {
+                        "line": 104,
+                        "event": "href",
+                        "expression": "pages/penentuan-jadwal.html"
+                    },
+                    {
+                        "line": 113,
+                        "event": "href",
+                        "expression": "pages/pengajuan-sempro.html"
+                    },
+                    {
+                        "line": 122,
+                        "event": "href",
+                        "expression": "pages/katalog-ta.html"
+                    },
+                    {
+                        "line": 134,
+                        "event": "href",
+                        "expression": "pages/data-mahasiswa.html"
+                    },
+                    {
+                        "line": 152,
+                        "event": "href",
+                        "expression": "pages/pengajuan-sempro.html"
+                    },
+                    {
+                        "line": 169,
+                        "event": "href",
+                        "expression": "pages/penentuan-jadwal.html"
+                    },
+                    {
+                        "line": 186,
+                        "event": "href",
+                        "expression": "pages/data-dosen.html"
+                    },
+                    {
+                        "line": 231,
+                        "event": ":href",
+                        "expression": "stage.id === 'judul' ? 'pages/pengajuan-judul.html' : (stage.id === 'sempro' ? 'pages/pengajuan-sempro.html' : (stage.id === 'bimbingan' ? 'pages/bimbingan.html' : (stage.id === 'sidang' ? 'pages/pengajuan-sidang.html' : '#')))"
+                    },
+                    {
+                        "line": 255,
+                        "event": "@click",
+                        "expression": "activeTab = 'pending'"
+                    },
+                    {
+                        "line": 262,
+                        "event": "@click",
+                        "expression": "activeTab = 'my-students'"
+                    },
+                    {
+                        "line": 289,
+                        "event": "@click",
+                        "expression": "showDetail(item)"
+                    },
+                    {
+                        "line": 290,
+                        "event": "@click",
+                        "expression": "quickApprove(item)"
+                    },
+                    {
+                        "line": 363,
+                        "event": "@click",
+                        "expression": "activeModalItem = null"
+                    },
+                    {
+                        "line": 374,
+                        "event": "@click",
+                        "expression": "activeModalItem = null"
+                    },
+                    {
+                        "line": 375,
+                        "event": "@click",
+                        "expression": "confirmApprove(activeModalItem)"
+                    }
+                ],
+                "resources/js/pages/Kaprodi/Dashboard.vue": [
+                    {
+                        "line": 128,
+                        "event": ":href",
+                        "expression": "action.href"
+                    },
+                    {
+                        "line": 244,
+                        "event": "href",
+                        "expression": "/kaprodi/persetujuan"
+                    }
+                ]
+            }
+        },
+        {
+            "source": "pages/penentuan-jadwal.html",
+            "targets": ["Koordinator/Penjadwalan.vue"],
+            "bindings": {
+                "Front-End/pages/penentuan-jadwal.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "../assets/css/style.css"
+                    },
+                    {
+                        "line": 57,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 58,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 66,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 67,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 79,
+                        "event": "href",
+                        "expression": "../index.html"
+                    },
+                    {
+                        "line": 81,
+                        "event": "href",
+                        "expression": "jadwal-sempro.html"
+                    },
+                    {
+                        "line": 97,
+                        "event": "href",
+                        "expression": "pengajuan-sempro.html"
+                    },
+                    {
+                        "line": 138,
+                        "event": "@click",
+                        "expression": "openGaModal"
+                    },
+                    {
+                        "line": 162,
+                        "event": "@click",
+                        "expression": "alertInfo('Melihat Riwayat Kelulusan Sempro Periode Lalu.')"
+                    },
+                    {
+                        "line": 166,
+                        "event": "@click",
+                        "expression": "exportExcel"
+                    },
+                    {
+                        "line": 170,
+                        "event": "@click",
+                        "expression": "alertInfo('Status Monitoring: Seluruh Mahasiswa Ter-plot Bebas Bentrok.')"
+                    },
+                    {
+                        "line": 174,
+                        "event": "@click",
+                        "expression": "downloadJadwal"
+                    },
+                    {
+                        "line": 312,
+                        "event": "@click",
+                        "expression": "openEditPlotting(row)"
+                    },
+                    {
+                        "line": 359,
+                        "event": "@click",
+                        "expression": "isGaModalOpen = false"
+                    },
+                    {
+                        "line": 453,
+                        "event": "@click",
+                        "expression": "isGaModalOpen = false"
+                    },
+                    {
+                        "line": 459,
+                        "event": "@click",
+                        "expression": "startGaOptimization"
+                    },
+                    {
+                        "line": 467,
+                        "event": "@click",
+                        "expression": "applyGaResults"
+                    },
+                    {
+                        "line": 489,
+                        "event": "@click",
+                        "expression": "isEditModalOpen = false"
+                    },
+                    {
+                        "line": 541,
+                        "event": "@click",
+                        "expression": "isEditModalOpen = false"
+                    },
+                    {
+                        "line": 542,
+                        "event": "@click",
+                        "expression": "saveEditPlotting"
+                    }
+                ],
+                "resources/js/pages/Koordinator/Penjadwalan.vue": [
+                    {
+                        "line": 281,
+                        "event": "@click",
+                        "expression": "openPeriod()"
+                    },
+                    {
+                        "line": 292,
+                        "event": "@change",
+                        "expression": "changePeriod"
+                    },
+                    {
+                        "line": 305,
+                        "event": "@click",
+                        "expression": "openPeriod(period)"
+                    },
+                    {
+                        "line": 370,
+                        "event": "@click",
+                        "expression": "generate"
+                    },
+                    {
+                        "line": 407,
+                        "event": "@click",
+                        "expression": "publish"
+                    },
+                    {
+                        "line": 410,
+                        "event": "@click",
+                        "expression": "preview = null"
+                    },
+                    {
+                        "line": 454,
+                        "event": "@click",
+                        "expression": "edit(row)"
+                    },
+                    {
+                        "line": 508,
+                        "event": "@click",
+                        "expression": "saveOverride"
+                    },
+                    {
+                        "line": 510,
+                        "event": "@click",
+                        "expression": "editing = null"
+                    },
+                    {
+                        "line": 517,
+                        "event": "@submit.prevent",
+                        "expression": "savePeriod"
+                    },
+                    {
+                        "line": 596,
+                        "event": "@click",
+                        "expression": "draft.slots.push({ ...slotDraft })"
+                    },
+                    {
+                        "line": 605,
+                        "event": "@click",
+                        "expression": "draft.slots.splice(index, 1)"
+                    },
+                    {
+                        "line": 616,
+                        "event": "@click",
+                        "expression": "periodForm = false"
+                    },
+                    {
+                        "line": 623,
+                        "event": ":href",
+                        "expression": "selected === null ? '/kaprodi/penjadwalan/export' : `/kaprodi/penjadwalan/export?period_id=${selected}`"
+                    }
+                ]
+            }
+        },
+        {
+            "source": "pages/jadwal-sempro.html",
+            "targets": ["Koordinator/Penjadwalan.vue"],
+            "bindings": {
+                "Front-End/pages/jadwal-sempro.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "../assets/css/style.css"
+                    },
+                    {
+                        "line": 57,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 58,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 67,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 68,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 76,
+                        "event": "href",
+                        "expression": "../index.html"
+                    },
+                    {
+                        "line": 84,
+                        "event": "href",
+                        "expression": "penentuan-jadwal.html"
+                    },
+                    {
+                        "line": 143,
+                        "event": "href",
+                        "expression": "penentuan-jadwal.html"
+                    }
+                ],
+                "resources/js/pages/Koordinator/Penjadwalan.vue": [
+                    {
+                        "line": 281,
+                        "event": "@click",
+                        "expression": "openPeriod()"
+                    },
+                    {
+                        "line": 292,
+                        "event": "@change",
+                        "expression": "changePeriod"
+                    },
+                    {
+                        "line": 305,
+                        "event": "@click",
+                        "expression": "openPeriod(period)"
+                    },
+                    {
+                        "line": 370,
+                        "event": "@click",
+                        "expression": "generate"
+                    },
+                    {
+                        "line": 407,
+                        "event": "@click",
+                        "expression": "publish"
+                    },
+                    {
+                        "line": 410,
+                        "event": "@click",
+                        "expression": "preview = null"
+                    },
+                    {
+                        "line": 454,
+                        "event": "@click",
+                        "expression": "edit(row)"
+                    },
+                    {
+                        "line": 508,
+                        "event": "@click",
+                        "expression": "saveOverride"
+                    },
+                    {
+                        "line": 510,
+                        "event": "@click",
+                        "expression": "editing = null"
+                    },
+                    {
+                        "line": 517,
+                        "event": "@submit.prevent",
+                        "expression": "savePeriod"
+                    },
+                    {
+                        "line": 596,
+                        "event": "@click",
+                        "expression": "draft.slots.push({ ...slotDraft })"
+                    },
+                    {
+                        "line": 605,
+                        "event": "@click",
+                        "expression": "draft.slots.splice(index, 1)"
+                    },
+                    {
+                        "line": 616,
+                        "event": "@click",
+                        "expression": "periodForm = false"
+                    },
+                    {
+                        "line": 623,
+                        "event": ":href",
+                        "expression": "selected === null ? '/kaprodi/penjadwalan/export' : `/kaprodi/penjadwalan/export?period_id=${selected}`"
+                    }
+                ]
+            }
+        },
+        {
+            "source": "pages/bimbingan.html",
+            "targets": ["Dosen/Bimbingan.vue", "Pendaftaran/Bimbingan.vue"],
+            "bindings": {
+                "Front-End/pages/bimbingan.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "../assets/css/style.css"
+                    },
+                    {
+                        "line": 57,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 58,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 66,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 67,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 88,
+                        "event": "href",
+                        "expression": "../index.html"
+                    },
+                    {
+                        "line": 103,
+                        "event": "@click",
+                        "expression": "printLogBimbingan"
+                    },
+                    {
+                        "line": 114,
+                        "event": "@click",
+                        "expression": "openModalTambahSesi"
+                    },
+                    {
+                        "line": 218,
+                        "event": "@click",
+                        "expression": "selectStudent(mhs)"
+                    },
+                    {
+                        "line": 279,
+                        "event": "@click.stop",
+                        "expression": "selectStudent(mhs)"
+                    },
+                    {
+                        "line": 324,
+                        "event": "@click",
+                        "expression": "selectedStudent = null"
+                    },
+                    {
+                        "line": 355,
+                        "event": "@click",
+                        "expression": "openModalTambahSesi(selectedStudent)"
+                    },
+                    {
+                        "line": 409,
+                        "event": "@click",
+                        "expression": "parafSesi(selectedStudent, sesi)"
+                    },
+                    {
+                        "line": 443,
+                        "event": "@click",
+                        "expression": "closeModalTambah"
+                    },
+                    {
+                        "line": 532,
+                        "event": "@click",
+                        "expression": "closeModalTambah"
+                    },
+                    {
+                        "line": 538,
+                        "event": "@click",
+                        "expression": "saveSesiBimbingan"
+                    }
+                ],
+                "resources/js/pages/Dosen/Bimbingan.vue": [
+                    {
+                        "line": 208,
+                        "event": "@click",
+                        "expression": "openModalTambahSesi"
+                    },
+                    {
+                        "line": 381,
+                        "event": "@click",
+                        "expression": "selectedAdviseeId = mhs.id"
+                    },
+                    {
+                        "line": 445,
+                        "event": "@click",
+                        "expression": "openModalTambahSesi"
+                    },
+                    {
+                        "line": 543,
+                        "event": "@click",
+                        "expression": "quickParafSesi(log)"
+                    },
+                    {
+                        "line": 553,
+                        "event": "@click",
+                        "expression": "openReviewModal(log)"
+                    },
+                    {
+                        "line": 604,
+                        "event": "@close",
+                        "expression": "!processing && (showApprovalModal = false)"
+                    },
+                    {
+                        "line": 627,
+                        "event": "@click",
+                        "expression": "!processing && (showApprovalModal = false)"
+                    },
+                    {
+                        "line": 649,
+                        "event": "@click",
+                        "expression": "isAccBimbingan = true"
+                    },
+                    {
+                        "line": 661,
+                        "event": "@click",
+                        "expression": "isAccBimbingan = false"
+                    },
+                    {
+                        "line": 686,
+                        "event": "@click",
+                        "expression": "!processing && (showApprovalModal = false)"
+                    },
+                    {
+                        "line": 692,
+                        "event": "@click",
+                        "expression": "submitReview"
+                    },
+                    {
+                        "line": 705,
+                        "event": "@close",
+                        "expression": "!processing && (isModalTambahOpen = false)"
+                    },
+                    {
+                        "line": 728,
+                        "event": "@click",
+                        "expression": "!processing && (isModalTambahOpen = false)"
+                    },
+                    {
+                        "line": 812,
+                        "event": "@click",
+                        "expression": "!processing && (isModalTambahOpen = false)"
+                    },
+                    {
+                        "line": 819,
+                        "event": "@click",
+                        "expression": "saveSesiBimbingan"
+                    }
+                ],
+                "resources/js/pages/Pendaftaran/Bimbingan.vue": [
+                    {
+                        "line": 339,
+                        "event": "@click",
+                        "expression": "openModal"
+                    },
+                    {
+                        "line": 394,
+                        "event": "@click",
+                        "expression": "openDetail(item)"
+                    },
+                    {
+                        "line": 441,
+                        "event": "@click",
+                        "expression": "editLog(item)"
+                    },
+                    {
+                        "line": 450,
+                        "event": "@click",
+                        "expression": "deleteLog(item.id)"
+                    },
+                    {
+                        "line": 472,
+                        "event": "@click",
+                        "expression": "openDetail(item)"
+                    },
+                    {
+                        "line": 518,
+                        "event": "@click",
+                        "expression": "editLog(item)"
+                    },
+                    {
+                        "line": 526,
+                        "event": "@click",
+                        "expression": "deleteLog(item.id)"
+                    },
+                    {
+                        "line": 543,
+                        "event": "@click",
+                        "expression": "currentPage--"
+                    },
+                    {
+                        "line": 554,
+                        "event": "@click",
+                        "expression": "currentPage++"
+                    },
+                    {
+                        "line": 580,
+                        "event": "@click",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 594,
+                        "event": "@submit.prevent",
+                        "expression": "submitBimbingan"
+                    },
+                    {
+                        "line": 747,
+                        "event": "@click",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 782,
+                        "event": "@click",
+                        "expression": "closeDetail"
+                    },
+                    {
+                        "line": 805,
+                        "event": "@click",
+                        "expression": "closeDetail"
+                    },
+                    {
+                        "line": 916,
+                        "event": "@click",
+                        "expression": "editLog(selectedLog); closeDetail();"
+                    },
+                    {
+                        "line": 926,
+                        "event": "@click",
+                        "expression": "deleteLog(selectedLog.id); closeDetail();"
+                    }
+                ]
+            }
+        },
+        {
+            "source": "pages/data-dosen.html",
+            "targets": ["Kaprodi/Dosen.vue"],
+            "bindings": {
+                "Front-End/pages/data-dosen.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "../assets/css/style.css"
+                    },
+                    {
+                        "line": 57,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 58,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 66,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 67,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 88,
+                        "event": "href",
+                        "expression": "../index.html"
+                    },
+                    {
+                        "line": 104,
+                        "event": "@click",
+                        "expression": "openModalImport"
+                    },
+                    {
+                        "line": 115,
+                        "event": "@click",
+                        "expression": "openModalTambah"
+                    },
+                    {
+                        "line": 189,
+                        "event": "@click",
+                        "expression": "filterProdi = 'all'"
+                    },
+                    {
+                        "line": 196,
+                        "event": "@click",
+                        "expression": "filterProdi = 'Informatika'"
+                    },
+                    {
+                        "line": 203,
+                        "event": "@click",
+                        "expression": "filterProdi = 'lintas'"
+                    },
+                    {
+                        "line": 341,
+                        "event": ":href",
+                        "expression": "'mailto:' + dosen.email"
+                    },
+                    {
+                        "line": 351,
+                        "event": "@click",
+                        "expression": "openModalEdit(dosen)"
+                    },
+                    {
+                        "line": 362,
+                        "event": "@click",
+                        "expression": "confirmDeleteDosen(dosen)"
+                    },
+                    {
+                        "line": 386,
+                        "event": "@click",
+                        "expression": "resetFilter"
+                    },
+                    {
+                        "line": 407,
+                        "event": "@click",
+                        "expression": "currentPage--"
+                    },
+                    {
+                        "line": 417,
+                        "event": "@click",
+                        "expression": "currentPage = p"
+                    },
+                    {
+                        "line": 425,
+                        "event": "@click",
+                        "expression": "currentPage++"
+                    },
+                    {
+                        "line": 450,
+                        "event": "@click",
+                        "expression": "closeModalForm"
+                    },
+                    {
+                        "line": 614,
+                        "event": "@click",
+                        "expression": "closeModalForm"
+                    },
+                    {
+                        "line": 620,
+                        "event": "@click",
+                        "expression": "saveDosen"
+                    },
+                    {
+                        "line": 644,
+                        "event": "@click",
+                        "expression": "isModalImportOpen = false"
+                    },
+                    {
+                        "line": 654,
+                        "event": "href",
+                        "expression": "#"
+                    },
+                    {
+                        "line": 654,
+                        "event": "@click.prevent",
+                        "expression": "showToast('Template CSV berhasil diunduh.')"
+                    },
+                    {
+                        "line": 658,
+                        "event": "@click",
+                        "expression": "isModalImportOpen = false"
+                    },
+                    {
+                        "line": 659,
+                        "event": "@click",
+                        "expression": "processImport"
+                    }
+                ],
+                "resources/js/pages/Kaprodi/Dosen.vue": [
+                    {
+                        "line": 220,
+                        "event": "@click",
+                        "expression": "showImport = !showImport"
+                    },
+                    {
+                        "line": 228,
+                        "event": "@click",
+                        "expression": "openModalTambah"
+                    },
+                    {
+                        "line": 481,
+                        "event": ":href",
+                        "expression": "`mailto:${dosen.email}`"
+                    },
+                    {
+                        "line": 500,
+                        "event": "@click",
+                        "expression": "openModalEdit(dosen)"
+                    },
+                    {
+                        "line": 509,
+                        "event": "@click",
+                        "expression": "confirmDeleteDosen(dosen)"
+                    },
+                    {
+                        "line": 546,
+                        "event": "@click",
+                        "expression": "resetFilter"
+                    },
+                    {
+                        "line": 582,
+                        "event": "@click",
+                        "expression": "currentPage--"
+                    },
+                    {
+                        "line": 597,
+                        "event": "@click",
+                        "expression": "currentPage = p"
+                    },
+                    {
+                        "line": 606,
+                        "event": "@click",
+                        "expression": "currentPage++"
+                    },
+                    {
+                        "line": 615,
+                        "event": "@close",
+                        "expression": "closeModalForm"
+                    },
+                    {
+                        "line": 616,
+                        "event": "@submit.prevent",
+                        "expression": "saveDosen"
+                    },
+                    {
+                        "line": 675,
+                        "event": "@click",
+                        "expression": "closeModalForm"
+                    },
+                    {
+                        "line": 681,
+                        "event": "@click",
+                        "expression": "saveDosen"
+                    }
+                ]
+            }
+        },
+        {
+            "source": "pages/data-mahasiswa.html",
+            "targets": ["Tendik/Mahasiswa.vue"],
+            "bindings": {
+                "Front-End/pages/data-mahasiswa.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "../assets/css/style.css"
+                    },
+                    {
+                        "line": 57,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 58,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 66,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 67,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 88,
+                        "event": "href",
+                        "expression": "../index.html"
+                    },
+                    {
+                        "line": 104,
+                        "event": "@click",
+                        "expression": "openModalImport"
+                    },
+                    {
+                        "line": 115,
+                        "event": "@click",
+                        "expression": "openModalTambah"
+                    },
+                    {
+                        "line": 235,
+                        "event": "@click",
+                        "expression": "resetFilter"
+                    },
+                    {
+                        "line": 300,
+                        "event": ":href",
+                        "expression": "'mailto:' + mhs.email"
+                    },
+                    {
+                        "line": 325,
+                        "event": "@click",
+                        "expression": "openModalEdit(mhs)"
+                    },
+                    {
+                        "line": 336,
+                        "event": "@click",
+                        "expression": "confirmDeleteMhs(mhs)"
+                    },
+                    {
+                        "line": 360,
+                        "event": "@click",
+                        "expression": "resetFilter"
+                    },
+                    {
+                        "line": 381,
+                        "event": "@click",
+                        "expression": "currentPage--"
+                    },
+                    {
+                        "line": 391,
+                        "event": "@click",
+                        "expression": "currentPage = p"
+                    },
+                    {
+                        "line": 399,
+                        "event": "@click",
+                        "expression": "currentPage++"
+                    },
+                    {
+                        "line": 424,
+                        "event": "@click",
+                        "expression": "closeModalForm"
+                    },
+                    {
+                        "line": 537,
+                        "event": "@click",
+                        "expression": "closeModalForm"
+                    },
+                    {
+                        "line": 543,
+                        "event": "@click",
+                        "expression": "saveMahasiswa"
+                    },
+                    {
+                        "line": 567,
+                        "event": "@click",
+                        "expression": "isModalImportOpen = false"
+                    },
+                    {
+                        "line": 577,
+                        "event": "href",
+                        "expression": "#"
+                    },
+                    {
+                        "line": 577,
+                        "event": "@click.prevent",
+                        "expression": "showToast('Template berkas mahasiswa berhasil diunduh.')"
+                    },
+                    {
+                        "line": 581,
+                        "event": "@click",
+                        "expression": "isModalImportOpen = false"
+                    },
+                    {
+                        "line": 582,
+                        "event": "@click",
+                        "expression": "processImport"
+                    }
+                ],
+                "resources/js/pages/Tendik/Mahasiswa.vue": [
+                    {
+                        "line": 140,
+                        "event": "@click",
+                        "expression": "openDetailModal(s)"
+                    },
+                    {
+                        "line": 153,
+                        "event": "@click",
+                        "expression": "openResetModal(s)"
+                    },
+                    {
+                        "line": 193,
+                        "event": "@close",
+                        "expression": "closeReset"
+                    },
+                    {
+                        "line": 234,
+                        "event": "@click",
+                        "expression": "closeReset"
+                    },
+                    {
+                        "line": 242,
+                        "event": "@click",
+                        "expression": "executeResetPassword"
+                    },
+                    {
+                        "line": 254,
+                        "event": "@close",
+                        "expression": "showDetailModal = false"
+                    },
+                    {
+                        "line": 266,
+                        "event": "@click",
+                        "expression": "showDetailModal = false"
+                    },
+                    {
+                        "line": 314,
+                        "event": "@click",
+                        "expression": "showDetailModal = false"
+                    },
+                    {
+                        "line": 320,
+                        "event": "@click",
+                        "expression": "showDetailModal = false; openResetModal(selectedStudent);"
+                    }
+                ]
+            }
+        },
+        {
+            "source": "pages/katalog-ta.html",
+            "targets": ["Katalog/Index.vue"],
+            "bindings": {
+                "Front-End/pages/katalog-ta.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "../assets/css/style.css"
+                    },
+                    {
+                        "line": 57,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 58,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 67,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 68,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 77,
+                        "event": "href",
+                        "expression": "../index.html"
+                    },
+                    {
+                        "line": 108,
+                        "event": "@click",
+                        "expression": "openSimilarityModal"
+                    },
+                    {
+                        "line": 118,
+                        "event": "@click",
+                        "expression": "showToast('Panduan pengunggahan naskah skripsi terunduh!')"
+                    },
+                    {
+                        "line": 201,
+                        "event": "@click",
+                        "expression": "searchQuery = ''"
+                    },
+                    {
+                        "line": 255,
+                        "event": "@click",
+                        "expression": "resetFilters"
+                    },
+                    {
+                        "line": 281,
+                        "event": "@click",
+                        "expression": "viewMode = 'grid'"
+                    },
+                    {
+                        "line": 291,
+                        "event": "@click",
+                        "expression": "viewMode = 'table'"
+                    },
+                    {
+                        "line": 336,
+                        "event": "@click",
+                        "expression": "openDetailModal(item)"
+                    },
+                    {
+                        "line": 413,
+                        "event": "@click",
+                        "expression": "downloadNaskah(item)"
+                    },
+                    {
+                        "line": 423,
+                        "event": "@click",
+                        "expression": "openDetailModal(item)"
+                    },
+                    {
+                        "line": 460,
+                        "event": "href",
+                        "expression": "#"
+                    },
+                    {
+                        "line": 461,
+                        "event": "@click.prevent",
+                        "expression": "openDetailModal(item)"
+                    },
+                    {
+                        "line": 489,
+                        "event": "@click",
+                        "expression": "openDetailModal(item)"
+                    },
+                    {
+                        "line": 495,
+                        "event": "@click",
+                        "expression": "downloadNaskah(item)"
+                    },
+                    {
+                        "line": 523,
+                        "event": "@click",
+                        "expression": "resetFilters"
+                    },
+                    {
+                        "line": 567,
+                        "event": "@click",
+                        "expression": "isDetailModalOpen = false"
+                    },
+                    {
+                        "line": 604,
+                        "event": "@click",
+                        "expression": "detailAbstractTab = 'id'"
+                    },
+                    {
+                        "line": 611,
+                        "event": "@click",
+                        "expression": "detailAbstractTab = 'en'"
+                    },
+                    {
+                        "line": 656,
+                        "event": "@click",
+                        "expression": "downloadNaskah(activeDetailItem)"
+                    },
+                    {
+                        "line": 672,
+                        "event": "@click",
+                        "expression": "copyCitation(activeDetailItem)"
+                    },
+                    {
+                        "line": 692,
+                        "event": "@click",
+                        "expression": "isDetailModalOpen = false"
+                    },
+                    {
+                        "line": 724,
+                        "event": "@click",
+                        "expression": "isSimilarityModalOpen = false"
+                    },
+                    {
+                        "line": 743,
+                        "event": "@click",
+                        "expression": "runSimilarityCheck"
+                    }
+                ],
+                "resources/js/pages/Katalog/Index.vue": [
+                    {
+                        "line": 292,
+                        "event": "@click",
+                        "expression": "openDetail(item)"
+                    },
+                    {
+                        "line": 342,
+                        "event": "@click",
+                        "expression": "closeDetail"
+                    },
+                    {
+                        "line": 365,
+                        "event": "@click",
+                        "expression": "closeDetail"
+                    },
+                    {
+                        "line": 528,
+                        "event": "@click",
+                        "expression": "activeTab = 'id'"
+                    },
+                    {
+                        "line": 540,
+                        "event": "@click",
+                        "expression": "activeTab = 'en'"
+                    }
+                ]
+            }
+        },
+        {
+            "source": "pages/pengajuan-judul.html",
+            "targets": ["Pendaftaran/Judul.vue", "Kaprodi/Persetujuan.vue"],
+            "bindings": {
+                "Front-End/pages/pengajuan-judul.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "../assets/css/style.css"
+                    },
+                    {
+                        "line": 57,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 58,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 66,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 67,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 88,
+                        "event": "href",
+                        "expression": "../index.html"
+                    },
+                    {
+                        "line": 103,
+                        "event": "@click",
+                        "expression": "openModalAjukan"
+                    },
+                    {
+                        "line": 113,
+                        "event": "href",
+                        "expression": "pengajuan-sempro.html"
+                    },
+                    {
+                        "line": 191,
+                        "event": "@click",
+                        "expression": "filterStatus = 'all'"
+                    },
+                    {
+                        "line": 199,
+                        "event": "@click",
+                        "expression": "filterStatus = 'Menunggu Review'"
+                    },
+                    {
+                        "line": 207,
+                        "event": "@click",
+                        "expression": "filterStatus = 'Disetujui'"
+                    },
+                    {
+                        "line": 215,
+                        "event": "@click",
+                        "expression": "filterStatus = 'Perlu Revisi'"
+                    },
+                    {
+                        "line": 279,
+                        "event": "@click",
+                        "expression": "selectJudul(item)"
+                    },
+                    {
+                        "line": 340,
+                        "event": "@click.stop",
+                        "expression": "selectJudul(item)"
+                    },
+                    {
+                        "line": 362,
+                        "event": "@click",
+                        "expression": "resetFilter"
+                    },
+                    {
+                        "line": 396,
+                        "event": "@click",
+                        "expression": "selectedJudul = null"
+                    },
+                    {
+                        "line": 465,
+                        "event": "@click",
+                        "expression": "updateStatus(selectedJudul, 'Disetujui')"
+                    },
+                    {
+                        "line": 472,
+                        "event": "@click",
+                        "expression": "updateStatus(selectedJudul, 'Perlu Revisi')"
+                    },
+                    {
+                        "line": 506,
+                        "event": "@click",
+                        "expression": "closeModalAjukan"
+                    },
+                    {
+                        "line": 615,
+                        "event": "@click",
+                        "expression": "closeModalAjukan"
+                    },
+                    {
+                        "line": 621,
+                        "event": "@click",
+                        "expression": "submitAjukanJudul"
+                    }
+                ],
+                "resources/js/pages/Pendaftaran/Judul.vue": [
+                    {
+                        "line": 221,
+                        "event": "@submit.prevent",
+                        "expression": "submitForm"
+                    }
+                ],
+                "resources/js/pages/Kaprodi/Persetujuan.vue": [
+                    {
+                        "line": 136,
+                        "event": "@click",
+                        "expression": "activeSection = 'judul'"
+                    },
+                    {
+                        "line": 139,
+                        "event": "@click",
+                        "expression": "activeSection = 'sempro'"
+                    },
+                    {
+                        "line": 142,
+                        "event": "@click",
+                        "expression": "activeSection = 'sidang'"
+                    },
+                    {
+                        "line": 208,
+                        "event": "@click",
+                        "expression": "openReview(item.id)"
+                    },
+                    {
+                        "line": 230,
+                        "event": "@close",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 308,
+                        "event": "@click",
+                        "expression": "submit('ditolak')"
+                    },
+                    {
+                        "line": 312,
+                        "event": "@click",
+                        "expression": "submit('disetujui')"
+                    },
+                    {
+                        "line": 319,
+                        "event": "@click",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 325,
+                        "event": "@click",
+                        "expression": "submit('revisi')"
+                    },
+                    {
+                        "line": 332,
+                        "event": "@click",
+                        "expression": "submit()"
+                    }
+                ]
+            }
+        },
+        {
+            "source": "pages/pengajuan-sempro.html",
+            "targets": [
+                "Pendaftaran/Sempro.vue",
+                "Kaprodi/Persetujuan.vue",
+                "Tendik/Verifikasi.vue",
+                "Dosen/Penilaian.vue"
+            ],
+            "bindings": {
+                "Front-End/pages/pengajuan-sempro.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "../assets/css/style.css"
+                    },
+                    {
+                        "line": 57,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 58,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 66,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 67,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 78,
+                        "event": "href",
+                        "expression": "../index.html"
+                    },
+                    {
+                        "line": 90,
+                        "event": "href",
+                        "expression": "penentuan-jadwal.html"
+                    },
+                    {
+                        "line": 135,
+                        "event": "@click",
+                        "expression": "changeTab('bimbingan')"
+                    },
+                    {
+                        "line": 147,
+                        "event": "@click",
+                        "expression": "changeTab('uji')"
+                    },
+                    {
+                        "line": 214,
+                        "event": "@click",
+                        "expression": "toggleSelectStudent(mhs)"
+                    },
+                    {
+                        "line": 254,
+                        "event": "@click",
+                        "expression": "selectedSemproStudent = null"
+                    },
+                    {
+                        "line": 275,
+                        "event": "@click",
+                        "expression": "selectedSemproStudent = null"
+                    },
+                    {
+                        "line": 378,
+                        "event": "@click",
+                        "expression": "alertInfo('Mengunduh ' + f.name)"
+                    },
+                    {
+                        "line": 386,
+                        "event": "@click",
+                        "expression": "validateSemproDoc(selectedSemproStudent, true)"
+                    },
+                    {
+                        "line": 392,
+                        "event": "@click",
+                        "expression": "validateSemproDoc(selectedSemproStudent, false)"
+                    }
+                ],
+                "resources/js/pages/Pendaftaran/Sempro.vue": [
+                    {
+                        "line": 272,
+                        "event": "@submit.prevent",
+                        "expression": "submitSempro"
+                    },
+                    {
+                        "line": 373,
+                        "event": "@click",
+                        "expression": "removeFile( document.field as FileField, document.id, )"
+                    },
+                    {
+                        "line": 393,
+                        "event": "@change",
+                        "expression": "setFile( document.field as FileField, $event, )"
+                    }
+                ],
+                "resources/js/pages/Kaprodi/Persetujuan.vue": [
+                    {
+                        "line": 136,
+                        "event": "@click",
+                        "expression": "activeSection = 'judul'"
+                    },
+                    {
+                        "line": 139,
+                        "event": "@click",
+                        "expression": "activeSection = 'sempro'"
+                    },
+                    {
+                        "line": 142,
+                        "event": "@click",
+                        "expression": "activeSection = 'sidang'"
+                    },
+                    {
+                        "line": 208,
+                        "event": "@click",
+                        "expression": "openReview(item.id)"
+                    },
+                    {
+                        "line": 230,
+                        "event": "@close",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 308,
+                        "event": "@click",
+                        "expression": "submit('ditolak')"
+                    },
+                    {
+                        "line": 312,
+                        "event": "@click",
+                        "expression": "submit('disetujui')"
+                    },
+                    {
+                        "line": 319,
+                        "event": "@click",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 325,
+                        "event": "@click",
+                        "expression": "submit('revisi')"
+                    },
+                    {
+                        "line": 332,
+                        "event": "@click",
+                        "expression": "submit()"
+                    }
+                ],
+                "resources/js/pages/Tendik/Verifikasi.vue": [
+                    {
+                        "line": 166,
+                        "event": "@click",
+                        "expression": "activeTab = 'sidang'"
+                    },
+                    {
+                        "line": 178,
+                        "event": "@click",
+                        "expression": "activeTab = 'sempro'"
+                    },
+                    {
+                        "line": 210,
+                        "event": "@click",
+                        "expression": "openVerification(app)"
+                    },
+                    {
+                        "line": 256,
+                        "event": "@click",
+                        "expression": "openVerification(app)"
+                    },
+                    {
+                        "line": 291,
+                        "event": "@close",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 316,
+                        "event": "@click",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 369,
+                        "event": "@click",
+                        "expression": "submitVerification('ditolak')"
+                    },
+                    {
+                        "line": 377,
+                        "event": "@click",
+                        "expression": "submitVerification('verifikasi_tendik')"
+                    }
+                ],
+                "resources/js/pages/Dosen/Penilaian.vue": [
+                    {
+                        "line": 82,
+                        "event": "@click",
+                        "expression": "selectExam(schedule)"
+                    },
+                    {
+                        "line": 89,
+                        "event": "@submit.prevent",
+                        "expression": "submit"
+                    }
+                ]
+            }
+        },
+        {
+            "source": "pages/pengajuan-sidang.html",
+            "targets": [
+                "Pendaftaran/Sidang.vue",
+                "Kaprodi/Persetujuan.vue",
+                "Tendik/Verifikasi.vue",
+                "Dosen/Penilaian.vue"
+            ],
+            "bindings": {
+                "Front-End/pages/pengajuan-sidang.html": [
+                    {
+                        "line": 9,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com"
+                    },
+                    {
+                        "line": 10,
+                        "event": "href",
+                        "expression": "https://fonts.gstatic.com"
+                    },
+                    {
+                        "line": 11,
+                        "event": "href",
+                        "expression": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+                    },
+                    {
+                        "line": 37,
+                        "event": "href",
+                        "expression": "../assets/css/style.css"
+                    },
+                    {
+                        "line": 57,
+                        "event": "@toggle-collapse",
+                        "expression": "toggleDesktopSidebar"
+                    },
+                    {
+                        "line": 58,
+                        "event": "@close-mobile",
+                        "expression": "closeMobileSidebar"
+                    },
+                    {
+                        "line": 66,
+                        "event": "@toggle-sidebar",
+                        "expression": "toggleSidebar"
+                    },
+                    {
+                        "line": 67,
+                        "event": "@toggle-theme",
+                        "expression": "toggleTheme"
+                    },
+                    {
+                        "line": 88,
+                        "event": "href",
+                        "expression": "../index.html"
+                    },
+                    {
+                        "line": 103,
+                        "event": "@click",
+                        "expression": "openModalDaftarSidang"
+                    },
+                    {
+                        "line": 193,
+                        "event": "@click",
+                        "expression": "activeSubtab = 'bimbingan'"
+                    },
+                    {
+                        "line": 205,
+                        "event": "@click",
+                        "expression": "activeSubtab = 'uji'"
+                    },
+                    {
+                        "line": 269,
+                        "event": "@click",
+                        "expression": "selectStudent(mhs)"
+                    },
+                    {
+                        "line": 405,
+                        "event": "@click",
+                        "expression": "showToast('Mengunduh ' + f.name)"
+                    },
+                    {
+                        "line": 415,
+                        "event": "@click",
+                        "expression": "validateSidangDoc(selectedSidangStudent, true)"
+                    },
+                    {
+                        "line": 421,
+                        "event": "@click",
+                        "expression": "validateSidangDoc(selectedSidangStudent, false)"
+                    },
+                    {
+                        "line": 430,
+                        "event": "@click",
+                        "expression": "openModalNilai(selectedSidangStudent)"
+                    },
+                    {
+                        "line": 461,
+                        "event": "@click",
+                        "expression": "isModalNilaiOpen = false"
+                    },
+                    {
+                        "line": 499,
+                        "event": "@click",
+                        "expression": "isModalNilaiOpen = false"
+                    },
+                    {
+                        "line": 501,
+                        "event": "@click",
+                        "expression": "submitNilaiSidang"
+                    },
+                    {
+                        "line": 518,
+                        "event": "@click",
+                        "expression": "isModalDaftarOpen = false"
+                    },
+                    {
+                        "line": 554,
+                        "event": "@click",
+                        "expression": "isModalDaftarOpen = false"
+                    },
+                    {
+                        "line": 555,
+                        "event": "@click",
+                        "expression": "submitDaftarSidang"
+                    }
+                ],
+                "resources/js/pages/Pendaftaran/Sidang.vue": [
+                    {
+                        "line": 243,
+                        "event": "@submit.prevent",
+                        "expression": "submitSidang"
+                    },
+                    {
+                        "line": 318,
+                        "event": "@change",
+                        "expression": "(e: any) => (form.draft_laporan_file = e.target.files?.[0] ?? null)"
+                    },
+                    {
+                        "line": 356,
+                        "event": "@change",
+                        "expression": "(e: any) => (form.turnitin_file = e.target.files?.[0] ?? null)"
+                    }
+                ],
+                "resources/js/pages/Kaprodi/Persetujuan.vue": [
+                    {
+                        "line": 136,
+                        "event": "@click",
+                        "expression": "activeSection = 'judul'"
+                    },
+                    {
+                        "line": 139,
+                        "event": "@click",
+                        "expression": "activeSection = 'sempro'"
+                    },
+                    {
+                        "line": 142,
+                        "event": "@click",
+                        "expression": "activeSection = 'sidang'"
+                    },
+                    {
+                        "line": 208,
+                        "event": "@click",
+                        "expression": "openReview(item.id)"
+                    },
+                    {
+                        "line": 230,
+                        "event": "@close",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 308,
+                        "event": "@click",
+                        "expression": "submit('ditolak')"
+                    },
+                    {
+                        "line": 312,
+                        "event": "@click",
+                        "expression": "submit('disetujui')"
+                    },
+                    {
+                        "line": 319,
+                        "event": "@click",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 325,
+                        "event": "@click",
+                        "expression": "submit('revisi')"
+                    },
+                    {
+                        "line": 332,
+                        "event": "@click",
+                        "expression": "submit()"
+                    }
+                ],
+                "resources/js/pages/Tendik/Verifikasi.vue": [
+                    {
+                        "line": 166,
+                        "event": "@click",
+                        "expression": "activeTab = 'sidang'"
+                    },
+                    {
+                        "line": 178,
+                        "event": "@click",
+                        "expression": "activeTab = 'sempro'"
+                    },
+                    {
+                        "line": 210,
+                        "event": "@click",
+                        "expression": "openVerification(app)"
+                    },
+                    {
+                        "line": 256,
+                        "event": "@click",
+                        "expression": "openVerification(app)"
+                    },
+                    {
+                        "line": 291,
+                        "event": "@close",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 316,
+                        "event": "@click",
+                        "expression": "closeModal"
+                    },
+                    {
+                        "line": 369,
+                        "event": "@click",
+                        "expression": "submitVerification('ditolak')"
+                    },
+                    {
+                        "line": 377,
+                        "event": "@click",
+                        "expression": "submitVerification('verifikasi_tendik')"
+                    }
+                ],
+                "resources/js/pages/Dosen/Penilaian.vue": [
+                    {
+                        "line": 82,
+                        "event": "@click",
+                        "expression": "selectExam(schedule)"
+                    },
+                    {
+                        "line": 89,
+                        "event": "@submit.prevent",
+                        "expression": "submit"
+                    }
+                ]
+            }
+        }
+    ]
+}

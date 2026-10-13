@@ -1,4 +1,4 @@
-// Run: bun tests/persetujuan-logic.check.js
+// Run: node tests/persetujuan-logic.check.js
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';

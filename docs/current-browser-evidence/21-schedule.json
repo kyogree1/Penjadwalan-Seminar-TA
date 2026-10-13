@@ -1,0 +1,273 @@
+{
+    "label": "21-schedule",
+    "url": "http://127.0.0.1:8897/kaprodi/penjadwalan",
+    "body": "Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Kaprodi\nDashboard Kaprodi\nJadwal Sempro & Sidang\nMonitoring Prodi\nData Dosen\nPersetujuan Akademik\nKatalog TA\nPanduan Website\nDashboard\nKoordinator Program Studi\nLight mode\nPD\nProf. Dr. Eng. Muhammad Ridwan, S.T., M.T.\nNIP: 198003152005011002\nLog Out\nPeriode dan Penjadwalan Ujian\n\nPreview GA diperiksa ulang terhadap booking saat publikasi.\n\nTambah periode\nPeriode\nSemua jadwal / historis\nAcceptance period — sempro (Terbuka)\n\n1 jadwal tersimpan · 0 pasangan konflik mahasiswa/penguji di daftar ini. Server memeriksa supervisor dan seluruh periode.\n\nKBK dosen, kalender ketersediaan dan kuota dosen belum tersedia. Tidak ada klaim match KBK atau waktu luang nyata. Kapasitas periode dan booking tersimpan diperiksa.\n\nPopulasi \nGenerasi \nCrossover \nMutasi \nGenerate\nJadwal tersimpan\nMahasiswa\tJenis / pendaftaran\tPenguji\tWaktu\tStatus\tAksi\nAkmal Falah Maulana\tsempro #1\tDr. Ir. Tejo Wahyu Susanto, S.T., M.Kom. / Acceptance Examiner\t2026-11-01 09:00:00 – 10:00:00\tterpublikasi\tEdit jadwal\n\nUnduh jadwal CSV · XLSX dan PDF belum tersedia (tidak ada library pembuat file). Riwayat kelulusan dan penerbitan arsip belum tersedia.\n\nPanduan Layanan\n•\nSOP & Prosedur TA\n\n© 2026 Program Studi Informatika ITK • SIPTA IF\n\nPanduan layanan akademik",
+    "controls": [
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lewati ke konten utama",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "#main-content"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SIPTA IF\n\nInformatika ITK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/kaprodi/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "Tutup Sidebar",
+            "aria": "Ringkas navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Dashboard Kaprodi",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/kaprodi/dashboard"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Jadwal Sempro & Sidang",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/kaprodi/penjadwalan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Monitoring Prodi",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/kaprodi/monitoring"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Data Dosen",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/kaprodi/dosen"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Persetujuan Akademik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/kaprodi/persetujuan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Katalog TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/katalog"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Website",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Buka navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Light mode",
+            "name": "",
+            "title": "",
+            "aria": "Beralih ke mode gelap",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "PD\nProf. Dr. Eng. Muhammad Ridwan, S.T., M.T.\nNIP: 198003152005011002",
+            "name": "",
+            "title": "",
+            "aria": "Profil akun",
+            "href": "/profile"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Log Out",
+            "name": "",
+            "title": "Keluar (Log Out)",
+            "aria": "Keluar (Log Out)",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Tambah periode",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "SELECT",
+            "type": "select-one",
+            "text": "Semua jadwal / historis\nAcceptance period — sempro (Terbuka)",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "Semua jadwal / historis",
+            "options": [
+                {
+                    "value": "Semua jadwal / historis",
+                    "text": "Semua jadwal / historis"
+                },
+                {
+                    "value": "1",
+                    "text": "Acceptance period — sempro (Terbuka)"
+                }
+            ]
+        },
+        {
+            "tag": "INPUT",
+            "type": "number",
+            "text": "",
+            "placeholder": "",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "50"
+        },
+        {
+            "tag": "INPUT",
+            "type": "number",
+            "text": "",
+            "placeholder": "",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "100"
+        },
+        {
+            "tag": "INPUT",
+            "type": "number",
+            "text": "",
+            "placeholder": "",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "0.8"
+        },
+        {
+            "tag": "INPUT",
+            "type": "number",
+            "text": "",
+            "placeholder": "",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "0.03"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Generate",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Edit jadwal",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Unduh jadwal CSV",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/kaprodi/penjadwalan/export"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Layanan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SOP & Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan layanan akademik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": false,
+        "focus": "BODY null Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Kaprodi\nDashboard Kaprodi\nJadwal Sempro & Sidang\nMonitoring Pro"
+    }
+}

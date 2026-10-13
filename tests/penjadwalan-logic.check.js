@@ -1,4 +1,4 @@
-// Run: bun tests/penjadwalan-logic.check.js
+// Run: node tests/penjadwalan-logic.check.js
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';

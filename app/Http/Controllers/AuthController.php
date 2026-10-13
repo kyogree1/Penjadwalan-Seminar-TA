@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PendaftaranSempro;
+use App\Models\PendaftaranSidang;
+use App\Models\Penjadwalan;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,13 +19,41 @@ class AuthController extends Controller
     /**
      * Display the login view or redirect if already authenticated.
      */
-    public function showLogin(): Response|\Illuminate\Http\RedirectResponse
+    public function showLogin(): Response|RedirectResponse
     {
         if (Auth::check()) {
             return $this->redirectBasedOnRole(Auth::user());
         }
 
-        return Inertia::render('Auth/Login');
+        $schedules = Penjadwalan::query()
+            ->where('penjadwalan.status', 'terpublikasi')
+            ->with(['mahasiswa:id,name', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
+            ->orderBy('tanggal')->orderBy('jam_mulai')->orderBy('penjadwalan.id')
+            ->get();
+        $titles = [];
+        foreach (['sempro' => PendaftaranSempro::class, 'sidang' => PendaftaranSidang::class] as $type => $model) {
+            $titles[$type] = $model::whereIn('id', $schedules->where('tipe', $type)->pluck('pendaftaran_id'))
+                ->get(['id', 'mahasiswa_id', 'judul_ta'])->keyBy('id');
+        }
+
+        return Inertia::render('Auth/Login', [
+            'publicSchedules' => $schedules->map(function ($schedule) use ($titles) {
+                $registration = $titles[$schedule->tipe]->get($schedule->pendaftaran_id);
+
+                return [
+                    'student_name' => $schedule->mahasiswa?->name,
+                    'title' => $registration?->mahasiswa_id === $schedule->mahasiswa_id ? $registration->judul_ta : null,
+                    'type' => $schedule->tipe,
+                    'date' => $schedule->tanggal->format('Y-m-d'),
+                    'start_time' => $schedule->jam_mulai,
+                    'end_time' => $schedule->jam_selesai,
+                    'room' => null,
+                    'mode' => $schedule->mode,
+                    'supervisors' => array_values(array_filter([$schedule->pembimbing1?->name, $schedule->pembimbing2?->name])),
+                    'examiners' => array_values(array_filter([$schedule->penguji1?->name, $schedule->penguji2?->name])),
+                ];
+            })->values(),
+        ]);
     }
 
     /**
@@ -29,17 +61,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Support quick demo one-click login if 'demo_role' is passed
-        if ($request->filled('demo_role')) {
-            $demoRole = $request->input('demo_role');
-            $user = User::where('role', $demoRole)->first();
-
-            if ($user) {
-                Auth::login($user, (bool) $request->input('remember', true));
-                $request->session()->regenerate();
-                return $this->redirectBasedOnRole($user);
-            }
-        }
+        abort_if($request->filled('demo_role'), 403);
 
         $credentials = $request->validate([
             'email' => ['required', 'string'],

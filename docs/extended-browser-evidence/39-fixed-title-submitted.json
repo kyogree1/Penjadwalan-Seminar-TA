@@ -1,0 +1,297 @@
+{
+    "label": "39-fixed-title-submitted",
+    "url": "http://127.0.0.1:8898/pendaftaran/judul",
+    "body": "Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Mahasiswa\nDashboard\nPengajuan TA\nPengajuan Judul\nBimbingan (TA-04)\nSeminar Proposal\nSidang Tugas Akhir\nPendaftar & Jadwal\nProsedur TA\nKatalog TA\nPanduan Website\nDashboard\nMahasiswa S1 Informatika\nLight mode\nAF\nAkmal Falah Maulana\nNIM: 11231006\nLog Out\nPengajuan Judul Tugas Akhir\nStatus:\nMenunggu Persetujuan\nPerhatian!\n\nSebelum mengajukan judul, pastikan:\n\nSudah konsultasi dengan dosen pembimbing yang dipilih dan mereka menyetujui judul\nDosen pembimbing sudah siap dan bersedia membimbing penelitian Anda\nJudul dan bidang penelitian sudah FINAL\nPengajuan menunggu persetujuan atau disetujui dikunci. Jika diminta revisi atau ditolak, perbaiki data dan ajukan kembali untuk peninjauan ulang.\nData Pengajuan TA\nJudul TA *\nBidang Penelitian *\nPembimbing 1 *\nPilih Pembimbing\nDr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.\nFixture Supervisor\nFixture Second Examiner\nPembimbing 2 (Opsional)\nPilih Pembimbing\nDr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.\nFixture Supervisor\nFixture Second Examiner\nSaya sudah berkonsultasi dengan dosen pembimbing yang dipilih dan mereka menyetujui judul serta bersedia membimbing penelitian saya.\nAjukan Judul\nPanduan Layanan\n•\nSOP & Prosedur TA\n\n© 2026 Program Studi Informatika ITK • SIPTA IF\n\nPanduan layanan akademik",
+    "controls": [
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lewati ke konten utama",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "#main-content"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SIPTA IF\n\nInformatika ITK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "Tutup Sidebar",
+            "aria": "Ringkas navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Dashboard",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Pengajuan TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Pengajuan Judul",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/judul"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Bimbingan (TA-04)",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/bimbingan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Seminar Proposal",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/sempro"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Sidang Tugas Akhir",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/sidang"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Pendaftar & Jadwal",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/jadwal"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Katalog TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/katalog"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Website",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Buka navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Light mode",
+            "name": "",
+            "title": "",
+            "aria": "Beralih ke mode gelap",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "AF\nAkmal Falah Maulana\nNIM: 11231006",
+            "name": "",
+            "title": "",
+            "aria": "Profil akun",
+            "href": "/profile"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Log Out",
+            "name": "",
+            "title": "Keluar (Log Out)",
+            "aria": "Keluar (Log Out)",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "TEXTAREA",
+            "type": "textarea",
+            "text": "",
+            "placeholder": "Masukkan judul...",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "Real UI submitted title"
+        },
+        {
+            "tag": "INPUT",
+            "type": "text",
+            "text": "",
+            "placeholder": "Masukkan bidang penelitian, seperti Computer vision, Internet of Things (IoT), Web Development, Data mining, dll...",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "Web"
+        },
+        {
+            "tag": "SELECT",
+            "type": "select-one",
+            "text": "Pilih Pembimbing\nDr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.\nFixture Supervisor\nFixture Second Examiner",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "5",
+            "options": [
+                {
+                    "value": "",
+                    "text": "Pilih Pembimbing"
+                },
+                {
+                    "value": "2",
+                    "text": "Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom."
+                },
+                {
+                    "value": "5",
+                    "text": "Fixture Supervisor"
+                },
+                {
+                    "value": "6",
+                    "text": "Fixture Second Examiner"
+                }
+            ]
+        },
+        {
+            "tag": "SELECT",
+            "type": "select-one",
+            "text": "Pilih Pembimbing\nDr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.\nFixture Supervisor\nFixture Second Examiner",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "",
+            "options": [
+                {
+                    "value": "",
+                    "text": "Pilih Pembimbing"
+                },
+                {
+                    "value": "2",
+                    "text": "Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom."
+                },
+                {
+                    "value": "5",
+                    "text": "Fixture Supervisor"
+                },
+                {
+                    "value": "6",
+                    "text": "Fixture Second Examiner"
+                }
+            ]
+        },
+        {
+            "tag": "INPUT",
+            "type": "checkbox",
+            "text": "",
+            "placeholder": "",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "on"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "submit",
+            "text": "Ajukan Judul",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Layanan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SOP & Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan layanan akademik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": false,
+        "focus": "BODY null Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Mahasiswa\nDashboard\nPengajuan TA\nPengajuan Judul\nBimbingan (TA-"
+    }
+}

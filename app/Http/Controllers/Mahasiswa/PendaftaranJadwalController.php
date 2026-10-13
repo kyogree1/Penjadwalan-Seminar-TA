@@ -14,17 +14,17 @@ class PendaftaranJadwalController extends Controller
     public function index(Request $request): Response
     {
         // 1. Daftar pendaftar sempro
-        $registrants = PendaftaranSempro::with('mahasiswa:id,name,username')
+        $registrants = PendaftaranSempro::with('mahasiswa:id,name,username,nim_nip')
             ->latest()
             ->take(20)
             ->get()
             ->map(function ($item) {
                 return [
                     'name' => $item->mahasiswa?->name ?? 'Mahasiswa',
-                    'nim' => $item->mahasiswa?->username ?? '-',
+                    'nim' => $item->mahasiswa?->nim_nip ?? '-',
                     'registered' => $item->created_at->translatedFormat('d M Y'),
                     'wave' => (string) $item->gelombang,
-                    'status' => match($item->status) {
+                    'status' => match ($item->status) {
                         'terjadwal' => 'Diterima',
                         'verifikasi_tendik' => 'Diverifikasi',
                         'ditolak' => 'Ditolak',
@@ -34,13 +34,13 @@ class PendaftaranJadwalController extends Controller
             });
 
         // 2. Jadwal sempro & sidang
-        $jadwalSempro = Penjadwalan::with(['mahasiswa:id,name,username', 'ruangan:id,nama_ruangan,gedung', 'pembimbing1:id,name', 'penguji1:id,name'])
+        $jadwalSempro = Penjadwalan::with(['mahasiswa:id,name,username,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
             ->where('tipe', 'sempro')
             ->where('status', 'terpublikasi')
             ->latest('tanggal')
             ->get();
 
-        $jadwalSidang = Penjadwalan::with(['mahasiswa:id,name,username', 'ruangan:id,nama_ruangan,gedung', 'pembimbing1:id,name', 'penguji1:id,name'])
+        $jadwalSidang = Penjadwalan::with(['mahasiswa:id,name,username,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
             ->where('tipe', 'sidang')
             ->where('status', 'terpublikasi')
             ->latest('tanggal')

@@ -1,0 +1,161 @@
+{
+    "label": "23-score-saved",
+    "url": "http://127.0.0.1:8897/dosen/penilaian",
+    "body": "Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Dosen\nDashboard Dosen\nBimbingan (TA-04)\nLembar Penilaian\nKatalog TA\nPanduan Website\nDashboard\nDosen Pembimbing & Penguji\nLight mode\nDI\nDr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.\nNIP: 198504122010121003\nLog Out\nPenugasan Seminar & Sidang\n\nJadwal dengan penugasan Anda sebagai pembimbing atau penguji\n\nSetiap penguji menyimpan satu nilai 0–100, maksimal dua angka desimal. Nilai tidak dapat ditimpa. Ujian selesai setelah dua penguji berbeda mengirim nilai; nilai akhir adalah rata-rata keduanya. Rubrik dan berita acara belum tersedia.\n\nAkmal Falah Maulana — sempro\n\nNIM: NIM: 11231006\n\n2026-11-01 • 09:00:00 – 10:00:00\n\nRuang Lab Riset Multimedia • Status: terpublikasi\n\nDokumen untuk penguji\nBuka proposal file\n\nPenilaian tersimpan: 1/2\n\nNilai Anda: 88.25 — Browser acceptance score note\n\nPanduan Layanan\n•\nSOP & Prosedur TA\n\n© 2026 Program Studi Informatika ITK • SIPTA IF\n\nPanduan layanan akademik",
+    "controls": [
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lewati ke konten utama",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "#main-content"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SIPTA IF\n\nInformatika ITK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dosen/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "Tutup Sidebar",
+            "aria": "Ringkas navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Dashboard Dosen",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dosen/dashboard"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Bimbingan (TA-04)",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dosen/bimbingan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lembar Penilaian",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dosen/penilaian"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Katalog TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/katalog"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Website",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Buka navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Light mode",
+            "name": "",
+            "title": "",
+            "aria": "Beralih ke mode gelap",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "DI\nDr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.\nNIP: 198504122010121003",
+            "name": "",
+            "title": "",
+            "aria": "Profil akun",
+            "href": "/profile"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Log Out",
+            "name": "",
+            "title": "Keluar (Log Out)",
+            "aria": "Keluar (Log Out)",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Buka proposal file",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dosen/penilaian/1/dokumen/proposal_file"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Layanan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SOP & Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan layanan akademik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": false,
+        "focus": "BODY null Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Dosen\nDashboard Dosen\nBimbingan (TA-04)\nLembar Penilaian\nKatalo"
+    }
+}

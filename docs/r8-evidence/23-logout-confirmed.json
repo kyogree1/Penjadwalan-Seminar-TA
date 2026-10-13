@@ -1,0 +1,5 @@
+{
+    "url": "http://127.0.0.1:8878/login",
+    "text": "Dark mode\nSIPTA IF\n\nSISTEM INFORMASI TUGAS AKHIR & PENJADWALAN SEMINAR\n\nProgram Studi Informatika, Jurusan Sains dan Teknologi Informasi, Institut Teknologi Kalimantan. Kelola seluruh proses pendaftaran Sempro, Sidang, hingga logbook bimbingan secara terpadu.\n\nSign in\n\nMasuk sesuai hak akses: Mahasiswa, Dosen, Kaprodi, atau Tendik\n\nUsername / NIM / NIP / Email\nPassword\nIngat saya\nLupa password? Hubungi Tendik\nMasuk ke Portal\nJadwal Seminar & Sidang\n\nJadwal publik belum tersedia. Masuk ke portal untuk melihat jadwal sesuai hak akses Anda.\n\nPanduan Layanan\n|\nSOP & Prosedur TA\n|\nKatalog Publik\n\n© 2026 Informatika ITK • SIPTA IF",
+    "page": "{\"component\":\"Auth\\/Login\",\"props\":{\"errors\":{},\"name\":\"Laravel\",\"auth\":{\"user\":null},\"flash\":{\"success\":null,\"error\":null,\"info\":null}},\"url\":\"\\/login\",\"version\":\"596e1793a3d35b0080b465e2746b38c5\",\"sharedProps\":[\"errors\",\"name\",\"auth\",\"flash\"]}"
+}

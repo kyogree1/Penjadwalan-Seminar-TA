@@ -1,0 +1,253 @@
+{
+    "label": "27-log-created",
+    "url": "http://127.0.0.1:8898/pendaftaran/bimbingan",
+    "body": "Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Mahasiswa\nDashboard\nPengajuan TA\nPengajuan Judul\nBimbingan (TA-04)\nSeminar Proposal\nSidang Tugas Akhir\nPendaftar & Jadwal\nProsedur TA\nKatalog TA\nPanduan Website\nDashboard\nMahasiswa S1 Informatika\nLight mode\nAF\nAkmal Falah Maulana\nNIM: 11231006\nLog Out\nBimbingan\nAF\nAkmal Falah Maulana\nAngkatan belum tersedia\nNIM: NIM: 11231006\nS1 Informatika\nUnduh TA-04 belum tersedia\nPembimbing\nPenguji\nLogbook Bimbingan\nTampilkan\n10\n25\n50\ndata\nTambah Baru\nNo.\tTanggal\tDosen Pembimbing\tRangkuman\tMetode\tStatus\tAksi\n1.\t12 Okt 2026\tFixture Supervisor\t\nExtended UI logbook topic\n\tMetode belum tersedia\t\nDiajukan\t\nDikunci\nPanduan Layanan\n•\nSOP & Prosedur TA\n\n© 2026 Program Studi Informatika ITK • SIPTA IF\n\nPanduan layanan akademik",
+    "controls": [
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lewati ke konten utama",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "#main-content"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SIPTA IF\n\nInformatika ITK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "Tutup Sidebar",
+            "aria": "Ringkas navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Dashboard",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Pengajuan TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Pengajuan Judul",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/judul"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Bimbingan (TA-04)",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/bimbingan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Seminar Proposal",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/sempro"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Sidang Tugas Akhir",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/sidang"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Pendaftar & Jadwal",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/pendaftaran/jadwal"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Katalog TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/katalog"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Website",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Buka navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Light mode",
+            "name": "",
+            "title": "",
+            "aria": "Beralih ke mode gelap",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "AF\nAkmal Falah Maulana\nNIM: 11231006",
+            "name": "",
+            "title": "",
+            "aria": "Profil akun",
+            "href": "/profile"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Log Out",
+            "name": "",
+            "title": "Keluar (Log Out)",
+            "aria": "Keluar (Log Out)",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Unduh TA-04 belum tersedia",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "SELECT",
+            "type": "select-one",
+            "text": "10\n25\n50",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "10",
+            "options": [
+                {
+                    "value": "10",
+                    "text": "10"
+                },
+                {
+                    "value": "25",
+                    "text": "25"
+                },
+                {
+                    "value": "50",
+                    "text": "50"
+                }
+            ]
+        },
+        {
+            "tag": "INPUT",
+            "type": "text",
+            "text": "",
+            "placeholder": "Cari bimbingan...",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Tambah Baru",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Layanan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SOP & Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan layanan akademik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": false,
+        "focus": "BODY null Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Mahasiswa\nDashboard\nPengajuan TA\nPengajuan Judul\nBimbingan (TA-"
+    }
+}

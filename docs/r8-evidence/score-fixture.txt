@@ -1,0 +1,1 @@
+Isolated score fixture: seeded lecturer #2 now examiner, supervisor #5

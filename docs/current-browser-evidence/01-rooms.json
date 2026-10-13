@@ -1,0 +1,231 @@
+{
+    "label": "01-rooms",
+    "url": "http://127.0.0.1:8897/tendik/ruangan",
+    "body": "Lewati ke konten utama\nSIPTA IF\n\nInformatika ITK\n\nPortal Tendik\nDashboard Tendik\nVerifikasi Berkas\nJadwal Ruangan\nBerita Acara & SK\nKelola Mahasiswa\nPanduan Website\nDashboard\nTenaga Kependidikan & Admin\nLight mode\nSN\nSiti Nurhaliza, S.Kom.\nNIP: 199208192018032001\nLog Out\nKelola Ruangan\nTambah Ruangan\n\nFasilitas terstruktur dan agenda pemakaian harian tidak tersedia pada halaman ini. Manajemen link hybrid ruangan belum tersedia; link online tersimpan per jadwal, bukan per ruangan.\n\nRuang Lab Jaringan & Keamanan Siber\n\nGedung: Gedung B • Lantai: Lantai 3\n\nKapasitas: 25\n\nTersedia\n\nCatatan: —\n\nEdit\nHapus\nRuang Lab Riset Multimedia\n\nGedung: Gedung A • Lantai: Lantai 2\n\nKapasitas: 30\n\nTersedia\n\nCatatan: —\n\nEdit\nHapus\nRuang Sidang Utama Informatika\n\nGedung: Gedung A • Lantai: Lantai 3\n\nKapasitas: 40\n\nTersedia\n\nCatatan: —\n\nEdit\nHapus\nPanduan Layanan\n•\nSOP & Prosedur TA\n\n© 2026 Program Studi Informatika ITK • SIPTA IF\n\nPanduan layanan akademik",
+    "controls": [
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lewati ke konten utama",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "#main-content"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SIPTA IF\n\nInformatika ITK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/dashboard"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "Tutup Sidebar",
+            "aria": "Ringkas navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Dashboard Tendik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/dashboard"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Verifikasi Berkas",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/verifikasi"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Jadwal Ruangan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/ruangan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Berita Acara & SK",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/arsip"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Kelola Mahasiswa",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/tendik/mahasiswa"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Website",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Buka navigasi",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Light mode",
+            "name": "",
+            "title": "",
+            "aria": "Beralih ke mode gelap",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SN\nSiti Nurhaliza, S.Kom.\nNIP: 199208192018032001",
+            "name": "",
+            "title": "",
+            "aria": "Profil akun",
+            "href": "/profile"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Log Out",
+            "name": "",
+            "title": "Keluar (Log Out)",
+            "aria": "Keluar (Log Out)",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Tambah Ruangan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Edit",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Hapus",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Edit",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Hapus",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Edit",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Hapus",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Layanan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SOP & Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan layanan akademik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": false,
+        "focus": "<body class=\"font-sans antialiased\">\n        <script data-page=\"app\" type=\"application/json\">{\"component\":\"Tendik\\/Ruangan\",\"props\":{\"errors\":{},\"name\":\"Laravel\",\"auth\":{\"user\":{\"id\":4,\"name\":\"Siti Nurhaliza, S.Kom.\",\"email\":\"tendik.fsti@itk.ac.id\",\"username\":\"199208192018032001\",\"role\":\"tendik\",\"nim_nip\":\"NIP: 199208192018032001\",\"prodi\":\"Fakultas Sains & Teknologi Informasi\",\"jabatan\":\"Tenaga Kependidikan \\/ Staf Akademik\",\"avatar\":null,\"email_verified_at\":null,\"created_at\":\"2026-10-12T04:57:48.000000Z\",\"updated_at\":\"2026-10-12T04:57:48.000000Z\"}},\"flash\":{\"success\":null,\"error\":null,\"info\":null},\"dbRuanganList\":[{\"id\":2,\"nama_ruangan\":\"Ruang Lab Jaringan & Keamanan Siber\",\"gedung\":\"Gedung B\",\"lantai\":\"Lantai 3\",\"kapasitas\":25,\"status\":\"tersedia\",\"keterangan\":null},{\"id\":1,\"nama_ruangan\":\"Ruang Lab Riset Multimedia\",\"gedung\":\"Gedung A\",\"lantai\":\"Lantai 2\",\"kapasitas\":30,\"status\":\"tersedia\",\"keterangan\":null},{\"id\":3,\"nama_ruangan\":\"Ruang Sidang Utama Informatika\",\"gedung\":\"Gedung A\",\"lantai\":\"Lantai 3\",\"kapasitas\":40,\"status\":\"tersedia\",\"keterangan\":null}]},\"url\":\"\\/tendik\\/ruangan\",\"version\":\"2e270a3a21014f79e3b4df1da4002240\",\"sharedProps\":[\"errors\",\"name\",\"auth\",\"flash\"]}</script><div id=\"app\" data-v-app=\"\"><div class=\"bg-app-bg dark:bg-navy-bg flex h-screen w-full overflow-hidden font-sans text-slate-800 antialiased transition-colors duration-200 dark:text-slate-100\"><a href=\"#main-content\" class=\"sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:rounded-lg focus:bg-white focus:p-3 focus:text-blue-700\">Lewati ke konten utama</a><aside class=\"z-30 hidden h-screen shrink-0 flex-col justify-between border-r border-[#1E293B] bg-[#0E1626] text-slate-300 transition-all duration-300 lg:flex w-64\"><div class=\"flex min-h-0 flex-1 flex-col\"><div class=\"flex h-16 shrink-0 items-center justify-between border-b border-slate-800/80 px-4\"><a class=\"flex items-center gap-3 overflow-hidden\" href=\"/tendik/dashboard\"><div class=\"flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/30\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-5 w-5 lucide-graduation-cap-icon lucide-graduation-cap h-5 w-5\" aria-hidden=\"true\"><path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\"></path><path d=\"M22 10v6\"></path><path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\"></path></svg></div><div class=\"min-w-0\"><h1 class=\"truncate text-sm font-bold tracking-tight text-white\"> SIPTA IF </h1><p class=\"truncate text-[10px] font-medium text-slate-400\"> Informatika ITK </p></div></a><button type=\"button\" class=\"flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white\" title=\"Tutup Sidebar\" aria-label=\"Ringkas navigasi\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-4 w-4 transition-transform lucide-chevron-left-icon lucide-chevron-left h-4 w-4 transition-transform\" aria-hidden=\"true\"><path d=\"m15 18-6-6 6-6\"></path></svg></button></div><div class=\"shrink-0 px-4 pt-3 pb-1\"><div class=\"rounded-xl border px-3 py-1.5 text-center text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border-emerald-500/30\">Portal Tendik</div></div><nav class=\"min-h-0 flex-1 space-y-1 overflow-y-auto p-3\"><a class=\"flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all text-slate-400 hover:bg-slate-800/70 hover:text-slate-200\" href=\"/tendik/dashboard\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-4 w-4 shrink-0 lucide-house-icon lucide-house h-4 w-4 shrink-0\" aria-hidden=\"true\"><path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"></path><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"></path></svg><span>Dashboard Tendik</span></a><a class=\"flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all text-slate-400 hover:bg-slate-800/70 hover:text-slate-200\" href=\"/tendik/verifikasi\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-4 w-4 shrink-0 lucide-file-check-icon lucide-file-check h-4 w-4 shrink-0\" aria-hidden=\"true\"><path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"></path><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"></path><path d=\"m9 15 2 2 4-4\"></path></svg><span>Verifikasi Berkas</span></a><a class=\"flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all bg-blue-600 text-white shadow-md shadow-blue-600/30\" href=\"/tendik/ruangan\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-4 w-4 shrink-0 lucide-building2-icon lucide-building-2 h-4 w-4 shrink-0\" aria-hidden=\"true\"><path d=\"M10 12h4\"></path><path d=\"M10 8h4\"></path><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"></path><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"></path><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"></path></svg><span>Jadwal Ruangan</span></a><a class=\"flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all text-slate-400 hover:bg-slate-800/70 hover:text-slate-200\" href=\"/tendik/arsip\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-4 w-4 shrink-0 lucide-printer-icon lucide-printer h-4 w-4 shrink-0\" aria-hidden=\"true\"><path d=\"M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2\"></path><path d=\"M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6\"></path><rect x=\"6\" y=\"14\" width=\"12\" height=\"8\" rx=\"1\"></rect></svg><span>Berita Acara &amp; SK</span></a><a class=\"flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all text-slate-400 hover:bg-slate-800/70 hover:text-slate-200\" href=\"/tendik/mahasiswa\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-4 w-4 shrink-0 lucide-key-round-icon lucide-key-round h-4 w-4 shrink-0\" aria-hidden=\"true\"><path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\"></path><circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"></circle></svg><span>Kelola Mahasiswa</span></a><a class=\"flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all text-slate-400 hover:bg-slate-800/70 hover:text-slate-200\" href=\"/panduan\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-4 w-4 shrink-0 lucide-globe-icon lucide-globe h-4 w-4 shrink-0\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"></path><path d=\"M2 12h20\"></path></svg><span>Panduan Website</span></a></nav></div></aside><div class=\"flex h-screen min-w-0 flex-1 flex-col overflow-hidden\"><header class=\"z-40 flex h-16 w-full shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md lg:px-8 dark:border-slate-800 dark:bg-[#0E1626]/95\"><div class=\"flex min-w-0 items-center gap-2 sm:gap-4\"><button type=\"button\" class=\"cursor-pointer rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden dark:text-slate-400 dark:hover:bg-slate-800\" aria-label=\"Buka navigasi\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-5 w-5 lucide-menu-icon lucide-menu h-5 w-5\" aria-hidden=\"true\"><path d=\"M4 5h16\"></path><path d=\"M4 12h16\"></path><path d=\"M4 19h16\"></path></svg></button><div><h2 class=\"truncate text-base font-bold tracking-tight text-slate-900 sm:text-lg dark:text-white\">Dashboard</h2></div><span class=\"hidden rounded-full border px-2.5 py-0.5 text-[10px] font-bold sm:inline-block bg-emerald-500/10 text-emerald-400 border-emerald-500/30\">Tenaga Kependidikan &amp; Admin</span></div><div class=\"flex shrink-0 items-center gap-1 sm:gap-3\"><button type=\"button\" class=\"flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-slate-100/80 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-all hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200\" aria-label=\"Beralih ke mode gelap\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-3.5 w-3.5 text-amber-500 lucide-sun-icon lucide-sun h-3.5 w-3.5 text-amber-500\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"4\"></circle><path d=\"M12 2v2\"></path><path d=\"M12 20v2\"></path><path d=\"m4.93 4.93 1.41 1.41\"></path><path d=\"m17.66 17.66 1.41 1.41\"></path><path d=\"M2 12h2\"></path><path d=\"M20 12h2\"></path><path d=\"m6.34 17.66-1.41 1.41\"></path><path d=\"m19.07 4.93-1.41 1.41\"></path></svg><span class=\"hidden sm:inline\">Light mode</span></button><span aria-label=\"Notifikasi server belum tersedia\" title=\"Notifikasi server belum tersedia\" class=\"text-slate-400\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-4 w-4 lucide-bell-icon lucide-bell h-4 w-4\" aria-hidden=\"true\"><path d=\"M10.268 21a2 2 0 0 0 3.464 0\"></path><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"></path></svg></span><a aria-label=\"Profil akun\" class=\"flex items-center gap-2.5 pl-1 transition-opacity hover:opacity-90\" href=\"/profile\"><div class=\"flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-700 dark:bg-slate-700 dark:text-slate-200\">SN</div><div class=\"hidden text-left sm:block\"><span class=\"block text-xs font-semibold text-slate-800 dark:text-slate-200\">Siti Nurhaliza, S.Kom.</span><span class=\"block text-[10px] text-slate-400\">NIP: 199208192018032001</span></div></a><button type=\"button\" class=\"flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-100/80 px-3 py-1.5 text-xs font-bold text-slate-600 transition-all hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:border-rose-900/50 dark:hover:bg-rose-950/40 dark:hover:text-rose-400\" aria-label=\"Keluar (Log Out)\" title=\"Keluar (Log Out)\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide h-3.5 w-3.5 lucide-log-out-icon lucide-log-out h-3.5 w-3.5\" aria-hidden=\"true\"><path d=\"m16 17 5-5-5-5\"></path><path d=\"M21 12H9\"></path><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\"></path></svg><span class=\"hidden sm:inline\">Log Out</span></button></div></header><!----><div class=\"flex flex-1 flex-col justify-between overflow-x-hidden overflow-y-auto\"><main id=\"main-content\" tabindex=\"-1\" class=\"min-w-0 flex-1 p-4 lg:p-8\"><!----><div class=\"space-y-6\"><div class=\"flex flex-col gap-3 border-b border-slate-200/80 pb-4 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800\" badge=\"Sarana &amp; Prasarana\" description=\"Status tersedia adalah pengaturan administratif, bukan kondisi pemakaian saat ini.\"><div class=\"min-w-0\"><h2 class=\"text-xl font-bold tracking-tight text-slate-900 dark:text-white\">Kelola Ruangan</h2><!----></div><!----></div><div class=\"flex justify-end\"><button type=\"button\" class=\"inline-flex items-center justify-center font-medium transition-all duration-150 select-none focus:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 focus-visible:ring-blue-500 shadow-sm shadow-blue-500/20 px-4 py-2 text-sm rounded-xl gap-2\"><!---->Tambah Ruangan</button></div><!----><!----><p class=\"text-sm text-slate-500\"> Fasilitas terstruktur dan agenda pemakaian harian tidak tersedia pada halaman ini. Manajemen link hybrid ruangan belum tersedia; link online tersimpan per jadwal, bukan per ruangan. </p><!----><div class=\"grid gap-6 md:grid-cols-2\"><div class=\"overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs transition-shadow duration-200 dark:border-slate-800 dark:bg-slate-900 space-y-3 p-6\"><!----><div class=\"p-6\"><h3 class=\"font-bold\">Ruang Lab Jaringan &amp; Keamanan Siber</h3><p> Gedung: Gedung B • Lantai: Lantai 3</p><p>Kapasitas: 25</p><p>Tersedia</p><p>Catatan: —</p><div class=\"flex gap-2\"><button type=\"button\" class=\"inline-flex items-center justify-center font-medium transition-all duration-150 select-none focus:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 px-4 py-2 text-sm rounded-xl gap-2\"><!---->Edit</button><button type=\"button\" class=\"inline-flex items-center justify-center font-medium transition-all duration-150 select-none focus:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 px-4 py-2 text-sm rounded-xl gap-2\"><!---->Hapus</button></div></div><!----></div><div class=\"overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs transition-shadow duration-200 dark:border-slate-800 dark:bg-slate-900 space-y-3 p-6\"><!----><div class=\"p-6\"><h3 class=\"font-bold\">Ruang Lab Riset Multimedia</h3><p> Gedung: Gedung A • Lantai: Lantai 2</p><p>Kapasitas: 30</p><p>Tersedia</p><p>Catatan: —</p><div class=\"flex gap-2\"><button type=\"button\" class=\"inline-flex items-center justify-center font-medium transition-all duration-150 select-none focus:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 px-4 py-2 text-sm rounded-xl gap-2\"><!---->Edit</button><button type=\"button\" class=\"inline-flex items-center justify-center font-medium transition-all duration-150 select-none focus:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 px-4 py-2 text-sm rounded-xl gap-2\"><!---->Hapus</button></div></div><!----></div><div class=\"overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs transition-shadow duration-200 dark:border-slate-800 dark:bg-slate-900 space-y-3 p-6\"><!----><div class=\"p-6\"><h3 class=\"font-bold\">Ruang Sidang Utama Informatika</h3><p> Gedung: Gedung A • Lantai: Lantai 3</p><p>Kapasitas: 40</p><p>Tersedia</p><p>Catatan: —</p><div class=\"flex gap-2\"><button type=\"button\" class=\"inline-flex items-center justify-center font-medium transition-all duration-150 select-none focus:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 px-4 py-2 text-sm rounded-xl gap-2\"><!---->Edit</button><button type=\"button\" class=\"inline-flex items-center justify-center font-medium transition-all duration-150 select-none focus:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 px-4 py-2 text-sm rounded-xl gap-2\"><!---->Hapus</button></div></div><!----></div></div></div></main><footer class=\"shrink-0 border-t border-slate-200/80 bg-white/50 px-4 py-4 text-center text-xs text-slate-500 sm:px-8 dark:border-slate-800 dark:bg-[#0E1626]/50 dark:text-slate-400\"><div class=\"flex flex-col items-center justify-between gap-2 sm:flex-row\"><div class=\"flex items-center gap-4\"><a class=\"transition-colors hover:text-blue-600\" href=\"/panduan\"> Panduan Layanan </a><span>•</span><a class=\"transition-colors hover:text-blue-600\" href=\"/prosedur\"> SOP &amp; Prosedur TA </a></div><p>© 2026 Program Studi Informatika ITK • SIPTA IF</p></div></footer></div></div><a class=\"sr-only focus:not-sr-only focus:fixed focus:right-4 focus:bottom-4 focus:z-50 focus:rounded-lg focus:bg-white focus:p-3 focus:text-blue-700\" href=\"/panduan\">Panduan layanan akademik</a></div></div>\n    <script data-inertia-devtools-id=\"\" type=\"application/json\">\"01M4Q7RV630PTDYQ0E81E1QA36\"</script>\n\n<!----></body>"
+    }
+}

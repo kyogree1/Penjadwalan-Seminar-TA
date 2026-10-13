@@ -40,25 +40,27 @@ const colorClasses = computed(() => {
 
 <template>
     <div
-        class="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:shadow-md dark:border-slate-800 dark:bg-[#0E1626]"
+        class="dark:bg-navy-surface flex flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-3 sm:p-4 dark:border-slate-800"
     >
         <div class="flex items-center justify-between">
             <span
-                class="text-xs font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+                class="text-sm font-medium text-slate-600 dark:text-slate-400"
             >
                 {{ title }}
             </span>
             <div
                 v-if="icon"
-                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-2xs"
+                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
                 :class="colorClasses"
             >
-                <component :is="icon" class="h-5 w-5" />
+                <component :is="icon" class="h-4 w-4" aria-hidden="true" />
             </div>
         </div>
 
-        <div class="mt-4">
-            <p class="text-2xl font-extrabold text-slate-900 dark:text-white">
+        <div class="mt-2">
+            <p
+                class="text-xl font-semibold text-slate-900 tabular-nums dark:text-white"
+            >
                 {{ value }}
             </p>
             <div

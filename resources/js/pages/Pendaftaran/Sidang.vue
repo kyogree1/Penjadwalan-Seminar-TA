@@ -1,30 +1,44 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import type { Auth } from '@/types/auth';
+import { computed, watch } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { Download, FileCheck, Lock, Send } from 'lucide-vue-next';
 
 import CollapsibleCard from '@/Components/CollapsibleCard.vue';
 import DosenTeamSection from '@/Components/DosenTeamSection.vue';
-import FileTemplateLink from '@/Components/FileTemplateLink.vue';
+import TemplateDownloadCard from '@/Components/TemplateDownloadCard.vue';
 import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 import ProfileHeaderCard from '@/Components/ProfileHeaderCard.vue';
 import RiwayatTimelineCard from '@/Components/RiwayatTimelineCard.vue';
-import AppLayout from '@/Layouts/AppLayout.vue';
+
+interface Props {
+    sidang?: {
+        id?: number;
+        judul_ta?: string;
+        lokasi_mitra?: string;
+        status?: string;
+        skor_iaet_file?: string;
+        draft_laporan_file?: string;
+        turnitin_file?: string;
+        created_at?: string;
+        catatan?: string | null;
+    } | null;
+    defaultJudul?: string | null;
+}
+
+const props = defineProps<Props>();
+const feedback = computed(
+    () => (page.props.flash as { success?: string; error?: string }) ?? {},
+);
 
 const page = usePage();
-const authUser = computed(() => (page.props.auth as any)?.user);
-const studentName = computed(
-    () => authUser.value?.name || 'Akmal Falah Maulana',
-);
+const authUser = computed(() => (page.props.auth as Auth | undefined)?.user);
+const studentName = computed(() => authUser.value?.name ?? '');
 const studentNim = computed(
-    () =>
-        authUser.value?.username ||
-        authUser.value?.nim_nip?.replace('NIM: ', '') ||
-        '11231006',
+    () => authUser.value?.nim_nip ?? 'NIM belum tersedia',
 );
 const studentProdi = computed(() => authUser.value?.prodi || 'Informatika');
 const studentInitials = computed(() => {
-    if (!authUser.value?.name) return 'AF';
+    if (!authUser.value?.name) return '';
     return authUser.value.name
         .split(' ')
         .filter(Boolean)
@@ -34,15 +48,122 @@ const studentInitials = computed(() => {
 });
 
 const form = useForm({
-    judul_ta:
-        'Sistem Penjadwalan Seminar dan Chatbot Layanan Akademik Menggunakan Algoritma Genetika dan Large Language Model',
-    skor_iaet_file: null as File | null,
-    lokasi_mitra: '',
+    judul_ta: props.sidang?.judul_ta || props.defaultJudul || '',
+    skor_iaet: '' as number | string,
+    lokasi_mitra: props.sidang?.lokasi_mitra || '',
     draft_laporan_file: null as File | null,
     turnitin_file: null as File | null,
 });
 
+watch(
+    () => [props.sidang, props.defaultJudul] as const,
+    ([record, title]) => {
+        form.judul_ta = record?.judul_ta ?? title ?? '';
+        form.lokasi_mitra = record?.lokasi_mitra ?? '';
+    },
+);
+const statusSidangConfig = computed(() => {
+    if (!props.sidang) {
+        return {
+            label: 'Belum Isi Formulir',
+            bg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
+        };
+    }
+    switch (props.sidang.status) {
+        case 'menunggu':
+            return {
+                label: 'Diajukan (Menunggu Tendik)',
+                bg: 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200',
+            };
+        case 'verifikasi_tendik':
+            return {
+                label: 'Berkas Diverifikasi',
+                bg: 'bg-blue-600 text-white',
+            };
+        case 'terjadwal':
+            return {
+                label: 'Jadwal Telah Ditetapkan',
+                bg: 'bg-emerald-600 text-white',
+            };
+        case 'selesai':
+            return { label: 'Sidang Selesai', bg: 'bg-emerald-700 text-white' };
+        case 'ditolak':
+            return {
+                label: 'Ditolak',
+                bg: 'bg-rose-600 text-white',
+            };
+        default:
+            return {
+                label: 'Diajukan',
+                bg: 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200',
+            };
+    }
+});
+
+const riwayatItems = computed(() => {
+    if (!props.sidang) return [];
+    return [
+        {
+            title: 'Pendaftaran Sidang Diajukan',
+            subtitle: props.sidang.judul_ta,
+            date: props.sidang.created_at
+                ? new Date(props.sidang.created_at).toLocaleDateString(
+                      'id-ID',
+                      { day: 'numeric', month: 'short', year: 'numeric' },
+                  )
+                : 'Baru saja',
+        },
+    ];
+});
+
+const fileError = (file: File | null, limitMb = 10) => {
+    if (!file) return 'Berkas wajib diunggah.';
+    if (
+        !/\.pdf$/i.test(file.name) ||
+        (file.type && file.type !== 'application/pdf')
+    )
+        return 'Berkas harus berupa PDF.';
+    if (file.size === 0) return 'Berkas tidak boleh kosong.';
+    if (file.size > limitMb * 1024 * 1024)
+        return `Ukuran berkas maksimal ${limitMb} MB.`;
+    return '';
+};
+const validationErrors = computed(() => ({
+    draft_laporan_file: fileError(form.draft_laporan_file),
+    turnitin_file: fileError(form.turnitin_file, 5),
+    skor_iaet:
+        form.skor_iaet !== '' &&
+        (!Number.isFinite(Number(form.skor_iaet)) || Number(form.skor_iaet) < 0)
+            ? 'Skor IAET harus berupa angka nol atau lebih.'
+            : '',
+}));
+const isFormValid = computed(() =>
+    Object.values(validationErrors.value).every((error) => !error),
+);
 const submitSidang = () => {
+    if (form.processing) return;
+    form.clearErrors();
+    if (!isFormValid.value) {
+        for (const field of [
+            'draft_laporan_file',
+            'turnitin_file',
+            'skor_iaet',
+        ] as const) {
+            if (validationErrors.value[field])
+                form.setError(field, validationErrors.value[field]);
+        }
+        return;
+    }
+    if (
+        form.skor_iaet !== '' &&
+        (!Number.isFinite(Number(form.skor_iaet)) || Number(form.skor_iaet) < 0)
+    ) {
+        form.setError(
+            'skor_iaet',
+            'Skor IAET harus berupa angka nol atau lebih.',
+        );
+        return;
+    }
     form.post('/pendaftaran/sidang', {
         forceFormData: true,
         preserveScroll: true,
@@ -51,238 +172,239 @@ const submitSidang = () => {
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
-        <Head title="Sidang Tugas Akhir - SIPTA IF" />
+    <Head title="Sidang Tugas Akhir - SIPTA IF" />
 
-        <div class="mx-auto max-w-7xl space-y-6">
-            <!-- 1. Header Box (Reusable Component) -->
-            <PageHeaderBox title="Sidang Tugas Akhir" />
+    <div class="mx-auto max-w-7xl space-y-6">
+        <p
+            v-if="feedback.success"
+            role="status"
+            class="text-sm text-emerald-700"
+        >
+            {{ feedback.success }}
+        </p>
+        <p v-if="feedback.error" role="alert" class="text-sm text-rose-700">
+            {{ feedback.error }}
+        </p>
+        <!-- 1. Header Box (Reusable Component) -->
+        <PageHeaderBox title="Sidang Tugas Akhir" />
 
-            <!-- 2. Profile Card (Reusable Component) -->
-            <ProfileHeaderCard
-                :name="studentName"
-                :nim="studentNim"
-                angkatan="Akt 2023"
-                :prodi="studentProdi"
-                :avatar-initials="studentInitials"
+        <!-- 2. Profile Card (Reusable Component) -->
+        <ProfileHeaderCard
+            :name="studentName"
+            :nim="studentNim"
+            angkatan="Angkatan belum tersedia"
+            :prodi="studentProdi"
+            :avatar-initials="studentInitials"
+        >
+            <span
+                class="mb-1 text-xs font-bold text-slate-500 dark:text-slate-400"
             >
-                <span
-                    class="mb-1 text-xs font-bold text-slate-500 dark:text-slate-400"
-                >
-                    Status Sidang
-                </span>
-                <span
-                    class="rounded-xl bg-[#FF7575] px-4 py-2 text-xs font-bold text-white shadow-2xs"
-                >
-                    Belum Isi Formulir
-                </span>
-            </ProfileHeaderCard>
+                Status Sidang
+            </span>
+            <span
+                class="rounded-xl px-4 py-2 text-xs font-bold shadow-2xs"
+                :class="statusSidangConfig.bg"
+            >
+                {{ statusSidangConfig.label }}
+            </span>
+        </ProfileHeaderCard>
 
-            <!-- 3. Two Column Layout -->
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <div class="space-y-6 lg:col-span-2">
-                    <!-- Dosen Pembimbing & Penguji (Reusable Component) -->
-                    <DosenTeamSection />
+        <!-- 3. Two Column Layout -->
+        <p
+            v-for="error in form.errors"
+            :key="error"
+            role="alert"
+            class="text-sm text-rose-700"
+        >
+            {{ error }}
+        </p>
+        <p class="text-sm text-slate-500">
+            Skor IAET numerik tidak disimpan oleh kontrak saat ini. Identitas
+            tim dosen belum tersedia pada halaman pendaftaran.
+        </p>
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div class="space-y-6 lg:col-span-2">
+                <!-- Dosen Pembimbing & Penguji (Reusable Component) -->
+                <DosenTeamSection :pembimbing-list="[]" :penguji-list="[]" />
 
-                    <!-- Formulir Pendaftaran Sidang TA (Reusable CollapsibleCard) -->
-                    <CollapsibleCard
-                        title="Formulir Pendaftaran Sidang TA"
-                        status-text="Belum Selesai"
-                        status-variant="yellow"
-                        :default-open="true"
-                    >
-                        <form class="space-y-6" @submit.prevent="submitSidang">
-                            <!-- Judul TA -->
-                            <div
-                                class="border-b border-slate-100 pb-4 text-xs dark:border-slate-800"
+                <TemplateDownloadCard
+                    :templates="[
+                        { label: 'Lembar Persetujuan Revisi Proposal TA' },
+                        { code: 'TA-04', label: 'Monitoring Bimbingan' },
+                        { code: 'TA-05', label: 'Persetujuan Sidang TA' },
+                    ]"
+                />
+
+                <!-- Formulir Pendaftaran Sidang TA (Reusable CollapsibleCard) -->
+                <CollapsibleCard
+                    title="Formulir Pendaftaran Sidang TA"
+                    :default-open="true"
+                >
+                    <form class="space-y-6" @submit.prevent="submitSidang">
+                        <!-- Judul TA -->
+                        <div
+                            class="border-b border-slate-100 pb-4 text-sm leading-relaxed dark:border-slate-800"
+                        >
+                            <span
+                                class="font-bold text-slate-800 dark:text-slate-200"
+                                >Judul TA:
+                            </span>
+                            <input
+                                v-model="form.judul_ta"
+                                placeholder="Judul TA"
+                                class="rounded border border-slate-300 p-2"
+                            />
+                        </div>
+
+                        <!-- Input Skor IAET Terbaru -->
+                        <div class="space-y-2">
+                            <label
+                                for="skor-iaet"
+                                class="block text-sm font-bold text-slate-800 dark:text-slate-200"
                             >
-                                <span
-                                    class="font-bold text-slate-800 dark:text-slate-200"
-                                    >Judul TA:
-                                </span>
-                                <span
-                                    class="text-slate-600 dark:text-slate-400"
-                                    >{{ form.judul_ta }}</span
-                                >
-                            </div>
-
-                            <!-- File Pendukung Links (Reusable FileTemplateLink) -->
-                            <div class="space-y-2 text-xs">
-                                <p
-                                    class="font-bold text-slate-800 dark:text-slate-200"
-                                >
-                                    File Pendukung:
-                                </p>
-                                <div class="space-y-1.5 pl-1">
-                                    <FileTemplateLink
-                                        label="Lembar Persetujuan Revisi Proposal TA"
-                                    />
-                                    <FileTemplateLink
-                                        label="Lembar Monitoring Bimbingan"
-                                        code="Form TA-04"
-                                    />
-                                    <FileTemplateLink
-                                        label="Formulir Persetujuan Sidang TA"
-                                        code="Form TA-05"
-                                    />
-                                </div>
-                            </div>
-
-                            <!-- Input Skor IAET Terbaru -->
-                            <div class="space-y-1.5">
-                                <label
-                                    class="block text-xs font-bold text-slate-800 dark:text-slate-200"
-                                >
-                                    Skor IAET Terbaru
-                                </label>
-                                <div
-                                    class="flex items-center gap-3 rounded-xl border border-slate-300 bg-slate-50/50 p-2.5 dark:border-slate-700 dark:bg-slate-900"
-                                >
-                                    <input
-                                        type="file"
-                                        accept=".pdf"
-                                        class="text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
-                                        @change="
-                                            (e: any) =>
-                                                (form.skor_iaet_file =
-                                                    e.target.files[0])
-                                        "
-                                    />
-                                    <span
-                                        class="ml-auto text-[11px] text-slate-400"
-                                        >Max 10 MB</span
-                                    >
-                                </div>
-                            </div>
-
-                            <!-- Input Lokasi/Mitra Penelitian -->
-                            <div class="space-y-1.5">
-                                <label
-                                    class="block text-xs font-bold text-slate-800 dark:text-slate-200"
-                                >
-                                    Lokasi/Mitra Penelitian (Opsional)
-                                </label>
-                                <input
-                                    v-model="form.lokasi_mitra"
-                                    type="text"
-                                    placeholder="Contoh: PT Lorem Ipsum / Laboratorium Universitas / Balikpapan"
-                                    class="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                                />
-                            </div>
-
-                            <!-- Input Draft Laporan TA -->
-                            <div class="space-y-1.5">
-                                <label
-                                    class="block text-xs font-bold text-slate-800 dark:text-slate-200"
-                                >
-                                    Draft Laporan Tugas Akhir
-                                </label>
-                                <div
-                                    class="flex items-center gap-3 rounded-xl border border-slate-300 bg-slate-50/50 p-2.5 dark:border-slate-700 dark:bg-slate-900"
-                                >
-                                    <input
-                                        type="file"
-                                        accept=".pdf"
-                                        class="text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
-                                        @change="
-                                            (e: any) =>
-                                                (form.draft_laporan_file =
-                                                    e.target.files[0])
-                                        "
-                                    />
-                                    <span
-                                        class="ml-auto text-[11px] text-slate-400"
-                                        >Max 10 MB</span
-                                    >
-                                </div>
-                            </div>
-
-                            <!-- Input Bukti Plagiasi Turnitin -->
-                            <div class="space-y-1.5">
-                                <label
-                                    class="block text-xs font-bold text-slate-800 dark:text-slate-200"
-                                >
-                                    Bukti Plagiasi (Turnitin)
-                                </label>
-                                <div
-                                    class="flex items-center gap-3 rounded-xl border border-slate-300 bg-slate-50/50 p-2.5 dark:border-slate-700 dark:bg-slate-900"
-                                >
-                                    <input
-                                        type="file"
-                                        accept=".pdf"
-                                        class="text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
-                                        @change="
-                                            (e: any) =>
-                                                (form.turnitin_file =
-                                                    e.target.files[0])
-                                        "
-                                    />
-                                    <span
-                                        class="ml-auto text-[11px] text-slate-400"
-                                        >Max 10 MB</span
-                                    >
-                                </div>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <div class="flex justify-end pt-2">
-                                <button
-                                    type="submit"
-                                    class="rounded-xl bg-[#8CE79B] px-6 py-2.5 text-xs font-bold text-slate-900 transition-all hover:bg-[#7BD68A] active:scale-95"
-                                >
-                                    Submit
-                                </button>
-                            </div>
-                        </form>
-                    </CollapsibleCard>
-
-                    <!-- Dokumen Kelulusan (Reusable CollapsibleCard) -->
-                    <CollapsibleCard
-                        title="Dokumen Kelulusan"
-                        status-text="Menunggu persetujuan revisi dari dosen"
-                        status-variant="red"
-                        :default-open="true"
-                    >
-                        <div class="space-y-3">
+                                Skor IAET Terbaru (Opsional)
+                            </label>
+                            <input
+                                id="skor-iaet"
+                                v-model.number="form.skor_iaet"
+                                disabled
+                                title="Skor numerik belum memiliki kontrak penyimpanan"
+                                type="number"
+                                min="0"
+                                step="any"
+                                placeholder="Masukkan skor IAET"
+                                class="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                :aria-invalid="!!form.errors.skor_iaet"
+                            />
                             <p
-                                class="text-xs leading-relaxed text-slate-500 dark:text-slate-400"
+                                v-if="form.errors.skor_iaet"
+                                class="text-xs text-rose-600"
                             >
-                                Dokumen kelulusan akan tersedia setelah semua
-                                dosen menyetujui hasil revisi Tugas Akhir Anda.
-                                Silakan hubungi dosen untuk melakukan ACC
-                                revisi.
+                                {{ form.errors.skor_iaet }}
                             </p>
+                        </div>
 
-                            <div
-                                class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 dark:border-slate-800 dark:bg-slate-900/60"
+                        <!-- Input Lokasi/Mitra Penelitian -->
+                        <div class="space-y-2">
+                            <label
+                                class="block text-sm font-bold text-slate-800 dark:text-slate-200"
                             >
-                                <div
-                                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 font-bold text-rose-600"
+                                Lokasi/Mitra Penelitian (Opsional)
+                            </label>
+                            <input
+                                v-model="form.lokasi_mitra"
+                                type="text"
+                                placeholder="Contoh: PT Lorem Ipsum / Laboratorium Universitas / Balikpapan"
+                                class="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                            />
+                        </div>
+
+                        <!-- Input Draft Laporan TA -->
+                        <div class="space-y-2">
+                            <label
+                                class="block text-sm font-bold text-slate-800 dark:text-slate-200"
+                            >
+                                Draft Laporan Tugas Akhir
+                                <span class="text-rose-500">*</span>
+                            </label>
+                            <div
+                                class="flex flex-col items-stretch gap-2 rounded-xl border border-slate-300 bg-slate-50/50 p-2.5 sm:flex-row sm:items-center dark:border-slate-700 dark:bg-slate-900"
+                            >
+                                <input
+                                    type="file"
+                                    required
+                                    accept=".pdf"
+                                    class="w-full min-w-0 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
+                                    @change="
+                                        (e: any) =>
+                                            (form.draft_laporan_file =
+                                                e.target.files?.[0] ?? null)
+                                    "
+                                />
+                                <p
+                                    v-if="
+                                        form.draft_laporan_file &&
+                                        validationErrors.draft_laporan_file
+                                    "
+                                    class="text-xs text-rose-600"
+                                    role="alert"
                                 >
-                                    <Lock class="h-5 w-5" />
-                                </div>
-                                <div class="min-w-0">
-                                    <p
-                                        class="text-xs font-bold text-slate-900 dark:text-white"
-                                    >
-                                        Lembar Pengesahan Tugas Akhir
-                                    </p>
-                                    <p class="text-[11px] text-slate-400">
-                                        Belum dapat diunduh - menunggu ACC
-                                        revisi
-                                    </p>
-                                </div>
+                                    {{ validationErrors.draft_laporan_file }}
+                                </p>
+                                <span class="shrink-0 text-xs text-slate-500"
+                                    >PDF, maks. 10 MB</span
+                                >
                             </div>
                         </div>
-                    </CollapsibleCard>
-                </div>
 
-                <!-- Right Column: Riwayat Pendaftaran & Pelaksanaan -->
-                <div class="space-y-6">
-                    <RiwayatTimelineCard title="Riwayat Pendaftaran" />
-                    <RiwayatTimelineCard title="Riwayat Pelaksanaan & Hasil" />
-                </div>
+                        <!-- Input Bukti Plagiasi Turnitin -->
+                        <div class="space-y-2">
+                            <label
+                                class="block text-sm font-bold text-slate-800 dark:text-slate-200"
+                            >
+                                Bukti Plagiasi (Turnitin)
+                                <span class="text-rose-500">*</span>
+                            </label>
+                            <div
+                                class="flex flex-col items-stretch gap-2 rounded-xl border border-slate-300 bg-slate-50/50 p-2.5 sm:flex-row sm:items-center dark:border-slate-700 dark:bg-slate-900"
+                            >
+                                <input
+                                    type="file"
+                                    required
+                                    accept=".pdf"
+                                    class="w-full min-w-0 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-white file:px-3 file:py-1 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-100"
+                                    @change="
+                                        (e: any) =>
+                                            (form.turnitin_file =
+                                                e.target.files?.[0] ?? null)
+                                    "
+                                />
+                                <p
+                                    v-if="
+                                        form.turnitin_file &&
+                                        validationErrors.turnitin_file
+                                    "
+                                    class="text-xs text-rose-600"
+                                    role="alert"
+                                >
+                                    {{ validationErrors.turnitin_file }}
+                                </p>
+                                <span class="shrink-0 text-xs text-slate-500"
+                                    >PDF, maks. 10 MB</span
+                                >
+                            </div>
+                        </div>
+
+                        <p
+                            v-if="!isFormValid"
+                            class="rounded-xl bg-blue-50 p-3 text-sm text-blue-800 dark:bg-blue-950/30 dark:text-blue-200"
+                            role="status"
+                        >
+                            Lengkapi berkas bertanda * dengan PDF yang valid
+                            (maksimal 10 MB) sebelum mengajukan. Skor IAET dan
+                            lokasi penelitian opsional.
+                        </p>
+                        <!-- Submit Button -->
+                        <div class="flex justify-end pt-2">
+                            <button
+                                type="submit"
+                                :disabled="!isFormValid || form.processing"
+                                class="w-full rounded-xl bg-[#8CE79B] px-6 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-[#7BD68A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                            >
+                                Ajukan Pendaftaran Sidang
+                            </button>
+                        </div>
+                    </form>
+                </CollapsibleCard>
+            </div>
+
+            <!-- Right Column: Riwayat Pendaftaran -->
+            <div class="space-y-6">
+                <RiwayatTimelineCard
+                    title="Riwayat Pendaftaran"
+                    :items="riwayatItems"
+                />
             </div>
         </div>
-    </AppLayout>
+    </div>
 </template>

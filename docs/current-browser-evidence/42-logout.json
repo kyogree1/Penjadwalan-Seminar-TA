@@ -1,0 +1,111 @@
+{
+    "label": "42-logout",
+    "url": "http://127.0.0.1:8897/login",
+    "body": "Dark mode\nSIPTA IF\n\nSISTEM INFORMASI TUGAS AKHIR & PENJADWALAN SEMINAR\n\nProgram Studi Informatika, Jurusan Sains dan Teknologi Informasi, Institut Teknologi Kalimantan. Kelola seluruh proses pendaftaran Sempro, Sidang, hingga logbook bimbingan secara terpadu.\n\nSign in\n\nMasuk sesuai hak akses: Mahasiswa, Dosen, Kaprodi, atau Tendik\n\nUsername / NIM / NIP / Email\nPassword\nIngat saya\nLupa password? Hubungi Tendik\nMasuk ke Portal\nJadwal Seminar & Sidang\n\nJadwal publik belum tersedia. Masuk ke portal untuk melihat jadwal sesuai hak akses Anda.\n\nPanduan Layanan\n|\nSOP & Prosedur TA\n|\nKatalog Publik\n\n© 2026 Informatika ITK • SIPTA IF",
+    "controls": [
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "Dark mode",
+            "name": "",
+            "title": "Beralih ke mode terang (Light mode)",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "INPUT",
+            "type": "text",
+            "text": "",
+            "placeholder": "Contoh: 11231006 atau 19850412...",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "INPUT",
+            "type": "password",
+            "text": "",
+            "placeholder": "Masukkan password",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null
+        },
+        {
+            "tag": "BUTTON",
+            "type": "button",
+            "text": "",
+            "name": "",
+            "title": "",
+            "aria": "Tampilkan password",
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "INPUT",
+            "type": "checkbox",
+            "text": "",
+            "placeholder": "",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": "on"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Lupa password? Hubungi Tendik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "BUTTON",
+            "type": "submit",
+            "text": "Masuk ke Portal",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": null,
+            "value": ""
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Panduan Layanan",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/panduan"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "SOP & Prosedur TA",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/prosedur"
+        },
+        {
+            "tag": "A",
+            "type": "",
+            "text": "Katalog Publik",
+            "name": "",
+            "title": "",
+            "aria": null,
+            "href": "/katalog"
+        }
+    ],
+    "layout": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "dark": true,
+        "focus": "BODY null Dark mode\nSIPTA IF\n\nSISTEM INFORMASI TUGAS AKHIR & PENJADWALAN SEMINAR\n\nProgram Studi Informatika, Jurusan Sains dan Tek"
+    }
+}
