@@ -34,13 +34,13 @@ class PendaftaranJadwalController extends Controller
             });
 
         // 2. Jadwal sempro & sidang
-        $jadwalSempro = Penjadwalan::with(['mahasiswa:id,name,username,nim_nip', 'ruangan:id,nama_ruangan,gedung', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
+        $jadwalSempro = Penjadwalan::with(['mahasiswa:id,name,username,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
             ->where('tipe', 'sempro')
             ->where('status', 'terpublikasi')
             ->latest('tanggal')
             ->get();
 
-        $jadwalSidang = Penjadwalan::with(['mahasiswa:id,name,username,nim_nip', 'ruangan:id,nama_ruangan,gedung', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
+        $jadwalSidang = Penjadwalan::with(['mahasiswa:id,name,username,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
             ->where('tipe', 'sidang')
             ->where('status', 'terpublikasi')
             ->latest('tanggal')

@@ -24,7 +24,6 @@ class PenilaianController extends Controller
         // Cari seminar di mana dosen ini bertindak sebagai pembimbing atau penguji
         $jadwalUji = Penjadwalan::with([
             'mahasiswa:id,name,username,nim_nip',
-            'ruangan:id,nama_ruangan',
             'penilaian',
         ])
             ->where(function ($q) use ($user) {

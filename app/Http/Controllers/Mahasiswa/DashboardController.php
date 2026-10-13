@@ -30,7 +30,7 @@ class DashboardController extends Controller
             ->count();
 
         // 3. Jadwal jika sudah dijadwalkan
-        $jadwalAktif = Penjadwalan::with(['ruangan:id,nama_ruangan,gedung', 'pembimbing1:id,name', 'penguji1:id,name'])
+        $jadwalAktif = Penjadwalan::with(['pembimbing1:id,name', 'penguji1:id,name'])
             ->where('mahasiswa_id', $user->id)
             ->where('status', 'terpublikasi')
             ->latest('tanggal')

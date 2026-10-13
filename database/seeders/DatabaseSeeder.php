@@ -154,7 +154,6 @@ class DatabaseSeeder extends Seeder
             [
                 'period_id' => $period->id,
                 'mahasiswa_id' => $mahasiswa->id,
-                'nama_ruangan' => 'Ruang Sidang Utama Informatika',
                 'pembimbing_1_id' => $dosen1->id,
                 'pembimbing_2_id' => $dosen2->id,
                 'penguji_1_id' => $dosen1->id,
