@@ -26,16 +26,19 @@ class DemoAuthenticationTest extends TestCase
 
     public static function nonLocalEnvironments(): array
     {
-        return [['production'], ['staging'], ['testing']];
+        return [['production'], ['staging'], ['testing'], ['local']];
     }
 
-    public function test_local_demo_login_still_authenticates_the_requested_role(): void
+    public function test_local_demo_login_with_credentials_still_requires_the_correct_password(): void
     {
         $dosen = User::factory()->create(['role' => 'dosen']);
         $this->app->instance('env', 'local');
         $this->withoutMiddleware(PreventRequestForgery::class);
 
-        $this->post('/login', ['demo_role' => 'dosen'])->assertRedirect('/dosen/dashboard');
+        $this->post('/login', ['demo_role' => 'dosen', 'email' => $dosen->email, 'password' => 'wrong-password'])->assertForbidden();
+
+        $this->assertGuest();
+        $this->post('/login', ['email' => $dosen->email, 'password' => 'password'])->assertRedirect('/dosen/dashboard');
 
         $this->assertAuthenticatedAs($dosen);
     }
