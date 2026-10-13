@@ -161,6 +161,6 @@ class ScheduleOptimizer
         $match = $rows ? $matches / (2 * count($rows)) : 0;
         $balance = $loads ? 1 / (1 + max($loads) - min($loads)) : 0;
 
-        return ['fitness' => $rows ? round(.5 * $match + .5 * $balance,6) : 0, 'kbk_match' => $match, 'workload_balance' => $balance, 'workloads' => $loads];
+        return ['fitness' => $rows ? round(.5 * $match + .5 * $balance, 6) : 0, 'kbk_match' => $match, 'workload_balance' => $balance, 'workloads' => $loads];
     }
 }

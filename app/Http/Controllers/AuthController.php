@@ -30,21 +30,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Passwordless demo login is only available on explicitly local servers.
-        if ($request->filled('demo_role')) {
-            abort_unless(app()->environment('local'), 403);
-
-            $demoRole = $request->input('demo_role');
-            $user = User::where('role', $demoRole)->first();
-
-            if ($user) {
-                Auth::login($user, (bool) $request->input('remember', true));
-                $request->session()->regenerate();
-
-                return $this->redirectBasedOnRole($user);
-            }
-        }
-
         $credentials = $request->validate([
             'email' => ['required', 'string'],
             'password' => ['required', 'string'],

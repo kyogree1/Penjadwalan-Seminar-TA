@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import {
-    Eye,
-    EyeOff,
-    GraduationCap,
-    Moon,
-    Sun,
-    Building2,
-    ClipboardList,
-    UserCheck,
-} from 'lucide-vue-next';
+import { Eye, EyeOff, GraduationCap, Moon, Sun } from 'lucide-vue-next';
 
 import { useTheme } from '@/composables/useTheme';
 
@@ -20,8 +11,6 @@ onMounted(() => {
     initializeTheme();
 });
 
-const isDev = import.meta.env.DEV;
-
 const showPassword = ref(false);
 defineProps<{ flash?: { success?: string } }>();
 
@@ -29,31 +18,15 @@ const form = useForm({
     email: '',
     password: '',
     remember: false,
-    demo_role: '',
 });
 
 const submitLogin = () => {
-    form.demo_role = '';
     form.post('/login', {
         preserveScroll: true,
         onError: () => {
             form.reset('password');
         },
     });
-};
-
-const quickLoginAs = (role: 'mahasiswa' | 'dosen' | 'kaprodi' | 'tendik') => {
-    const credentials = {
-        mahasiswa: { email: '11231006', password: 'password' },
-        dosen: { email: '198504122010121003', password: 'password' },
-        kaprodi: { email: '198003152005011002', password: 'password' },
-        tendik: { email: '199208192018032001', password: 'password' },
-    };
-
-    form.email = credentials[role].email;
-    form.password = credentials[role].password;
-    form.demo_role = role;
-    form.post('/login');
 };
 </script>
 
@@ -243,80 +216,6 @@ const quickLoginAs = (role: 'mahasiswa' | 'dosen' | 'kaprodi' | 'tendik') => {
                                 <span v-else>Masuk ke Portal</span>
                             </button>
                         </form>
-
-                        <!-- Demo Accounts Quick Access -->
-                        <div
-                            v-if="isDev"
-                            class="mt-5 border-t border-blue-200/80 pt-4 dark:border-blue-900/50"
-                        >
-                            <p
-                                class="text-[10px] font-bold tracking-wider text-slate-600 uppercase dark:text-slate-400"
-                            >
-                                Masuk Cepat Sebagai Akun Uji:
-                            </p>
-                            <div class="mt-2 grid grid-cols-2 gap-2">
-                                <button
-                                    type="button"
-                                    :disabled="form.processing"
-                                    class="flex flex-col items-start rounded-xl border border-blue-300/80 bg-white/80 p-2 text-left transition-all hover:border-blue-600 hover:bg-white active:scale-95 dark:border-blue-800 dark:bg-slate-900/80 dark:hover:bg-slate-900"
-                                    @click="quickLoginAs('mahasiswa')"
-                                >
-                                    <span
-                                        class="flex items-center gap-1.5 text-[11px] font-bold text-blue-700 dark:text-blue-300"
-                                        ><GraduationCap class="h-3.5 w-3.5" />
-                                        Mahasiswa</span
-                                    >
-                                    <span class="text-[9px] text-slate-500"
-                                        >NIM: 11231006</span
-                                    >
-                                </button>
-                                <button
-                                    type="button"
-                                    :disabled="form.processing"
-                                    class="flex flex-col items-start rounded-xl border border-blue-300/80 bg-white/80 p-2 text-left transition-all hover:border-blue-600 hover:bg-white active:scale-95 dark:border-blue-800 dark:bg-slate-900/80 dark:hover:bg-slate-900"
-                                    @click="quickLoginAs('dosen')"
-                                >
-                                    <span
-                                        class="flex items-center gap-1.5 text-[11px] font-bold text-indigo-700 dark:text-indigo-300"
-                                        ><UserCheck class="h-3.5 w-3.5" />
-                                        Dosen</span
-                                    >
-                                    <span class="text-[9px] text-slate-500"
-                                        >Pembimbing & Penguji</span
-                                    >
-                                </button>
-                                <button
-                                    type="button"
-                                    :disabled="form.processing"
-                                    class="flex flex-col items-start rounded-xl border border-blue-300/80 bg-white/80 p-2 text-left transition-all hover:border-blue-600 hover:bg-white active:scale-95 dark:border-blue-800 dark:bg-slate-900/80 dark:hover:bg-slate-900"
-                                    @click="quickLoginAs('kaprodi')"
-                                >
-                                    <span
-                                        class="flex items-center gap-1.5 text-[11px] font-bold text-purple-700 dark:text-purple-300"
-                                        ><Building2 class="h-3.5 w-3.5" />
-                                        Kaprodi</span
-                                    >
-                                    <span class="text-[9px] text-slate-500"
-                                        >Koordinator TA</span
-                                    >
-                                </button>
-                                <button
-                                    type="button"
-                                    :disabled="form.processing"
-                                    class="flex flex-col items-start rounded-xl border border-blue-300/80 bg-white/80 p-2 text-left transition-all hover:border-blue-600 hover:bg-white active:scale-95 dark:border-blue-800 dark:bg-slate-900/80 dark:hover:bg-slate-900"
-                                    @click="quickLoginAs('tendik')"
-                                >
-                                    <span
-                                        class="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300"
-                                        ><ClipboardList class="h-3.5 w-3.5" />
-                                        Tendik</span
-                                    >
-                                    <span class="text-[9px] text-slate-500"
-                                        >Staf Administrasi</span
-                                    >
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

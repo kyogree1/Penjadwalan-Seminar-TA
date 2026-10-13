@@ -16,6 +16,7 @@ class RoleAuthenticationTest extends TestCase
         parent::setUp();
         $this->seed();
     }
+
     public function test_guest_is_served_login_page_on_root_route(): void
     {
         $response = $this->get('/');

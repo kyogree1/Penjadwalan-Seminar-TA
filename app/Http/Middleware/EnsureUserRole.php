@@ -12,12 +12,11 @@ class EnsureUserRole
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  string  ...$roles
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login');
         }
 
@@ -31,7 +30,7 @@ class EnsureUserRole
 
         $checkUserRole = $userRole === 'koordinator' ? 'kaprodi' : $userRole;
 
-        if (!empty($roles) && !in_array($checkUserRole, $normalizedRoles, true)) {
+        if (! empty($roles) && ! in_array($checkUserRole, $normalizedRoles, true)) {
             // Redirect to the user's correct role dashboard
             return match ($user->role) {
                 'dosen' => redirect()->route('dosen.dashboard')->with('error', 'Halaman tersebut hanya untuk peran tertentu.'),
