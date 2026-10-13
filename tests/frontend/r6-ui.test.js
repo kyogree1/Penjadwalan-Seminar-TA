@@ -50,13 +50,14 @@ const wrapper = Vue.defineComponent({
         () =>
             Vue.h('div', slots.default?.()),
 });
-function mount(path, additions = {}) {
+function compileComponent(path, additions = {}) {
     const { descriptor } = parse(readFileSync(path, 'utf8'), {
         filename: path,
     });
     const compiled = compileScript(descriptor, {
         id: 'r6',
         inlineTemplate: true,
+        templateOptions: { compilerOptions: { hoistStatic: false } },
     });
     const imports = {
         ...Vue,
@@ -88,8 +89,11 @@ function mount(path, additions = {}) {
     const component = runInNewContext(`(function () { ${code} })()`, {
         imports,
     });
+    return component;
+}
+function mount(path, additions = {}, props = {}) {
     const root = node();
-    renderer.createApp(component).mount(root);
+    renderer.createApp(compileComponent(path, additions), props).mount(root);
     return root;
 }
 
@@ -113,10 +117,34 @@ test('actual login SFC renders honest schedule state, labelled credentials and p
         post() {},
         reset() {},
     });
-    const root = mount('resources/js/pages/Auth/Login.vue', {
-        useForm: () => form,
-    });
-    expect(text(root)).toContain('Jadwal publik belum tersedia');
+    const root = mount(
+        'resources/js/pages/Auth/Login.vue',
+        {
+            useForm: () => form,
+            PublicSchedules: compileComponent(
+                'resources/js/Components/PublicSchedules.vue',
+            ),
+        },
+        {
+            publicSchedules: [
+                {
+                    student_name: 'Public Student',
+                    title: 'Public title',
+                    type: 'sempro',
+                    date: '2026-11-01',
+                    start_time: '09:00:00',
+                    end_time: '10:00:00',
+                    room: 'Room A',
+                    mode: 'offline',
+                    supervisors: [],
+                    examiners: [],
+                },
+            ],
+        },
+    );
+    expect(text(root)).toContain('Public Student');
+    expect(text(root)).toContain('09:00');
+    expect(text(root)).not.toContain('Masuk ke portal untuk melihat');
     expect(text(root)).not.toContain('Realtime Sync');
     expect(text(root)).not.toContain('Tejo');
     expect(walk(root).some((el) => el.props.for === 'login-identifier')).toBe(
@@ -134,6 +162,26 @@ test('actual login SFC renders honest schedule state, labelled credentials and p
         walk(root).find((el) => el.props.type === 'submit').props.disabled,
     ).toBe(true);
     expect(walk(root).some((el) => el.props.role === 'alert')).toBe(true);
+});
+
+test('login has no quick access shortcuts and topbar has no redundant role badge', () => {
+    const login = readFileSync('resources/js/pages/Auth/Login.vue', 'utf8');
+    expect(login).not.toContain('quickLoginAs');
+    expect(login).not.toContain('demo_role');
+    const root = mount('resources/js/Layouts/partials/Topbar.vue', {
+        useAuth: () => ({
+            roleInfo: { badge: 'ROLE_BADGE_SENTINEL', color: '' },
+            profileData: {
+                name: 'Account Owner',
+                initials: 'AO',
+                idNumber: '123',
+            },
+        }),
+        router: { post() {} },
+    });
+    expect(text(root)).toContain('Dashboard');
+    expect(text(root)).toContain('Account Owner');
+    expect(text(root)).not.toContain('ROLE_BADGE_SENTINEL');
 });
 
 test('shared dialog traps both tab directions, recovers escaped focus and restores opener/overflow', async () => {

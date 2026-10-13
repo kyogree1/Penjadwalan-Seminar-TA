@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PendaftaranSempro;
+use App\Models\PendaftaranSidang;
+use App\Models\Penjadwalan;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,7 +25,35 @@ class AuthController extends Controller
             return $this->redirectBasedOnRole(Auth::user());
         }
 
-        return Inertia::render('Auth/Login');
+        $schedules = Penjadwalan::query()
+            ->where('penjadwalan.status', 'terpublikasi')
+            ->with(['mahasiswa:id,name', 'ruangan:id,nama_ruangan', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
+            ->orderBy('tanggal')->orderBy('jam_mulai')->orderBy('penjadwalan.id')
+            ->get();
+        $titles = [];
+        foreach (['sempro' => PendaftaranSempro::class, 'sidang' => PendaftaranSidang::class] as $type => $model) {
+            $titles[$type] = $model::whereIn('id', $schedules->where('tipe', $type)->pluck('pendaftaran_id'))
+                ->get(['id', 'mahasiswa_id', 'judul_ta'])->keyBy('id');
+        }
+
+        return Inertia::render('Auth/Login', [
+            'publicSchedules' => $schedules->map(function ($schedule) use ($titles) {
+                $registration = $titles[$schedule->tipe]->get($schedule->pendaftaran_id);
+
+                return [
+                    'student_name' => $schedule->mahasiswa?->name,
+                    'title' => $registration?->mahasiswa_id === $schedule->mahasiswa_id ? $registration->judul_ta : null,
+                    'type' => $schedule->tipe,
+                    'date' => $schedule->tanggal->format('Y-m-d'),
+                    'start_time' => $schedule->jam_mulai,
+                    'end_time' => $schedule->jam_selesai,
+                    'room' => $schedule->ruangan?->nama_ruangan,
+                    'mode' => $schedule->mode,
+                    'supervisors' => array_values(array_filter([$schedule->pembimbing1?->name, $schedule->pembimbing2?->name])),
+                    'examiners' => array_values(array_filter([$schedule->penguji1?->name, $schedule->penguji2?->name])),
+                ];
+            })->values(),
+        ]);
     }
 
     /**
@@ -30,6 +61,8 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        abort_if($request->filled('demo_role'), 403);
+
         $credentials = $request->validate([
             'email' => ['required', 'string'],
             'password' => ['required', 'string'],

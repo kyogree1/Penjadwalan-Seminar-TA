@@ -4,6 +4,7 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 import { Eye, EyeOff, GraduationCap, Moon, Sun } from 'lucide-vue-next';
 
 import { useTheme } from '@/composables/useTheme';
+import PublicSchedules from '@/Components/PublicSchedules.vue';
 
 const { isDarkMode, toggleDarkMode, initializeTheme } = useTheme();
 
@@ -12,7 +13,21 @@ onMounted(() => {
 });
 
 const showPassword = ref(false);
-defineProps<{ flash?: { success?: string } }>();
+defineProps<{
+    flash?: { success?: string };
+    publicSchedules: {
+        student_name: string | null;
+        title: string | null;
+        type: 'sempro' | 'sidang';
+        date: string;
+        start_time: string;
+        end_time: string;
+        room: string | null;
+        mode: 'offline' | 'online' | 'hybrid';
+        supervisors: string[];
+        examiners: string[];
+    }[];
+}>();
 
 const form = useForm({
     email: '',
@@ -221,16 +236,7 @@ const submitLogin = () => {
             </div>
         </div>
 
-        <section
-            class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8"
-            aria-label="Jadwal publik"
-        >
-            <h2 class="text-base font-semibold">Jadwal Seminar &amp; Sidang</h2>
-            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-                Jadwal publik belum tersedia. Masuk ke portal untuk melihat
-                jadwal sesuai hak akses Anda.
-            </p>
-        </section>
+        <PublicSchedules :schedules="publicSchedules" />
 
         <!-- Footer -->
         <footer

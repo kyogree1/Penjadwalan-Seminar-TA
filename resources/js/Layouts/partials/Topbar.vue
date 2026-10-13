@@ -13,7 +13,7 @@ const emit = defineEmits<{
     (e: 'toggle-mobile-menu'): void;
 }>();
 
-const { roleInfo, profileData } = useAuth();
+const { profileData } = useAuth();
 const { isDarkMode, toggleDarkMode } = useTheme();
 const handleLogout = () => {
     router.post('/logout');
@@ -24,7 +24,7 @@ const handleLogout = () => {
     <header
         class="z-40 flex h-16 w-full shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md lg:px-8 dark:border-slate-800 dark:bg-[#0E1626]/95"
     >
-        <!-- Left: Hamburger mobile toggle + Page Title + Active Role Pill -->
+        <!-- Left: Mobile navigation and page title -->
         <div class="flex min-w-0 items-center gap-2 sm:gap-4">
             <button
                 type="button"
@@ -42,14 +42,6 @@ const handleLogout = () => {
                     {{ title || 'Dashboard' }}
                 </h2>
             </div>
-
-            <!-- Active Role Chip Badge -->
-            <span
-                class="hidden rounded-full border px-2.5 py-0.5 text-[10px] font-bold sm:inline-block"
-                :class="roleInfo.color"
-            >
-                {{ roleInfo.badge }}
-            </span>
         </div>
 
         <!-- Right: Actions (Theme, Notification, Profile, Logout) -->

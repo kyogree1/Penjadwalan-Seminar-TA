@@ -13,10 +13,10 @@ class DemoAuthenticationTest extends TestCase
 
     public function test_demo_role_login_is_rejected(): void
     {
-        $dosen = User::factory()->create(['role' => 'dosen']);
+        User::factory()->create(['role' => 'dosen']);
         $this->withoutMiddleware(PreventRequestForgery::class);
 
-        $this->post('/login', ['demo_role' => 'dosen'])->assertSessionHasErrors('email');
+        $this->post('/login', ['demo_role' => 'dosen'])->assertForbidden();
 
         $this->assertGuest();
     }
