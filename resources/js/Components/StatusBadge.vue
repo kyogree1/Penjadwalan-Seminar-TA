@@ -128,7 +128,7 @@ const config = computed(() => {
                 text: 'text-emerald-700 dark:text-emerald-300',
                 border: 'border-emerald-200 dark:border-emerald-900',
                 dot: 'bg-emerald-500',
-                defaultLabel: 'Disetujui (ACC)',
+                defaultLabel: 'Disetujui',
             };
         case 'ditolak':
             return {

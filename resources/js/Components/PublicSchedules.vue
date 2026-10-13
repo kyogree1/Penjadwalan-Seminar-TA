@@ -28,9 +28,25 @@ interface ScheduleItem {
     examiners: string[];
 }
 
-const props = defineProps<{
-    schedules: ScheduleItem[];
-}>();
+interface PeriodItem {
+    id: number | string;
+    name: string;
+    type: 'sempro' | 'sidang';
+    gelombang: number;
+    start_date: string;
+    end_date: string;
+    is_open: boolean;
+}
+
+const props = withDefaults(
+    defineProps<{
+        schedules: ScheduleItem[];
+        periods?: PeriodItem[];
+    }>(),
+    {
+        periods: () => [],
+    },
+);
 
 const today = new Date();
 const currentMonthDate = ref(
@@ -45,6 +61,7 @@ const selectedCell = ref<{
     dateKey: string;
     dateLabel: string;
     schedules: ScheduleItem[];
+    periods?: PeriodItem[];
 } | null>(null);
 const selectedSchedule = ref<ScheduleItem | null>(null);
 
@@ -100,6 +117,9 @@ const days = computed(() => {
                     raw: s,
                 })),
             schedules: props.schedules.filter((s) => s.date === k),
+            periods: props.periods.filter(
+                (p) => k >= p.start_date && k <= p.end_date,
+            ),
         };
     });
 });
@@ -158,17 +178,18 @@ function resetMonth() {
     currentMonthDate.value = new Date(today.getFullYear(), today.getMonth(), 1);
 }
 
-function openDayModal(cell: any) {
+const openDayModal = (cell: any) => {
     selectedCell.value = {
         day: cell.day,
         dateKey: cell.key ?? cell.dateString,
         dateLabel: cell.dateLabel ?? cell.dateString,
         schedules: cell.schedules ?? [],
+        periods: cell.periods ?? [],
     };
     activeModalView.value = 'agenda';
     selectedSchedule.value = null;
     isModalOpen.value = true;
-}
+};
 
 function openScheduleDetail(schedule: ScheduleItem) {
     selectedSchedule.value = schedule;
@@ -357,17 +378,60 @@ function closeModal() {
                                 {{ item.day }}
                             </span>
 
-                            <span
-                                v-if="item.schedules.length > 0"
-                                class="flex items-center gap-1 rounded-md bg-blue-50/80 px-1.5 py-0.5 text-[10px] font-bold text-blue-600 opacity-0 transition-all group-hover:opacity-100 dark:bg-blue-950/60 dark:text-blue-400"
-                            >
-                                <span>Buka</span>
-                                <ChevronRight class="h-3 w-3" />
-                            </span>
+                            <div class="flex items-center gap-1">
+                                <span
+                                    v-if="
+                                        item.periods && item.periods.length > 0
+                                    "
+                                    class="rounded-md bg-emerald-50 px-1.5 py-0.5 text-[9.5px] font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                                    title="Ada periode pendaftaran aktif pada tanggal ini"
+                                >
+                                    Pendaftaran
+                                </span>
+
+                                <span
+                                    v-if="item.schedules.length > 0"
+                                    class="flex items-center gap-1 rounded-md bg-blue-50/80 px-1.5 py-0.5 text-[10px] font-bold text-blue-600 opacity-0 transition-all group-hover:opacity-100 dark:bg-blue-950/60 dark:text-blue-400"
+                                >
+                                    <span>Buka</span>
+                                    <ChevronRight class="h-3 w-3" />
+                                </span>
+                            </div>
                         </div>
 
                         <!-- Events Badges inside Day Cell: Google Calendar Style (Max 3) -->
                         <div class="mt-3 space-y-2">
+                            <!-- Registration Period Badge in Calendar Cell -->
+                            <div
+                                v-for="(p, pIdx) in item.periods"
+                                :key="`period-${pIdx}`"
+                                class="flex items-center gap-1.5 truncate rounded-lg border px-2 py-1 text-[10.5px] font-bold shadow-2xs"
+                                :class="
+                                    p.type === 'sempro'
+                                        ? 'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                                        : 'border-purple-300 bg-purple-50 text-purple-800 dark:border-purple-800 dark:bg-purple-950/60 dark:text-purple-300'
+                                "
+                                :title="`Periode Pendaftaran Buka: ${p.name}`"
+                            >
+                                <span
+                                    class="h-1.5 w-1.5 shrink-0 rounded-full"
+                                    :class="
+                                        p.type === 'sempro'
+                                            ? 'bg-emerald-500'
+                                            : 'bg-purple-500'
+                                    "
+                                />
+                                <span class="truncate">
+                                    Daftar
+                                    {{
+                                        p.type === 'sempro'
+                                            ? 'Sempro'
+                                            : 'Sidang'
+                                    }}
+                                    G{{ p.gelombang }}
+                                </span>
+                            </div>
+
                             <div
                                 v-for="(ev, eIdx) in item.schedules.slice(0, 3)"
                                 :key="eIdx"
@@ -479,7 +543,72 @@ function closeModal() {
 
                     <!-- Body List Sessions View 1 -->
                     <div class="flex-1 space-y-3.5 overflow-y-auto p-5 sm:p-6">
-                        <template v-if="selectedCell.schedules.length > 0">
+                        <template
+                            v-if="
+                                selectedCell.schedules.length > 0 ||
+                                (selectedCell.periods &&
+                                    selectedCell.periods.length > 0)
+                            "
+                        >
+                            <!-- Active Registration Periods on this Day in Modal -->
+                            <div
+                                v-if="
+                                    selectedCell.periods &&
+                                    selectedCell.periods.length > 0
+                                "
+                                class="space-y-2.5"
+                            >
+                                <div
+                                    v-for="(p, pIdx) in selectedCell.periods"
+                                    :key="`modal-p-${pIdx}`"
+                                    class="rounded-2xl border p-4 shadow-xs"
+                                    :class="
+                                        p.type === 'sempro'
+                                            ? 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-800/80 dark:bg-emerald-950/20'
+                                            : 'border-purple-200 bg-purple-50/70 dark:border-purple-800/80 dark:bg-purple-950/20'
+                                    "
+                                >
+                                    <div
+                                        class="flex items-center justify-between"
+                                    >
+                                        <span
+                                            class="rounded-lg px-2.5 py-0.5 text-[10.5px] font-bold uppercase"
+                                            :class="
+                                                p.type === 'sempro'
+                                                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200'
+                                                    : 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-200'
+                                            "
+                                        >
+                                            Periode Pendaftaran Buka • Gelombang
+                                            {{ p.gelombang }}
+                                        </span>
+                                        <span
+                                            class="text-[11px] font-semibold text-slate-500 dark:text-slate-400"
+                                        >
+                                            {{ p.start_date }} s.d.
+                                            {{ p.end_date }}
+                                        </span>
+                                    </div>
+                                    <h4
+                                        class="mt-2 text-sm font-bold"
+                                        :class="
+                                            p.type === 'sempro'
+                                                ? 'text-emerald-950 dark:text-emerald-100'
+                                                : 'text-purple-950 dark:text-purple-100'
+                                        "
+                                    >
+                                        {{ p.name }}
+                                    </h4>
+                                    <p
+                                        class="mt-1 text-xs text-slate-600 dark:text-slate-300"
+                                    >
+                                        Pendaftaran online dibuka untuk
+                                        mahasiswa aktif yang memenuhi syarat
+                                        akademik.
+                                    </p>
+                                </div>
+                            </div>
+
                             <div
                                 v-for="(
                                     session, sIdx

@@ -47,6 +47,16 @@ interface Props {
         created_at?: string;
     }>;
     dosenList?: Array<{ id: number; name: string }>;
+    pembimbingList?: Array<{
+        nama: string;
+        role: string;
+        variant?: 'rose' | 'blue' | 'indigo' | 'emerald';
+    }>;
+    pengujiList?: Array<{
+        nama: string;
+        role: string;
+        variant?: 'rose' | 'blue' | 'indigo' | 'emerald';
+    }>;
 }
 
 const props = defineProps<Props>();
@@ -296,7 +306,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
         </ProfileHeaderCard>
 
         <!-- 3. Pembimbing & Penguji Grid (Reusable Component) -->
-        <DosenTeamSection :pembimbing-list="[]" :penguji-list="[]" />
+        <DosenTeamSection
+            :pembimbing-list="props.pembimbingList ?? []"
+            :penguji-list="props.pengujiList ?? []"
+        />
 
         <!-- 4. Logbook Bimbingan -->
         <div

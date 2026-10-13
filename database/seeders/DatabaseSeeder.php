@@ -84,5 +84,8 @@ class DatabaseSeeder extends Seeder
             ['nama_ruangan' => 'Ruang Sidang Utama Informatika'],
             ['gedung' => 'Gedung A', 'lantai' => 'Lantai 3', 'kapasitas' => 40, 'status' => 'tersedia']
         );
+
+        // 6. Real Data from CSV
+        $this->call(CsvRealDataSeeder::class);
     }
 }

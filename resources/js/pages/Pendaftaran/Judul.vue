@@ -169,6 +169,30 @@ const submitForm = () => {
             </template>
         </PageHeaderBox>
 
+        <!-- Banner Notifikasi Status Disetujui -->
+        <div
+            v-if="applicationStatus === 'disetujui'"
+            class="flex items-start gap-3.5 rounded-2xl border border-emerald-300 bg-emerald-50/90 p-5 shadow-xs dark:border-emerald-800 dark:bg-emerald-950/30"
+        >
+            <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs"
+            >
+                <CheckCircle2 class="h-6 w-6" />
+            </div>
+            <div class="flex-1">
+                <h3
+                    class="text-sm font-bold text-emerald-950 dark:text-emerald-100"
+                >
+                    Pengajuan Judul Telah Disetujui
+                </h3>
+                <p class="mt-1 text-xs text-emerald-800 dark:text-emerald-300">
+                    Judul tugas akhir Anda telah disetujui secara resmi oleh
+                    Koordinator / Program Studi. Anda dapat melanjutkan ke
+                    tahapan bimbingan logbook dan pendaftaran seminar proposal.
+                </p>
+            </div>
+        </div>
+
         <!-- 2. Card Perhatian! (Sesuai Mockup) -->
         <div
             class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
@@ -203,9 +227,13 @@ const submitForm = () => {
             </div>
         </div>
 
-        <!-- 2.5 Catatan Kaprodi Alert jika ada -->
+        <!-- 2.5 Catatan Kaprodi Alert: Hanya tampil jika status revisi/ditolak DAN ada catatan -->
         <div
-            v-if="props.pengajuan?.catatan_kaprodi"
+            v-if="
+                (applicationStatus === 'revisi' ||
+                    applicationStatus === 'ditolak') &&
+                props.pengajuan?.catatan_kaprodi?.trim()
+            "
             class="rounded-2xl border border-amber-200 bg-amber-50/80 p-5 shadow-xs dark:border-amber-900/60 dark:bg-amber-950/40"
         >
             <div class="flex items-start gap-3">
@@ -216,7 +244,7 @@ const submitForm = () => {
                     <h4
                         class="text-sm font-bold text-amber-900 dark:text-amber-200"
                     >
-                        Catatan dari Koordinator / Kaprodi
+                        Catatan Revisi dari Koordinator / Kaprodi
                     </h4>
                     <p class="mt-1 text-xs text-amber-800 dark:text-amber-300">
                         {{ props.pengajuan.catatan_kaprodi }}
@@ -378,7 +406,17 @@ const submitForm = () => {
 
                 <!-- Submit Button -->
                 <div class="flex justify-end pt-2">
+                    <div
+                        v-if="applicationStatus === 'disetujui'"
+                        class="inline-flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-100/80 px-5 py-2.5 text-xs font-bold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200"
+                    >
+                        <CheckCircle2
+                            class="h-4 w-4 text-emerald-600 dark:text-emerald-400"
+                        />
+                        <span>Judul Disetujui</span>
+                    </div>
                     <button
+                        v-else
                         type="submit"
                         :disabled="
                             !canEditForm || !isFormValid || form.processing

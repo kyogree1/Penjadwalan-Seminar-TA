@@ -27,6 +27,42 @@ class DashboardController extends Controller
         $sempro = PendaftaranSempro::where('mahasiswa_id', $user->id)->latest()->first();
         $sidang = PendaftaranSidang::where('mahasiswa_id', $user->id)->latest()->first();
 
+        // 1b. Periode Aktif Pendaftaran
+        $activePeriods = \Illuminate\Support\Facades\DB::table('schedule_periods')
+            ->where('is_open', true)
+            ->get()
+            ->map(function ($period) {
+                $isSempro = $period->tipe === 'sempro';
+                $start = \Carbon\Carbon::parse($period->start_date)->translatedFormat('d M');
+                $end = \Carbon\Carbon::parse($period->end_date)->translatedFormat('d M Y');
+
+                return [
+                    'id' => (string) $period->id,
+                    'type' => $period->tipe,
+                    'title' => $period->name,
+                    'semester' => 'Genap',
+                    'academicYear' => '2025/2026',
+                    'gelombang' => (string) $period->gelombang,
+                    'startDate' => $start,
+                    'endDate' => $end,
+                    'colorTheme' => $isSempro
+                        ? [
+                            'bg' => 'bg-emerald-50/70 dark:bg-emerald-950/20',
+                            'badgeBg' => 'bg-emerald-100 dark:bg-emerald-900/60',
+                            'text' => 'text-emerald-900 dark:text-emerald-200',
+                            'accentText' => 'text-emerald-700 dark:text-emerald-300',
+                            'border' => 'border-emerald-200 dark:border-emerald-800',
+                        ]
+                        : [
+                            'bg' => 'bg-purple-50/70 dark:bg-purple-950/20',
+                            'badgeBg' => 'bg-purple-100 dark:bg-purple-900/60',
+                            'text' => 'text-purple-900 dark:text-purple-200',
+                            'accentText' => 'text-purple-700 dark:text-purple-300',
+                            'border' => 'border-purple-200 dark:border-purple-800',
+                        ],
+                ];
+            });
+
         // 2. Total Bimbingan yang telah disetujui (delivered)
         $totalBimbinganAcc = Bimbingan::where('mahasiswa_id', $user->id)
             ->where('status', 'delivered')
@@ -125,6 +161,7 @@ class DashboardController extends Controller
             'dbApprovedTitle' => $approvedTitle,
             'dbSempro' => $sempro,
             'dbSidang' => $sidang,
+            'activePeriods' => $activePeriods,
             'dbTotalBimbinganAcc' => $totalBimbinganAcc,
             'dbJadwal' => $jadwalAktif,
             'dbJadwalList' => $jadwalList,

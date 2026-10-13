@@ -51,8 +51,6 @@ interface ActivePeriod {
     };
 }
 
-const activePeriods = computed<ActivePeriod[]>(() => []);
-
 // ==========================================
 // 2. ROADMAP & STATUS TUGAS AKHIR (Status Dinamis)
 // Selesai = Blue, Berlangsung = Amber (Kuning), Belum = Slate
@@ -69,6 +67,7 @@ interface Props {
     dbJudul: RegistrationRecord | null;
     dbSempro: RegistrationRecord | null;
     dbSidang: RegistrationRecord | null;
+    activePeriods?: ActivePeriod[];
     dbTotalBimbinganAcc?: number;
     dbJadwal: ScheduleRecord | null;
     dbJadwalList?: ScheduleRecord[];
@@ -78,6 +77,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const activePeriods = computed<ActivePeriod[]>(() => props.activePeriods ?? []);
 
 const semproSteps = computed<RoadmapStep[]>(() => props.dbSemproSteps ?? []);
 

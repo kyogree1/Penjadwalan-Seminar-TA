@@ -23,6 +23,25 @@ interface Props {
         catatan?: string | null;
     } | null;
     defaultJudul?: string | null;
+    pembimbingList?: Array<{
+        nama: string;
+        role: string;
+        variant?: 'rose' | 'blue' | 'indigo' | 'emerald';
+    }>;
+    pengujiList?: Array<{
+        nama: string;
+        role: string;
+        variant?: 'rose' | 'blue' | 'indigo' | 'emerald';
+    }>;
+    pelaksanaan?: {
+        tanggal?: string | null;
+        jam?: string | null;
+        ruangan?: string | null;
+        mode?: string | null;
+        status?: string | null;
+        nilai_akhir?: number | null;
+        catatan?: string | null;
+    } | null;
 }
 
 const props = defineProps<Props>();
@@ -114,6 +133,31 @@ const riwayatItems = computed(() => {
                 : 'Baru saja',
         },
     ];
+});
+
+const riwayatPelaksanaanSidang = computed(() => {
+    if (!props.pelaksanaan) return [];
+    const items = [];
+    if (props.pelaksanaan.tanggal) {
+        items.push({
+            title: `Jadwal Sidang Tugas Akhir (${props.pelaksanaan.mode || 'Offline'})`,
+            subtitle: props.pelaksanaan.jam
+                ? `Pukul ${props.pelaksanaan.jam} WITA`
+                : 'Jadwal telah ditentukan',
+            date: props.pelaksanaan.tanggal,
+        });
+    }
+    if (
+        props.pelaksanaan.nilai_akhir !== null &&
+        props.pelaksanaan.nilai_akhir !== undefined
+    ) {
+        items.push({
+            title: 'Hasil Sidang Tugas Akhir Selesai',
+            subtitle: `Nilai Rata-rata: ${props.pelaksanaan.nilai_akhir}${props.pelaksanaan.catatan ? ` • Catatan: ${props.pelaksanaan.catatan}` : ''}`,
+            date: props.pelaksanaan.tanggal || 'Selesai',
+        });
+    }
+    return items;
 });
 
 const fileError = (file: File | null, limitMb = 10) => {
@@ -225,7 +269,10 @@ const submitSidang = () => {
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
                 <!-- Dosen Pembimbing & Penguji (Reusable Component) -->
-                <DosenTeamSection :pembimbing-list="[]" :penguji-list="[]" />
+                <DosenTeamSection
+                    :pembimbing-list="props.pembimbingList ?? []"
+                    :penguji-list="props.pengujiList ?? []"
+                />
 
                 <TemplateDownloadCard
                     :templates="[
@@ -243,17 +290,20 @@ const submitSidang = () => {
                     <form class="space-y-6" @submit.prevent="submitSidang">
                         <!-- Judul TA -->
                         <div
-                            class="border-b border-slate-100 pb-4 text-sm leading-relaxed dark:border-slate-800"
+                            class="rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm dark:border-slate-800 dark:bg-slate-900/40"
                         >
                             <span
-                                class="font-bold text-slate-800 dark:text-slate-200"
-                                >Judul TA:
-                            </span>
-                            <input
-                                v-model="form.judul_ta"
-                                placeholder="Judul TA"
-                                class="rounded border border-slate-300 p-2"
-                            />
+                                class="font-bold text-slate-700 dark:text-slate-300"
+                                >Judul TA:</span
+                            >
+                            <p
+                                class="mt-1 leading-relaxed font-medium text-slate-900 dark:text-slate-100"
+                            >
+                                {{
+                                    form.judul_ta ||
+                                    'Belum ada judul tugas akhir'
+                                }}
+                            </p>
                         </div>
 
                         <!-- Input Skor IAET Terbaru -->
@@ -398,11 +448,19 @@ const submitSidang = () => {
                 </CollapsibleCard>
             </div>
 
-            <!-- Right Column: Riwayat Pendaftaran -->
+            <!-- Right Column: Riwayat Pendaftaran & Pelaksanaan -->
             <div class="space-y-6">
                 <RiwayatTimelineCard
                     title="Riwayat Pendaftaran"
                     :items="riwayatItems"
+                    empty-text="Belum ada riwayat pendaftaran"
+                    empty-subtext="Riwayat akan muncul setelah pengajuan dikirim."
+                />
+                <RiwayatTimelineCard
+                    title="Riwayat Pelaksanaan & Hasil"
+                    :items="riwayatPelaksanaanSidang"
+                    empty-text="Belum ada pelaksanaan"
+                    empty-subtext="Jadwal dan hasil Sidang Tugas Akhir akan muncul di sini."
                 />
             </div>
         </div>

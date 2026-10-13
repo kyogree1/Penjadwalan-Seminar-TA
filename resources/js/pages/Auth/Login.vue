@@ -13,6 +13,16 @@ onMounted(() => {
 });
 
 const showPassword = ref(false);
+interface PeriodItem {
+    id: number | string;
+    name: string;
+    type: 'sempro' | 'sidang';
+    gelombang: number;
+    start_date: string;
+    end_date: string;
+    is_open: boolean;
+}
+
 defineProps<{
     flash?: { success?: string };
     publicSchedules: {
@@ -27,6 +37,7 @@ defineProps<{
         supervisors: string[];
         examiners: string[];
     }[];
+    publicPeriods?: PeriodItem[];
 }>();
 
 const form = useForm({
@@ -236,7 +247,10 @@ const submitLogin = () => {
             </div>
         </div>
 
-        <PublicSchedules :schedules="publicSchedules" />
+        <PublicSchedules
+            :schedules="publicSchedules"
+            :periods="publicPeriods"
+        />
 
         <!-- Footer -->
         <footer

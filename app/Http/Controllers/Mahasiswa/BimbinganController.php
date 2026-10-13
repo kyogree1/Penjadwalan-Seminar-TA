@@ -28,9 +28,55 @@ class BimbinganController extends Controller
             ->select('id', 'name')
             ->get();
 
+        // Ambil data dosen pembimbing & penguji dari pengajuan judul dan penjadwalan
+        $approvedJudul = PengajuanJudul::with(['pembimbing1:id,name', 'pembimbing2:id,name'])
+            ->where('mahasiswa_id', $user->id)
+            ->where('status', 'disetujui')
+            ->latest('id')
+            ->first();
+
+        $pembimbingList = [];
+        if ($approvedJudul?->pembimbing1) {
+            $pembimbingList[] = [
+                'nama' => $approvedJudul->pembimbing1->name,
+                'role' => 'Pembimbing 1',
+                'variant' => 'rose',
+            ];
+        }
+        if ($approvedJudul?->pembimbing2) {
+            $pembimbingList[] = [
+                'nama' => $approvedJudul->pembimbing2->name,
+                'role' => 'Pembimbing 2',
+                'variant' => 'rose',
+            ];
+        }
+
+        $jadwal = \App\Models\Penjadwalan::with(['penguji1:id,name', 'penguji2:id,name'])
+            ->where('mahasiswa_id', $user->id)
+            ->latest('id')
+            ->first();
+
+        $pengujiList = [];
+        if ($jadwal?->penguji1) {
+            $pengujiList[] = [
+                'nama' => $jadwal->penguji1->name,
+                'role' => 'Penguji 1',
+                'variant' => 'rose',
+            ];
+        }
+        if ($jadwal?->penguji2) {
+            $pengujiList[] = [
+                'nama' => $jadwal->penguji2->name,
+                'role' => 'Penguji 2',
+                'variant' => 'rose',
+            ];
+        }
+
         return Inertia::render('Pendaftaran/Bimbingan', [
             'bimbinganList' => $bimbinganList,
             'dosenList' => $dosenList,
+            'pembimbingList' => $pembimbingList,
+            'pengujiList' => $pengujiList,
         ]);
     }
 

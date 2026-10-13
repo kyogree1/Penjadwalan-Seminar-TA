@@ -36,7 +36,23 @@ class AuthController extends Controller
                 ->get(['id', 'mahasiswa_id', 'judul_ta'])->keyBy('id');
         }
 
+        $activePeriods = \Illuminate\Support\Facades\DB::table('schedule_periods')
+            ->where('is_open', true)
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id' => $p->id,
+                    'name' => $p->name,
+                    'type' => $p->tipe,
+                    'gelombang' => $p->gelombang,
+                    'start_date' => $p->start_date,
+                    'end_date' => $p->end_date,
+                    'is_open' => (bool) $p->is_open,
+                ];
+            });
+
         return Inertia::render('Auth/Login', [
+            'publicPeriods' => $activePeriods,
             'publicSchedules' => $schedules->map(function ($schedule) use ($titles) {
                 $registration = $titles[$schedule->tipe]->get($schedule->pendaftaran_id);
 

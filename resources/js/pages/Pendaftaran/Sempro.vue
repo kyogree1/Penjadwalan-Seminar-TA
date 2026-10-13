@@ -46,6 +46,25 @@ interface Props {
         iaet_file?: string;
     } | null;
     defaultJudul?: string | null;
+    pembimbingList?: Array<{
+        nama: string;
+        role: string;
+        variant?: 'rose' | 'blue' | 'indigo' | 'emerald';
+    }>;
+    pengujiList?: Array<{
+        nama: string;
+        role: string;
+        variant?: 'rose' | 'blue' | 'indigo' | 'emerald';
+    }>;
+    pelaksanaan?: {
+        tanggal?: string | null;
+        jam?: string | null;
+        ruangan?: string | null;
+        mode?: string | null;
+        status?: string | null;
+        nilai_akhir?: number | null;
+        catatan?: string | null;
+    } | null;
 }
 
 const props = defineProps<Props>();
@@ -96,6 +115,51 @@ const form = useForm({
     turnitin_file: null as File | null,
     lokasi_mitra: props.sempro?.lokasi_mitra || '',
     skor_iaet: '' as number | '',
+});
+
+const riwayatPendaftaran = computed(() => {
+    if (!props.sempro) return [];
+    const dateFormatted = props.sempro.created_at
+        ? new Date(props.sempro.created_at).toLocaleDateString('id-ID', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+          })
+        : 'Baru saja';
+
+    return [
+        {
+            title: 'Pendaftaran Seminar Proposal Diajukan',
+            subtitle: props.sempro.judul_ta || 'Seminar Proposal',
+            date: dateFormatted,
+            status: statusLabel.value,
+        },
+    ];
+});
+
+const riwayatPelaksanaan = computed(() => {
+    if (!props.pelaksanaan) return [];
+    const items = [];
+    if (props.pelaksanaan.tanggal) {
+        items.push({
+            title: `Jadwal Seminar Proposal (${props.pelaksanaan.mode || 'Offline'})`,
+            subtitle: props.pelaksanaan.jam
+                ? `Pukul ${props.pelaksanaan.jam} WITA`
+                : 'Jadwal telah ditentukan',
+            date: props.pelaksanaan.tanggal,
+        });
+    }
+    if (
+        props.pelaksanaan.nilai_akhir !== null &&
+        props.pelaksanaan.nilai_akhir !== undefined
+    ) {
+        items.push({
+            title: 'Hasil Seminar Proposal Selesai',
+            subtitle: `Nilai Rata-rata: ${props.pelaksanaan.nilai_akhir}${props.pelaksanaan.catatan ? ` • Catatan: ${props.pelaksanaan.catatan}` : ''}`,
+            date: props.pelaksanaan.tanggal || 'Selesai',
+        });
+    }
+    return items;
 });
 
 watch(
@@ -268,7 +332,10 @@ const submitSempro = () => {
         </p>
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
-                <DosenTeamSection :pembimbing-list="[]" :penguji-list="[]" />
+                <DosenTeamSection
+                    :pembimbing-list="props.pembimbingList ?? []"
+                    :penguji-list="props.pengujiList ?? []"
+                />
 
                 <TemplateDownloadCard
                     :templates="[
@@ -287,35 +354,34 @@ const submitSempro = () => {
                 >
                     <form class="space-y-6" @submit.prevent="submitSempro">
                         <div
-                            class="space-y-3 border-b border-slate-100 pb-4 text-sm dark:border-slate-800"
+                            class="space-y-3 rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm dark:border-slate-800 dark:bg-slate-900/40"
                         >
                             <div>
                                 <span
-                                    class="font-bold text-slate-800 dark:text-slate-200"
+                                    class="font-bold text-slate-700 dark:text-slate-300"
                                     >Judul TA:</span
                                 >
-                                <span
-                                    class="ml-1 text-slate-600 dark:text-slate-400"
-                                    ><input
-                                        v-model="form.judul_ta"
-                                        :disabled="!canEdit"
-                                        placeholder="Judul TA"
-                                        class="rounded border p-2"
-                                /></span>
+                                <p
+                                    class="mt-1 leading-relaxed font-medium text-slate-900 dark:text-slate-100"
+                                >
+                                    {{
+                                        form.judul_ta ||
+                                        'Belum ada judul tugas akhir'
+                                    }}
+                                </p>
                             </div>
-                            <div>
+                            <div
+                                class="border-t border-slate-200/60 pt-2 dark:border-slate-800/60"
+                            >
                                 <span
-                                    class="font-bold text-slate-800 dark:text-slate-200"
+                                    class="font-bold text-slate-700 dark:text-slate-300"
                                     >Bentuk TA:</span
                                 >
-                                <span
-                                    class="ml-1 text-slate-600 dark:text-slate-400"
-                                    ><input
-                                        v-model="form.bentuk_ta"
-                                        :disabled="!canEdit"
-                                        placeholder="Bentuk TA"
-                                        class="rounded border p-2"
-                                /></span>
+                                <p
+                                    class="mt-0.5 text-slate-800 dark:text-slate-200"
+                                >
+                                    {{ form.bentuk_ta || 'Skripsi' }}
+                                </p>
                             </div>
                         </div>
 
@@ -539,11 +605,13 @@ const submitSempro = () => {
             <div class="space-y-6">
                 <RiwayatTimelineCard
                     title="Riwayat Pendaftaran"
+                    :items="riwayatPendaftaran"
                     empty-text="Belum ada riwayat pendaftaran"
                     empty-subtext="Riwayat akan muncul setelah pengajuan dikirim."
                 />
                 <RiwayatTimelineCard
                     title="Riwayat Pelaksanaan & Hasil"
+                    :items="riwayatPelaksanaan"
                     empty-text="Belum ada pelaksanaan"
                     empty-subtext="Jadwal dan hasil Seminar Proposal akan muncul di sini."
                 />

@@ -22,13 +22,70 @@ class PendaftaranSemproController extends Controller
             ->latest()
             ->first();
 
-        $pengajuanJudul = PengajuanJudul::where('mahasiswa_id', $user->id)
+        $pengajuanJudul = PengajuanJudul::with(['pembimbing1:id,name', 'pembimbing2:id,name'])
+            ->where('mahasiswa_id', $user->id)
             ->where('status', 'disetujui')
             ->first();
+
+        $pembimbingList = [];
+        if ($pengajuanJudul?->pembimbing1) {
+            $pembimbingList[] = [
+                'nama' => $pengajuanJudul->pembimbing1->name,
+                'role' => 'Pembimbing 1',
+                'variant' => 'rose',
+            ];
+        }
+        if ($pengajuanJudul?->pembimbing2) {
+            $pembimbingList[] = [
+                'nama' => $pengajuanJudul->pembimbing2->name,
+                'role' => 'Pembimbing 2',
+                'variant' => 'rose',
+            ];
+        }
+
+        $jadwal = \App\Models\Penjadwalan::with(['penguji1:id,name', 'penguji2:id,name', 'ruangan:id,nama_ruangan'])
+            ->where('mahasiswa_id', $user->id)
+            ->where('tipe', 'sempro')
+            ->latest('id')
+            ->first();
+
+        $pengujiList = [];
+        if ($jadwal?->penguji1) {
+            $pengujiList[] = [
+                'nama' => $jadwal->penguji1->name,
+                'role' => 'Penguji 1',
+                'variant' => 'rose',
+            ];
+        }
+        if ($jadwal?->penguji2) {
+            $pengujiList[] = [
+                'nama' => $jadwal->penguji2->name,
+                'role' => 'Penguji 2',
+                'variant' => 'rose',
+            ];
+        }
+
+        $pelaksanaan = null;
+        if ($jadwal) {
+            $penilaianList = \App\Models\Penilaian::where('penjadwalan_id', $jadwal->id)->get();
+            $rataRata = $penilaianList->isNotEmpty() ? round($penilaianList->avg('nilai'), 2) : null;
+
+            $pelaksanaan = [
+                'tanggal' => $jadwal->tanggal ? \Carbon\Carbon::parse($jadwal->tanggal)->translatedFormat('d M Y') : null,
+                'jam' => $jadwal->jam_mulai && $jadwal->jam_selesai ? substr($jadwal->jam_mulai, 0, 5) . ' - ' . substr($jadwal->jam_selesai, 0, 5) : null,
+                'mode' => ucfirst($jadwal->mode ?? 'offline'),
+                'status' => $jadwal->status,
+                'nilai_akhir' => $rataRata,
+                'catatan' => $jadwal->catatan,
+            ];
+        }
 
         return Inertia::render('Pendaftaran/Sempro', [
             'sempro' => $sempro,
             'defaultJudul' => $pengajuanJudul?->judul_ta ?? null,
+            'pembimbingList' => $pembimbingList,
+            'pengujiList' => $pengujiList,
+            'pelaksanaan' => $pelaksanaan,
         ]);
     }
 

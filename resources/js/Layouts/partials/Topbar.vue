@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Link, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import { Bell, LogOut, Menu, Moon, Sun } from 'lucide-vue-next';
 
 import { useAuth } from '@/composables/useAuth';
 import { useTheme } from '@/composables/useTheme';
 
-defineProps<{
+const props = defineProps<{
     title?: string;
 }>();
 
@@ -15,6 +16,68 @@ const emit = defineEmits<{
 
 const { profileData } = useAuth();
 const { isDarkMode, toggleDarkMode } = useTheme();
+
+const pageTitle = computed(() => {
+    if (props.title && props.title !== 'Dashboard') {
+        return props.title;
+    }
+
+    let path = '';
+    try {
+        if (typeof usePage === 'function') {
+            const page = usePage();
+            path = page?.url ?? '';
+        }
+    } catch {
+        path = '';
+    }
+
+    if (!path && typeof window !== 'undefined') {
+        path = window.location.pathname;
+    }
+    path = path.split('?')[0];
+
+    // Rute Mahasiswa
+    if (path === '/dashboard') return 'Dashboard Mahasiswa';
+    if (path.startsWith('/pendaftaran/judul')) return 'Pengajuan Judul';
+    if (path.startsWith('/pendaftaran/bimbingan')) return 'Logbook Bimbingan';
+    if (path.startsWith('/pendaftaran/jadwal')) return 'Pendaftaran & Jadwal';
+    if (path.startsWith('/pendaftaran/sempro')) return 'Seminar Proposal';
+    if (path.startsWith('/pendaftaran/sidang')) return 'Sidang Tugas Akhir';
+
+    // Rute Tendik
+    if (path === '/tendik/dashboard') return 'Dashboard Tendik';
+    if (path.startsWith('/tendik/verifikasi')) return 'Verifikasi Berkas';
+    if (path.startsWith('/tendik/ruangan')) return 'Kelola Ruangan';
+    if (path.startsWith('/tendik/arsip')) return 'Arsip Dokumen';
+    if (path.startsWith('/tendik/mahasiswa')) return 'Data Mahasiswa';
+
+    // Rute Dosen
+    if (path === '/dosen/dashboard') return 'Dashboard Dosen';
+    if (path.startsWith('/dosen/bimbingan')) return 'Bimbingan Mahasiswa';
+    if (path.startsWith('/dosen/penilaian'))
+        return 'Penilaian Seminar & Sidang';
+
+    // Rute Kaprodi / Koordinator
+    if (path === '/kaprodi/dashboard') return 'Dashboard Kaprodi';
+    if (path.startsWith('/kaprodi/persetujuan')) return 'Persetujuan Pengajuan';
+    if (path.startsWith('/kaprodi/penjadwalan')) return 'Penjadwalan Ujian';
+    if (path.startsWith('/kaprodi/dosen')) return 'Master Data Dosen';
+    if (
+        path.startsWith('/kaprodi/monitoring') ||
+        path.startsWith('/koordinator/monitoring')
+    )
+        return 'Monitoring Kemajuan TA';
+
+    // Rute Umum
+    if (path.startsWith('/profile')) return 'Profil Akun';
+    if (path.startsWith('/katalog')) return 'Katalog Publik';
+    if (path.startsWith('/panduan')) return 'Panduan Layanan';
+    if (path.startsWith('/prosedur')) return 'SOP & Prosedur TA';
+
+    return props.title || 'Dashboard';
+});
+
 const handleLogout = () => {
     router.post('/logout');
 };
@@ -39,7 +102,7 @@ const handleLogout = () => {
                 <h2
                     class="truncate text-base font-bold tracking-tight text-slate-900 sm:text-lg dark:text-white"
                 >
-                    {{ title || 'Dashboard' }}
+                    {{ pageTitle }}
                 </h2>
             </div>
         </div>
