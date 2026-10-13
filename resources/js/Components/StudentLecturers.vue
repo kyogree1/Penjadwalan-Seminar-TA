@@ -30,19 +30,19 @@ const exams = computed(() =>
                 >
                     Pembimbing
                 </h4>
-                <p
+                <div
                     v-if="
                         !supervisors?.pembimbing1 && !supervisors?.pembimbing2
                     "
-                    class="text-xs text-slate-500"
+                    class="flex items-center rounded-xl border border-dashed border-slate-200 p-4 text-xs text-slate-400 dark:border-slate-800"
                 >
                     Pembimbing belum ditetapkan.
-                </p>
+                </div>
                 <div
                     v-for="(lecturer, index) in [
                         supervisors?.pembimbing1,
                         supervisors?.pembimbing2,
-                    ]"
+                    ].filter(Boolean)"
                     :key="index"
                     class="dark:bg-navy-surface flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-2xs dark:border-slate-800"
                 >
@@ -71,15 +71,18 @@ const exams = computed(() =>
                 >
                     Penguji
                 </h4>
-                <p v-if="!exams.length" class="text-xs text-slate-500">
+                <div
+                    v-if="!exams.length"
+                    class="flex items-center rounded-xl border border-dashed border-slate-200 p-4 text-xs text-slate-400 dark:border-slate-800"
+                >
                     Penguji belum ditetapkan pada jadwal terpublikasi.
-                </p>
+                </div>
                 <template v-for="exam in exams" :key="exam.id">
                     <div
                         v-for="(lecturer, index) in [
                             exam.penguji1,
                             exam.penguji2,
-                        ]"
+                        ].filter(Boolean)"
                         :key="index"
                         class="dark:bg-navy-surface flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-2xs dark:border-slate-800"
                     >

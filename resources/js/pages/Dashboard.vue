@@ -274,12 +274,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
             </div>
         </div>
 
-        <StudentLecturers
-            :approved-title="props.dbApprovedTitle ?? null"
-            :schedules="props.dbJadwalList ?? []"
-        />
-
-        <!-- 2. ROADMAP WIDGET DENGAN INDIKATOR WARNA KUNING UNTUK PROGRES AKTIF -->
+        <!-- 2. ROADMAP WIDGET DENGAN INDIKATOR WARNA KUNING UNTUK PROGRES AKTIF (DI BAWAH HERO) -->
         <div
             class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
         >
@@ -462,6 +457,78 @@ const openAssessmentModal = (item: AssessmentDetail) => {
             </div>
         </div>
 
+        <!-- Section Dosen Pembimbing & Penguji serta Bimbingan Tugas Akhir (DI BAWAH ROADMAP) -->
+        <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+            <!-- Kotak 1 & 2: Dosen Pembimbing & Penguji (2 Kolom di Desktop) -->
+            <div
+                class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs lg:col-span-2 dark:border-slate-800 dark:bg-[#0E1626]"
+            >
+                <StudentLecturers
+                    :approved-title="props.dbApprovedTitle ?? null"
+                    :schedules="props.dbJadwalList ?? []"
+                />
+            </div>
+
+            <!-- Kotak 3: Bimbingan Tugas Akhir (1 Kolom Sejajar dengan Dosen di Desktop) -->
+            <div
+                class="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            >
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h3
+                            class="text-sm font-bold text-slate-900 dark:text-white"
+                        >
+                            Bimbingan Tugas Akhir
+                        </h3>
+                        <span
+                            class="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
+                        >
+                            Logbook
+                        </span>
+                    </div>
+                    <p
+                        class="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400"
+                    >
+                        Pantau riwayat catatan, lembar konsultasi, dan
+                        perkembangan bimbingan skripsi Anda bersama dosen
+                        pembimbing.
+                    </p>
+
+                    <div
+                        class="mt-4 rounded-xl border border-slate-100 bg-slate-50/70 p-4 dark:border-slate-800/80 dark:bg-slate-900/50"
+                    >
+                        <span
+                            class="text-[11px] font-semibold text-slate-500 dark:text-slate-400"
+                        >
+                            Total Sesi Tercatat
+                        </span>
+                        <div class="mt-1 flex items-baseline gap-1.5">
+                            <span
+                                class="text-2xl font-extrabold text-slate-900 dark:text-white"
+                            >
+                                {{ props.dbTotalBimbinganAcc ?? 0 }}
+                            </span>
+                            <span class="text-xs font-medium text-slate-400">
+                                sesi konsultasi
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800"
+                >
+                    <Link
+                        href="/pendaftaran/bimbingan"
+                        class="flex w-full items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-blue-700"
+                    >
+                        <span>Lihat Detail</span>
+                        <span aria-hidden="true">&gt;</span>
+                    </Link>
+                </div>
+            </div>
+        </div>
+
         <!-- 3. KARTU STATUS SAAT INI (COMPACT SEPERTI NOTIFIKASI HP) -->
         <div class="space-y-2.5">
             <div class="flex items-center justify-between">
@@ -544,24 +611,6 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                 </Link>
             </div>
         </div>
-
-        <section
-            class="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"
-        >
-            <h3 class="font-bold">
-                Bimbingan disetujui: {{ dbTotalBimbinganAcc ?? 0 }}
-            </h3>
-            <p class="text-sm text-slate-500">
-                Jumlah sesi delivered, bukan syarat kelayakan sidang.
-            </p>
-            <Link href="/pendaftaran/bimbingan" class="text-blue-600"
-                >Lihat logbook</Link
-            >
-            <p class="mt-3 text-sm text-slate-500">
-                Periode pendaftaran belum tersedia. Nilai, kelulusan, dan
-                dokumen hasil menunggu kontrak penilaian R3.
-            </p>
-        </section>
 
         <!-- 5. HASIL PENILAIAN CARD DENGAN KLIK DETAIL POPUP MODAL -->
         <div
