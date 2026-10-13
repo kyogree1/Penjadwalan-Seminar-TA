@@ -2,7 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Bimbingan;
+use App\Models\PendaftaranSempro;
+use App\Models\PendaftaranSidang;
+use App\Models\PengajuanJudul;
+use App\Models\Penjadwalan;
 use App\Models\Ruangan;
+use App\Models\SchedulePeriod;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,7 +23,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Mahasiswa
-        User::updateOrCreate(
+        $mahasiswa = User::updateOrCreate(
             ['email' => 'akmal.falah@student.itk.ac.id'],
             [
                 'name' => 'Akmal Falah Maulana',
@@ -31,7 +37,7 @@ class DatabaseSeeder extends Seeder
         );
 
         // 2. Dosen (Pembimbing & Penguji)
-        User::updateOrCreate(
+        $dosen1 = User::updateOrCreate(
             ['email' => 'tejo.wahyu@lecturer.itk.ac.id'],
             [
                 'name' => 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
@@ -44,8 +50,21 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        $dosen2 = User::updateOrCreate(
+            ['email' => 'dewi.ratnasari@lecturer.itk.ac.id'],
+            [
+                'name' => 'Dewi Ratnasari, S.T., M.T.',
+                'username' => '198803152018012001',
+                'role' => 'dosen',
+                'nim_nip' => 'NIP: 198803152018012001',
+                'prodi' => 'S1 Informatika',
+                'jabatan' => 'Dosen Penguji',
+                'password' => bcrypt('password'),
+            ]
+        );
+
         // 3. Kaprodi (Koordinator Prodi)
-        User::updateOrCreate(
+        $kaprodi = User::updateOrCreate(
             ['email' => 'kaprodi.if@itk.ac.id'],
             [
                 'name' => 'Prof. Dr. Eng. Muhammad Ridwan, S.T., M.T.',
@@ -73,6 +92,10 @@ class DatabaseSeeder extends Seeder
         );
 
         // 5. Data Master Ruangan
+        $ruangan = Ruangan::updateOrCreate(
+            ['nama_ruangan' => 'Ruang Sidang Utama Informatika'],
+            ['gedung' => 'Gedung A', 'lantai' => 'Lantai 3', 'kapasitas' => 40, 'status' => 'tersedia']
+        );
         Ruangan::updateOrCreate(
             ['nama_ruangan' => 'Ruang Lab Riset Multimedia'],
             ['gedung' => 'Gedung A', 'lantai' => 'Lantai 2', 'kapasitas' => 30, 'status' => 'tersedia']
@@ -81,9 +104,84 @@ class DatabaseSeeder extends Seeder
             ['nama_ruangan' => 'Ruang Lab Jaringan & Keamanan Siber'],
             ['gedung' => 'Gedung B', 'lantai' => 'Lantai 3', 'kapasitas' => 25, 'status' => 'tersedia']
         );
-        Ruangan::updateOrCreate(
-            ['nama_ruangan' => 'Ruang Sidang Utama Informatika'],
-            ['gedung' => 'Gedung A', 'lantai' => 'Lantai 3', 'kapasitas' => 40, 'status' => 'tersedia']
+
+        // 6. Paket demo alur penuh: judul disetujui -> bimbingan -> sempro
+        // terverifikasi -> periode terbuka -> jadwal terpublikasi.
+        PengajuanJudul::updateOrCreate(
+            ['mahasiswa_id' => $mahasiswa->id],
+            [
+                'judul_ta' => 'Implementasi Machine Learning untuk Prediksi Cuaca',
+                'bidang_penelitian' => 'Kecerdasan Buatan',
+                'pembimbing_1_id' => $dosen1->id,
+                'pembimbing_2_id' => $dosen2->id,
+                'telah_konsultasi' => true,
+                'status' => 'disetujui',
+                'disetujui_oleh' => $kaprodi->id,
+                'disetujui_at' => now(),
+            ]
+        );
+
+        Bimbingan::updateOrCreate(
+            ['mahasiswa_id' => $mahasiswa->id, 'dosen_id' => $dosen1->id, 'tanggal' => '2026-09-01'],
+            [
+                'rangkuman' => 'Membahas bab 1 dan tinjauan pustaka',
+                'keterangan' => 'Tatap Muka di Lab',
+                'status' => 'delivered',
+                'catatan_dosen' => 'Lanjut ke bab 2',
+            ]
+        );
+
+        $sempro = PendaftaranSempro::updateOrCreate(
+            ['mahasiswa_id' => $mahasiswa->id],
+            [
+                'judul_ta' => 'Implementasi Machine Learning untuk Prediksi Cuaca',
+                'bentuk_ta' => 'Skripsi Reguler',
+                'gelombang' => 1,
+                'status' => 'terjadwal',
+                'status_akademik' => 'disetujui',
+            ]
+        );
+
+        PendaftaranSidang::updateOrCreate(
+            ['mahasiswa_id' => $mahasiswa->id],
+            [
+                'judul_ta' => 'Implementasi Machine Learning untuk Prediksi Cuaca',
+                'gelombang' => 1,
+                'status' => 'menunggu',
+                'status_akademik' => 'menunggu',
+            ]
+        );
+
+        $period = SchedulePeriod::updateOrCreate(
+            ['tipe' => 'sempro', 'gelombang' => 1],
+            [
+                'name' => 'Sempro Gelombang 1',
+                'capacity' => 20,
+                'start_date' => '2026-11-01',
+                'end_date' => '2026-11-30',
+                'slots' => [['tanggal' => '2026-11-10', 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00']],
+                'is_open' => true,
+            ]
+        );
+
+        Penjadwalan::updateOrCreate(
+            ['tipe' => 'sempro', 'pendaftaran_id' => $sempro->id],
+            [
+                'period_id' => $period->id,
+                'mahasiswa_id' => $mahasiswa->id,
+                'ruangan_id' => $ruangan->id,
+                'pembimbing_1_id' => $dosen1->id,
+                'pembimbing_2_id' => $dosen2->id,
+                'penguji_1_id' => $dosen1->id,
+                'penguji_2_id' => $dosen2->id,
+                'tanggal' => '2026-11-10',
+                'jam_mulai' => '09:00:00',
+                'jam_selesai' => '10:30:00',
+                'mode' => 'offline',
+                'gelombang' => 1,
+                'status' => 'terpublikasi',
+                'dibuat_oleh' => $kaprodi->id,
+            ]
         );
     }
 }

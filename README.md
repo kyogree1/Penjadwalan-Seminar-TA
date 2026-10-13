@@ -99,8 +99,13 @@ Wajib pakai akun (tombol quick-login sudah dihapus, login dibatasi 5x/menit).
 | --------- | ------------------ | -------- |
 | Mahasiswa | `11231006`         | `password` |
 | Dosen     | `198504122010121003` | `password` |
+| Dosen 2   | `198803152018012001` | `password` |
 | Kaprodi   | `198003152005011002` | `password` |
 | Tendik    | `199208192018032001` | `password` |
+
+`migrate:fresh --seed` juga mengisi paket demo alur penuh: judul disetujui →
+bimbingan delivered → sempro terjadwal → periode terbuka → jadwal terpublikasi
+(sebagai penguji: Tejo + Dewi). Jadi halaman Dosen/Penilaian langsung terisi.
 
 ## Cek & test
 
