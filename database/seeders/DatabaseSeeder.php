@@ -7,7 +7,6 @@ use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use App\Models\PengajuanJudul;
 use App\Models\Penjadwalan;
-use App\Models\Ruangan;
 use App\Models\SchedulePeriod;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -51,9 +50,9 @@ class DatabaseSeeder extends Seeder
         );
 
         $dosen2 = User::updateOrCreate(
-            ['email' => 'dewi.ratnasari@lecturer.itk.ac.id'],
+            ['email' => 'rina.agustina@lecturer.itk.ac.id'],
             [
-                'name' => 'Dewi Ratnasari, S.T., M.T.',
+                'name' => 'Rina Agustina, S.T., M.Kom.',
                 'username' => '198803152018012001',
                 'role' => 'dosen',
                 'nim_nip' => 'NIP: 198803152018012001',
@@ -91,21 +90,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 5. Data Master Ruangan
-        $ruangan = Ruangan::updateOrCreate(
-            ['nama_ruangan' => 'Ruang Sidang Utama Informatika'],
-            ['gedung' => 'Gedung A', 'lantai' => 'Lantai 3', 'kapasitas' => 40, 'status' => 'tersedia']
-        );
-        Ruangan::updateOrCreate(
-            ['nama_ruangan' => 'Ruang Lab Riset Multimedia'],
-            ['gedung' => 'Gedung A', 'lantai' => 'Lantai 2', 'kapasitas' => 30, 'status' => 'tersedia']
-        );
-        Ruangan::updateOrCreate(
-            ['nama_ruangan' => 'Ruang Lab Jaringan & Keamanan Siber'],
-            ['gedung' => 'Gedung B', 'lantai' => 'Lantai 3', 'kapasitas' => 25, 'status' => 'tersedia']
-        );
-
-        // 6. Paket demo alur penuh: judul disetujui -> bimbingan -> sempro
+        // 5. Paket demo alur penuh: judul disetujui -> bimbingan -> sempro
         // terverifikasi -> periode terbuka -> jadwal terpublikasi.
         PengajuanJudul::updateOrCreate(
             ['mahasiswa_id' => $mahasiswa->id],
@@ -169,7 +154,7 @@ class DatabaseSeeder extends Seeder
             [
                 'period_id' => $period->id,
                 'mahasiswa_id' => $mahasiswa->id,
-                'ruangan_id' => $ruangan->id,
+                'nama_ruangan' => 'Ruang Sidang Utama Informatika',
                 'pembimbing_1_id' => $dosen1->id,
                 'pembimbing_2_id' => $dosen2->id,
                 'penguji_1_id' => $dosen1->id,

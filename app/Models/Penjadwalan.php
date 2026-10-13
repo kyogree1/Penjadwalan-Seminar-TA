@@ -18,7 +18,7 @@ class Penjadwalan extends Model
         'period_id',
         'pendaftaran_id',
         'mahasiswa_id',
-        'ruangan_id',
+        'nama_ruangan',
         'pembimbing_1_id',
         'pembimbing_2_id',
         'penguji_1_id',
@@ -53,10 +53,10 @@ class Penjadwalan extends Model
         return $this->belongsTo(User::class, 'mahasiswa_id');
     }
 
-    public function ruangan(): BelongsTo
-    {
-        return $this->belongsTo(Ruangan::class, 'ruangan_id');
-    }
+    /**
+     * Ruangan tidak lagi dikelola sebagai entitas terpisah.
+     * Nama ruangan disimpan langsung sebagai string di kolom `nama_ruangan`.
+     */
 
     public function pembimbing1(): BelongsTo
     {

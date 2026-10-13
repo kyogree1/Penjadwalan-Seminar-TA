@@ -21,7 +21,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Tendik\ArsipController as TendikArsipController;
 use App\Http\Controllers\Tendik\DashboardController as TendikDashboardController;
 use App\Http\Controllers\Tendik\MahasiswaController as TendikMahasiswaController;
-use App\Http\Controllers\Tendik\RuanganController as TendikRuanganController;
 use App\Http\Controllers\Tendik\VerifikasiController as TendikVerifikasiController;
 use Illuminate\Support\Facades\Route;
 
@@ -138,11 +137,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/verifikasi', [TendikVerifikasiController::class, 'index'])->name('verifikasi');
         Route::patch('/verifikasi/sempro/{id}', [TendikVerifikasiController::class, 'verifySempro'])->name('verifikasi.sempro');
         Route::patch('/verifikasi/sidang/{id}', [TendikVerifikasiController::class, 'verifySidang'])->name('verifikasi.sidang');
-
-        Route::get('/ruangan', [TendikRuanganController::class, 'index'])->name('ruangan');
-        Route::post('/ruangan', [TendikRuanganController::class, 'store'])->name('ruangan.store');
-        Route::put('/ruangan/{id}', [TendikRuanganController::class, 'update'])->name('ruangan.update');
-        Route::delete('/ruangan/{id}', [TendikRuanganController::class, 'destroy'])->name('ruangan.destroy');
 
         Route::get('/arsip', [TendikArsipController::class, 'index'])->name('arsip');
 
