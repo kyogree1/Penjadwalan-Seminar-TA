@@ -21,6 +21,9 @@ class DashboardController extends Controller
 
         // 1. Data Pengajuan
         $judul = PengajuanJudul::where('mahasiswa_id', $user->id)->latest()->first();
+        $approvedTitle = PengajuanJudul::with(['pembimbing1:id,name', 'pembimbing2:id,name'])
+            ->where('mahasiswa_id', $user->id)->where('status', 'disetujui')
+            ->latest()->orderByDesc('id')->first();
         $sempro = PendaftaranSempro::where('mahasiswa_id', $user->id)->latest()->first();
         $sidang = PendaftaranSidang::where('mahasiswa_id', $user->id)->latest()->first();
 
@@ -29,12 +32,13 @@ class DashboardController extends Controller
             ->where('status', 'delivered')
             ->count();
 
-        // 3. Jadwal jika sudah dijadwalkan
-        $jadwalAktif = Penjadwalan::with(['ruangan:id,nama_ruangan,gedung', 'pembimbing1:id,name', 'penguji1:id,name'])
+        // Only this student's published exams belong in the personal agenda.
+        $jadwalList = Penjadwalan::with(['ruangan:id,nama_ruangan,gedung', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
             ->where('mahasiswa_id', $user->id)
             ->where('status', 'terpublikasi')
-            ->latest('tanggal')
-            ->first();
+            ->orderBy('tanggal')->orderBy('jam_mulai')->orderBy('id')
+            ->get();
+        $jadwalAktif = $jadwalList->last();
 
         // 4. Hitung Roadmap Sempro
         $semproSteps = [
@@ -118,10 +122,12 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard', [
             'dbJudul' => $judul,
+            'dbApprovedTitle' => $approvedTitle,
             'dbSempro' => $sempro,
             'dbSidang' => $sidang,
             'dbTotalBimbinganAcc' => $totalBimbinganAcc,
             'dbJadwal' => $jadwalAktif,
+            'dbJadwalList' => $jadwalList,
             'dbSemproSteps' => $semproSteps,
             'dbSidangSteps' => $sidangSteps,
         ]);

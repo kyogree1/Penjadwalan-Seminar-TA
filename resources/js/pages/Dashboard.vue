@@ -16,6 +16,7 @@ import {
 } from 'lucide-vue-next';
 
 import Modal from '@/Components/Modal.vue';
+import StudentLecturers from '@/Components/StudentLecturers.vue';
 import type {
     RegistrationRecord,
     ScheduleRecord,
@@ -70,6 +71,8 @@ interface Props {
     dbSidang: RegistrationRecord | null;
     dbTotalBimbinganAcc?: number;
     dbJadwal: ScheduleRecord | null;
+    dbJadwalList?: ScheduleRecord[];
+    dbApprovedTitle?: RegistrationRecord | null;
     dbSemproSteps?: RoadmapStep[];
     dbSidangSteps?: RoadmapStep[];
 }
@@ -179,17 +182,8 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                 class="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs lg:col-span-2 dark:border-slate-800 dark:bg-[#0E1626]"
             >
                 <div>
-                    <div class="flex items-center gap-2">
-                        <span
-                            class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20"
-                        />
-                        <span
-                            class="text-[11px] font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400"
-                            >Akun Aktif</span
-                        >
-                    </div>
                     <h2
-                        class="mt-2 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white"
+                        class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-white"
                     >
                         Selamat Datang, {{ studentName }}
                     </h2>
@@ -279,6 +273,11 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                 </Link>
             </div>
         </div>
+
+        <StudentLecturers
+            :approved-title="props.dbApprovedTitle ?? null"
+            :schedules="props.dbJadwalList ?? []"
+        />
 
         <!-- 2. ROADMAP WIDGET DENGAN INDIKATOR WARNA KUNING UNTUK PROGRES AKTIF -->
         <div
@@ -557,16 +556,6 @@ const openAssessmentModal = (item: AssessmentDetail) => {
             </p>
             <Link href="/pendaftaran/bimbingan" class="text-blue-600"
                 >Lihat logbook</Link
-            >
-            <h3 class="mt-4 font-bold">Jadwal terpublikasi terbaru</h3>
-            <p v-if="dbJadwal">
-                {{ dbJadwal.tipe }} — {{ dbJadwal.tanggal.slice(0, 10) }} •
-                {{ dbJadwal.jam_mulai }} – {{ dbJadwal.jam_selesai }} •
-                {{ dbJadwal.ruangan?.nama_ruangan ?? 'Ruangan belum tersedia' }}
-            </p>
-            <p v-else class="text-slate-500">Belum ada jadwal terpublikasi.</p>
-            <Link href="/pendaftaran/jadwal" class="text-blue-600"
-                >Lihat seluruh jadwal</Link
             >
             <p class="mt-3 text-sm text-slate-500">
                 Periode pendaftaran belum tersedia. Nilai, kelulusan, dan

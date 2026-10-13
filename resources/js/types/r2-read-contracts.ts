@@ -3,6 +3,8 @@ export interface RegistrationRecord {
     judul_ta: string;
     status: string;
     created_at?: string;
+    pembimbing1?: { name: string } | null;
+    pembimbing2?: { name: string } | null;
     catatan?: string | null;
 }
 export interface ScheduleRecord {

@@ -251,6 +251,12 @@ test('shared dialog traps both tab directions, recovers escaped focus and restor
     }
 });
 
+test('student greeting has no redundant active account label', () => {
+    const source = readFileSync('resources/js/pages/Dashboard.vue', 'utf8');
+    expect(source).not.toContain('Akun Aktif');
+    expect(source).toContain('Selamat Datang, {{ studentName }}');
+});
+
 test('catalogue surfaces use the shared semantic navy token', () => {
     const source = readFileSync('resources/js/pages/Katalog/Index.vue', 'utf8');
     expect(source).not.toMatch(/dark:bg-\[#0e1626\]/i);

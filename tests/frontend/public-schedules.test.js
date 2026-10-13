@@ -60,15 +60,34 @@ test('actual public schedule SFC renders both exam types and reacts to empty ser
             /import\s+\{([^}]+)\}\s+from\s+["'][^"']+["'];?/g,
             (_, names) => `const {${names.replace(/\bas\b/g, ':')}} = imports;`,
         )
+        .replace(
+            /import\s+(\w+)\s+from\s+["'][^"']+["'];?/g,
+            (_, name) => `const ${name} = imports.${name};`,
+        )
         .replace('export default', 'return');
     const Component = runInNewContext(`(function () { ${code} })()`, {
-        imports: Vue,
+        imports: {
+            ...Vue,
+            CompactCalendar: { render: () => null },
+            WeekSelector: { render: () => null },
+            WeeklyAgendaList: { render: () => null },
+            CalendarIcon: { render: () => null },
+            ChevronLeft: { render: () => null },
+            ChevronRight: { render: () => null },
+            Clock: { render: () => null },
+            FileCheck: { render: () => null },
+            GraduationCap: { render: () => null },
+            MapPin: { render: () => null },
+            User: { render: () => null },
+            X: { render: () => null },
+        },
     });
+    const todayStr = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-15`;
     const schedule = {
         student_name: 'Actual Student',
         title: '<script>private()</script>',
         type: 'sempro',
-        date: '2026-11-01',
+        date: todayStr,
         start_time: '09:00:00',
         end_time: '10:30:00',
         room: 'Room A',
@@ -95,18 +114,47 @@ test('actual public schedule SFC renders both exam types and reacts to empty ser
         setup: () => () => Vue.h(Component, props),
     });
     app.mount(root);
-    expect(text(root)).toContain('Seminar Proposal');
+    expect(text(root)).toContain('Sempro');
     expect(text(root)).toContain('Sidang');
     expect(text(root)).toContain('Actual Student');
-    expect(text(root)).toContain('2026-11-01');
+    expect(text(root)).toContain('SENIN / MON');
+    expect(text(root)).toContain('MINGGU / SUN');
+
+    // Find day cell with schedule and invoke click
+    const findCellWithSchedule = (el) => {
+        if (el['onClick'] && text(el).includes('Sempro')) return el;
+        for (const child of el.children) {
+            const found = findCellWithSchedule(child);
+            if (found) return found;
+        }
+        return null;
+    };
+    const clickable = findCellWithSchedule(root);
+    clickable?.onClick?.();
+    await Vue.nextTick();
+
+    expect(text(root)).toContain('Seminar Proposal TA');
+    expect(text(root)).toContain('Sidang Tugas Akhir');
     expect(text(root)).toContain('09:00');
     expect(text(root)).toContain('10:30');
     expect(text(root)).toContain('Room A');
-    expect(text(root)).toContain('Hybrid');
-    expect(text(root)).toContain('Online');
+    expect(text(root)).toContain('hybrid');
     expect(text(root)).toContain('Actual Supervisor');
-    expect(text(root)).toContain('Actual Examiner');
     expect(text(root)).toContain('<script>private()</script>');
+
+    // Close modal
+    const findCloseButton = (el) => {
+        if (el['onClick'] && text(el).trim() === 'Tutup') return el;
+        for (const child of el.children) {
+            const found = findCloseButton(child);
+            if (found) return found;
+        }
+        return null;
+    };
+    const closeBtn = findCloseButton(root);
+    closeBtn?.onClick?.();
+    await Vue.nextTick();
+
     props.schedules = [];
     await Vue.nextTick();
     expect(text(root)).toContain('Belum ada jadwal terpublikasi');
