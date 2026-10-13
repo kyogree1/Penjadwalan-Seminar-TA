@@ -74,6 +74,7 @@ class PendaftaranSemproController extends Controller
                 'judul_ta' => $validated['judul_ta'],
                 'bentuk_ta' => $validated['bentuk_ta'],
                 'lokasi_mitra' => $validated['lokasi_mitra'] ?? null,
+                'skor_iaet' => $validated['skor_iaet'] ?? null,
                 'gelombang' => $wave,
                 'status' => 'menunggu',
                 'status_akademik' => 'menunggu',

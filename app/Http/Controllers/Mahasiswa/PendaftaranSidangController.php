@@ -70,6 +70,7 @@ class PendaftaranSidangController extends Controller
             array_merge([
                 'judul_ta' => $validated['judul_ta'],
                 'lokasi_mitra' => $validated['lokasi_mitra'] ?? null,
+                'skor_iaet' => $validated['skor_iaet'] ?? null,
                 'gelombang' => $wave,
                 'status' => 'menunggu',
                 'status_akademik' => 'menunggu',
