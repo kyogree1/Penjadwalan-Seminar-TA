@@ -43,10 +43,10 @@ class PendaftaranSemproController extends Controller
             ];
         }
 
-        $jadwal = \App\Models\Penjadwalan::with(['penguji1:id,name', 'penguji2:id,name', 'ruangan:id,nama_ruangan'])
-            ->where('mahasiswa_id', $user->id)
+        $jadwal = \App\Models\Penjadwalan::with(['penguji1:id,name', 'penguji2:id,name'])
             ->where('tipe', 'sempro')
-            ->latest('id')
+            ->where('mahasiswa_id', $user->id)
+            ->where('status', 'terpublikasi')
             ->first();
 
         $pengujiList = [];

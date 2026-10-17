@@ -48,7 +48,6 @@ const pageTitle = computed(() => {
     // Rute Tendik
     if (path === '/tendik/dashboard') return 'Dashboard Tendik';
     if (path.startsWith('/tendik/verifikasi')) return 'Verifikasi Berkas';
-    if (path.startsWith('/tendik/ruangan')) return 'Kelola Ruangan';
     if (path.startsWith('/tendik/arsip')) return 'Arsip Dokumen';
     if (path.startsWith('/tendik/mahasiswa')) return 'Data Mahasiswa';
 

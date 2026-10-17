@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test';
+import { expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { compileScript, parse } from '@vue/compiler-sfc';
@@ -9,7 +9,7 @@ import * as Icons from 'lucide-vue-next';
 globalThis.Document = class {};
 globalThis.ShadowRoot = class {};
 // Compile the actual SFC; only visual wrappers and Inertia navigation are stubbed.
-for (const pageName of ['Ruangan', 'Dashboard', 'Arsip']) {
+for (const pageName of ['Dashboard', 'Arsip']) {
     const source = readFileSync(
         `resources/js/pages/Tendik/${pageName}.vue`,
         'utf8',
@@ -146,28 +146,9 @@ for (const pageName of ['Ruangan', 'Dashboard', 'Arsip']) {
         nextSibling: (el) =>
             el.parent?.children[el.parent.children.indexOf(el) + 1],
     });
+    const walk = (el) => [el, ...el.children.flatMap(walk)];
     const text = (el) => [el.text, ...el.children.map(text)].join(' ');
 
-    const walk = (el) => [el, ...el.children.flatMap(walk)];
-    const click = (root, label) => {
-        const el = walk(root).find(
-            (el) =>
-                el.tagName === 'BUTTON' &&
-                el.onClick &&
-                text(el).trim() === label,
-        );
-        expect(el).toBeDefined();
-        el.onClick();
-    };
-    const room = {
-        id: 40,
-        nama_ruangan: 'Actual Room',
-        gedung: null,
-        lantai: '2',
-        kapasitas: 12,
-        status: 'tidak_tersedia',
-        keterangan: 'Perawatan',
-    };
     const mount = (input) => {
         requests.length = 0;
         const props = reactive(input);
@@ -177,122 +158,6 @@ for (const pageName of ['Ruangan', 'Dashboard', 'Arsip']) {
             .mount(root);
         return { root, props };
     };
-    if (pageName === 'Ruangan')
-        describe('rooms actual SFC', () => {
-            test('renders reactive persisted room fields without invented facilities or occupancy', async () => {
-                const { root, props } = mount({ dbRuanganList: [room] });
-                expect(text(root)).toContain('Actual Room');
-                expect(text(root)).toContain('Tidak tersedia');
-                expect(text(root)).toContain('Perawatan');
-                expect(text(root)).not.toContain('Agenda Pemakaian');
-                props.dbRuanganList = [];
-                await nextTick();
-                expect(text(root)).not.toContain('Actual Room');
-                expect(text(root)).toContain('Belum ada ruangan');
-            });
-            test('CRUD sends persisted fields and IDs once, with server-only confirmation and recoverable failures', async () => {
-                const { root, props } = mount({ dbRuanganList: [room] });
-                click(root, 'Tambah Ruangan');
-                await nextTick();
-                const input = walk(root).find(
-                    (el) => el.name === 'nama_ruangan',
-                );
-                expect(input).toBeDefined();
-                input['onUpdate:modelValue']('New Room');
-                click(root, 'Simpan');
-                click(root, 'Simpan');
-                expect(requests.length).toBe(1);
-                expect(requests[0].slice(0, 2)).toEqual([
-                    'post',
-                    '/tendik/ruangan',
-                ]);
-                expect(requests[0][2]).toEqual({
-                    nama_ruangan: 'New Room',
-                    gedung: null,
-                    lantai: null,
-                    kapasitas: 30,
-                    status: 'tersedia',
-                    keterangan: null,
-                });
-                expect(text(root)).not.toContain('berhasil');
-                requests[0][3].onError({ nama_ruangan: 'Nama ditolak' });
-                requests[0][3].onFinish();
-                await nextTick();
-                expect(text(root)).toContain('Nama ditolak');
-                click(root, 'Simpan');
-                requests[1][3].onNetworkError();
-                requests[1][3].onFinish();
-                await nextTick();
-                expect(text(root)).toContain('Koneksi');
-                click(root, 'Simpan');
-                requests[2][3].onSuccess({
-                    props: { flash: { error: 'Server menolak' } },
-                });
-                requests[2][3].onFinish();
-                await nextTick();
-                expect(text(root)).toContain('Server menolak');
-                click(root, 'Simpan');
-                requests[3][3].onSuccess({ props: { flash: {} } });
-                requests[3][3].onFinish();
-                await nextTick();
-                expect(text(root)).toContain(
-                    'Konfirmasi server belum diterima',
-                );
-                click(root, 'Simpan');
-                requests[4][3].onSuccess({
-                    props: { flash: { success: 'Dikonfirmasi server' } },
-                });
-                requests[4][3].onFinish();
-                await nextTick();
-                expect(text(root)).toContain('Dikonfirmasi server');
-                expect(props.dbRuanganList).toHaveLength(1);
-                click(root, 'Edit');
-                await nextTick();
-                click(root, 'Simpan');
-                expect(requests[5].slice(0, 2)).toEqual([
-                    'put',
-                    '/tendik/ruangan/40',
-                ]);
-                expect(requests[5][2]).toEqual(roomPayload());
-                requests[5][3].onSuccess({
-                    props: { flash: { success: 'Updated server' } },
-                });
-                requests[5][3].onFinish();
-                await nextTick();
-                click(root, 'Hapus');
-                await nextTick();
-                expect(text(root)).toContain(
-                    'tidak lagi memiliki referensi ruangan',
-                );
-                click(root, 'Ya, Hapus');
-                click(root, 'Ya, Hapus');
-                expect(requests[6].slice(0, 2)).toEqual([
-                    'delete',
-                    '/tendik/ruangan/40',
-                ]);
-                expect(props.dbRuanganList).toHaveLength(1);
-                requests[6][2].onHttpException();
-                requests[6][2].onFinish();
-                await nextTick();
-                expect(text(root)).toContain('Permintaan gagal');
-                props.dbRuanganList = [];
-                await nextTick();
-                expect(text(root)).toContain(
-                    'Data ruangan tidak lagi tersedia',
-                );
-                const before = requests.length;
-                click(root, 'Ya, Hapus');
-                expect(requests.length).toBe(before);
-            });
-        });
-    const roomPayload = () => ({
-        nama_ruangan: room.nama_ruangan,
-        gedung: room.gedung,
-        lantai: room.lantai,
-        kapasitas: room.kapasitas,
-        status: room.status,
-        keterangan: room.keterangan,
-    });
     if (pageName === 'Dashboard')
         test('dashboard displays supported server stats reactively and no fixture print/month metrics', async () => {
             const { root, props } = mount({
@@ -300,14 +165,10 @@ for (const pageName of ['Ruangan', 'Dashboard', 'Arsip']) {
                     antreanVerifikasi: 7,
                     antreanSempro: 4,
                     antreanSidang: 3,
-                    totalRuangan: 9,
-                    ruanganTersedia: 5,
                     totalMahasiswa: 13,
                 },
             });
             expect(text(root)).toContain('Antrean Verifikasi: 7');
-            expect(text(root)).toContain('Total Ruangan: 9');
-            expect(text(root)).toContain('Ruangan Tersedia: 5');
             expect(text(root)).toContain('Akun Mahasiswa: 13');
             expect(text(root)).toContain('4 Sempro');
             expect(text(root)).toContain('3 Sidang');
@@ -317,8 +178,6 @@ for (const pageName of ['Ruangan', 'Dashboard', 'Arsip']) {
                 antreanVerifikasi: 0,
                 antreanSempro: 0,
                 antreanSidang: 0,
-                totalRuangan: 0,
-                ruanganTersedia: 0,
                 totalMahasiswa: 0,
             };
             await nextTick();

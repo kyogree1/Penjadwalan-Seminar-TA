@@ -71,21 +71,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 5. Data Master Ruangan
-        \App\Models\Ruangan::updateOrCreate(
-            ['nama_ruangan' => 'Ruang Lab Riset Multimedia'],
-            ['gedung' => 'Gedung A', 'lantai' => 'Lantai 2', 'kapasitas' => 30, 'status' => 'tersedia']
-        );
-        \App\Models\Ruangan::updateOrCreate(
-            ['nama_ruangan' => 'Ruang Lab Jaringan & Keamanan Siber'],
-            ['gedung' => 'Gedung B', 'lantai' => 'Lantai 3', 'kapasitas' => 25, 'status' => 'tersedia']
-        );
-        \App\Models\Ruangan::updateOrCreate(
-            ['nama_ruangan' => 'Ruang Sidang Utama Informatika'],
-            ['gedung' => 'Gedung A', 'lantai' => 'Lantai 3', 'kapasitas' => 40, 'status' => 'tersedia']
-        );
-
-        // 6. Real Data from CSV
+        // 5. Real Data from CSV
         $this->call(CsvRealDataSeeder::class);
     }
 }

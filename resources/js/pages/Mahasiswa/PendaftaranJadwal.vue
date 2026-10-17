@@ -73,7 +73,6 @@ const schedules = computed(() => {
                 time: item.jam_mulai
                     ? `${item.jam_mulai} - ${item.jam_selesai}`
                     : 'Waktu belum tersedia',
-                room: item.ruangan?.nama_ruangan || 'Ruangan belum tersedia',
                 supervisors: [
                     item.pembimbing1?.name,
                     item.pembimbing2?.name,
@@ -98,7 +97,6 @@ const schedules = computed(() => {
                 time: item.jam_mulai
                     ? `${item.jam_mulai} - ${item.jam_selesai}`
                     : 'Waktu belum tersedia',
-                room: item.ruangan?.nama_ruangan || 'Ruangan belum tersedia',
                 supervisors: [
                     item.pembimbing1?.name,
                     item.pembimbing2?.name,

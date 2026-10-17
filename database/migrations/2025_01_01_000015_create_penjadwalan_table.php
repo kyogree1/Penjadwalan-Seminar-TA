@@ -15,7 +15,6 @@ return new class extends Migration
             $table->unsignedBigInteger('pendaftaran_id'); // FK dinamis ke pendaftaran_sempro / pendaftaran_sidang
 
             $table->foreignId('mahasiswa_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('ruangan_id')->nullable()->constrained('ruangan')->nullOnDelete();
 
             // Tim penguji (relasi ke users role=dosen)
             $table->foreignId('pembimbing_1_id')->nullable()->constrained('users')->nullOnDelete();

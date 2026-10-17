@@ -28,7 +28,6 @@ export interface ScheduleRecord {
         nim_nip: string | null;
         username?: string | null;
     } | null;
-    ruangan?: { nama_ruangan: string; gedung?: string | null } | null;
     pembimbing1?: { name: string } | null;
     pembimbing2?: { name: string } | null;
     penguji1?: { name: string } | null;

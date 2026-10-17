@@ -250,13 +250,6 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                             <FileCheck class="h-4 w-4" /> Verifikasi Berkas
                         </Link>
                         <Link
-                            href="/tendik/ruangan"
-                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
-                            @click="emit('close')"
-                        >
-                            <Building2 class="h-4 w-4" /> Jadwal Ruangan
-                        </Link>
-                        <Link
                             href="/tendik/arsip"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"

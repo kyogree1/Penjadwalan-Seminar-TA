@@ -93,6 +93,7 @@ class MahasiswaFlowComprehensiveTest extends TestCase
 
         $response = $this->actingAs($mahasiswa)->post('/pendaftaran/sidang', [
             'judul_ta' => 'Sistem Informasi Penjadwalan Sidang Final',
+            'skor_iaet' => 500,
             'lokasi_mitra' => 'Balikpapan',
             'draft_laporan_file' => $file,
         ]);

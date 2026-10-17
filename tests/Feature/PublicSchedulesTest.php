@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use App\Models\Penjadwalan;
-use App\Models\Ruangan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -48,7 +47,6 @@ class PublicSchedulesTest extends TestCase
             ->has('publicSchedules', 2)
             ->where('publicSchedules.0.title', null)
             ->where('publicSchedules.1.title', null)
-            ->where('publicSchedules.0.room', null)
             ->where('publicSchedules.0.supervisors', [])
             ->where('publicSchedules.0.examiners', []));
     }
@@ -57,14 +55,13 @@ class PublicSchedulesTest extends TestCase
     {
         $student = User::factory()->create(['name' => 'Student Public', 'role' => 'mahasiswa', 'email' => 'private@example.test']);
         $lecturer = User::factory()->create(['name' => 'Lecturer Public', 'role' => 'dosen']);
-        $room = Ruangan::create(['nama_ruangan' => 'Room A', 'gedung' => 'Building', 'lantai' => 1, 'kapasitas' => 20, 'keterangan' => 'PRIVATE ROOM NOTE']);
         $sempro = PendaftaranSempro::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Proposal title', 'bentuk_ta' => 'Skripsi', 'proposal_file' => 'PRIVATE DOCUMENT', 'catatan' => 'PRIVATE REGISTRATION NOTE']);
         $sidang = PendaftaranSidang::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Defense title', 'draft_laporan_file' => 'PRIVATE DRAFT']);
         foreach (['sidang' => $sidang, 'sempro' => $sempro] as $type => $registration) {
             foreach (['terpublikasi', 'draft', 'dibatalkan', 'selesai'] as $status) {
                 Penjadwalan::create([
                     'tipe' => $type, 'pendaftaran_id' => $registration->id,
-                    'mahasiswa_id' => $student->id, 'ruangan_id' => $room->id,
+                    'mahasiswa_id' => $student->id,
                     'pembimbing_1_id' => $lecturer->id, 'penguji_1_id' => $lecturer->id,
                     'tanggal' => $type === 'sempro' ? '2026-11-01' : '2026-11-02',
                     'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00',
@@ -78,7 +75,7 @@ class PublicSchedulesTest extends TestCase
             'title' => $type === 'sempro' ? 'Proposal title' : 'Defense title',
             'type' => $type, 'date' => $type === 'sempro' ? '2026-11-01' : '2026-11-02',
             'start_time' => '09:00:00', 'end_time' => '10:30:00',
-            'room' => 'Room A', 'mode' => 'hybrid',
+            'mode' => 'hybrid',
             'supervisors' => ['Lecturer Public'], 'examiners' => ['Lecturer Public'],
         ], ['sempro', 'sidang']);
         foreach (['/', '/login'] as $url) {

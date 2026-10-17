@@ -15,8 +15,6 @@ export interface TendikDashboardProps {
         antreanVerifikasi: number;
         antreanSempro: number;
         antreanSidang: number;
-        totalRuangan: number;
-        ruanganTersedia: number;
         totalMahasiswa: number;
     };
 }

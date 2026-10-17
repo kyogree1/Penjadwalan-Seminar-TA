@@ -16,7 +16,7 @@ class ScheduleExportController extends Controller
         if ($periodId !== null) {
             SchedulePeriod::findOrFail($periodId);
         }
-        $rows = Penjadwalan::with(['mahasiswa', 'penguji1', 'penguji2', 'pembimbing1', 'pembimbing2', 'ruangan'])
+        $rows = Penjadwalan::with(['mahasiswa', 'penguji1', 'penguji2', 'pembimbing1', 'pembimbing2'])
             ->when($periodId !== null, fn ($query) => $query->where('period_id', $periodId))
             ->orderBy('tanggal')->orderBy('jam_mulai')->orderBy('id')->get();
 

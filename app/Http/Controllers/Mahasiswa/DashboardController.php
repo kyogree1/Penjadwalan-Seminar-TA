@@ -69,7 +69,7 @@ class DashboardController extends Controller
             ->count();
 
         // Only this student's published exams belong in the personal agenda.
-        $jadwalList = Penjadwalan::with(['ruangan:id,nama_ruangan,gedung', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
+        $jadwalList = Penjadwalan::with(['pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
             ->where('mahasiswa_id', $user->id)
             ->where('status', 'terpublikasi')
             ->orderBy('tanggal')->orderBy('jam_mulai')->orderBy('id')

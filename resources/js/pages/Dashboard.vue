@@ -128,9 +128,8 @@ interface CurrentStatusCard {
 
 const formatStatusLabel = (status: string) => {
     if (status in STATUS_VERIFIKASI) {
-        return STATUS_VERIFIKASI[
-            status as keyof typeof STATUS_VERIFIKASI
-        ].label;
+        return STATUS_VERIFIKASI[status as keyof typeof STATUS_VERIFIKASI]
+            .label;
     }
     if (status in STATUS_PENGAJUAN) {
         return STATUS_PENGAJUAN[status as keyof typeof STATUS_PENGAJUAN].label;

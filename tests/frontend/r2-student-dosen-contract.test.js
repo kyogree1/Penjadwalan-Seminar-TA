@@ -34,6 +34,13 @@ function setup(path, props) {
     const imports = {
         ...Vue,
         ...Icons,
+        STATUS_PENGAJUAN: {
+            ditolak: { label: 'Ditolak', variant: 'rose' },
+        },
+        STATUS_VERIFIKASI: {
+            ditolak: { label: 'Ditolak', variant: 'rose' },
+        },
+        statusToBadge: (s) => ({ label: s, variant: 'slate' }),
         // This setup-only harness intentionally has no mounted lifecycle.
         onMounted() {},
         onUnmounted() {},
@@ -634,7 +641,7 @@ describe('R2 actual page reactive contracts', () => {
         expect(state.semproSteps.value).toEqual([]);
         expect(state.sidangSteps.value).toEqual([]);
         props.dbSempro = { id: 7, judul_ta: 'Judul server', status: 'ditolak' };
-        expect(state.currentStatusCards.value[0].badgeText).toBe('ditolak');
+        expect(state.currentStatusCards.value[0].title).toBe('Ditolak');
         props.dbSempro = null;
         expect(state.currentStatusCards.value).toEqual([]);
     });

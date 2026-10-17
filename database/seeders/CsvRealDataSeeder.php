@@ -6,7 +6,6 @@ use App\Models\PengajuanJudul;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use App\Models\Penjadwalan;
-use App\Models\Ruangan;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -120,7 +119,6 @@ class CsvRealDataSeeder extends Seeder
         );
 
         // 4. Jadwal Sempro Akmal (Terjadwal & Terpublikasi)
-        $ruang = Ruangan::where('nama_ruangan', 'B-102')->first() ?? Ruangan::first();
         Penjadwalan::updateOrCreate(
             [
                 'tipe' => 'sempro',
@@ -128,7 +126,6 @@ class CsvRealDataSeeder extends Seeder
                 'mahasiswa_id' => $akmal->id,
             ],
             [
-                'ruangan_id' => $ruang?->id,
                 'pembimbing_1_id' => $p1?->id,
                 'pembimbing_2_id' => $p2?->id,
                 'penguji_1_id' => $u1?->id,
@@ -136,7 +133,8 @@ class CsvRealDataSeeder extends Seeder
                 'tanggal' => now()->addDays(5)->toDateString(),
                 'jam_mulai' => '09:00:00',
                 'jam_selesai' => '10:30:00',
-                'mode' => 'offline',
+                'mode' => 'online',
+                'link_online' => 'https://meet.google.com/abc-defg-hij',
                 'gelombang' => 1,
                 'status' => 'terpublikasi',
                 'catatan' => 'Seminar proposal dijadwalkan secara resmi.',
@@ -154,15 +152,15 @@ class CsvRealDataSeeder extends Seeder
                 'mahasiswa_id' => $akmal->id,
             ],
             [
-                'ruangan_id' => $ruang?->id,
                 'pembimbing_1_id' => $p1?->id,
                 'pembimbing_2_id' => $p2?->id,
                 'penguji_1_id' => $u3?->id,
                 'penguji_2_id' => $u4?->id,
                 'tanggal' => now()->addDays(12)->toDateString(),
-                'jam_mulai' => '13:00:00',
+                'jam_mulai' => '13:30:00',
                 'jam_selesai' => '15:00:00',
-                'mode' => 'offline',
+                'mode' => 'online',
+                'link_online' => 'https://meet.google.com/xyz-uvwx-rst',
                 'gelombang' => 1,
                 'status' => 'terpublikasi',
                 'catatan' => 'Sidang tugas akhir dijadwalkan secara resmi.',
@@ -187,12 +185,12 @@ class CsvRealDataSeeder extends Seeder
         );
         $this->studentCache['11231006'] = $akmal;
 
-        // 2. Akun Kaprodi (Prof. Dr. Eng. Muhammad Ridwan)
+        // 2. Akun Kaprodi (Prof. Dr. Eng. Muhammad Ridwan, S.T., M.T.)
         User::updateOrCreate(
             ['username' => '198003152005011002'],
             [
                 'name' => 'Prof. Dr. Eng. Muhammad Ridwan, S.T., M.T.',
-                'email' => 'kaprodi.if@itk.ac.id',
+                'email' => 'ridwan@lecturer.itk.ac.id',
                 'role' => 'kaprodi',
                 'nim_nip' => 'NIP: 198003152005011002',
                 'prodi' => 'S1 Informatika',
@@ -215,32 +213,7 @@ class CsvRealDataSeeder extends Seeder
             ]
         );
 
-        // 4. Default Seed Ruangan
-        $defaultRooms = [
-            'B-102' => ['gedung' => 'Gedung B', 'lantai' => 'Lantai 1'],
-            'B-103' => ['gedung' => 'Gedung B', 'lantai' => 'Lantai 1'],
-            'B-201' => ['gedung' => 'Gedung B', 'lantai' => 'Lantai 2'],
-            'B-207' => ['gedung' => 'Gedung B', 'lantai' => 'Lantai 2'],
-            'G-103' => ['gedung' => 'Gedung G', 'lantai' => 'Lantai 1'],
-            'Ruang Rapat A2 (A-308)' => ['gedung' => 'Gedung A', 'lantai' => 'Lantai 3'],
-            'Ruang Lab Riset Multimedia' => ['gedung' => 'Gedung A', 'lantai' => 'Lantai 2'],
-            'Ruang Lab Jaringan & Keamanan Siber' => ['gedung' => 'Gedung B', 'lantai' => 'Lantai 3'],
-            'Ruang Sidang Utama Informatika' => ['gedung' => 'Gedung A', 'lantai' => 'Lantai 3'],
-        ];
-
-        foreach ($defaultRooms as $name => $meta) {
-            $this->roomCache[$name] = Ruangan::updateOrCreate(
-                ['nama_ruangan' => $name],
-                [
-                    'gedung' => $meta['gedung'],
-                    'lantai' => $meta['lantai'],
-                    'kapasitas' => 30,
-                    'status' => 'tersedia',
-                ]
-            );
-        }
-
-        // 5. Seed Periode Pendaftaran (Sempro & Sidang)
+        // 4. Seed Periode Pendaftaran (Sempro & Sidang)
         // Tanggal pendaftaran awal bulan (contoh: tanggal 3 s.d. 10 bulan berjalan)
         $startPendaftaran = now()->startOfMonth()->addDays(2)->toDateString(); // Tanggal 3
         $endPendaftaran = now()->startOfMonth()->addDays(9)->toDateString();   // Tanggal 10
@@ -365,14 +338,11 @@ class CsvRealDataSeeder extends Seeder
                 $pendaftaranId = $pendaftaran->id;
             }
 
-            // 5. Ruangan
-            $ruangan = $this->getOrCreateRuangan($tempatStr);
-
-            // 6. Tanggal & Jam
+            // 5. Tanggal & Jam
             $tanggal = $this->parseIndonesianDate($tglStr);
             [$jamMulai, $jamSelesai] = $this->parseTimeRange($waktuStr);
 
-            // 7. Penjadwalan
+            // 6. Penjadwalan
             Penjadwalan::updateOrCreate(
                 [
                     'tipe' => $type,
@@ -380,7 +350,6 @@ class CsvRealDataSeeder extends Seeder
                     'mahasiswa_id' => $mhs->id,
                 ],
                 [
-                    'ruangan_id' => $ruangan?->id,
                     'pembimbing_1_id' => $p1?->id,
                     'pembimbing_2_id' => $p2?->id,
                     'penguji_1_id' => $u1?->id,
@@ -388,7 +357,8 @@ class CsvRealDataSeeder extends Seeder
                     'tanggal' => $tanggal,
                     'jam_mulai' => $jamMulai,
                     'jam_selesai' => $jamSelesai,
-                    'mode' => 'offline',
+                    'mode' => 'online',
+                    'link_online' => 'https://meet.google.com/ta-' . strtolower(substr(md5($mhs->username . $type), 0, 8)),
                     'gelombang' => 1,
                     'status' => 'terpublikasi',
                     'catatan' => "Jadwal resmi {$type} hasil sinkronisasi data akademik.",
@@ -456,41 +426,6 @@ class CsvRealDataSeeder extends Seeder
 
         $this->lecturerCache[$cleanName] = $user;
         return $user;
-    }
-
-    private function getOrCreateRuangan(?string $roomName): ?Ruangan
-    {
-        if (!$roomName) return null;
-        $clean = trim($roomName);
-        if (!$clean) return null;
-
-        if (isset($this->roomCache[$clean])) {
-            return $this->roomCache[$clean];
-        }
-
-        $existing = Ruangan::where('nama_ruangan', $clean)->first();
-        if ($existing) {
-            $this->roomCache[$clean] = $existing;
-            return $existing;
-        }
-
-        $gedung = 'Gedung A';
-        if (str_starts_with($clean, 'B-') || str_contains($clean, 'B')) {
-            $gedung = 'Gedung B';
-        } elseif (str_starts_with($clean, 'G-') || str_contains($clean, 'G')) {
-            $gedung = 'Gedung G';
-        }
-
-        $ruangan = Ruangan::create([
-            'nama_ruangan' => $clean,
-            'gedung' => $gedung,
-            'lantai' => 'Lantai 2',
-            'kapasitas' => 30,
-            'status' => 'tersedia',
-        ]);
-
-        $this->roomCache[$clean] = $ruangan;
-        return $ruangan;
     }
 
     private function parseIndonesianDate(string $raw): string

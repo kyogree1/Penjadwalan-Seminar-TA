@@ -137,27 +137,6 @@ class PortalsBackendTest extends TestCase
      * TENDIK PORTAL TESTS
      * -----------------------------------------------------------*/
 
-    public function test_tendik_can_manage_ruangan(): void
-    {
-        $tendik = User::factory()->create(['role' => 'tendik']);
-
-        // Create room
-        $createResp = $this->actingAs($tendik)->post('/tendik/ruangan', [
-            'nama_ruangan' => 'Ruang Sidang Baru FSTI',
-            'gedung' => 'GKT 3',
-            'lantai' => 'Lantai 3',
-            'kapasitas' => 25,
-            'status' => 'tersedia',
-            'keterangan' => 'Dilengkapi proyektor 4K',
-        ]);
-
-        $createResp->assertStatus(302);
-        $this->assertDatabaseHas('ruangan', [
-            'nama_ruangan' => 'Ruang Sidang Baru FSTI',
-            'kapasitas' => 25,
-        ]);
-    }
-
     public function test_tendik_can_reset_student_password(): void
     {
         $tendik = User::factory()->create(['role' => 'tendik']);

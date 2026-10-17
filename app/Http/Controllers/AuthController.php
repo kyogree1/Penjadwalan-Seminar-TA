@@ -27,7 +27,7 @@ class AuthController extends Controller
 
         $schedules = Penjadwalan::query()
             ->where('penjadwalan.status', 'terpublikasi')
-            ->with(['mahasiswa:id,name', 'ruangan:id,nama_ruangan', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
+            ->with(['mahasiswa:id,name', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
             ->orderBy('tanggal')->orderBy('jam_mulai')->orderBy('penjadwalan.id')
             ->get();
         $titles = [];
@@ -63,7 +63,6 @@ class AuthController extends Controller
                     'date' => $schedule->tanggal->format('Y-m-d'),
                     'start_time' => $schedule->jam_mulai,
                     'end_time' => $schedule->jam_selesai,
-                    'room' => $schedule->ruangan?->nama_ruangan,
                     'mode' => $schedule->mode,
                     'supervisors' => array_values(array_filter([$schedule->pembimbing1?->name, $schedule->pembimbing2?->name])),
                     'examiners' => array_values(array_filter([$schedule->penguji1?->name, $schedule->penguji2?->name])),

@@ -35,7 +35,7 @@ class TrackHIntegrationTest extends TestCase
     {
         $this->actingAs(User::factory()->create(['role' => 'mahasiswa']));
         foreach (['sempro' => PendaftaranSempro::class, 'sidang' => PendaftaranSidang::class] as $type => $model) {
-            $data = ['judul_ta' => 'Actual title', 'bentuk_ta' => 'Skripsi'];
+            $data = ['judul_ta' => 'Actual title', 'bentuk_ta' => 'Skripsi', 'skor_iaet' => 500];
             $this->post('/pendaftaran/'.$type, $data)->assertSessionHasErrors('gelombang');
             $period = SchedulePeriod::create(['name' => 'Open period', 'tipe' => $type, 'gelombang' => 7, 'capacity' => 10, 'start_date' => '2026-11-01', 'end_date' => '2026-11-02', 'slots' => [], 'is_open' => true]);
             $this->post('/pendaftaran/'.$type, $data)->assertSessionHas('success');

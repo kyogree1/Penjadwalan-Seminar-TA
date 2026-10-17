@@ -60,10 +60,7 @@ const submit = () => {
                 {{ schedule.tanggal?.slice(0, 10) }} •
                 {{ schedule.jam_mulai }} – {{ schedule.jam_selesai }}
             </p>
-            <p>
-                {{ schedule.ruangan?.nama_ruangan ?? 'Ruangan belum tersedia' }}
-                • Status: {{ schedule.status }}
-            </p>
+            <p>Status: {{ schedule.status }}</p>
             <p v-if="schedule.catatan" class="mt-3 text-sm">
                 Catatan jadwal: {{ schedule.catatan }}
             </p>

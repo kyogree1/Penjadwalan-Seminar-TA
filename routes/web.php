@@ -140,11 +140,6 @@ Route::middleware('auth')->group(function () {
         Route::patch('/verifikasi/sempro/{id}', [TendikVerifikasiController::class, 'verifySempro'])->name('verifikasi.sempro');
         Route::patch('/verifikasi/sidang/{id}', [TendikVerifikasiController::class, 'verifySidang'])->name('verifikasi.sidang');
 
-        Route::get('/ruangan', [TendikRuanganController::class, 'index'])->name('ruangan');
-        Route::post('/ruangan', [TendikRuanganController::class, 'store'])->name('ruangan.store');
-        Route::put('/ruangan/{id}', [TendikRuanganController::class, 'update'])->name('ruangan.update');
-        Route::delete('/ruangan/{id}', [TendikRuanganController::class, 'destroy'])->name('ruangan.destroy');
-
         Route::get('/arsip', [TendikArsipController::class, 'index'])->name('arsip');
 
         Route::get('/mahasiswa', [TendikMahasiswaController::class, 'index'])->name('mahasiswa');

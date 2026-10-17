@@ -14,7 +14,7 @@ export interface ScheduleDetail {
     title: string;
     date: string;
     time: string;
-    room: string;
+    room?: string;
     supervisors: string[];
     examiners: string[];
     status: string;
