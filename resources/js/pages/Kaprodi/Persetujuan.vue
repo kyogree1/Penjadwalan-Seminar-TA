@@ -17,6 +17,8 @@ import {
 } from 'lucide-vue-next';
 import Button from '@/Components/Button.vue';
 import Modal from '@/Components/Modal.vue';
+import SemproSection from './Partials/SemproSection.vue';
+import SidangSection from './Partials/SidangSection.vue';
 import type {
     AcademicReview,
     JudulReview,
@@ -739,6 +741,10 @@ onMounted(() => {
         const sec = params.get('section');
         if (sec === 'sempro' || sec === 'sidang' || sec === 'judul') {
             activeSection.value = sec;
+        } else if (window.location.pathname.includes('/sempro')) {
+            activeSection.value = 'sempro';
+        } else if (window.location.pathname.includes('/sidang')) {
+            activeSection.value = 'sidang';
         }
     }
 });
@@ -1717,163 +1723,19 @@ const submitAcademicReview = (
         </div>
     </div>
 
-    <!-- 2. MODE: SEMPRO & SIDANG TA ACADEMIC REVIEWS (PRESERVED SECTIONS) -->
-    <div v-else class="space-y-6">
-        <div
-            class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
-        >
-            <div>
-                <button
-                    type="button"
-                    @click="activeSection = 'judul'"
-                    class="mb-2 flex cursor-pointer items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400"
-                >
-                    <span>← Kembali ke Daftar Judul</span>
-                </button>
-                <h1
-                    class="text-2xl font-black tracking-tight text-black dark:text-white"
-                >
-                    Tinjauan Akademik
-                    {{
-                        activeSection === 'sempro'
-                            ? 'Seminar Proposal'
-                            : 'Sidang Tugas Akhir'
-                    }}
-                </h1>
-                <p class="mt-0.5 text-xs font-normal text-black dark:text-slate-400">
-                    Tinjau berkas akademik dan berikan arahan untuk tahapan
-                    {{ activeSection === 'sempro' ? 'Sempro' : 'Sidang TA' }}.
-                </p>
-            </div>
+    <!-- 2. MODE: SEMINAR PROPOSAL (MATCHING FRONT-END EXACTLY) -->
+    <SemproSection
+        v-else-if="activeSection === 'sempro'"
+        :db-sempro="dbSempro"
+        @back-to-judul="activeSection = 'judul'"
+    />
 
-            <!-- Tab Switcher for Sempro / Sidang -->
-            <div class="flex items-center gap-2">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    class="font-bold text-black"
-                    :class="{
-                        '!bg-blue-600 !text-white':
-                            activeSection === 'sempro',
-                    }"
-                    @click="activeSection = 'sempro'"
-                >
-                    Sempro ({{ dbSempro?.length ?? 0 }})
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    class="font-bold text-black"
-                    :class="{
-                        '!bg-blue-600 !text-white':
-                            activeSection === 'sidang',
-                    }"
-                    @click="activeSection = 'sidang'"
-                >
-                    Sidang TA ({{ dbSidang?.length ?? 0 }})
-                </Button>
-            </div>
-        </div>
-
-        <!-- Academic Submissions Table -->
-        <div
-            class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
-        >
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead
-                        class="border-b border-slate-100 bg-slate-50 font-black text-black uppercase dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-400"
-                    >
-                        <tr>
-                            <th class="p-3">Mahasiswa</th>
-                            <th class="p-3">Judul Penelitian</th>
-                            <th class="p-3">Status Verifikasi</th>
-                            <th class="p-3 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody
-                        class="divide-y divide-slate-100 dark:divide-slate-800"
-                    >
-                        <tr
-                            v-for="item in activeSection === 'sempro'
-                                ? (dbSempro ?? [])
-                                : (dbSidang ?? [])"
-                            :key="`${activeSection}-${item.id}`"
-                            class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40"
-                        >
-                            <td class="p-3">
-                                <p
-                                    class="font-black text-black dark:text-white"
-                                >
-                                    {{ item.mahasiswa?.name ?? 'Mahasiswa' }}
-                                </p>
-                                <span
-                                    class="font-mono text-[10px] font-normal text-black dark:text-slate-400"
-                                    >NIM:
-                                    {{ item.mahasiswa?.nim_nip ?? '—' }}</span
-                                >
-                            </td>
-                            <td class="p-3">
-                                <p
-                                    class="font-bold text-black dark:text-slate-200"
-                                >
-                                    {{ item.judul_ta }}
-                                </p>
-                                <p
-                                    v-if="item.catatan"
-                                    class="mt-0.5 text-[11px] font-normal text-black dark:text-slate-400"
-                                >
-                                    Catatan: {{ item.catatan }}
-                                </p>
-                            </td>
-                            <td class="p-3">
-                                <span
-                                    class="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                                >
-                                    {{ item.status }}
-                                </span>
-                                <p
-                                    v-if="item.status_akademik"
-                                    class="mt-1 text-[10px] font-normal text-black dark:text-slate-400"
-                                >
-                                    Akademik:
-                                    <b class="font-bold capitalize text-black dark:text-white">{{
-                                        item.status_akademik
-                                    }}</b>
-                                </p>
-                            </td>
-                            <td class="p-3 text-center">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    class="font-bold text-black"
-                                    @click="openAcademicReview(item)"
-                                >
-                                    Tinjau
-                                </Button>
-                            </td>
-                        </tr>
-                        <tr
-                            v-if="
-                                !(
-                                    activeSection === 'sempro'
-                                        ? (dbSempro ?? [])
-                                        : (dbSidang ?? [])
-                                ).length
-                            "
-                        >
-                            <td
-                                colspan="4"
-                                class="p-8 text-center font-normal text-black dark:text-slate-500"
-                            >
-                                Tidak ada pengajuan yang sesuai.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    <!-- 3. MODE: SIDANG TA (MATCHING FRONT-END EXACTLY) -->
+    <SidangSection
+        v-else-if="activeSection === 'sidang'"
+        :db-sidang="dbSidang"
+        @back-to-judul="activeSection = 'judul'"
+    />
 
     <!-- ACADEMIC MODAL FOR SEMPRO & SIDANG -->
     <Modal :show="showAcademicModal" max-width="lg" @close="closeAcademicModal">
