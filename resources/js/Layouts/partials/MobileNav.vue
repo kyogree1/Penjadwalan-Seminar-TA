@@ -19,7 +19,6 @@ import {
     Layers,
     LogOut,
     Moon,
-    PenTool,
     Printer,
     ShieldCheck,
     Sun,
@@ -159,33 +158,71 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 
                     <!-- Dosen -->
                     <template v-else-if="userRole === 'dosen'">
+                        <p
+                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Manajemen Utama
+                        </p>
                         <Link
                             href="/dosen/dashboard"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <Home class="h-4 w-4" /> Dashboard Dosen
+                            <Home class="h-4 w-4" /> Dashboard
+                        </Link>
+
+                        <p
+                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Data Pengajuan
+                        </p>
+                        <Link
+                            href="/dosen/persetujuan"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <FileText class="h-4 w-4" /> Daftar Judul
                         </Link>
                         <Link
                             href="/dosen/bimbingan"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <UserCheck class="h-4 w-4" /> Bimbingan Mahasiswa
+                            <UserCheck class="h-4 w-4" /> Bimbingan TA
                         </Link>
                         <Link
-                            href="/dosen/penilaian"
+                            href="/dosen/sempro"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <PenTool class="h-4 w-4" /> Lembar Penilaian
+                            <Calendar class="h-4 w-4" /> Seminar Proposal
                         </Link>
+                        <Link
+                            href="/dosen/sidang"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <GraduationCap class="h-4 w-4" /> Sidang TA
+                        </Link>
+
+                        <p
+                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Panduan &amp; Lainnya
+                        </p>
                         <Link
                             href="/katalog"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
                             <BookOpen class="h-4 w-4" /> Katalog TA
+                        </Link>
+                        <Link
+                            href="/panduan"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <Globe class="h-4 w-4" /> Panduan Website
                         </Link>
                     </template>
 
@@ -211,17 +248,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </p>
                         <Link
                             href="/kaprodi/persetujuan"
-                            class="flex items-center justify-between rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <div class="flex items-center gap-3">
-                                <FileText class="h-4 w-4" /> Daftar Judul
-                            </div>
-                            <span
-                                class="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold text-amber-400"
-                            >
-                                Review
-                            </span>
+                            <FileText class="h-4 w-4" /> Daftar Judul
                         </Link>
                         <Link
                             href="/dosen/bimbingan"
@@ -231,14 +261,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                             <UserCheck class="h-4 w-4" /> Bimbingan TA
                         </Link>
                         <Link
-                            href="/kaprodi/persetujuan"
+                            href="/kaprodi/persetujuan?section=sempro"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
                             <Calendar class="h-4 w-4" /> Seminar Proposal
                         </Link>
                         <Link
-                            href="/kaprodi/persetujuan"
+                            href="/kaprodi/persetujuan?section=sidang"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
@@ -248,7 +278,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         <p
                             class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
                         >
-                            Jadwal &amp; AI Plotting
+                            Penjadwalan &amp; Plotting
                         </p>
                         <Link
                             href="/kaprodi/penjadwalan"

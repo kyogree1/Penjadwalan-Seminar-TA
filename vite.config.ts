@@ -17,7 +17,7 @@ export default defineConfig({
                 }),
             ],
         }),
-        inertia(),
+        inertia({ ssr: false }),
         tailwindcss(),
         vue({
             template: {
@@ -32,6 +32,7 @@ export default defineConfig({
         }),
     ]),
     server: {
+        host: '127.0.0.1',
         watch: {
             ignored: [
                 '**/.agents/**',

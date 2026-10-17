@@ -92,6 +92,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/penilaian/{id}/dokumen/{field}', ExamDocumentController::class)->name('penilaian.dokumen');
         Route::get('/penilaian', [DosenPenilaianController::class, 'index'])->name('penilaian');
         Route::post('/penilaian/{id}', [DosenPenilaianController::class, 'store'])->name('penilaian.store');
+
+        Route::get('/persetujuan', [KaprodiPersetujuanController::class, 'index'])->name('persetujuan');
+        Route::get('/sempro', [KaprodiPersetujuanController::class, 'index'])->name('sempro');
+        Route::get('/sidang', [KaprodiPersetujuanController::class, 'index'])->name('sidang');
+        Route::patch('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'updateJudul'])->name('persetujuan.judul');
+        Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul'])->name('persetujuan.judul.destroy');
+        Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro'])->name('persetujuan.sempro');
+        Route::patch('/persetujuan/sidang/{id}', [KaprodiPersetujuanController::class, 'updateSidang'])->name('persetujuan.sidang');
     });
 
     // ==========================================
@@ -129,7 +137,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/mahasiswa/{id}', [KaprodiMahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
 
         Route::get('/persetujuan', [KaprodiPersetujuanController::class, 'index'])->name('persetujuan');
+        Route::get('/sempro', [KaprodiPersetujuanController::class, 'index'])->name('sempro');
+        Route::get('/sidang', [KaprodiPersetujuanController::class, 'index'])->name('sidang');
         Route::patch('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'updateJudul'])->name('persetujuan.judul');
+        Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul'])->name('persetujuan.judul.destroy');
         Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro'])->name('persetujuan.sempro');
         Route::patch('/persetujuan/sidang/{id}', [KaprodiPersetujuanController::class, 'updateSidang'])->name('persetujuan.sidang');
     });

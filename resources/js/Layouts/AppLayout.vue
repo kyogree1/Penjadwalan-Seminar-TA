@@ -29,8 +29,10 @@ const pageTitle = computed(() => {
     }
     if (
         component.startsWith('Dosen/Bimbingan') ||
+        component.startsWith('Kaprodi/Persetujuan') ||
         page.url.startsWith('/dosen/bimbingan') ||
-        page.url.startsWith('/kaprodi/bimbingan')
+        page.url.startsWith('/kaprodi/bimbingan') ||
+        page.url.startsWith('/kaprodi/persetujuan')
     ) {
         return 'Data Pengajuan';
     }

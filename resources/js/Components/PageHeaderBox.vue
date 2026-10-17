@@ -2,6 +2,8 @@
 interface Props {
     title: string;
     subtitle?: string;
+    description?: string;
+    badge?: string;
 }
 
 defineProps<Props>();
@@ -18,10 +20,10 @@ defineProps<Props>();
                 {{ title }}
             </h2>
             <p
-                v-if="subtitle"
+                v-if="subtitle || description"
                 class="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
             >
-                {{ subtitle }}
+                {{ subtitle || description }}
             </p>
         </div>
 

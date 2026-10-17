@@ -30,7 +30,11 @@ class EnsureUserRole
 
         $checkUserRole = $userRole === 'koordinator' ? 'kaprodi' : $userRole;
 
-        if (! empty($roles) && ! in_array($checkUserRole, $normalizedRoles, true)) {
+        // Koorprodi is also an active Dosen, so they have full access to Dosen features
+        $isAuthorized = in_array($checkUserRole, $normalizedRoles, true)
+            || ($checkUserRole === 'kaprodi' && in_array('dosen', $normalizedRoles, true));
+
+        if (! empty($roles) && ! $isAuthorized) {
             // Redirect to the user's correct role dashboard
             return match ($user->role) {
                 'dosen' => redirect()->route('dosen.dashboard')->with('error', 'Halaman tersebut hanya untuk peran tertentu.'),

@@ -16,16 +16,17 @@ class KaprodiPersetujuanTest extends TestCase
 
     public function test_live_payload_includes_persisted_supervisors_and_lecturer_options(): void
     {
-        $this->actingAs(User::factory()->create(['role' => 'kaprodi']))
+        $kaprodi = User::factory()->create(['role' => 'kaprodi']);
+        $this->actingAs($kaprodi)
             ->get('/kaprodi/persetujuan')->assertInertia(fn (Assert $page) => $page
             ->where('dbJudul', [])->where('dbSempro', [])->where('dbSidang', [])->where('dosenOptions', []));
         $student = User::factory()->create(['role' => 'mahasiswa', 'nim_nip' => null]);
         $lecturer = User::factory()->create(['role' => 'dosen']);
-        $judul = PengajuanJudul::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Aktual', 'bidang_penelitian' => 'AI', 'pembimbing_1_id' => $lecturer->id]);
+        $judul = PengajuanJudul::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Aktual', 'bidang_penelitian' => 'AI', 'pembimbing_1_id' => $kaprodi->id]);
         $sempro = PendaftaranSempro::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Proposal', 'bentuk_ta' => 'Skripsi', 'catatan' => 'Telaah']);
         $sidang = PendaftaranSidang::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Sidang']);
         $this->get('/kaprodi/persetujuan')->assertInertia(fn (Assert $page) => $page
-            ->where('dbJudul.0.id', $judul->id)->where('dbJudul.0.pembimbing_1_id', $lecturer->id)
+            ->where('dbJudul.0.id', $judul->id)->where('dbJudul.0.pembimbing_1_id', $kaprodi->id)
             ->where('dbJudul.0.mahasiswa.nim_nip', null)->where('dbSempro.0.id', $sempro->id)
             ->where('dbSempro.0.catatan', 'Telaah')->where('dbSidang.0.id', $sidang->id)
             ->has('dosenOptions', 1)->where('dosenOptions.0.id', $lecturer->id));
@@ -67,5 +68,62 @@ class KaprodiPersetujuanTest extends TestCase
             $this->assertNull($row->fresh()->catatan);
             $this->patch('/kaprodi/persetujuan/'.$type.'/999999', ['status' => 'menunggu'])->assertNotFound();
         }
+    }
+
+    public function test_destroy_judul_deletes_record_and_redirects_with_success(): void
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+        $judul = PengajuanJudul::create([
+            'mahasiswa_id' => $student->id,
+            'judul_ta' => 'Topik yang akan dihapus',
+            'bidang_penelitian' => 'AI',
+        ]);
+
+        $this->actingAs(User::factory()->create(['role' => 'kaprodi']))
+            ->delete('/kaprodi/persetujuan/judul/'.$judul->id)
+            ->assertRedirect()
+            ->assertSessionHas('success', 'Pengajuan judul berhasil dihapus!');
+
+        $this->assertDatabaseMissing('pengajuan_judul', [
+            'id' => $judul->id,
+        ]);
+    }
+
+    public function test_update_judul_succeeds_without_pembimbing_fields_and_supports_koordinator_as_supervisor(): void
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa']);
+        $koorprodi = User::factory()->create(['role' => 'koordinator']);
+        $judul = PengajuanJudul::create([
+            'mahasiswa_id' => $student->id,
+            'judul_ta' => 'Topik NLP',
+            'bidang_penelitian' => 'AI',
+            'pembimbing_1_id' => $koorprodi->id,
+            'status' => 'menunggu',
+        ]);
+
+        $this->actingAs(User::factory()->create(['role' => 'kaprodi']))
+            ->patch('/kaprodi/persetujuan/judul/'.$judul->id, [
+                'status' => 'disetujui',
+                'catatan_kaprodi' => 'Judul disetujui tanpa mengirim ulang pembimbing.',
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success', 'Keputusan persetujuan judul berhasil disimpan!');
+
+        $fresh = $judul->fresh();
+        $this->assertSame('disetujui', $fresh->status);
+        $this->assertSame($koorprodi->id, $fresh->pembimbing_1_id);
+        $this->assertSame('Judul disetujui tanpa mengirim ulang pembimbing.', $fresh->catatan_kaprodi);
+
+        // Also test sending pembimbing_1_id as koordinator explicitly
+        $this->patch('/kaprodi/persetujuan/judul/'.$judul->id, [
+            'status' => 'revisi',
+            'pembimbing_1_id' => $koorprodi->id,
+            'catatan_kaprodi' => 'Perlu revisi.',
+        ])
+            ->assertRedirect()
+            ->assertSessionHas('success', 'Keputusan persetujuan judul berhasil disimpan!');
+
+        $this->assertSame('revisi', $judul->fresh()->status);
+        $this->assertSame($koorprodi->id, $judul->fresh()->pembimbing_1_id);
     }
 }

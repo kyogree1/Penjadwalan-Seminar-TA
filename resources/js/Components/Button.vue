@@ -11,7 +11,8 @@ interface Props {
         | 'outline'
         | 'danger'
         | 'ghost'
-        | 'success';
+        | 'success'
+        | 'dark';
     size?: 'sm' | 'md' | 'lg';
     href?: string;
     loading?: boolean;
@@ -39,6 +40,8 @@ const variantClasses = computed(() => {
             return 'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 focus-visible:ring-rose-500 shadow-sm shadow-rose-500/20';
         case 'success':
             return 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 focus-visible:ring-emerald-500 shadow-sm shadow-emerald-500/20';
+        case 'dark':
+            return 'border border-slate-900 bg-slate-900 text-white hover:bg-slate-800 active:bg-black focus-visible:ring-slate-900 shadow-xs dark:border-white dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 dark:active:bg-slate-200 dark:focus-visible:ring-white';
         case 'ghost':
             return 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200';
         default:

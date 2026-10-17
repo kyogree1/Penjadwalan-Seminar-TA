@@ -46,11 +46,12 @@ composer dev
 
 Wajib pakai akun (tombol quick-login sudah dihapus, login dibatasi 5x/menit).
 
-| Role      | Username/NIM       | Password |
-| --------- | ------------------ | -------- |
-| Mahasiswa | `11231006`         | `password` |
+| Role      | Username/NIM         | Password   |
+| --------- | -------------------- | ---------- |
+| Mahasiswa | `11231006`           | `password` |
 | Dosen     | `198504122010121003` | `password` |
 | Kaprodi   | `198003152005011002` | `password` |
+| Koorprodi | `koorprodi`          | `password` |
 | Tendik    | `199208192018032001` | `password` |
 
 ## Cek & test

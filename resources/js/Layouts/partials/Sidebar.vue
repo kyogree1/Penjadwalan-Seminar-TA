@@ -18,7 +18,6 @@ import {
     Home,
     KeyRound,
     Layers,
-    PenTool,
     Printer,
     ShieldCheck,
     UserCheck,
@@ -38,6 +37,7 @@ const emit = defineEmits<{
 const page = usePage();
 const { role: userRole, roleInfo } = useAuth();
 const pengajuanDropdownOpen = ref(true);
+const dosenPengajuanOpen = ref(true);
 const kaprodiPengajuanOpen = ref(true);
 const kaprodiJadwalOpen = ref(true);
 
@@ -47,6 +47,14 @@ const isPengajuanActive = computed(
     () =>
         currentUrl.value.startsWith('/pendaftaran') &&
         !currentUrl.value.startsWith('/pendaftaran/jadwal'),
+);
+
+const isDosenPengajuanActive = computed(
+    () =>
+        currentUrl.value.startsWith('/dosen/persetujuan') ||
+        currentUrl.value.startsWith('/dosen/bimbingan') ||
+        currentUrl.value.startsWith('/dosen/sempro') ||
+        currentUrl.value.startsWith('/dosen/sidang'),
 );
 
 const isKaprodiPengajuanActive = computed(
@@ -271,70 +279,148 @@ const isKaprodiJadwalActive = computed(
 
                 <!-- 2. DOSEN -->
                 <template v-else-if="userRole === 'dosen'">
-                    <Link
-                        href="/dosen/dashboard"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl === '/dosen/dashboard'
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <Home class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Dashboard Dosen</span>
-                    </Link>
+                    <!-- SECTION 1: MANAJEMEN UTAMA -->
+                    <div class="space-y-1">
+                        <p
+                            v-if="!collapsed"
+                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Manajemen Utama
+                        </p>
 
-                    <Link
-                        href="/dosen/bimbingan"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/dosen/bimbingan')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <UserCheck class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Bimbingan (TA-04)</span>
-                    </Link>
+                        <Link
+                            href="/dosen/dashboard"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl === '/dosen/dashboard'
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Dashboard' : ''"
+                        >
+                            <Home class="h-4 w-4 shrink-0" />
+                            <span v-if="!collapsed">Dashboard</span>
+                        </Link>
+                    </div>
 
-                    <Link
-                        href="/dosen/penilaian"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/dosen/penilaian')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <PenTool class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Lembar Penilaian</span>
-                    </Link>
+                    <!-- SECTION 2: DATA PENGAJUAN (ACCORDION) -->
+                    <div class="pt-2">
+                        <button
+                            type="button"
+                            class="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-1.5 text-xs font-semibold transition-all"
+                            :class="[
+                                isDosenPengajuanActive
+                                    ? 'text-white'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            @click="dosenPengajuanOpen = !dosenPengajuanOpen"
+                        >
+                            <div class="flex items-center gap-3">
+                                <FileText class="h-4 w-4 shrink-0" />
+                                <span v-if="!collapsed">Data Pengajuan</span>
+                            </div>
+                            <ChevronDown
+                                v-if="!collapsed"
+                                class="h-3.5 w-3.5 transition-transform"
+                                :class="{ '-rotate-90': !dosenPengajuanOpen }"
+                            />
+                        </button>
 
-                    <Link
-                        href="/katalog"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/katalog')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <FileSpreadsheet class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Katalog TA</span>
-                    </Link>
+                        <div
+                            v-if="dosenPengajuanOpen && !collapsed"
+                            class="mt-1 space-y-1 pl-9"
+                        >
+                            <Link
+                                href="/dosen/persetujuan"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith('/dosen/persetujuan') &&
+                                    !currentUrl.includes('section=sempro') &&
+                                    !currentUrl.includes('section=sidang')
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Daftar Judul
+                            </Link>
 
-                    <Link
-                        href="/panduan"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/panduan')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <Globe class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Panduan Website</span>
-                    </Link>
+                            <Link
+                                href="/dosen/bimbingan"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith('/dosen/bimbingan')
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Bimbingan TA
+                            </Link>
+
+                            <Link
+                                href="/dosen/sempro"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith('/dosen/sempro') ||
+                                    currentUrl.includes('section=sempro')
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Seminar Proposal
+                            </Link>
+
+                            <Link
+                                href="/dosen/sidang"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith('/dosen/sidang') ||
+                                    currentUrl.includes('section=sidang')
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Sidang TA
+                            </Link>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: PANDUAN & LAINNYA -->
+                    <div class="space-y-1 pt-2">
+                        <p
+                            v-if="!collapsed"
+                            class="px-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Panduan &amp; Lainnya
+                        </p>
+
+                        <Link
+                            href="/katalog"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl.startsWith('/katalog')
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Katalog TA' : ''"
+                        >
+                            <BookOpen class="h-4 w-4 shrink-0" />
+                            <span v-if="!collapsed">Katalog TA</span>
+                        </Link>
+
+                        <Link
+                            href="/panduan"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl.startsWith('/panduan')
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Panduan Website' : ''"
+                        >
+                            <Globe class="h-4 w-4 shrink-0" />
+                            <span v-if="!collapsed">Panduan Website</span>
+                        </Link>
+                    </div>
                 </template>
 
                 <!-- 3. KAPRODI / KOORPRODI -->
@@ -447,7 +533,7 @@ const isKaprodiJadwalActive = computed(
                         </div>
                     </div>
 
-                    <!-- SECTION 3: JADWAL & AI PLOTTING (ACCORDION) -->
+                    <!-- SECTION 3: PENJADWALAN & PLOTTING PENGUJI (ACCORDION) -->
                     <div class="pt-2">
                         <button
                             type="button"
@@ -461,7 +547,7 @@ const isKaprodiJadwalActive = computed(
                         >
                             <div class="flex items-center gap-3">
                                 <Cpu class="h-4 w-4 shrink-0" />
-                                <span v-if="!collapsed">Jadwal &amp; AI</span>
+                                <span v-if="!collapsed">Penjadwalan &amp; Plotting</span>
                             </div>
                             <ChevronDown
                                 v-if="!collapsed"
@@ -494,7 +580,7 @@ const isKaprodiJadwalActive = computed(
                                 <span
                                     class="py-0.2 rounded-full border border-blue-500/30 bg-blue-500/20 px-1.5 text-[9px] font-extrabold text-blue-400"
                                 >
-                                    AI
+                                    GA
                                 </span>
                             </Link>
 
