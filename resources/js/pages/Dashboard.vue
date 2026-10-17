@@ -4,7 +4,9 @@ import { computed, ref } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     AlertCircle,
+    Calendar,
     Check,
+    CheckCircle2,
     Clock,
     Download,
     Eye,
@@ -13,10 +15,16 @@ import {
     FileText,
     GraduationCap,
     X,
+    XCircle,
 } from 'lucide-vue-next';
 
 import Modal from '@/Components/Modal.vue';
 import StudentLecturers from '@/Components/StudentLecturers.vue';
+import {
+    STATUS_PENGAJUAN,
+    STATUS_VERIFIKASI,
+    statusToBadge,
+} from '@/lib/status';
 import type {
     RegistrationRecord,
     ScheduleRecord,
@@ -111,34 +119,99 @@ const getStepProgressWidth = (steps: RoadmapStep[]) => {
 interface CurrentStatusCard {
     id: string;
     title: string;
-    stage: string;
     description: string;
-    type:
-        | 'progress-sempro'
-        | 'progress-sidang'
-        | 'alert-sempro'
-        | 'alert-sidang';
-    daysLeft?: number;
     linkUrl: string;
-    badgeText: string;
+    icon: any;
+    cardClasses: string;
+    iconClasses: string;
 }
+
+const formatStatusLabel = (status: string) => {
+    if (status in STATUS_VERIFIKASI) {
+        return STATUS_VERIFIKASI[
+            status as keyof typeof STATUS_VERIFIKASI
+        ].label;
+    }
+    if (status in STATUS_PENGAJUAN) {
+        return STATUS_PENGAJUAN[status as keyof typeof STATUS_PENGAJUAN].label;
+    }
+    return statusToBadge(status).label;
+};
+
+const getStatusTheme = (status: string) => {
+    switch (status) {
+        case 'verifikasi_tendik':
+        case 'disetujui':
+            return {
+                icon: CheckCircle2,
+                cardClasses:
+                    'border-emerald-300/80 bg-emerald-50/50 hover:border-emerald-400 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:hover:border-emerald-600',
+                iconClasses:
+                    'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
+            };
+        case 'selesai':
+            return {
+                icon: FileCheck,
+                cardClasses:
+                    'border-emerald-300/80 bg-emerald-50/50 hover:border-emerald-400 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:hover:border-emerald-600',
+                iconClasses:
+                    'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
+            };
+        case 'terjadwal':
+            return {
+                icon: Calendar,
+                cardClasses:
+                    'border-blue-300/80 bg-blue-50/50 hover:border-blue-400 dark:border-blue-900/50 dark:bg-blue-950/20 dark:hover:border-blue-600',
+                iconClasses:
+                    'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
+            };
+        case 'ditolak':
+            return {
+                icon: XCircle,
+                cardClasses:
+                    'border-rose-300/80 bg-rose-50/50 hover:border-rose-400 dark:border-rose-900/50 dark:bg-rose-950/20 dark:hover:border-rose-600',
+                iconClasses:
+                    'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
+            };
+        case 'revisi':
+            return {
+                icon: AlertCircle,
+                cardClasses:
+                    'border-amber-300/80 bg-amber-50/50 hover:border-amber-400 dark:border-amber-900/50 dark:bg-amber-950/20 dark:hover:border-amber-600',
+                iconClasses:
+                    'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
+            };
+        case 'diajukan':
+        case 'menunggu':
+        case 'menunggu_ulang':
+        default:
+            return {
+                icon: Clock,
+                cardClasses:
+                    'border-amber-200/80 bg-amber-50/40 hover:border-amber-400 dark:border-amber-900/40 dark:bg-amber-950/20 dark:hover:border-amber-600',
+                iconClasses:
+                    'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
+            };
+    }
+};
 
 const currentStatusCards = computed<CurrentStatusCard[]>(() => {
     const cards: CurrentStatusCard[] = [];
+
     for (const [type, record] of [
         ['sempro', props.dbSempro],
         ['sidang', props.dbSidang],
     ] as const) {
         if (!record) continue;
+        const theme = getStatusTheme(record.status);
         cards.push({
             id: `${type}-${record.id}`,
-            title:
-                type === 'sempro' ? 'Seminar Proposal' : 'Sidang Tugas Akhir',
-            stage: record.status,
-            description: record.judul_ta,
-            type: type === 'sempro' ? 'progress-sempro' : 'progress-sidang',
+            title: formatStatusLabel(record.status),
+            description: type === 'sempro' ? 'Seminar Proposal' : 'Sidang',
             linkUrl: `/pendaftaran/${type}`,
-            badgeText: record.status,
+            icon: theme.icon,
+            cardClasses: theme.cardClasses,
+            iconClasses: theme.iconClasses,
         });
     }
     return cards;
@@ -238,23 +311,12 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                     </div>
 
                     <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2">
-                            <p
-                                class="truncate text-xs font-extrabold"
-                                :class="period.colorTheme.text"
-                            >
-                                {{ period.title }}
-                            </p>
-                            <span
-                                class="shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-bold"
-                                :class="[
-                                    period.colorTheme.badgeBg,
-                                    period.colorTheme.accentText,
-                                ]"
-                            >
-                                Gel. {{ period.gelombang }}
-                            </span>
-                        </div>
+                        <p
+                            class="truncate text-xs font-extrabold"
+                            :class="period.colorTheme.text"
+                        >
+                            {{ period.title }}
+                        </p>
                         <p
                             class="mt-0.5 truncate text-[10px]"
                             :class="period.colorTheme.text"
@@ -264,13 +326,6 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                             {{ period.startDate }}–{{ period.endDate }}
                         </p>
                     </div>
-
-                    <span
-                        class="shrink-0 text-[10px] font-bold"
-                        :class="period.colorTheme.accentText"
-                    >
-                        Dibuka ›
-                    </span>
                 </Link>
             </div>
         </div>
@@ -458,6 +513,50 @@ const openAssessmentModal = (item: AssessmentDetail) => {
             </div>
         </div>
 
+        <!-- 3. KARTU STATUS SAAT INI (COMPACT SEPERTI NOTIFIKASI HP) -->
+        <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white">
+                    Status Saat Ini
+                </h3>
+                <span class="text-xs text-slate-500 dark:text-slate-400">
+                    Aktivitas & tenggat waktu
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                <Link
+                    v-for="card in currentStatusCards"
+                    :key="card.id"
+                    :href="card.linkUrl"
+                    class="flex items-center gap-3 rounded-xl border p-3 shadow-2xs transition-colors"
+                    :class="card.cardClasses"
+                >
+                    <!-- Icon Notification Pill -->
+                    <div
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                        :class="card.iconClasses"
+                    >
+                        <component :is="card.icon" class="h-4 w-4" />
+                    </div>
+
+                    <!-- Content Text -->
+                    <div class="min-w-0 flex-1">
+                        <p
+                            class="truncate text-xs font-bold text-slate-900 dark:text-white"
+                        >
+                            {{ card.title }}
+                        </p>
+                        <p
+                            class="truncate text-[11px] text-slate-500 dark:text-slate-400"
+                        >
+                            {{ card.description }}
+                        </p>
+                    </div>
+                </Link>
+            </div>
+        </div>
+
         <!-- Section Dosen Pembimbing & Penguji serta Bimbingan Tugas Akhir (DI BAWAH ROADMAP) -->
         <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <!-- Kotak 1 & 2: Dosen Pembimbing & Penguji (2 Kolom di Desktop) -->
@@ -527,89 +626,6 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                         <span aria-hidden="true">&gt;</span>
                     </Link>
                 </div>
-            </div>
-        </div>
-
-        <!-- 3. KARTU STATUS SAAT INI (COMPACT SEPERTI NOTIFIKASI HP) -->
-        <div class="space-y-2.5">
-            <div class="flex items-center justify-between">
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white">
-                    Status Saat Ini
-                </h3>
-                <span class="text-xs text-slate-500 dark:text-slate-400">
-                    Aktivitas & tenggat waktu
-                </span>
-            </div>
-
-            <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                <Link
-                    v-for="card in currentStatusCards"
-                    :key="card.id"
-                    :href="card.linkUrl"
-                    class="flex items-center gap-3 rounded-xl border p-3 shadow-2xs transition-colors hover:border-blue-400 dark:hover:border-blue-500"
-                    :class="[
-                        card.type === 'alert-sempro'
-                            ? 'border-lime-300/80 bg-lime-50/50 dark:border-lime-900/50 dark:bg-lime-950/20'
-                            : card.type === 'alert-sidang'
-                              ? 'border-amber-300/80 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/20'
-                              : 'border-slate-200/80 bg-white dark:border-slate-800 dark:bg-[#0E1626]',
-                    ]"
-                >
-                    <!-- Icon Notification Pill -->
-                    <div
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                        :class="[
-                            card.type === 'alert-sempro'
-                                ? 'bg-lime-100 text-lime-700 dark:bg-lime-950 dark:text-lime-300'
-                                : card.type === 'alert-sidang'
-                                  ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300'
-                                  : 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
-                        ]"
-                    >
-                        <Clock
-                            v-if="card.daysLeft !== undefined"
-                            class="h-4 w-4"
-                        />
-                        <FileCheck
-                            v-else-if="card.type === 'progress-sempro'"
-                            class="h-4 w-4"
-                        />
-                        <FileText v-else class="h-4 w-4" />
-                    </div>
-
-                    <!-- Content Text -->
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center justify-between gap-1">
-                            <p
-                                class="truncate text-xs font-bold text-slate-900 dark:text-white"
-                            >
-                                {{ card.title }}
-                            </p>
-                            <span
-                                class="shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-bold"
-                                :class="[
-                                    card.type === 'alert-sempro'
-                                        ? 'bg-lime-200 text-lime-900 dark:bg-lime-900 dark:text-lime-200'
-                                        : card.type === 'alert-sidang'
-                                          ? 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200'
-                                          : 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
-                                ]"
-                            >
-                                {{ card.badgeText }}
-                            </span>
-                        </div>
-                        <p
-                            class="truncate text-[11px] font-medium text-slate-600 dark:text-slate-300"
-                        >
-                            {{ card.stage }}
-                        </p>
-                        <p
-                            class="truncate text-[10px] text-slate-400 dark:text-slate-500"
-                        >
-                            {{ card.description }}
-                        </p>
-                    </div>
-                </Link>
             </div>
         </div>
 
