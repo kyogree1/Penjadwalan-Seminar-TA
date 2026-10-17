@@ -7,8 +7,10 @@ import {
     BookOpen,
     Building2,
     Calendar,
+    Clock,
     Cpu,
     FileCheck,
+    FileSpreadsheet,
     FileText,
     Globe,
     GraduationCap,
@@ -187,29 +189,94 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
                     </template>
 
-                    <!-- Kaprodi -->
+                    <!-- Kaprodi / Koorprodi -->
                     <template v-else-if="userRole === 'kaprodi'">
+                        <p
+                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Manajemen Utama
+                        </p>
                         <Link
                             href="/kaprodi/dashboard"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <Home class="h-4 w-4" /> Dashboard Kaprodi
+                            <Home class="h-4 w-4" /> Dashboard
+                        </Link>
+
+                        <p
+                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Data Pengajuan
+                        </p>
+                        <Link
+                            href="/kaprodi/persetujuan"
+                            class="flex items-center justify-between rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <div class="flex items-center gap-3">
+                                <FileText class="h-4 w-4" /> Daftar Judul
+                            </div>
+                            <span
+                                class="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold text-amber-400"
+                            >
+                                Review
+                            </span>
+                        </Link>
+                        <Link
+                            href="/dosen/bimbingan"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <UserCheck class="h-4 w-4" /> Bimbingan TA
+                        </Link>
+                        <Link
+                            href="/kaprodi/persetujuan"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <Calendar class="h-4 w-4" /> Seminar Proposal
+                        </Link>
+                        <Link
+                            href="/kaprodi/persetujuan"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <Award class="h-4 w-4" /> Sidang TA
+                        </Link>
+
+                        <p
+                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Jadwal &amp; AI Plotting
+                        </p>
+                        <Link
+                            href="/kaprodi/penjadwalan"
+                            class="flex items-center justify-between rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <div class="flex items-center gap-3">
+                                <Cpu class="h-4 w-4" /> Plotting Jadwal (GA)
+                            </div>
+                            <span
+                                class="rounded-full bg-blue-500/20 px-1.5 py-0.5 text-[9px] font-bold text-blue-400"
+                            >
+                                AI
+                            </span>
                         </Link>
                         <Link
                             href="/kaprodi/penjadwalan"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <Cpu class="h-4 w-4" /> Jadwal Sempro & Sidang
+                            <Clock class="h-4 w-4" /> Periode Gelombang
                         </Link>
-                        <Link
-                            href="/kaprodi/monitoring"
-                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
-                            @click="emit('close')"
+
+                        <p
+                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
                         >
-                            <Users class="h-4 w-4" /> Monitoring Prodi
-                        </Link>
+                            Data Master
+                        </p>
                         <Link
                             href="/kaprodi/dosen"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
@@ -218,18 +285,45 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                             <GraduationCap class="h-4 w-4" /> Data Dosen
                         </Link>
                         <Link
-                            href="/kaprodi/persetujuan"
+                            href="/kaprodi/mahasiswa"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <ShieldCheck class="h-4 w-4" /> Persetujuan Akademik
+                            <Users class="h-4 w-4" /> Data Mahasiswa
                         </Link>
+
+                        <p
+                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Prosedur &amp; Katalog
+                        </p>
                         <Link
                             href="/katalog"
+                            class="flex items-center justify-between rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <div class="flex items-center gap-3">
+                                <FileSpreadsheet class="h-4 w-4" /> Katalog TA
+                            </div>
+                            <span
+                                class="rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-bold text-emerald-400"
+                            >
+                                Arsip
+                            </span>
+                        </Link>
+                        <Link
+                            href="/prosedur"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <BookOpen class="h-4 w-4" /> Katalog TA
+                            <Layers class="h-4 w-4" /> Prosedur TA
+                        </Link>
+                        <Link
+                            href="/panduan"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <Globe class="h-4 w-4" /> Panduan Website
                         </Link>
                     </template>
 

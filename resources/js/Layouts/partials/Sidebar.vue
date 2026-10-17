@@ -38,6 +38,8 @@ const emit = defineEmits<{
 const page = usePage();
 const { role: userRole, roleInfo } = useAuth();
 const pengajuanDropdownOpen = ref(true);
+const kaprodiPengajuanOpen = ref(true);
+const kaprodiJadwalOpen = ref(true);
 
 const currentUrl = computed(() => page.url);
 
@@ -45,6 +47,19 @@ const isPengajuanActive = computed(
     () =>
         currentUrl.value.startsWith('/pendaftaran') &&
         !currentUrl.value.startsWith('/pendaftaran/jadwal'),
+);
+
+const isKaprodiPengajuanActive = computed(
+    () =>
+        currentUrl.value.startsWith('/kaprodi/persetujuan') ||
+        currentUrl.value.startsWith('/dosen/bimbingan') ||
+        currentUrl.value.startsWith('/kaprodi/bimbingan'),
+);
+
+const isKaprodiJadwalActive = computed(
+    () =>
+        currentUrl.value.startsWith('/kaprodi/penjadwalan') ||
+        currentUrl.value.startsWith('/koordinator/penjadwalan'),
 );
 </script>
 
@@ -322,100 +337,288 @@ const isPengajuanActive = computed(
                     </Link>
                 </template>
 
-                <!-- 3. KAPRODI -->
+                <!-- 3. KAPRODI / KOORPRODI -->
                 <template v-else-if="userRole === 'kaprodi'">
-                    <Link
-                        href="/kaprodi/dashboard"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl === '/kaprodi/dashboard'
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <Home class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Dashboard Kaprodi</span>
-                    </Link>
+                    <!-- SECTION 1: MANAJEMEN UTAMA -->
+                    <div class="space-y-1">
+                        <p
+                            v-if="!collapsed"
+                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Manajemen Utama
+                        </p>
 
-                    <Link
-                        href="/kaprodi/penjadwalan"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/kaprodi/penjadwalan') ||
-                            currentUrl.startsWith('/koordinator/penjadwalan')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <Cpu class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Jadwal Sempro & Sidang</span>
-                    </Link>
+                        <Link
+                            href="/kaprodi/dashboard"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl === '/kaprodi/dashboard'
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Dashboard' : ''"
+                        >
+                            <Home class="h-4 w-4 shrink-0" />
+                            <span v-if="!collapsed">Dashboard</span>
+                        </Link>
+                    </div>
 
-                    <Link
-                        href="/kaprodi/monitoring"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/kaprodi/monitoring') ||
-                            currentUrl.startsWith('/koordinator/monitoring')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <Users class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Monitoring Prodi</span>
-                    </Link>
+                    <!-- SECTION 2: DATA PENGAJUAN (ACCORDION) -->
+                    <div class="pt-2">
+                        <button
+                            type="button"
+                            class="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-1.5 text-xs font-semibold transition-all"
+                            :class="[
+                                isKaprodiPengajuanActive
+                                    ? 'text-white'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            @click="
+                                kaprodiPengajuanOpen = !kaprodiPengajuanOpen
+                            "
+                        >
+                            <div class="flex items-center gap-3">
+                                <FileText class="h-4 w-4 shrink-0" />
+                                <span v-if="!collapsed">Data Pengajuan</span>
+                            </div>
+                            <ChevronDown
+                                v-if="!collapsed"
+                                class="h-3.5 w-3.5 transition-transform"
+                                :class="{ '-rotate-90': !kaprodiPengajuanOpen }"
+                            />
+                        </button>
 
-                    <Link
-                        href="/kaprodi/dosen"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/kaprodi/dosen')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <GraduationCap class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Data Dosen</span>
-                    </Link>
+                        <div
+                            v-if="kaprodiPengajuanOpen && !collapsed"
+                            class="mt-1 space-y-1 pl-9"
+                        >
+                            <Link
+                                href="/kaprodi/persetujuan"
+                                class="flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith(
+                                        '/kaprodi/persetujuan',
+                                    )
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                <span class="truncate">Daftar Judul</span>
+                                <span
+                                    class="py-0.2 rounded-full border border-amber-500/30 bg-amber-500/20 px-1.5 text-[9px] font-bold text-amber-400"
+                                >
+                                    Review
+                                </span>
+                            </Link>
 
-                    <Link
-                        href="/kaprodi/persetujuan"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/kaprodi/persetujuan')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <ShieldCheck class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Persetujuan Akademik</span>
-                    </Link>
+                            <Link
+                                href="/dosen/bimbingan"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith('/dosen/bimbingan') ||
+                                    currentUrl.startsWith('/kaprodi/bimbingan')
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Bimbingan TA
+                            </Link>
 
-                    <Link
-                        href="/katalog"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/katalog')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <FileSpreadsheet class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Katalog TA</span>
-                    </Link>
+                            <Link
+                                href="/kaprodi/persetujuan"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith(
+                                        '/kaprodi/persetujuan',
+                                    )
+                                        ? 'text-slate-300 hover:text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Seminar Proposal
+                            </Link>
 
-                    <Link
-                        href="/panduan"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
-                        :class="[
-                            currentUrl.startsWith('/panduan')
-                                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
-                        ]"
-                    >
-                        <Globe class="h-4 w-4 shrink-0" />
-                        <span v-if="!collapsed">Panduan Website</span>
-                    </Link>
+                            <Link
+                                href="/kaprodi/persetujuan"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith(
+                                        '/kaprodi/persetujuan',
+                                    )
+                                        ? 'text-slate-300 hover:text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Sidang TA
+                            </Link>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: JADWAL & AI PLOTTING (ACCORDION) -->
+                    <div class="pt-2">
+                        <button
+                            type="button"
+                            class="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-1.5 text-xs font-semibold transition-all"
+                            :class="[
+                                isKaprodiJadwalActive
+                                    ? 'text-white'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            @click="kaprodiJadwalOpen = !kaprodiJadwalOpen"
+                        >
+                            <div class="flex items-center gap-3">
+                                <Cpu class="h-4 w-4 shrink-0" />
+                                <span v-if="!collapsed">Jadwal &amp; AI</span>
+                            </div>
+                            <ChevronDown
+                                v-if="!collapsed"
+                                class="h-3.5 w-3.5 transition-transform"
+                                :class="{ '-rotate-90': !kaprodiJadwalOpen }"
+                            />
+                        </button>
+
+                        <div
+                            v-if="kaprodiJadwalOpen && !collapsed"
+                            class="mt-1 space-y-1 pl-9"
+                        >
+                            <Link
+                                href="/kaprodi/penjadwalan"
+                                class="flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith(
+                                        '/kaprodi/penjadwalan',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/penjadwalan',
+                                    )
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                <span class="truncate"
+                                    >Plotting Jadwal (GA)</span
+                                >
+                                <span
+                                    class="py-0.2 rounded-full border border-blue-500/30 bg-blue-500/20 px-1.5 text-[9px] font-extrabold text-blue-400"
+                                >
+                                    AI
+                                </span>
+                            </Link>
+
+                            <Link
+                                href="/kaprodi/penjadwalan"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith(
+                                        '/kaprodi/penjadwalan',
+                                    )
+                                        ? 'text-slate-300 hover:text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Periode Gelombang
+                            </Link>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: DATA MASTER -->
+                    <div class="space-y-1 pt-2">
+                        <p
+                            v-if="!collapsed"
+                            class="px-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Data Master
+                        </p>
+
+                        <Link
+                            href="/kaprodi/dosen"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl.startsWith('/kaprodi/dosen')
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Data Dosen' : ''"
+                        >
+                            <GraduationCap class="h-4 w-4 shrink-0" />
+                            <span v-if="!collapsed">Data Dosen</span>
+                        </Link>
+
+                        <Link
+                            href="/kaprodi/mahasiswa"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl.startsWith('/kaprodi/mahasiswa') ||
+                                currentUrl.startsWith('/koordinator/mahasiswa')
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Data Mahasiswa' : ''"
+                        >
+                            <Users class="h-4 w-4 shrink-0" />
+                            <span v-if="!collapsed">Data Mahasiswa</span>
+                        </Link>
+                    </div>
+
+                    <!-- SECTION 5: PROSEDUR & KATALOG -->
+                    <div class="space-y-1 pt-2">
+                        <p
+                            v-if="!collapsed"
+                            class="px-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Prosedur &amp; Katalog
+                        </p>
+
+                        <Link
+                            href="/katalog"
+                            class="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl.startsWith('/katalog')
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Katalog TA' : ''"
+                        >
+                            <div class="flex items-center gap-3">
+                                <FileSpreadsheet class="h-4 w-4 shrink-0" />
+                                <span v-if="!collapsed">Katalog TA</span>
+                            </div>
+                            <span
+                                v-if="!collapsed"
+                                class="py-0.2 rounded-full border border-emerald-500/30 bg-emerald-500/20 px-1.5 text-[9px] font-extrabold text-emerald-400"
+                            >
+                                Arsip
+                            </span>
+                        </Link>
+
+                        <Link
+                            href="/prosedur"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl.startsWith('/prosedur')
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Prosedur TA' : ''"
+                        >
+                            <Layers class="h-4 w-4 shrink-0" />
+                            <span v-if="!collapsed">Prosedur TA</span>
+                        </Link>
+
+                        <Link
+                            href="/panduan"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold transition-all"
+                            :class="[
+                                currentUrl.startsWith('/panduan')
+                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Panduan Website' : ''"
+                        >
+                            <Globe class="h-4 w-4 shrink-0" />
+                            <span v-if="!collapsed">Panduan Website</span>
+                        </Link>
+                    </div>
                 </template>
 
                 <!-- 4. TENDIK -->

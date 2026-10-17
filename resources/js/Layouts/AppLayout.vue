@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 
 import AcademicChatbot from '@/Components/AcademicChatbot.vue';
 import MobileNav from '@/Layouts/partials/MobileNav.vue';
@@ -11,8 +11,30 @@ interface Props {
     title?: string;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     title: 'Dashboard',
+});
+
+const page = usePage();
+const pageTitle = computed(() => {
+    if (props.title && props.title !== 'Dashboard') {
+        return props.title;
+    }
+    const component = page.component || '';
+    if (
+        component.startsWith('Kaprodi/Mahasiswa') ||
+        component.startsWith('Kaprodi/Dosen')
+    ) {
+        return 'Data Master';
+    }
+    if (
+        component.startsWith('Dosen/Bimbingan') ||
+        page.url.startsWith('/dosen/bimbingan') ||
+        page.url.startsWith('/kaprodi/bimbingan')
+    ) {
+        return 'Data Pengajuan';
+    }
+    return props.title || 'Dashboard';
 });
 
 const mobileMenuOpen = ref(false);
@@ -38,7 +60,7 @@ const sidebarCollapsed = ref(false);
         <div class="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
             <!-- TOP NAVBAR -->
             <Topbar
-                :title="title"
+                :title="pageTitle"
                 @toggle-mobile-menu="mobileMenuOpen = !mobileMenuOpen"
             />
 
