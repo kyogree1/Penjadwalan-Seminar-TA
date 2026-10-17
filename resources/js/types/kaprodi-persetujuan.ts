@@ -8,6 +8,7 @@ export type ReviewStudent = {
     id: number;
     name: string;
     nim_nip: string | null;
+    angkatan?: string | number | null;
 };
 export type SupervisorOption = { id: number; name: string };
 export type JudulReview = {
@@ -21,6 +22,9 @@ export type JudulReview = {
     pembimbing1: SupervisorOption | null;
     pembimbing2: SupervisorOption | null;
     catatan_kaprodi: string | null;
+    abstrak?: string | null;
+    created_at?: string;
+    updated_at?: string;
 };
 export type AcademicReview = {
     id: number;
