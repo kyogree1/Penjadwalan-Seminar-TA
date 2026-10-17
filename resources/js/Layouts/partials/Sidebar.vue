@@ -394,21 +394,18 @@ const isKaprodiJadwalActive = computed(
                         >
                             <Link
                                 href="/kaprodi/persetujuan"
-                                class="flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl.startsWith(
                                         '/kaprodi/persetujuan',
-                                    )
+                                    ) &&
+                                    !currentUrl.includes('section=sempro') &&
+                                    !currentUrl.includes('section=sidang')
                                         ? 'font-bold text-white'
                                         : 'text-slate-400 hover:text-slate-200',
                                 ]"
                             >
-                                <span class="truncate">Daftar Judul</span>
-                                <span
-                                    class="py-0.2 rounded-full border border-amber-500/30 bg-amber-500/20 px-1.5 text-[9px] font-bold text-amber-400"
-                                >
-                                    Review
-                                </span>
+                                Daftar Judul
                             </Link>
 
                             <Link
@@ -425,13 +422,11 @@ const isKaprodiJadwalActive = computed(
                             </Link>
 
                             <Link
-                                href="/kaprodi/persetujuan"
+                                href="/kaprodi/persetujuan?section=sempro"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
-                                    currentUrl.startsWith(
-                                        '/kaprodi/persetujuan',
-                                    )
-                                        ? 'text-slate-300 hover:text-white'
+                                    currentUrl.includes('section=sempro')
+                                        ? 'font-bold text-white'
                                         : 'text-slate-400 hover:text-slate-200',
                                 ]"
                             >
@@ -439,13 +434,11 @@ const isKaprodiJadwalActive = computed(
                             </Link>
 
                             <Link
-                                href="/kaprodi/persetujuan"
+                                href="/kaprodi/persetujuan?section=sidang"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
-                                    currentUrl.startsWith(
-                                        '/kaprodi/persetujuan',
-                                    )
-                                        ? 'text-slate-300 hover:text-white'
+                                    currentUrl.includes('section=sidang')
+                                        ? 'font-bold text-white'
                                         : 'text-slate-400 hover:text-slate-200',
                                 ]"
                             >

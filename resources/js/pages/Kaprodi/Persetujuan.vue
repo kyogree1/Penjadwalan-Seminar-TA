@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
     ArrowRight,
     BookOpen,
@@ -29,161 +29,235 @@ const props = defineProps<KaprodiReviewProps>();
 type Section = 'judul' | 'sempro' | 'sidang';
 const activeSection = ref<Section>('judul');
 
-// Fallback dataset matching Front-End mockData.js in case live db has no judul records
-const defaultMockJudulList: JudulReview[] = [
-    {
-        id: 1,
-        mahasiswa: {
-            id: 1,
-            name: 'Muhammad Azka Yunastio',
-            nim_nip: '11231036',
-            angkatan: '2023',
-        },
-        judul_ta:
-            'Penerapan Algoritma Genetika dan Large Language Model pada Sistem Penjadwalan Seminar Tugas Akhir',
-        bidang_penelitian: 'Artificial Intelligence & NLP',
-        status: 'disetujui',
-        pembimbing_1_id: 5,
-        pembimbing_2_id: 18,
-        pembimbing1: { id: 5, name: 'Dra. Nurul Rahmania, M.T.' },
-        pembimbing2: {
-            id: 18,
-            name: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
-        },
-        catatan_kaprodi:
-            'Topik penelitian sangat relevan dan metodologi sudah matang. Disetujui.',
-        abstrak:
-            'Rancang bangun sistem penjadwalan seminar tugas akhir otomatis dengan representasi kromosom GA dan asisten chatbot terintegrasi pedoman akademik.',
-        created_at: '2026-09-28T08:00:00Z',
-    },
-    {
-        id: 2,
-        mahasiswa: {
-            id: 2,
-            name: 'Hari Yatun Nasifa',
-            nim_nip: '11231030',
-            angkatan: '2023',
-        },
-        judul_ta:
-            'Pengembangan Antarmuka Sistem Informasi Akademik Tugas Akhir Berbasis Desain Komponen Reusable dan Responsif',
-        bidang_penelitian: 'Human-Computer Interaction & Software Eng.',
-        status: 'disetujui',
-        pembimbing_1_id: 19,
-        pembimbing_2_id: 20,
-        pembimbing1: { id: 19, name: 'Dian Permata Sari, S.Kom., M.Kom.' },
-        pembimbing2: { id: 20, name: 'Rian Kurniawan, S.Kom., M.Eng.' },
-        catatan_kaprodi:
-            'Topik disetujui. Lanjutkan persiapan Bab 1-3 untuk Seminar Proposal.',
-        abstrak:
-            'Fokus pada rancang bangun UI/UX web modern berbasis Vue 3 dan Tailwind CSS untuk mempermudah pemantauan alur sidang TA mahasiswa secara real-time dan ramah pengguna.',
-        created_at: '2026-09-25T09:30:00Z',
-    },
-    {
-        id: 3,
-        mahasiswa: {
-            id: 3,
-            name: 'Junnior Marcellino Polla',
-            nim_nip: '11231034',
-            angkatan: '2023',
-        },
-        judul_ta:
-            'Rancang Bangun Arsitektur Microservices dan Keamanan Data pada Portal Layanan Ujian Tugas Akhir',
-        bidang_penelitian: 'Cloud Computing & Cyber Security',
-        status: 'revisi',
-        pembimbing_1_id: 21,
-        pembimbing_2_id: 2,
-        pembimbing1: { id: 21, name: 'Dr. Budi Wicaksono, M.Kom.' },
-        pembimbing2: {
-            id: 2,
-            name: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
-        },
-        catatan_kaprodi:
-            'Perjelas studi kasus pembanding dan batasan pengujian keamanan sistem pada bagian latar belakang.',
-        abstrak:
-            'Membahas perancangan backend REST API dengan autentikasi JWT dan enkripsi data sensitif dokumen tugas akhir mahasiswa.',
-        created_at: '2026-09-22T10:15:00Z',
-    },
-    {
-        id: 4,
-        mahasiswa: {
-            id: 4,
-            name: 'Mochammad Reezqi Pratama',
-            nim_nip: '11231041',
-            angkatan: '2023',
-        },
-        judul_ta:
-            'Optimasi Alokasi Dosen Penguji Ujian Skripsi dengan Pendekatan Constraint Satisfaction Problem dan Algoritma Genetika',
-        bidang_penelitian: 'Computational Intelligence & Optimasi',
-        status: 'disetujui',
-        pembimbing_1_id: 18,
-        pembimbing_2_id: 5,
-        pembimbing1: {
-            id: 18,
-            name: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
-        },
-        pembimbing2: { id: 5, name: 'Dra. Nurul Rahmania, M.T.' },
-        catatan_kaprodi:
-            'Judul dan metode sangat relevan dengan kebutuhan prodi. Disetujui.',
-        abstrak:
-            'Eksperimen tuning hyperparameter mutation rate dan crossover rate untuk mencari konvergensi fitness tercepat pada penjadwalan sidang.',
-        created_at: '2026-09-20T11:00:00Z',
-    },
-    {
-        id: 5,
-        mahasiswa: {
-            id: 5,
-            name: 'Akmal Falah Maulana',
-            nim_nip: '11231006',
-            angkatan: '2023',
-        },
-        judul_ta:
-            'Rancang Bangun Frontend Dashboard Monitoring Progres Bimbingan Tugas Akhir Menggunakan Progressive Web Apps',
-        bidang_penelitian: 'Human-Computer Interaction & Software Eng.',
-        status: 'disetujui',
-        pembimbing_1_id: 20,
-        pembimbing_2_id: 19,
-        pembimbing1: { id: 20, name: 'Rian Kurniawan, S.Kom., M.Eng.' },
-        pembimbing2: { id: 19, name: 'Dian Permata Sari, S.Kom., M.Kom.' },
-        catatan_kaprodi: 'Topik disetujui. Lanjutkan penyusunan proposal.',
-        abstrak:
-            'Penerapan PWA dan caching cerdas pada frontend dashboard monitoring tugas akhir mahasiswa untuk aksesibilitas tinggi di piranti bergerak.',
-        created_at: '2026-09-18T13:45:00Z',
-    },
-    {
-        id: 6,
-        mahasiswa: {
-            id: 6,
-            name: 'Bagus Setiawan',
-            nim_nip: '11211019',
-            angkatan: '2021',
-        },
-        judul_ta:
-            'Implementasi NLP dan Named Entity Recognition untuk Ekstraksi Otomatis Dokumen Skripsi',
-        bidang_penelitian: 'Artificial Intelligence & NLP',
-        status: 'menunggu',
-        pembimbing_1_id: 5,
-        pembimbing_2_id: 19,
-        pembimbing1: { id: 5, name: 'Dra. Nurul Rahmania, M.T.' },
-        pembimbing2: { id: 19, name: 'Dian Permata Sari, S.Kom., M.Kom.' },
-        catatan_kaprodi: 'Dalam antrean telaah oleh tim KBK Sistem Cerdas.',
-        abstrak:
-            'Penerapan IndoBERT untuk ekstraksi otomatis informasi metrik, pembimbing, dan luaran dari repositori skripsi mahasiswa.',
-        created_at: '2026-09-30T14:20:00Z',
-    },
-];
+// Authenticated user context
+const page = usePage();
+const currentUser = computed(() => (page.props as any).auth?.user);
 
-// Reactive judul dataset: strictly respects props.dbJudul if passed, otherwise defaultMockJudulList
-const judulList = ref<JudulReview[]>(
-    props.dbJudul !== undefined
-        ? JSON.parse(JSON.stringify(props.dbJudul))
-        : defaultMockJudulList,
-);
+// Dynamic demo dataset strictly respecting the 3 conditions and user as supervisor
+const getDemoJudulListForUser = (user: any): JudulReview[] => {
+    const currentId = user?.id || 5;
+    const currentName = user?.name || 'Dra. Nurul Rahmania, M.T.';
+
+    return [
+        {
+            id: 101,
+            mahasiswa: {
+                id: 1,
+                name: 'Akmal Falah Maulana',
+                nim_nip: '11231006',
+                angkatan: '2023',
+            },
+            judul_ta:
+                'Rancang Bangun Frontend Dashboard Monitoring Progres Bimbingan Tugas Akhir Menggunakan Progressive Web Apps',
+            bidang_penelitian: 'Human-Computer Interaction & Software Eng.',
+            status: 'menunggu',
+            pembimbing_1_id: currentId,
+            pembimbing_2_id: 2,
+            pembimbing1: { id: currentId, name: currentName },
+            pembimbing2: {
+                id: 2,
+                name: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
+            },
+            catatan_kaprodi: 'Menunggu telaah awal calon pembimbing tugas akhir.',
+            abstrak:
+                'Penerapan Progressive Web Apps (PWA) dan caching cerdas pada frontend dashboard monitoring tugas akhir mahasiswa untuk aksesibilitas tinggi di piranti bergerak.',
+            created_at: '2026-09-18T13:45:00Z',
+        },
+        {
+            id: 102,
+            mahasiswa: {
+                id: 2,
+                name: 'Bagus Setiawan',
+                nim_nip: '11211018',
+                angkatan: '2021',
+            },
+            judul_ta:
+                'Implementasi NLP dan Named Entity Recognition untuk Ekstraksi Otomatis Dokumen Skripsi',
+            bidang_penelitian: 'Artificial Intelligence & NLP',
+            status: 'menunggu',
+            pembimbing_1_id: 19,
+            pembimbing_2_id: currentId,
+            pembimbing1: {
+                id: 19,
+                name: 'Dian Permata Sari, S.Kom., M.Kom.',
+            },
+            pembimbing2: { id: currentId, name: currentName },
+            catatan_kaprodi: 'Dalam antrean telaah oleh calon pembimbing.',
+            abstrak:
+                'Penerapan IndoBERT untuk ekstraksi otomatis informasi metrik, pembimbing, dan luaran dari repositori skripsi mahasiswa.',
+            created_at: '2026-09-30T14:20:00Z',
+        },
+        {
+            id: 103,
+            mahasiswa: {
+                id: 3,
+                name: 'Kevin Julio Alexander',
+                nim_nip: '11221045',
+                angkatan: '2022',
+            },
+            judul_ta:
+                'Pengembangan Sistem Deteksi Intrusi Jaringan Berbasis Deep Learning dan Packet Inspection',
+            bidang_penelitian: 'Keamanan Siber & Jaringan',
+            status: 'menunggu',
+            pembimbing_1_id: currentId,
+            pembimbing_2_id: 20,
+            pembimbing1: { id: currentId, name: currentName },
+            pembimbing2: {
+                id: 20,
+                name: 'Rian Kurniawan, S.Kom., M.Eng.',
+            },
+            catatan_kaprodi:
+                'Pengajuan usulan judul baru dari mahasiswa, menunggu review kelayakan dan metodologi.',
+            abstrak:
+                'Deteksi intrusi jaringan skala kampus menggunakan algoritma deep learning CNN-LSTM pada header packet inspection secara real-time.',
+            created_at: '2026-10-01T08:15:00Z',
+        },
+        {
+            id: 104,
+            mahasiswa: {
+                id: 4,
+                name: 'Mochammad Reezqi Pratama',
+                nim_nip: '11231041',
+                angkatan: '2023',
+            },
+            judul_ta:
+                'Optimasi Alokasi Dosen Penguji Ujian Skripsi dengan Pendekatan Constraint Satisfaction Problem dan Algoritma Genetika',
+            bidang_penelitian: 'Computational Intelligence & Optimasi',
+            status: 'revisi',
+            pembimbing_1_id: 18,
+            pembimbing_2_id: currentId,
+            pembimbing1: {
+                id: 18,
+                name: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
+            },
+            pembimbing2: { id: currentId, name: currentName },
+            catatan_kaprodi:
+                'Perjelas batas waktu optimasi penjadwalan dan parameter mutasi pada bab metodologi.',
+            abstrak:
+                'Eksperimen tuning hyperparameter mutation rate dan crossover rate untuk mencari konvergensi fitness tercepat pada penjadwalan sidang.',
+            created_at: '2026-09-20T11:00:00Z',
+        },
+        {
+            id: 105,
+            mahasiswa: {
+                id: 5,
+                name: 'Junnior Marcellino Polla',
+                nim_nip: '11231034',
+                angkatan: '2023',
+            },
+            judul_ta:
+                'Rancang Bangun Arsitektur Microservices dan Keamanan Data pada Portal Layanan Ujian Tugas Akhir',
+            bidang_penelitian: 'Cloud Computing & Cyber Security',
+            status: 'revisi',
+            pembimbing_1_id: currentId,
+            pembimbing_2_id: 21,
+            pembimbing1: { id: currentId, name: currentName },
+            pembimbing2: {
+                id: 21,
+                name: 'Dr. Budi Wicaksono, M.Kom.',
+            },
+            catatan_kaprodi:
+                'Perjelas studi kasus pembanding dan batasan pengujian keamanan sistem pada bagian latar belakang.',
+            abstrak:
+                'Membahas perancangan backend REST API dengan autentikasi JWT dan enkripsi data sensitif dokumen tugas akhir mahasiswa.',
+            created_at: '2026-09-22T10:15:00Z',
+        },
+        {
+            id: 106,
+            mahasiswa: {
+                id: 6,
+                name: 'Muhammad Azka Yunastio',
+                nim_nip: '11231036',
+                angkatan: '2023',
+            },
+            judul_ta:
+                'Penerapan Algoritma Genetika dan Large Language Model pada Sistem Penjadwalan Seminar Tugas Akhir',
+            bidang_penelitian: 'Artificial Intelligence & NLP',
+            status: 'disetujui',
+            pembimbing_1_id: currentId,
+            pembimbing_2_id: 18,
+            pembimbing1: { id: currentId, name: currentName },
+            pembimbing2: {
+                id: 18,
+                name: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
+            },
+            catatan_kaprodi:
+                'Topik penelitian sangat relevan dan metodologi sudah matang. Disetujui.',
+            abstrak:
+                'Rancang bangun sistem penjadwalan seminar tugas akhir otomatis dengan representasi kromosom GA dan asisten chatbot terintegrasi pedoman akademik.',
+            created_at: '2026-09-28T08:00:00Z',
+        },
+        {
+            id: 107,
+            mahasiswa: {
+                id: 7,
+                name: 'Hari Yatun Nasifa',
+                nim_nip: '11231030',
+                angkatan: '2023',
+            },
+            judul_ta:
+                'Pengembangan Antarmuka Sistem Informasi Akademik Tugas Akhir Berbasis Desain Komponen Reusable dan Responsif',
+            bidang_penelitian: 'Human-Computer Interaction & Software Eng.',
+            status: 'disetujui',
+            pembimbing_1_id: 2,
+            pembimbing_2_id: currentId,
+            pembimbing1: {
+                id: 2,
+                name: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
+            },
+            pembimbing2: { id: currentId, name: currentName },
+            catatan_kaprodi:
+                'Topik disetujui. Lanjutkan persiapan Bab 1-3 untuk Seminar Proposal.',
+            abstrak:
+                'Fokus pada rancang bangun UI/UX web modern berbasis Vue 3 dan Tailwind CSS untuk mempermudah pemantauan alur sidang TA mahasiswa secara real-time dan ramah pengguna.',
+            created_at: '2026-09-25T09:30:00Z',
+        },
+        {
+            id: 108,
+            mahasiswa: {
+                id: 8,
+                name: 'Putri Ayu Wandira',
+                nim_nip: '11211052',
+                angkatan: '2021',
+            },
+            judul_ta:
+                'Sistem Rekomendasi Pemilihan Topik Skripsi Menggunakan Content-Based Filtering dan Analisis Minat Bakat',
+            bidang_penelitian: 'Sistem Cerdas & Rekomendasi',
+            status: 'disetujui',
+            pembimbing_1_id: 19,
+            pembimbing_2_id: currentId,
+            pembimbing1: {
+                id: 19,
+                name: 'Dian Permata Sari, S.Kom., M.Kom.',
+            },
+            pembimbing2: { id: currentId, name: currentName },
+            catatan_kaprodi:
+                'Topik penelitian sangat bagus dan metodologi filtering sesuai. Disetujui.',
+            abstrak:
+                'Algoritma Cosine Similarity dan TF-IDF untuk mencocokkan riwayat mata kuliah peminatan mahasiswa dengan topik riset dosen.',
+            created_at: '2026-09-29T11:20:00Z',
+        },
+    ];
+};
+
+// Reactive judul dataset: jika props.dbJudul memiliki data, gunakan props.dbJudul;
+// jika kosong (misal akun login belum memiliki data bimbingan di DB), sediakan demo dataset otomatis
+const resolveInitialJudulList = (): JudulReview[] => {
+    if (Array.isArray(props.dbJudul) && props.dbJudul.length > 0) {
+        return JSON.parse(JSON.stringify(props.dbJudul));
+    }
+    return getDemoJudulListForUser(currentUser.value);
+};
+
+const judulList = ref<JudulReview[]>(resolveInitialJudulList());
 
 watch(
     () => props.dbJudul,
     (val) => {
-        if (val !== undefined) {
+        if (Array.isArray(val) && val.length > 0) {
             judulList.value = JSON.parse(JSON.stringify(val));
+        } else {
+            judulList.value = getDemoJudulListForUser(currentUser.value);
         }
     },
     { deep: true },
@@ -307,28 +381,68 @@ const formatTanggal = (dateString?: string) => {
     }
 };
 
-// KPI Metrics computed from judulList
-const totalCount = computed(() => judulList.value.length);
+// Filter: hanya judul di mana user bersangkutan (dosen/koorprodi) menjadi Pembimbing 1 atau Pembimbing 2
+const isUserSupervisor = (item: JudulReview): boolean => {
+    const user = currentUser.value;
+    if (!user) return true; // jika belum ada context auth (e.g. testing standalone) tampilkan semua
+
+    // Cocokkan berdasarkan ID pembimbing
+    if (
+        (item.pembimbing_1_id && item.pembimbing_1_id === user.id) ||
+        (item.pembimbing_2_id && item.pembimbing_2_id === user.id) ||
+        (item.pembimbing1?.id && item.pembimbing1.id === user.id) ||
+        (item.pembimbing2?.id && item.pembimbing2.id === user.id)
+    ) {
+        return true;
+    }
+
+    // Cocokkan berdasarkan nama dosen/user
+    const currentName = (user.name || '').toLowerCase().trim();
+    if (!currentName) return false;
+
+    const p1Name = (item.pembimbing1?.name || '').toLowerCase().trim();
+    const p2Name = (item.pembimbing2?.name || '').toLowerCase().trim();
+
+    const cleanTokens = currentName
+        .replace(/(dr\.|dra\.|ir\.|prof\.|s\.t\.|m\.t\.|m\.kom\.|ph\.d\.|s\.kom\.|m\.eng\.)/gi, '')
+        .split(/[\s,]+/)
+        .filter((t: string) => t.length >= 3);
+
+    const matchesP1 = cleanTokens.some((t: string) => p1Name.includes(t));
+    const matchesP2 = cleanTokens.some((t: string) => p2Name.includes(t));
+
+    return matchesP1 || matchesP2;
+};
+
+// Dataset judul yang hanya berisikan judul di mana user yang login menjadi Pembimbing 1 atau Pembimbing 2
+const myJudulList = computed(() => {
+    const filtered = judulList.value.filter(isUserSupervisor);
+    if (filtered.length > 0) return filtered;
+    return judulList.value;
+});
+
+// KPI Metrics computed from myJudulList
+const totalCount = computed(() => myJudulList.value.length);
 const pendingCount = computed(
     () =>
-        judulList.value.filter((j) => getDisplayStatus(j) === 'Menunggu Review')
+        myJudulList.value.filter((j) => getDisplayStatus(j) === 'Menunggu Review')
             .length,
 );
 const approvedCount = computed(
     () =>
-        judulList.value.filter((j) => getDisplayStatus(j) === 'Disetujui')
+        myJudulList.value.filter((j) => getDisplayStatus(j) === 'Disetujui')
             .length,
 );
 const revisionCount = computed(
     () =>
-        judulList.value.filter((j) => getDisplayStatus(j) === 'Perlu Revisi')
+        myJudulList.value.filter((j) => getDisplayStatus(j) === 'Perlu Revisi')
             .length,
 );
 
 // Dynamic unique lists for select filters
 const bidangList = computed(() => {
     const set = new Set<string>();
-    for (const item of judulList.value) {
+    for (const item of myJudulList.value) {
         if (item.bidang_penelitian?.trim())
             set.add(item.bidang_penelitian.trim());
     }
@@ -337,7 +451,7 @@ const bidangList = computed(() => {
 
 const angkatanList = computed(() => {
     const set = new Set<string>();
-    for (const item of judulList.value) {
+    for (const item of myJudulList.value) {
         const angk = getStudentAngkatan(item);
         if (angk) set.add(angk);
     }
@@ -346,7 +460,7 @@ const angkatanList = computed(() => {
 
 // Filtered list
 const filteredJudulList = computed(() => {
-    return judulList.value.filter((item) => {
+    return myJudulList.value.filter((item) => {
         const q = searchQuery.value.toLowerCase().trim();
         const studentName = getStudentName(item).toLowerCase();
         const studentNim = getStudentNim(item).toLowerCase();
@@ -391,6 +505,19 @@ const totalPages = computed(() =>
     ),
 );
 
+const paginationStart = computed(() =>
+    filteredJudulList.value.length === 0
+        ? 0
+        : (currentPage.value - 1) * entriesPerPage.value + 1,
+);
+
+const paginationEnd = computed(() =>
+    Math.min(
+        currentPage.value * entriesPerPage.value,
+        filteredJudulList.value.length,
+    ),
+);
+
 watch([searchQuery, filterStatus, filterBidang, filterAngkatan], () => {
     currentPage.value = 1;
 });
@@ -416,7 +543,7 @@ const selectedJudulId = ref<number | null>(null);
 const selectedJudul = computed(() => {
     if (selectedJudulId.value === -1) return null;
     if (selectedJudulId.value !== null) {
-        const found = judulList.value.find(
+        const found = myJudulList.value.find(
             (j) => j.id === selectedJudulId.value,
         );
         if (found) return found;
@@ -424,7 +551,7 @@ const selectedJudul = computed(() => {
     return (
         paginatedJudulList.value[0] ??
         filteredJudulList.value[0] ??
-        judulList.value[0] ??
+        myJudulList.value[0] ??
         null
     );
 });
@@ -466,6 +593,28 @@ const chooseDecision = (status: 'disetujui' | 'revisi') => {
 const saveDecision = () => {
     const item = selectedJudul.value;
     if (!item || saving.value) return;
+
+    // Untuk item demo (id > 100), perbarui state lokal langsung tanpa perlu patch server
+    if (item.id > 100) {
+        const foundIndex = judulList.value.findIndex(
+            (j) => j.id === item.id,
+        );
+        if (foundIndex !== -1) {
+            judulList.value[foundIndex] = {
+                ...judulList.value[foundIndex],
+                status: reviewDecision.value,
+                catatan_kaprodi: reviewNote.value,
+            };
+        }
+        const label =
+            reviewDecision.value === 'disetujui'
+                ? 'Disetujui'
+                : 'Perlu Revisi';
+        showToast(
+            `Status judul untuk "${getStudentName(item)}" berhasil diperbarui menjadi ${label}!`,
+        );
+        return;
+    }
 
     saving.value = true;
     errorMsg.value = '';
@@ -527,6 +676,19 @@ const confirmDeleteJudul = (item: JudulReview) => {
             `Apakah Anda yakin ingin menghapus pengajuan judul dari "${studentName}"?`,
         )
     ) {
+        return;
+    }
+
+    // Untuk item demo (id > 100), hapus dari list lokal langsung
+    if (item.id > 100) {
+        judulList.value = judulList.value.filter(
+            (j) => j.id !== item.id,
+        );
+        if (selectedJudulId.value === item.id) {
+            selectedJudulId.value =
+                filteredJudulList.value[0]?.id ?? null;
+        }
+        showToast(`Pengajuan judul "${studentName}" berhasil dihapus.`);
         return;
     }
 
@@ -1038,7 +1200,7 @@ const submitAcademicReview = (
                                         >
                                     </td>
 
-                                    <!-- Status Badge -->
+                                    <!-- Status Badge (No dot circle) -->
                                     <td
                                         class="px-3 py-3 text-center whitespace-nowrap"
                                     >
@@ -1046,16 +1208,8 @@ const submitAcademicReview = (
                                             :class="
                                                 getStatusBadgeClass(item.status)
                                             "
-                                            class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-extrabold shadow-2xs"
+                                            class="inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-extrabold shadow-2xs"
                                         >
-                                            <span
-                                                class="h-1.5 w-1.5 rounded-full"
-                                                :class="
-                                                    getStatusDotClass(
-                                                        item.status,
-                                                    )
-                                                "
-                                            ></span>
                                             <span>{{
                                                 getDisplayStatus(item)
                                             }}</span>
@@ -1118,52 +1272,57 @@ const submitAcademicReview = (
                         </table>
                     </div>
 
-                    <!-- Pagination (Matching Bimbingan TA) -->
-                    <div
-                        v-if="totalPages > 1"
-                        class="flex items-center justify-center gap-2 border-t border-slate-100 p-4 text-xs text-black dark:border-slate-800 dark:text-slate-300"
-                    >
-                        <button
-                            type="button"
-                            :disabled="currentPage === 1"
-                            class="cursor-pointer rounded-lg border border-slate-300 px-3 py-1.5 font-bold transition-colors hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-40 dark:border-slate-700 dark:hover:bg-slate-800"
-                            @click="currentPage--"
-                        >
-                            Sebelumnya
-                        </button>
-                        <span class="font-bold">
-                            Halaman {{ currentPage }} dari {{ totalPages }}
-                        </span>
-                        <button
-                            type="button"
-                            :disabled="currentPage >= totalPages"
-                            class="cursor-pointer rounded-lg border border-slate-300 px-3 py-1.5 font-bold transition-colors hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-40 dark:border-slate-700 dark:hover:bg-slate-800"
-                            @click="currentPage++"
-                        >
-                            Berikutnya
-                        </button>
-                    </div>
-
-                    <!-- Table Footer Summary -->
+                    <!-- Table Footer & Pagination (Matching Data Master Mahasiswa) -->
                     <div
                         class="flex flex-col justify-between gap-3 border-t border-slate-100 p-4 text-xs font-normal text-black sm:flex-row sm:items-center dark:border-slate-800 dark:text-slate-400"
                     >
-                        <span>
+                        <div class="text-xs font-semibold text-black dark:text-white">
                             Menampilkan
-                            <b class="font-bold text-black dark:text-white"
-                                >{{ paginatedJudulList.length }}</b
-                            >
+                            <b class="font-bold text-black dark:text-white">{{
+                                paginationStart
+                            }}</b>
+                            sampai
+                            <b class="font-bold text-black dark:text-white">{{
+                                paginationEnd
+                            }}</b>
                             dari
-                            <b class="font-bold text-black dark:text-white"
-                                >{{ filteredJudulList.length }}</b
+                            <b class="font-bold text-black dark:text-white">{{
+                                filteredJudulList.length
+                            }}</b>
+                            pengajuan judul
+                        </div>
+
+                        <div class="flex items-center gap-1 overflow-x-auto">
+                            <button
+                                type="button"
+                                :disabled="currentPage === 1"
+                                class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-slate-300 font-bold text-black hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30 dark:border-slate-700 dark:text-white dark:hover:bg-slate-800"
+                                @click="currentPage--"
                             >
-                            total pengajuan judul
-                        </span>
-                        <div class="flex items-center gap-1">
-                            <span
-                                class="text-[11px] font-bold text-black dark:text-slate-400"
-                                >Semester Gasal 2026/2027</span
+                                ‹
+                            </button>
+                            <button
+                                v-for="p in totalPages"
+                                :key="p"
+                                type="button"
+                                :class="
+                                    currentPage === p
+                                        ? 'border border-blue-600 bg-blue-600 font-black text-white shadow-xs'
+                                        : 'border border-slate-300 font-bold text-black hover:bg-slate-100 dark:border-slate-700 dark:text-white dark:hover:bg-slate-800'
+                                "
+                                class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg text-xs transition-colors"
+                                @click="currentPage = p"
                             >
+                                {{ p }}
+                            </button>
+                            <button
+                                type="button"
+                                :disabled="currentPage === totalPages"
+                                class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-slate-300 font-bold text-black hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30 dark:border-slate-700 dark:text-white dark:hover:bg-slate-800"
+                                @click="currentPage++"
+                            >
+                                ›
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1439,16 +1598,11 @@ const submitAcademicReview = (
                         <div
                             class="flex items-center justify-between rounded-xl border border-emerald-500/30 bg-emerald-50/70 p-3 dark:border-emerald-500/20 dark:bg-emerald-950/20"
                         >
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="h-2 w-2 rounded-full bg-emerald-500"
-                                ></span>
-                                <span
-                                    class="text-xs font-black tracking-wide text-emerald-700 dark:text-emerald-400"
-                                >
-                                    Disetujui
-                                </span>
-                            </div>
+                            <span
+                                class="text-xs font-black tracking-wide text-emerald-700 dark:text-emerald-400"
+                            >
+                                Disetujui
+                            </span>
                             <span
                                 class="text-[10px] font-bold text-emerald-600/80 dark:text-emerald-400/80"
                             >
@@ -1489,16 +1643,11 @@ const submitAcademicReview = (
                         <div
                             class="flex items-center justify-between rounded-xl border border-purple-500/30 bg-purple-50/70 p-3 dark:border-purple-500/20 dark:bg-purple-950/20"
                         >
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="h-2 w-2 rounded-full bg-purple-600 dark:bg-purple-400"
-                                ></span>
-                                <span
-                                    class="text-xs font-black tracking-wide text-purple-700 dark:text-purple-300"
-                                >
-                                    Perlu Revisi
-                                </span>
-                            </div>
+                            <span
+                                class="text-xs font-black tracking-wide text-purple-700 dark:text-purple-300"
+                            >
+                                Perlu Revisi
+                            </span>
                             <span
                                 class="text-[10px] font-bold text-purple-600/80 dark:text-purple-400/80"
                             >
@@ -1535,19 +1684,35 @@ const submitAcademicReview = (
                         <div
                             class="flex items-center justify-between rounded-xl border border-rose-500/30 bg-rose-50/70 p-3 dark:border-rose-500/20 dark:bg-rose-950/20"
                         >
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="h-2 w-2 rounded-full bg-rose-500"
-                                ></span>
-                                <span
-                                    class="text-xs font-black tracking-wide text-rose-700 dark:text-rose-400"
-                                >
-                                    {{ getDisplayStatus(selectedJudul) }}
-                                </span>
-                            </div>
+                            <span
+                                class="text-xs font-black tracking-wide text-rose-700 dark:text-rose-400"
+                            >
+                                {{ getDisplayStatus(selectedJudul) }}
+                            </span>
                         </div>
                     </div>
                 </template>
+            </div>
+
+            <!-- Placeholder if no judul selected or list empty (matching Lembar Kendali Bimbingan) -->
+            <div
+                v-else
+                class="sticky top-20 flex w-full shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center lg:w-96 dark:border-slate-700 dark:bg-[#111827]"
+            >
+                <div
+                    class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400"
+                >
+                    <ClipboardList class="h-6 w-6" />
+                </div>
+                <h3
+                    class="mt-3 text-sm font-black text-black dark:text-white"
+                >
+                    Telaah Usulan Judul
+                </h3>
+                <p class="mt-1 text-xs font-normal text-black dark:text-slate-400">
+                    Pilih salah satu mahasiswa dari tabel di sebelah kiri untuk
+                    melihat detail usulan judul dan status keputusan review.
+                </p>
             </div>
         </div>
     </div>
