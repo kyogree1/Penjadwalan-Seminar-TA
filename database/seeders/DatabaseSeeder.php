@@ -302,6 +302,8 @@ class DatabaseSeeder extends Seeder
         $mhsReezqi = User::where('email', '11231041@student.itk.ac.id')->first();
         $mhsAkmal = User::where('email', 'akmal.falah@student.itk.ac.id')->first();
         $mhsBagus = User::where('email', '11211018@student.itk.ac.id')->first();
+        $mhsKevin = User::where('email', '11221045@student.itk.ac.id')->first();
+        $mhsPutri = User::where('email', '11211052@student.itk.ac.id')->first();
 
         $titlesData = [
             // 1. Azka: Koorprodi (P1 - 5 sesi), Faisal (P2 - 5 sesi)
@@ -311,6 +313,8 @@ class DatabaseSeeder extends Seeder
                 'bidang' => 'Computational Intelligence & Optimasi',
                 'p1' => $koorprodi->id,
                 'p2' => $dosenFaisal->id,
+                'status' => 'disetujui',
+                'catatan_kaprodi' => 'Topik penelitian sangat relevan dan metodologi sudah matang. Disetujui.',
                 'sessions' => [
                     ['tanggal' => '2026-08-10', 'dosen_id' => $koorprodi->id, 'bab' => 'Bab 1 - Pendahuluan', 'rangkuman' => 'Diskusi rumusan masalah antrian penjadwalan seminar manual di prodi Informatika ITK.', 'catatan' => 'Perkuat rumusan masalah dengan perbandingan jurnal terkait Algoritma Genetika.', 'status' => 'delivered'],
                     ['tanggal' => '2026-08-25', 'dosen_id' => $koorprodi->id, 'bab' => 'Bab 2 - Tinjauan Pustaka & State of the Art', 'rangkuman' => 'Kajian komparasi penelitian penjadwalan GA 5 tahun terakhir dan metrik evaluasi fitness.', 'catatan' => 'Tambahkan referensi evaluasi NLP untuk chatbot.', 'status' => 'delivered'],
@@ -333,6 +337,8 @@ class DatabaseSeeder extends Seeder
                 'bidang' => 'Computational Intelligence & Optimasi',
                 'p1' => $dosenFaisal->id,
                 'p2' => $koorprodi->id,
+                'status' => 'revisi',
+                'catatan_kaprodi' => 'Perjelas batas waktu optimasi penjadwalan dan parameter mutasi pada bab metodologi.',
                 'sessions' => [
                     ['tanggal' => '2026-08-16', 'dosen_id' => $koorprodi->id, 'bab' => 'Bab 1 - Batasan Sistem', 'rangkuman' => 'Penetapan ruang lingkup seminar prodi IF.', 'catatan' => 'Disetujui.', 'status' => 'delivered'],
                     ['tanggal' => '2026-09-01', 'dosen_id' => $koorprodi->id, 'bab' => 'Bab 3 - Alur Komputasi AI', 'rangkuman' => 'Diagram alir optimasi penjadwalan GA.', 'catatan' => 'Bagus, lanjutkan.', 'status' => 'delivered'],
@@ -341,13 +347,15 @@ class DatabaseSeeder extends Seeder
                 ],
             ],
 
-            // 3. Akmal: Tejo (P1 - 5 sesi, 5 delivered), Rian (P2)
+            // 3. Akmal: Tejo (P1), Koorprodi (P2)
             [
                 'mahasiswa' => $mhsAkmal,
                 'judul' => 'Rancang Bangun Frontend Dashboard Monitoring Progres Bimbingan Tugas Akhir Menggunakan Progressive Web Apps',
                 'bidang' => 'Software Engineering & PWA',
                 'p1' => $dosenTejo->id,
-                'p2' => $dosenRian->id,
+                'p2' => $koorprodi->id,
+                'status' => 'menunggu',
+                'catatan_kaprodi' => 'Menunggu telaah awal calon pembimbing tugas akhir.',
                 'sessions' => [
                     ['tanggal' => '2026-08-11', 'dosen_id' => $dosenTejo->id, 'bab' => 'Bab 1 - Pendahuluan', 'rangkuman' => 'Latar belakang kendala monitoring bimbingan via chat informal.', 'catatan' => 'Perjelas fitur PWA yang akan diimplementasikan.', 'status' => 'delivered'],
                     ['tanggal' => '2026-08-27', 'dosen_id' => $dosenTejo->id, 'bab' => 'Bab 2 - Service Worker & PWA', 'rangkuman' => 'Tinjauan teknologi caching Service Worker.', 'catatan' => 'Bagus.', 'status' => 'delivered'],
@@ -357,13 +365,15 @@ class DatabaseSeeder extends Seeder
                 ],
             ],
 
-            // 4. Hari: Dian (P1), Tejo (P2 - 4 sesi, 3 delivered, 1 process)
+            // 4. Hari: Koorprodi (P1), Tejo (P2 - 4 sesi, 3 delivered, 1 process)
             [
                 'mahasiswa' => $mhsHari,
                 'judul' => 'Pengembangan Antarmuka Sistem Informasi Akademik Tugas Akhir Berbasis Desain Komponen Reusable dan Responsif',
                 'bidang' => 'Human-Computer Interaction & Software Eng.',
-                'p1' => $dosenDian->id,
+                'p1' => $koorprodi->id,
                 'p2' => $dosenTejo->id,
+                'status' => 'disetujui',
+                'catatan_kaprodi' => 'Topik penelitian disetujui. Lanjutkan persiapan Bab 1-3.',
                 'sessions' => [
                     ['tanggal' => '2026-08-20', 'dosen_id' => $dosenTejo->id, 'bab' => 'Bab 1 - Rumusan Masalah', 'rangkuman' => 'Fokus responsivitas mobile dan dark mode.', 'catatan' => 'Revisi batasan browser target.', 'status' => 'delivered'],
                     ['tanggal' => '2026-09-05', 'dosen_id' => $dosenTejo->id, 'bab' => 'Bab 3 - Wireframe & Design System', 'rangkuman' => 'Presentasi mockup dashboard dan halaman bimbingan.', 'catatan' => 'Tingkatkan kontras warna pada status badge.', 'status' => 'delivered'],
@@ -372,13 +382,15 @@ class DatabaseSeeder extends Seeder
                 ],
             ],
 
-            // 5. Junnior: Budi (P1), Tejo (P2 - 3 sesi)
+            // 5. Junnior: Budi (P1), Koorprodi (P2 - 3 sesi)
             [
                 'mahasiswa' => $mhsJunnior,
                 'judul' => 'Rancang Bangun Arsitektur Microservices dan Keamanan Data pada Portal Layanan Ujian Tugas Akhir',
                 'bidang' => 'Cloud Computing & Cyber Security',
                 'p1' => $dosenBudi->id,
-                'p2' => $dosenTejo->id,
+                'p2' => $koorprodi->id,
+                'status' => 'revisi',
+                'catatan_kaprodi' => 'Perjelas studi kasus pembanding dan batasan pengujian keamanan sistem pada bagian latar belakang.',
                 'sessions' => [
                     ['tanggal' => '2026-08-26', 'dosen_id' => $dosenTejo->id, 'bab' => 'Bab 1 - Analisis Ancaman Keamanan', 'rangkuman' => 'Penerapan JWT dan otorisasi RBAC.', 'catatan' => 'Tambahkan mitigasi serangan CSRF & XSS.', 'status' => 'delivered'],
                     ['tanggal' => '2026-09-12', 'dosen_id' => $dosenTejo->id, 'bab' => 'Bab 3 - Skema Komunikasi REST & Event', 'rangkuman' => 'Desain kontrak JSON API untuk backend.', 'catatan' => 'Validasi payload skema sudah bagus.', 'status' => 'delivered'],
@@ -386,13 +398,15 @@ class DatabaseSeeder extends Seeder
                 ],
             ],
 
-            // 6. Bagus: Kaprodi (P1 - 5 sesi, 5 delivered)
+            // 6. Bagus: Koorprodi (P1), Dian (P2)
             [
                 'mahasiswa' => $mhsBagus,
                 'judul' => 'Implementasi NLP dan Named Entity Recognition untuk Ekstraksi Otomatis Dokumen Skripsi',
                 'bidang' => 'Natural Language Processing',
-                'p1' => $kaprodi->id,
+                'p1' => $koorprodi->id,
                 'p2' => $dosenDian->id,
+                'status' => 'menunggu',
+                'catatan_kaprodi' => 'Dalam antrean telaah oleh calon pembimbing.',
                 'sessions' => [
                     ['tanggal' => '2026-08-14', 'dosen_id' => $kaprodi->id, 'bab' => 'Bab 1 - Pendahuluan', 'rangkuman' => 'Latar belakang ekstraksi otomatis dokumen akademik.', 'catatan' => 'Perjelas dataset yang digunakan.', 'status' => 'delivered'],
                     ['tanggal' => '2026-08-30', 'dosen_id' => $kaprodi->id, 'bab' => 'Bab 2 - Tinjauan Pustaka Transformer', 'rangkuman' => 'Perbandingan IndoBERT vs RoBERTa.', 'catatan' => 'Kajian literatur sudah memadai.', 'status' => 'delivered'],
@@ -400,6 +414,30 @@ class DatabaseSeeder extends Seeder
                     ['tanggal' => '2026-09-26', 'dosen_id' => $kaprodi->id, 'bab' => 'Bab 3 - Skenario Pelatihan Model', 'rangkuman' => 'Parameter fine-tuning dan evaluasi F1-Score.', 'catatan' => 'Siapkan draf bab 1-3 lengkap.', 'status' => 'delivered'],
                     ['tanggal' => '2026-10-04', 'dosen_id' => $kaprodi->id, 'bab' => 'Bab 1-3 - Draf Proposal Final', 'rangkuman' => 'Pemeriksaan akhir naskah proposal skripsi.', 'catatan' => 'Acc maju seminar proposal.', 'status' => 'delivered'],
                 ],
+            ],
+
+            // 7. Kevin: Koorprodi (P1), Rian (P2)
+            [
+                'mahasiswa' => $mhsKevin,
+                'judul' => 'Pengembangan Sistem Deteksi Intrusi Jaringan Berbasis Deep Learning dan Packet Inspection',
+                'bidang' => 'Keamanan Siber & Jaringan',
+                'p1' => $koorprodi->id,
+                'p2' => $dosenRian->id,
+                'status' => 'menunggu',
+                'catatan_kaprodi' => 'Pengajuan usulan judul baru dari mahasiswa, menunggu review kelayakan dan metodologi.',
+                'sessions' => [],
+            ],
+
+            // 8. Putri: Dian (P1), Koorprodi (P2)
+            [
+                'mahasiswa' => $mhsPutri,
+                'judul' => 'Sistem Rekomendasi Pemilihan Topik Skripsi Menggunakan Content-Based Filtering dan Analisis Minat Bakat',
+                'bidang' => 'Sistem Cerdas & Rekomendasi',
+                'p1' => $dosenDian->id,
+                'p2' => $koorprodi->id,
+                'status' => 'disetujui',
+                'catatan_kaprodi' => 'Topik penelitian sangat bagus dan metodologi filtering sesuai. Disetujui.',
+                'sessions' => [],
             ],
         ];
 
@@ -418,9 +456,10 @@ class DatabaseSeeder extends Seeder
                     'pembimbing_1_id' => $data['p1'],
                     'pembimbing_2_id' => $data['p2'],
                     'telah_konsultasi' => true,
-                    'status' => 'disetujui',
-                    'disetujui_oleh' => $kaprodi->id,
-                    'disetujui_at' => now(),
+                    'status' => $data['status'] ?? 'disetujui',
+                    'catatan_kaprodi' => $data['catatan_kaprodi'] ?? null,
+                    'disetujui_oleh' => ($data['status'] ?? 'disetujui') === 'disetujui' ? $kaprodi->id : null,
+                    'disetujui_at' => ($data['status'] ?? 'disetujui') === 'disetujui' ? now() : null,
                 ]
             );
 

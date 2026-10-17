@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'username', 'role', 'nim_nip', 'prodi', 'jabatan', 'avatar', 'password'])]
+#[Fillable(['name', 'email', 'username', 'role', 'nim_nip', 'prodi', 'jabatan', 'avatar', 'password', 'angkatan', 'jurusan', 'status_ta', 'no_telpon'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -35,7 +35,7 @@ class User extends Authenticatable
 
     public function isDosen(): bool
     {
-        return $this->role === 'dosen';
+        return $this->role === 'dosen' || $this->isKaprodi();
     }
 
     public function isKaprodi(): bool
