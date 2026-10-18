@@ -49,16 +49,20 @@ const emit = defineEmits<{
                 <h3 class="text-base font-bold text-slate-900 dark:text-white">
                     {{ title }}
                 </h3>
-                <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+                <p
+                    class="text-xs leading-relaxed text-slate-600 dark:text-slate-400"
+                >
                     <template v-if="message">
                         {{ message }}
                     </template>
                     <template v-else-if="itemName">
                         Apakah Anda yakin ingin menghapus
                         <span v-if="itemType">{{ itemType }} </span>
-                        <strong class="font-bold text-slate-900 dark:text-white">
-                            "{{ itemName }}"
-                        </strong>?
+                        <strong
+                            class="font-bold text-slate-900 dark:text-white"
+                        >
+                            "{{ itemName }}" </strong
+                        >?
                     </template>
                     <template v-else>
                         Apakah Anda yakin ingin menghapus data ini?

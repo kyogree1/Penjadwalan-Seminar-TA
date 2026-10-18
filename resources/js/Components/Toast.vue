@@ -36,7 +36,7 @@ const emit = defineEmits<{
             <span class="text-xs font-bold sm:text-sm">{{ message }}</span>
             <button
                 type="button"
-                class="ml-2 text-xs font-bold opacity-60 hover:opacity-100 cursor-pointer"
+                class="ml-2 cursor-pointer text-xs font-bold opacity-60 hover:opacity-100"
                 @click="emit('close')"
             >
                 ✕
