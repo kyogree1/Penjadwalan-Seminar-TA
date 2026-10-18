@@ -379,6 +379,18 @@ const ajuanRescheduleCount = computed(
             (s) => !!rescheduledStudents.value[s.id],
         ).length,
 );
+const bimbinganRescheduleCount = computed(
+    () =>
+        displayStudentsList.value.filter(
+            (s) => s.roleTab === 'bimbingan' && !!rescheduledStudents.value[s.id],
+        ).length,
+);
+const ujiRescheduleCount = computed(
+    () =>
+        displayStudentsList.value.filter(
+            (s) => s.roleTab === 'uji' && !!rescheduledStudents.value[s.id],
+        ).length,
+);
 
 // Unique Angkatan list for filter dropdown
 const angkatanOptions = computed(() => {
@@ -562,6 +574,12 @@ const submitReschedule = () => {
     isModalRescheduleOpen.value = false;
 };
 
+const cancelReschedule = (student: SemproStudentItem) => {
+    if (!student) return;
+    delete rescheduledStudents.value[student.id];
+    showToast(`Pengajuan reschedule untuk "${student.nama}" berhasil dibatalkan.`);
+};
+
 const toggleKonfirmasiHadir = (studentId: number) => {
     confirmedAttendance.value[studentId] = !confirmedAttendance.value[studentId];
     if (confirmedAttendance.value[studentId]) {
@@ -581,13 +599,16 @@ const isPengujiConfirmed = (student: SemproStudentItem, pengujiName: string) => 
 // Badge helper classes (Strictly NO DOTS beside text!)
 const getStatusBerkasClass = (status: string) => {
     const s = status.toLowerCase();
+    if (s.includes('menunggu')) {
+        return 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/60 dark:text-amber-400';
+    }
     if (s.includes('valid') || s.includes('disetujui')) {
         return 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300';
     }
     if (s.includes('revisi')) {
         return 'border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-950/60 dark:text-purple-300';
     }
-    return 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300';
+    return 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/60 dark:text-amber-400';
 };
 
 const getPersetujuanClass = (persetujuan: string) => {
@@ -611,7 +632,6 @@ const getPersetujuanClass = (persetujuan: string) => {
                     : 'border-emerald-300 bg-emerald-50/95 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/90 dark:text-emerald-200',
             ]"
         >
-            <span class="text-base">{{ toast.isError ? '⚠️' : '✅' }}</span>
             <span class="text-xs font-bold sm:text-sm">{{ toast.message }}</span>
         </div>
 
@@ -638,11 +658,11 @@ const getPersetujuanClass = (persetujuan: string) => {
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <!-- 1. Total Mahasiswa Sempro -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs transition-shadow duration-200 dark:border-slate-800 dark:bg-slate-900"
+                class="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-white"
+                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-slate-400"
                     >
                         {{ isKoorprodi ? 'Total Pendaftar Sempro' : 'Total Mahasiswa Sempro' }}
                     </p>
@@ -659,15 +679,15 @@ const getPersetujuanClass = (persetujuan: string) => {
 
             <!-- 2. Jadwal Tervalidasi (Koorprodi) vs Konfirmasi Kehadiran (Dosen) -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-emerald-200 bg-white p-4 shadow-xs transition-shadow duration-200 dark:border-emerald-900/40 dark:bg-slate-900"
+                class="flex items-center justify-between rounded-2xl border border-emerald-200/80 bg-white p-4 shadow-xs dark:border-emerald-900/40 dark:bg-[#111827]"
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-white"
+                        class="text-[11px] font-bold tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
                     >
                         {{ isKoorprodi ? 'Jadwal Tervalidasi' : 'Konfirmasi Kehadiran' }}
                     </p>
-                    <p class="mt-1 text-2xl font-black text-black dark:text-white">
+                    <p class="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-400">
                         {{ isKoorprodi ? `${terjadwalCount} Mhs` : `${konfirmasiHadirCount} Mhs` }}
                     </p>
                 </div>
@@ -680,15 +700,15 @@ const getPersetujuanClass = (persetujuan: string) => {
 
             <!-- 3. Menunggu Validasi (Koorprodi) vs Ajuan Reschedule Jadwal (Dosen) -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-amber-200 bg-white p-4 shadow-xs transition-shadow duration-200 dark:border-amber-900/40 dark:bg-slate-900"
+                class="flex items-center justify-between rounded-2xl border border-amber-200/80 bg-white p-4 shadow-xs dark:border-amber-900/40 dark:bg-[#111827]"
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-white"
+                        class="text-[11px] font-bold tracking-wider text-amber-700 uppercase dark:text-amber-400"
                     >
                         {{ isKoorprodi ? 'Menunggu Validasi' : 'Ajuan Reschedule Jadwal' }}
                     </p>
-                    <p class="mt-1 text-2xl font-black text-black dark:text-white">
+                    <p class="mt-1 text-2xl font-black text-amber-700 dark:text-amber-400">
                         {{ isKoorprodi ? `${pendingValidationCount} Mhs` : `${ajuanRescheduleCount} Pengajuan` }}
                     </p>
                 </div>
@@ -701,15 +721,15 @@ const getPersetujuanClass = (persetujuan: string) => {
 
             <!-- 4. Selesai Dinilai -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-purple-200 bg-white p-4 shadow-xs transition-shadow duration-200 dark:border-purple-900/40 dark:bg-slate-900"
+                class="flex items-center justify-between rounded-2xl border border-purple-200/80 bg-white p-4 shadow-xs dark:border-purple-900/40 dark:bg-[#111827]"
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-white"
+                        class="text-[11px] font-bold tracking-wider text-purple-700 uppercase dark:text-purple-400"
                     >
                         Selesai Dinilai
                     </p>
-                    <p class="mt-1 text-2xl font-black text-black dark:text-white">
+                    <p class="mt-1 text-2xl font-black text-purple-700 dark:text-purple-400">
                         {{ selesaiDinilaiCount }} Mhs
                     </p>
                 </div>
@@ -794,6 +814,17 @@ const getPersetujuanClass = (persetujuan: string) => {
                             >
                                 {{ bimbinganCount }}
                             </span>
+                            <span
+                                v-if="bimbinganRescheduleCount > 0"
+                                class="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                                :class="
+                                    activeTab === 'bimbingan'
+                                        ? 'bg-amber-400 text-amber-950'
+                                        : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                                "
+                            >
+                                {{ bimbinganRescheduleCount }} Reschedule
+                            </span>
                         </button>
                         <button
                             type="button"
@@ -816,6 +847,17 @@ const getPersetujuanClass = (persetujuan: string) => {
                             >
                                 {{ ujiCount }}
                             </span>
+                            <span
+                                v-if="ujiRescheduleCount > 0"
+                                class="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                                :class="
+                                    activeTab === 'uji'
+                                        ? 'bg-amber-400 text-amber-950'
+                                        : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                                "
+                            >
+                                {{ ujiRescheduleCount }} Reschedule
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -829,20 +871,14 @@ const getPersetujuanClass = (persetujuan: string) => {
                         class="flex flex-col justify-between gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:p-5 dark:border-slate-800"
                     >
                         <h3
-                            class="text-sm font-black text-black sm:text-base dark:text-white whitespace-nowrap"
+                            class="text-sm font-black leading-snug text-black sm:text-base dark:text-white"
                         >
                             Daftar Mahasiswa Seminar Proposal
                         </h3>
 
                         <div class="flex items-center gap-3">
                             <!-- Filter Angkatan -->
-                            <div class="flex items-center gap-1.5 shrink-0">
-                                <span
-                                    class="flex items-center gap-1 text-xs font-bold text-black dark:text-slate-400"
-                                >
-                                    <Filter class="h-3.5 w-3.5 text-black dark:text-slate-400" />
-                                    <span>Angkatan:</span>
-                                </span>
+                            <div class="flex items-center shrink-0">
                                 <select
                                     v-model="filterAngkatan"
                                     class="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-bold text-black focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
@@ -871,21 +907,6 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 />
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Horizontal Scroll Helper Banner (Matches Mockup) -->
-                    <div
-                        class="flex items-center gap-2 border-b border-slate-100 bg-slate-50/80 px-4 py-2 text-[11px] font-normal text-black dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-400"
-                    >
-                        <span class="font-black text-blue-600 dark:text-blue-400">➔</span>
-                        <span>
-                            Geser tabel ke samping atau gunakan
-                            <kbd
-                                class="rounded bg-slate-200 px-1.5 py-0.5 font-bold text-black dark:bg-slate-700 dark:text-slate-200"
-                                >Shift</kbd
-                            >
-                            + scroll mouse
-                        </span>
                     </div>
 
                     <!-- Table Content -->
@@ -1097,7 +1118,7 @@ const getPersetujuanClass = (persetujuan: string) => {
 
             <!-- RIGHT SECTION: INSPECTOR PANEL (FIXED WIDTH, STICKY) -->
             <div
-                class="w-full shrink-0 space-y-4 lg:sticky lg:top-6 lg:w-72 xl:w-80"
+                class="w-full shrink-0 space-y-4 lg:sticky lg:top-20 lg:w-96"
             >
                 <!-- Active Selection Pill Banner (Visible when student selected) -->
                 <div
@@ -1259,12 +1280,31 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 <span>✓ Bebas kendala ruangan</span>
                             </div>
 
-                            <!-- Actions: Hanya ada di Mahasiswa Uji (Dosen Penguji) -->
+                            <!-- Status Pengajuan Reschedule Banner -->
                             <div
-                                v-if="selectedStudent.roleTab === 'uji'"
+                                v-if="rescheduledStudents[selectedStudent.id]"
+                                class="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50/80 p-2.5 text-[11px] font-medium text-amber-900 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300"
+                            >
+                                <Clock class="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+                                <span>Pengajuan reschedule telah dikirimkan ke Koorprodi (Menunggu persetujuan).</span>
+                            </div>
+
+                            <!-- Actions Jadwal Dosen (Bisa diajukan baik pada Bimbingan maupun Uji) -->
+                            <div
                                 class="space-y-2 border-t border-slate-200/50 pt-2 dark:border-slate-700/50"
                             >
+                                <!-- Toggle Reschedule / Batalkan Reschedule -->
                                 <button
+                                    v-if="rescheduledStudents[selectedStudent.id]"
+                                    type="button"
+                                    @click="cancelReschedule(selectedStudent)"
+                                    class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 py-2 text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100 dark:border-rose-800/60 dark:bg-rose-950/40 dark:text-rose-300"
+                                >
+                                    <X class="h-3.5 w-3.5" />
+                                    <span>Batalkan Reschedule</span>
+                                </button>
+                                <button
+                                    v-else
                                     type="button"
                                     @click="openModalReschedule(selectedStudent)"
                                     class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 py-2 text-xs font-bold text-amber-900 transition-colors hover:bg-amber-100 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300"
@@ -1273,7 +1313,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                                     <span>Ajukan Reschedule Jadwal</span>
                                 </button>
 
+                                <!-- Konfirmasi Hadir hanya jika dosen penguji di tab uji -->
                                 <button
+                                    v-if="selectedStudent.roleTab === 'uji'"
                                     type="button"
                                     @click="toggleKonfirmasiHadir(selectedStudent.id)"
                                     class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-bold transition-all"
@@ -1475,7 +1517,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                         <p class="font-bold text-black dark:text-white">
                             {{ selectedStudent.nama }}
                         </p>
-                        <p class="font-mono text-[11px] text-black dark:text-slate-400">
+                        <p class="text-[11px] text-black dark:text-slate-400">
                             NIM: {{ selectedStudent.nim }}
                         </p>
                     </div>
