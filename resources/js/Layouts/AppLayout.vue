@@ -31,10 +31,24 @@ const pageTitle = computed(() => {
         component.startsWith('Dosen/Bimbingan') ||
         component.startsWith('Kaprodi/Persetujuan') ||
         page.url.startsWith('/dosen/bimbingan') ||
-        page.url.startsWith('/kaprodi/bimbingan') ||
-        page.url.startsWith('/kaprodi/persetujuan')
+        page.url.startsWith('/kaprodi/bimbingan')
     ) {
-        return 'Data Pengajuan';
+        return 'Bimbingan Mahasiswa';
+    }
+    if (
+        component.startsWith('Kaprodi/Plotting') ||
+        page.url.includes('/plotting')
+    ) {
+        return 'Penjadwalan & Plotting';
+    }
+    if (
+        component.startsWith('Kaprodi/Periode') ||
+        page.url.includes('/periods')
+    ) {
+        return 'Periode Gelombang';
+    }
+    if (page.url.startsWith('/kaprodi/penjadwalan')) {
+        return 'Penjadwalan & Plotting';
     }
     return props.title || 'Dashboard';
 });

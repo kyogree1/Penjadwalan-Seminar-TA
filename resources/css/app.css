@@ -58,12 +58,29 @@ main table {
     }
 
     /* Headings, table headers, and bold elements */
-    h1, h2, h3, h4, h5, h6, th, b, strong, dt {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    th,
+    b,
+    strong,
+    dt {
         color: #000000;
         font-weight: 700;
     }
-    .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
-    .dark th, .dark b, .dark strong, .dark dt {
+    .dark h1,
+    .dark h2,
+    .dark h3,
+    .dark h4,
+    .dark h5,
+    .dark h6,
+    .dark th,
+    .dark b,
+    .dark strong,
+    .dark dt {
         color: #ffffff;
     }
 }
