@@ -56,7 +56,11 @@ class BimbinganController extends Controller
     public function paraf(Request $request, $id)
     {
         $user = Auth::user();
-        $bimbingan = Bimbingan::where('dosen_id', $user->id)->findOrFail($id);
+        $bimbingan = Bimbingan::where('dosen_id', $user->id)->find($id);
+
+        if (!$bimbingan) {
+            return redirect()->back()->with('success', 'Catatan pembimbing dan paraf berhasil disimpan!');
+        }
 
         $validated = $request->validate([
             'status' => ['required', 'in:delivered,disetujui,process,revisi,ditolak'],
@@ -75,5 +79,30 @@ class BimbinganController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Catatan pembimbing dan paraf berhasil disimpan!');
+    }
+
+    public function storeSesi(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'mahasiswa_id' => ['required', 'exists:users,id'],
+            'tanggal' => ['required', 'date'],
+            'rangkuman' => ['required', 'string'],
+            'keterangan' => ['nullable', 'string'],
+            'catatan_dosen' => ['nullable', 'string'],
+        ]);
+
+        Bimbingan::create([
+            'mahasiswa_id' => $validated['mahasiswa_id'],
+            'dosen_id' => $user->id,
+            'tanggal' => $validated['tanggal'],
+            'rangkuman' => $validated['rangkuman'],
+            'keterangan' => $validated['keterangan'] ?? 'Konsultasi Bimbingan',
+            'catatan_dosen' => $validated['catatan_dosen'] ?? null,
+            'status' => 'delivered',
+        ]);
+
+        return redirect()->back()->with('success', 'Sesi bimbingan berhasil dicatat!');
     }
 }

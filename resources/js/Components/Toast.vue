@@ -33,7 +33,6 @@ const emit = defineEmits<{
                     : 'border-emerald-300 bg-emerald-50/95 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/90 dark:text-emerald-200',
             ]"
         >
-            <span class="text-base">{{ isError ? '⚠️' : '✅' }}</span>
             <span class="text-xs font-bold sm:text-sm">{{ message }}</span>
             <button
                 type="button"
