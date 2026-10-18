@@ -1,4 +1,3 @@
-/** Persisted lecturer directory fields; no workload or external affiliation metadata. */
 export type LecturerDirectoryEntry = {
     id: number;
     name: string;
@@ -6,6 +5,10 @@ export type LecturerDirectoryEntry = {
     nip: string | null;
     prodi: string;
     jabatan: string | null;
+    role?: string;
+    bidangKeahlian?: string;
+    currentQuota?: number;
+    maxQuota?: number;
 };
 
 export type LecturerDirectoryProps = {
