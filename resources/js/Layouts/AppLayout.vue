@@ -28,12 +28,23 @@ const pageTitle = computed(() => {
         return 'Data Master';
     }
     if (
+        component.startsWith('Dosen/Sempro') ||
+        component.startsWith('Dosen/Sidang') ||
+        page.url.startsWith('/dosen/sempro') ||
+        page.url.startsWith('/dosen/sidang')
+    ) {
+        return 'Penjadwalan';
+    }
+    if (
         component.startsWith('Dosen/Bimbingan') ||
         component.startsWith('Kaprodi/Persetujuan') ||
+        component.startsWith('Dosen/Persetujuan') ||
         page.url.startsWith('/dosen/bimbingan') ||
-        page.url.startsWith('/kaprodi/bimbingan')
+        page.url.startsWith('/kaprodi/bimbingan') ||
+        page.url.startsWith('/kaprodi/persetujuan') ||
+        page.url.startsWith('/dosen/persetujuan')
     ) {
-        return 'Bimbingan Mahasiswa';
+        return 'Data Pengajuan';
     }
     if (
         component.startsWith('Kaprodi/Plotting') ||
