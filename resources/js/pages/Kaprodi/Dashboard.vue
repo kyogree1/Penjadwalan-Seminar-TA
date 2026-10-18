@@ -139,13 +139,13 @@ const pipelineStages = computed(() => {
     <div class="space-y-6">
         <!-- 1. HERO BANNER WITH QUICK ACTION PILLS (STYLE SIPTA PENJADWALAN-SEMINAR-TA) -->
         <div
-            class="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 text-white shadow-xs md:p-8 dark:border-slate-800"
+            class="relative overflow-hidden rounded-2xl border border-blue-700/40 bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 p-6 text-white shadow-xl shadow-blue-950/20 md:p-8"
         >
             <div
-                class="pointer-events-none absolute -right-12 -bottom-16 h-64 w-64 rounded-full bg-blue-500/15 blur-3xl"
+                class="pointer-events-none absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"
             />
             <div
-                class="pointer-events-none absolute -top-12 -left-12 h-48 w-48 rounded-full bg-indigo-500/15 blur-2xl"
+                class="pointer-events-none absolute top-4 right-20 h-32 w-32 rounded-full bg-blue-400/10 blur-2xl"
             />
 
             <div

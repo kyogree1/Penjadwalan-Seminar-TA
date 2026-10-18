@@ -61,12 +61,12 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
     >
         <div
             v-dialog="'Navigasi portal'"
-            class="flex h-full w-72 max-w-[calc(100vw-2rem)] flex-col justify-between overflow-y-auto bg-[#0E1626] p-5 shadow-2xl"
+            class="flex h-full w-72 max-w-[calc(100vw-2rem)] flex-col justify-between overflow-y-auto bg-white p-5 shadow-2xl text-slate-700 dark:bg-[#0E1626] dark:text-slate-300"
             @click.stop
         >
             <div>
                 <div
-                    class="flex items-center justify-between border-b border-slate-800 pb-4"
+                    class="flex items-center justify-between border-b border-slate-200 pb-4 dark:border-slate-800"
                 >
                     <div class="flex items-center gap-2.5">
                         <div
@@ -74,14 +74,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         >
                             <GraduationCap class="h-4 w-4" />
                         </div>
-                        <span class="text-sm font-bold text-white"
+                        <span class="text-sm font-bold text-slate-900 dark:text-white"
                             >SIPTA IF</span
                         >
                     </div>
                     <button
                         type="button"
                         aria-label="Tutup navigasi"
-                        class="cursor-pointer p-1 text-slate-400 hover:text-white"
+                        class="cursor-pointer p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white"
                         @click="emit('close')"
                     >
                         <X class="h-5 w-5" />
@@ -290,10 +290,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
                         <Link
                             href="/kaprodi/penjadwalan/ta"
-                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <Calendar class="h-4 w-4" /> Periode Tugas Akhir
+                            <Calendar class="h-4 w-4" /> Periode TA
                         </Link>
 
                         <p
@@ -344,17 +344,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </p>
                         <Link
                             href="/katalog"
-                            class="flex items-center justify-between rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <div class="flex items-center gap-3">
-                                <FileSpreadsheet class="h-4 w-4" /> Katalog TA
-                            </div>
-                            <span
-                                class="rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-bold text-emerald-400"
-                            >
-                                Arsip
-                            </span>
+                            <BookOpen class="h-4 w-4" /> Katalog TA
                         </Link>
                         <Link
                             href="/prosedur"
@@ -414,10 +407,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
             </div>
 
             <!-- Footer: Theme Toggle & Logout -->
-            <div class="space-y-2 border-t border-slate-800 pt-4">
+            <div class="space-y-2 border-t border-slate-200 pt-4 dark:border-slate-800">
                 <button
                     type="button"
-                    class="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-slate-300 transition-colors hover:bg-slate-800"
+                    class="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                     @click="toggleDarkMode"
                 >
                     <span class="flex items-center gap-3">
@@ -435,7 +428,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
 
                 <button
                     type="button"
-                    class="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold text-rose-400 transition-colors hover:bg-rose-950/30"
+                    class="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/30"
                     @click="handleLogout"
                 >
                     <LogOut class="h-4 w-4" /> Log Out

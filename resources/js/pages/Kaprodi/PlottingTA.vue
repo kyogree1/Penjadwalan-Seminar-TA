@@ -402,10 +402,13 @@ const downloadJadwal = () => {
 
         <!-- AI OPTIMIZATION BANNER (Genetic Algorithm) -->
         <div
-            class="relative overflow-hidden rounded-2xl border border-blue-900/30 bg-gradient-to-r from-[#0E1626] via-[#131F35] to-[#1E293B] p-5 text-white shadow-xl md:p-6"
+            class="relative overflow-hidden rounded-2xl border border-blue-700/40 bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 p-6 text-white shadow-xl shadow-blue-950/20 md:p-8"
         >
             <div
-                class="pointer-events-none absolute -right-6 -bottom-8 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl"
+                class="pointer-events-none absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"
+            ></div>
+            <div
+                class="pointer-events-none absolute top-4 right-20 h-32 w-32 rounded-full bg-blue-400/10 blur-2xl"
             ></div>
 
             <div

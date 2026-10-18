@@ -47,6 +47,16 @@ const pageTitle = computed(() => {
     ) {
         return 'Periode Gelombang';
     }
+    if (
+        component.startsWith('Katalog') ||
+        component.startsWith('Panduan') ||
+        component.startsWith('Prosedur') ||
+        page.url.startsWith('/katalog') ||
+        page.url.startsWith('/panduan') ||
+        page.url.startsWith('/prosedur')
+    ) {
+        return 'Prosedur & Katalog';
+    }
     if (page.url.startsWith('/kaprodi/penjadwalan')) {
         return 'Penjadwalan & Plotting';
     }
