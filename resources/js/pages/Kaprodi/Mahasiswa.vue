@@ -29,6 +29,23 @@ const mahasiswaList = computed(() => props.mahasiswaList);
 const searchQuery = ref('');
 const filterAngkatan = ref('all');
 
+// Check URL query param e.g. ?status=alumni or ?status=lulus from dashboard pipeline
+const initialStatus = (() => {
+    try {
+        if (typeof window !== 'undefined' && window.location?.search) {
+            const p = new URLSearchParams(window.location.search).get('status');
+            if (p && (p.toLowerCase() === 'alumni' || p.toLowerCase() === 'lulus')) {
+                return 'Lulus';
+            }
+        }
+    } catch {
+        // Fallback for isolated SSR or tests
+    }
+    return 'all';
+})();
+
+const filterStatus = ref<string>(initialStatus);
+
 const angkatanOptions = computed(() => {
     const list = [
         '2024',
@@ -48,19 +65,28 @@ const filteredMahasiswaList = computed(() =>
         const query = searchQuery.value.trim().toLowerCase();
         const matchQuery =
             !query ||
-            [m.nama, m.nim, m.email, m.noTelpon].some((val) =>
+            [m.nama, m.nim, m.email, m.noTelpon, m.angkatan].some((val) =>
                 (val ?? '').toLowerCase().includes(query),
             );
         const matchAngkatan =
             filterAngkatan.value === 'all' ||
             m.angkatan === filterAngkatan.value;
+        const matchStatus =
+            filterStatus.value === 'all' ||
+            (filterStatus.value === 'Lulus'
+                ? m.statusTa === 'Lulus' || m.statusTa === 'Alumni'
+                : m.statusTa === filterStatus.value);
 
-        return matchQuery && matchAngkatan;
+        return matchQuery && matchAngkatan && matchStatus;
     }),
 );
 
 const hasActiveFilter = computed(() => {
-    return searchQuery.value !== '' || filterAngkatan.value !== 'all';
+    return (
+        searchQuery.value !== '' ||
+        filterAngkatan.value !== 'all' ||
+        filterStatus.value !== 'all'
+    );
 });
 
 // Pagination
@@ -71,7 +97,7 @@ const totalPages = computed(() =>
 );
 
 watch(
-    [searchQuery, filterAngkatan],
+    [searchQuery, filterAngkatan, filterStatus],
     () => {
         currentPage.value = 1;
     },
@@ -103,27 +129,10 @@ const paginationEnd = computed(() =>
     Math.min(currentPage.value * pageSize, filteredMahasiswaList.value.length),
 );
 
-// 4 KPI Summary Counts
-const totalMhsCount = computed(() => mahasiswaList.value.length);
-const aktifTaCount = computed(
-    () =>
-        mahasiswaList.value.filter(
-            (m) => m.statusTa === 'Aktif TA' || m.statusTa === 'Bimbingan',
-        ).length,
-);
-const semproCount = computed(
-    () =>
-        mahasiswaList.value.filter(
-            (m) => m.statusTa === 'Sempro' || m.statusTa === 'Sidang Akhir',
-        ).length,
-);
-const lulusCount = computed(
-    () => mahasiswaList.value.filter((m) => m.statusTa === 'Lulus').length,
-);
-
 const resetFilter = () => {
     searchQuery.value = '';
     filterAngkatan.value = 'all';
+    filterStatus.value = 'all';
     currentPage.value = 1;
 };
 
@@ -224,7 +233,7 @@ const isFormValid = computed(() =>
     ),
 );
 
-const requestOptions = (closeForm = false) => ({
+const requestOptions = (closeForm = false, isEdit = false) => ({
     preserveScroll: true,
     onSuccess: (page: { props: Record<string, unknown> }) => {
         const flash = page.props.flash as
@@ -234,9 +243,17 @@ const requestOptions = (closeForm = false) => ({
             showToast(flash.error, true);
         } else if (flash?.success) {
             showToast(flash.success, false);
+        } else {
+            showToast(
+                isEdit
+                    ? 'Data mahasiswa berhasil diperbarui!'
+                    : 'Data mahasiswa berhasil disimpan!',
+                false,
+            );
         }
-        if (closeForm && flash?.success && !flash?.error) {
+        if (closeForm && !flash?.error) {
             isModalFormOpen.value = false;
+            editingMahasiswaId.value = null;
         }
     },
     onError: (serverErrors: Record<string, string>) => {
@@ -263,7 +280,6 @@ const saveMahasiswa = () => {
     if (processing.value || !isFormValid.value) return;
     processing.value = true;
     errors.value = {};
-    feedback.value = '';
     const payload = {
         ...formMhs.value,
         jurusan: 'Teknik Elektro, Informatika, dan Bisnis',
@@ -274,10 +290,10 @@ const saveMahasiswa = () => {
         router.put(
             `/kaprodi/mahasiswa/${editingMahasiswaId.value}`,
             payload,
-            requestOptions(true),
+            requestOptions(true, true),
         );
     } else {
-        router.post('/kaprodi/mahasiswa', payload, requestOptions(true));
+        router.post('/kaprodi/mahasiswa', payload, requestOptions(true, false));
     }
 };
 
@@ -294,7 +310,6 @@ const executeDeleteMahasiswa = () => {
     if (!mhsToDelete.value || processing.value) return;
     processing.value = true;
     errors.value = {};
-    feedback.value = '';
     const id = mhsToDelete.value.id;
     router.delete(`/kaprodi/mahasiswa/${id}`, {
         ...requestOptions(),
@@ -365,101 +380,6 @@ const executeDeleteMahasiswa = () => {
             @close="toast.show = false"
         />
 
-        <!-- 4 KPI SUMMARY CARDS (Matching Daftar Judul) -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <!-- 1. Total Mahasiswa -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-slate-400"
-                    >
-                        Total Mahasiswa
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-black dark:text-white"
-                    >
-                        {{ totalMhsCount }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                >
-                    <Users class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- 2. Aktif Tugas Akhir -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-blue-200/80 bg-white p-4 shadow-xs dark:border-blue-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-blue-700 uppercase dark:text-blue-400"
-                    >
-                        Aktif Tugas Akhir
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-blue-700 dark:text-blue-400"
-                    >
-                        {{ aktifTaCount }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                >
-                    <FileText class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- 3. Tahap Sempro & Uji -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-amber-200/80 bg-white p-4 shadow-xs dark:border-amber-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-amber-700 uppercase dark:text-amber-400"
-                    >
-                        Tahap Sempro &amp; Uji
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-amber-700 dark:text-amber-400"
-                    >
-                        {{ semproCount }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
-                >
-                    <Award class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- 4. Alumni / Lulus -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-emerald-200/80 bg-white p-4 shadow-xs dark:border-emerald-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
-                    >
-                        Alumni / Lulus
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-400"
-                    >
-                        {{ lulusCount }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
-                >
-                    <GraduationCap class="h-5 w-5" />
-                </div>
-            </div>
-        </div>
-
         <!-- MAIN TABLE CONTAINER (Matching Daftar Judul & Data Dosen) -->
         <div
             class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
@@ -498,7 +418,7 @@ const executeDeleteMahasiswa = () => {
                     </div>
 
                     <!-- Filter Angkatan -->
-                    <div class="w-full sm:w-52">
+                    <div class="w-full sm:w-48">
                         <select
                             v-model="filterAngkatan"
                             aria-label="Filter angkatan"
@@ -512,6 +432,22 @@ const executeDeleteMahasiswa = () => {
                             >
                                 Angkatan {{ angkatan }}
                             </option>
+                        </select>
+                    </div>
+
+                    <!-- Filter Dropdown (Default: Semua, auto 'Lulus / Alumni' when direct from dashboard) -->
+                    <div class="w-full sm:w-48">
+                        <select
+                            v-model="filterStatus"
+                            aria-label="Filter status mahasiswa"
+                            class="w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 p-2 text-xs text-slate-700 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                        >
+                            <option value="all">Semua Status</option>
+                            <option value="Aktif TA">Aktif TA</option>
+                            <option value="Bimbingan">Bimbingan</option>
+                            <option value="Sempro">Seminar Proposal</option>
+                            <option value="Sidang Akhir">Sidang TA</option>
+                            <option value="Lulus">Lulus / Alumni</option>
                         </select>
                     </div>
                 </div>

@@ -43,6 +43,31 @@ const getDemoJudulListForUser = (user: any): JudulReview[] => {
 
     return [
         {
+            id: 100,
+            mahasiswa: {
+                id: 9,
+                name: 'Fajar Nugraha',
+                nim_nip: '11231045',
+                angkatan: '2023',
+            },
+            judul_ta:
+                'Implementasi Federative Learning pada Sistem Deteksi Penyakit Tanaman Padi',
+            bidang_penelitian: 'Artificial Intelligence & Machine Learning',
+            status: 'menunggu',
+            pembimbing_1_id: currentId,
+            pembimbing_2_id: 2,
+            pembimbing1: { id: currentId, name: currentName },
+            pembimbing2: {
+                id: 2,
+                name: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
+            },
+            catatan_kaprodi:
+                'Usulan judul baru, menunggu review calon pembimbing.',
+            abstrak:
+                'Penerapan federated learning untuk melatih model deteksi penyakit tanaman padi secara terdistribusi tanpa mengumpulkan data mentah ke server pusat.',
+            created_at: '2026-10-18T09:00:00Z',
+        },
+        {
             id: 101,
             mahasiswa: {
                 id: 1,
@@ -737,23 +762,28 @@ const executeDeleteJudul = () => {
 
 // Navigation button to Sempro
 const goToSempro = () => {
-    activeSection.value = 'sempro';
+    router.visit('/kaprodi/persetujuan?section=sempro');
 };
 
-// Check query param on mount (e.g. ?section=sempro or ?section=sidang)
-onMounted(() => {
-    if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search);
-        const sec = params.get('section');
-        if (sec === 'sempro' || sec === 'sidang' || sec === 'judul') {
-            activeSection.value = sec;
-        } else if (window.location.pathname.includes('/sempro')) {
+const backToJudul = () => {
+    router.visit('/kaprodi/persetujuan');
+};
+
+// Check query param reactively on URL change (e.g. ?section=sempro or ?section=sidang)
+watch(
+    () => page.url,
+    (newUrl) => {
+        if (!newUrl) return;
+        if (newUrl.includes('section=sempro') || newUrl.includes('/sempro')) {
             activeSection.value = 'sempro';
-        } else if (window.location.pathname.includes('/sidang')) {
+        } else if (newUrl.includes('section=sidang') || newUrl.includes('/sidang')) {
             activeSection.value = 'sidang';
+        } else {
+            activeSection.value = 'judul';
         }
-    }
-});
+    },
+    { immediate: true },
+);
 
 // Sempro / Sidang fallback review modal state
 const showAcademicModal = ref(false);
@@ -1738,14 +1768,14 @@ const submitAcademicReview = (
     <SemproSection
         v-else-if="activeSection === 'sempro'"
         :db-sempro="dbSempro"
-        @back-to-judul="activeSection = 'judul'"
+        @back-to-judul="backToJudul"
     />
 
     <!-- 3. MODE: SIDANG TA (MATCHING FRONT-END EXACTLY) -->
     <SidangSection
         v-else-if="activeSection === 'sidang'"
         :db-sidang="dbSidang"
-        @back-to-judul="activeSection = 'judul'"
+        @back-to-judul="backToJudul"
     />
 
     <!-- ACADEMIC MODAL FOR SEMPRO & SIDANG -->
