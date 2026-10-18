@@ -35,6 +35,7 @@ const { role: userRole, roleInfo } = useAuth();
 
 const pengajuanDropdownOpen = ref(true);
 const dosenPengajuanOpen = ref(true);
+const dosenJadwalOpen = ref(true);
 const kaprodiPengajuanOpen = ref(true);
 const kaprodiJadwalOpen = ref(true);
 const kaprodiPeriodeOpen = ref(true);
@@ -50,7 +51,11 @@ const isPengajuanActive = computed(
 const isDosenPengajuanActive = computed(
     () =>
         currentUrl.value.startsWith('/dosen/persetujuan') ||
-        currentUrl.value.startsWith('/dosen/bimbingan') ||
+        currentUrl.value.startsWith('/dosen/bimbingan'),
+);
+
+const isDosenJadwalActive = computed(
+    () =>
         currentUrl.value.startsWith('/dosen/sempro') ||
         currentUrl.value.startsWith('/dosen/sidang'),
 );
@@ -84,6 +89,7 @@ const handleAccordionClick = (
     type:
         | 'pengajuan'
         | 'dosenPengajuan'
+        | 'dosenJadwal'
         | 'kaprodiPengajuan'
         | 'kaprodiPeriode'
         | 'kaprodiJadwal',
@@ -98,6 +104,9 @@ const handleAccordionClick = (
             break;
         case 'dosenPengajuan':
             dosenPengajuanOpen.value = !dosenPengajuanOpen.value;
+            break;
+        case 'dosenJadwal':
+            dosenJadwalOpen.value = !dosenJadwalOpen.value;
             break;
         case 'kaprodiPengajuan':
             kaprodiPengajuanOpen.value = !kaprodiPengajuanOpen.value;
@@ -301,17 +310,12 @@ const handleAccordionClick = (
                             class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
-                                class="flex items-center justify-between border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
+                                class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
                                     class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Pengajuan TA
-                                </span>
-                                <span
-                                    class="rounded-full bg-blue-100 px-1.5 py-0.5 text-[9px] font-extrabold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-                                >
-                                    4 Menu
                                 </span>
                             </div>
                             <div class="space-y-0.5 pt-1.5">
@@ -569,30 +573,6 @@ const handleAccordionClick = (
                             >
                                 Bimbingan TA
                             </Link>
-                            <Link
-                                href="/dosen/sempro"
-                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
-                                :class="[
-                                    currentUrl.startsWith('/dosen/sempro') ||
-                                    currentUrl.includes('section=sempro')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
-                                ]"
-                            >
-                                Seminar Proposal
-                            </Link>
-                            <Link
-                                href="/dosen/sidang"
-                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
-                                :class="[
-                                    currentUrl.startsWith('/dosen/sidang') ||
-                                    currentUrl.includes('section=sidang')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
-                                ]"
-                            >
-                                Sidang TA
-                            </Link>
                         </div>
 
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
@@ -601,17 +581,12 @@ const handleAccordionClick = (
                             class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
-                                class="flex items-center justify-between border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
+                                class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
                                     class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Data Pengajuan
-                                </span>
-                                <span
-                                    class="rounded-full bg-blue-100 px-1.5 py-0.5 text-[9px] font-extrabold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-                                >
-                                    4 Menu
                                 </span>
                             </div>
                             <div class="space-y-0.5 pt-1.5">
@@ -641,12 +616,89 @@ const handleAccordionClick = (
                                     <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
                                     <span>Bimbingan TA</span>
                                 </Link>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION: PENJADWALAN (ACCORDION & FLYOUT) -->
+                    <div class="relative group pt-1">
+                        <button
+                            type="button"
+                            class="flex w-full cursor-pointer items-center rounded-xl text-xs font-semibold transition-all"
+                            :class="[
+                                collapsed
+                                    ? 'h-10 w-10 mx-auto justify-center p-0'
+                                    : 'px-3 py-1.5 justify-between',
+                                isDosenJadwalActive
+                                    ? 'text-blue-600 dark:text-white font-bold bg-blue-50/70 dark:bg-slate-800/50'
+                                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
+                            ]"
+                            :title="collapsed ? 'Penjadwalan (Klik untuk buka)' : ''"
+                            @click="handleAccordionClick('dosenJadwal')"
+                        >
+                            <div
+                                class="flex items-center"
+                                :class="collapsed ? 'justify-center' : 'gap-3'"
+                            >
+                                <Calendar class="h-4 w-4 shrink-0" />
+                                <span v-if="!collapsed">Penjadwalan</span>
+                            </div>
+                            <ChevronDown
+                                v-if="!collapsed"
+                                class="h-3.5 w-3.5 transition-transform"
+                                :class="{ '-rotate-90': !dosenJadwalOpen }"
+                            />
+                        </button>
+
+                        <!-- Submenu inline saat sidebar terbuka -->
+                        <div
+                            v-if="dosenJadwalOpen && !collapsed"
+                            class="mt-1 space-y-1 pl-9"
+                        >
+                            <Link
+                                href="/dosen/sempro"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith('/dosen/sempro')
+                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                ]"
+                            >
+                                Seminar Proposal
+                            </Link>
+                            <Link
+                                href="/dosen/sidang"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith('/dosen/sidang')
+                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                ]"
+                            >
+                                Sidang TA
+                            </Link>
+                        </div>
+
+                        <!-- Flyout Floating Menu saat sidebar collapsed -->
+                        <div
+                            v-if="collapsed"
+                            class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
+                        >
+                            <div
+                                class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
+                            >
+                                <span
+                                    class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
+                                >
+                                    Penjadwalan
+                                </span>
+                            </div>
+                            <div class="space-y-0.5 pt-1.5">
                                 <Link
                                     href="/dosen/sempro"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/dosen/sempro') ||
-                                        currentUrl.includes('section=sempro')
+                                        currentUrl.startsWith('/dosen/sempro')
                                             ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
@@ -658,8 +710,7 @@ const handleAccordionClick = (
                                     href="/dosen/sidang"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/dosen/sidang') ||
-                                        currentUrl.includes('section=sidang')
+                                        currentUrl.startsWith('/dosen/sidang')
                                             ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
@@ -870,17 +921,12 @@ const handleAccordionClick = (
                             class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
-                                class="flex items-center justify-between border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
+                                class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
                                     class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Data Pengajuan
-                                </span>
-                                <span
-                                    class="rounded-full bg-blue-100 px-1.5 py-0.5 text-[9px] font-extrabold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-                                >
-                                    4 Menu
                                 </span>
                             </div>
                             <div class="space-y-0.5 pt-1.5">
@@ -1006,17 +1052,12 @@ const handleAccordionClick = (
                             class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
-                                class="flex items-center justify-between border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
+                                class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
                                     class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Periode Gelombang
-                                </span>
-                                <span
-                                    class="rounded-full bg-blue-100 px-1.5 py-0.5 text-[9px] font-extrabold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-                                >
-                                    2 Menu
                                 </span>
                             </div>
                             <div class="space-y-0.5 pt-1.5">
@@ -1120,17 +1161,12 @@ const handleAccordionClick = (
                             class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-60 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
-                                class="flex items-center justify-between border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
+                                class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
                                     class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Penjadwalan &amp; Plotting
-                                </span>
-                                <span
-                                    class="rounded-full bg-blue-100 px-1.5 py-0.5 text-[9px] font-extrabold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-                                >
-                                    2 Menu
                                 </span>
                             </div>
                             <div class="space-y-0.5 pt-1.5">

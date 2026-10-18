@@ -191,6 +191,12 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         >
                             <UserCheck class="h-4 w-4" /> Bimbingan TA
                         </Link>
+
+                        <p
+                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
+                            Penjadwalan
+                        </p>
                         <Link
                             href="/dosen/sempro"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
