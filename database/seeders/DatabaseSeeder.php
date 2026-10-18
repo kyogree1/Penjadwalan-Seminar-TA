@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Bimbingan;
+use App\Models\PendaftaranSempro;
 use App\Models\PengajuanJudul;
 use App\Models\Ruangan;
+use App\Models\SchedulePeriod;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -557,6 +559,99 @@ class DatabaseSeeder extends Seeder
                     ]
                 );
             }
+        }
+
+        // 7. Data Master Periode Gelombang (Matching Front-End & ContohScreen)
+        $semproSlotsWave1 = [
+            ['tanggal' => '2026-08-15', 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00'],
+            ['tanggal' => '2026-08-15', 'jam_mulai' => '10:30:00', 'jam_selesai' => '12:00:00'],
+        ];
+
+        $semproSlotsWave2 = [
+            ['tanggal' => '2026-10-20', 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00'],
+            ['tanggal' => '2026-10-20', 'jam_mulai' => '10:30:00', 'jam_selesai' => '12:00:00'],
+            ['tanggal' => '2026-10-21', 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00'],
+            ['tanggal' => '2026-10-21', 'jam_mulai' => '13:30:00', 'jam_selesai' => '15:00:00'],
+        ];
+
+        $semproSlotsWave3 = [
+            ['tanggal' => '2026-11-15', 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00'],
+            ['tanggal' => '2026-11-15', 'jam_mulai' => '10:30:00', 'jam_selesai' => '12:00:00'],
+        ];
+
+        $period1 = SchedulePeriod::updateOrCreate(
+            ['tipe' => 'sempro', 'gelombang' => 1],
+            [
+                'name' => '2026/2027',
+                'semester' => 'Gasal',
+                'prodi' => 'Informatika',
+                'capacity' => 20,
+                'start_date' => '2026-08-01',
+                'end_date' => '2026-08-31',
+                'slots' => $semproSlotsWave1,
+                'is_open' => false,
+            ]
+        );
+
+        $period2 = SchedulePeriod::updateOrCreate(
+            ['tipe' => 'sempro', 'gelombang' => 2],
+            [
+                'name' => '2026/2027',
+                'semester' => 'Gasal',
+                'prodi' => 'Informatika',
+                'capacity' => 25,
+                'start_date' => '2026-10-01',
+                'end_date' => '2026-10-31',
+                'slots' => $semproSlotsWave2,
+                'is_open' => true,
+            ]
+        );
+
+        $period3 = SchedulePeriod::updateOrCreate(
+            ['tipe' => 'sempro', 'gelombang' => 3],
+            [
+                'name' => '2026/2027',
+                'semester' => 'Gasal',
+                'prodi' => 'Informatika',
+                'capacity' => 20,
+                'start_date' => '2026-11-01',
+                'end_date' => '2026-11-30',
+                'slots' => $semproSlotsWave3,
+                'is_open' => false,
+            ]
+        );
+
+        // 8. Registrasi Pendaftaran Sempro Gelombang 2 (untuk demo & testing alur)
+        if ($mhsAzka) {
+            PendaftaranSempro::updateOrCreate(
+                ['mahasiswa_id' => $mhsAzka->id],
+                [
+                    'judul_ta' => 'Penerapan Algoritma Genetika dan Large Language Model pada Sistem Penjadwalan Seminar Tugas Akhir',
+                    'bentuk_ta' => 'Skripsi Reguler',
+                    'lokasi_mitra' => 'Program Studi Informatika ITK',
+                    'gelombang' => 2,
+                    'status' => 'verifikasi_tendik',
+                    'status_akademik' => 'disetujui',
+                    'catatan' => 'Berkas pendaftaran sempro lengkap dan memenuhi syarat.',
+                    'catatan_kaprodi' => 'Disetujui untuk penjadwalan sempro gelombang 2.',
+                ]
+            );
+        }
+
+        if ($mhsReezqi) {
+            PendaftaranSempro::updateOrCreate(
+                ['mahasiswa_id' => $mhsReezqi->id],
+                [
+                    'judul_ta' => 'Optimasi Alokasi Dosen Penguji Ujian Skripsi dengan Pendekatan Constraint Satisfaction Problem dan Algoritma Genetika',
+                    'bentuk_ta' => 'Skripsi Reguler',
+                    'lokasi_mitra' => 'FSTI ITK',
+                    'gelombang' => 2,
+                    'status' => 'verifikasi_tendik',
+                    'status_akademik' => 'disetujui',
+                    'catatan' => 'Berkas proposal lengkap.',
+                    'catatan_kaprodi' => 'Disetujui maju seminar proposal.',
+                ]
+            );
         }
     }
 }
