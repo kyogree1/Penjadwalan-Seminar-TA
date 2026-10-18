@@ -61,7 +61,8 @@ const getDemoJudulListForUser = (user: any): JudulReview[] => {
                 id: 2,
                 name: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
             },
-            catatan_kaprodi: 'Menunggu telaah awal calon pembimbing tugas akhir.',
+            catatan_kaprodi:
+                'Menunggu telaah awal calon pembimbing tugas akhir.',
             abstrak:
                 'Penerapan Progressive Web Apps (PWA) dan caching cerdas pada frontend dashboard monitoring tugas akhir mahasiswa untuk aksesibilitas tinggi di piranti bergerak.',
             created_at: '2026-09-18T13:45:00Z',
@@ -407,7 +408,10 @@ const isUserSupervisor = (item: JudulReview): boolean => {
     const p2Name = (item.pembimbing2?.name || '').toLowerCase().trim();
 
     const cleanTokens = currentName
-        .replace(/(dr\.|dra\.|ir\.|prof\.|s\.t\.|m\.t\.|m\.kom\.|ph\.d\.|s\.kom\.|m\.eng\.)/gi, '')
+        .replace(
+            /(dr\.|dra\.|ir\.|prof\.|s\.t\.|m\.t\.|m\.kom\.|ph\.d\.|s\.kom\.|m\.eng\.)/gi,
+            '',
+        )
         .split(/[\s,]+/)
         .filter((t: string) => t.length >= 3);
 
@@ -428,8 +432,9 @@ const myJudulList = computed(() => {
 const totalCount = computed(() => myJudulList.value.length);
 const pendingCount = computed(
     () =>
-        myJudulList.value.filter((j) => getDisplayStatus(j) === 'Menunggu Review')
-            .length,
+        myJudulList.value.filter(
+            (j) => getDisplayStatus(j) === 'Menunggu Review',
+        ).length,
 );
 const approvedCount = computed(
     () =>
@@ -599,9 +604,7 @@ const saveDecision = () => {
 
     // Untuk item demo (id > 100), perbarui state lokal langsung tanpa perlu patch server
     if (item.id > 100) {
-        const foundIndex = judulList.value.findIndex(
-            (j) => j.id === item.id,
-        );
+        const foundIndex = judulList.value.findIndex((j) => j.id === item.id);
         if (foundIndex !== -1) {
             judulList.value[foundIndex] = {
                 ...judulList.value[foundIndex],
@@ -610,9 +613,7 @@ const saveDecision = () => {
             };
         }
         const label =
-            reviewDecision.value === 'disetujui'
-                ? 'Disetujui'
-                : 'Perlu Revisi';
+            reviewDecision.value === 'disetujui' ? 'Disetujui' : 'Perlu Revisi';
         showToast(
             `Status judul untuk "${getStudentName(item)}" berhasil diperbarui menjadi ${label}!`,
         );
@@ -686,12 +687,9 @@ const executeDeleteJudul = () => {
 
     // Untuk item demo (id > 100), hapus dari list lokal langsung
     if (item.id > 100) {
-        judulList.value = judulList.value.filter(
-            (j) => j.id !== item.id,
-        );
+        judulList.value = judulList.value.filter((j) => j.id !== item.id);
         if (selectedJudulId.value === item.id) {
-            selectedJudulId.value =
-                filteredJudulList.value[0]?.id ?? null;
+            selectedJudulId.value = filteredJudulList.value[0]?.id ?? null;
         }
         showDeleteJudulModal.value = false;
         judulToDelete.value = null;
@@ -825,7 +823,6 @@ const submitAcademicReview = (
                 : 'border-emerald-300 bg-emerald-50/95 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/90 dark:text-emerald-200',
         ]"
     >
-        <span class="text-base">{{ toast.isError ? '⚠️' : '✅' }}</span>
         <span class="text-xs font-bold sm:text-sm">{{ toast.message }}</span>
     </div>
 
@@ -841,7 +838,9 @@ const submitAcademicReview = (
                 >
                     Daftar & Pengajuan Judul TA
                 </h1>
-                <p class="mt-0.5 text-xs font-normal text-black dark:text-slate-400">
+                <p
+                    class="mt-0.5 text-xs font-normal text-black dark:text-slate-400"
+                >
                     Pendaftaran topik penelitian, verifikasi orisinalitas, dan
                     alokasi calon pembimbing tugas akhir.
                 </p>
@@ -1047,7 +1046,7 @@ const submitAcademicReview = (
                                     v-model="searchQuery"
                                     type="text"
                                     placeholder="Cari judul, nama, atau NIM..."
-                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-8 text-xs font-medium text-black outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 placeholder:text-black dark:placeholder:text-slate-400"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-8 text-xs font-medium text-black outline-hidden placeholder:text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:placeholder:text-slate-400"
                                 />
                                 <Search
                                     class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-black dark:text-slate-400"
@@ -1098,11 +1097,7 @@ const submitAcademicReview = (
                                     <th class="min-w-[140px] px-3 py-3">
                                         NAMA
                                     </th>
-                                    <th
-                                        class="min-w-[90px] px-3 py-3 font-mono"
-                                    >
-                                        NIM
-                                    </th>
+                                    <th class="min-w-[90px] px-3 py-3">NIM</th>
                                     <th class="min-w-[260px] px-3 py-3">
                                         JUDUL TA
                                     </th>
@@ -1141,30 +1136,24 @@ const submitAcademicReview = (
                                         class="px-3 py-3 text-center font-bold text-black dark:text-slate-400"
                                     >
                                         {{
-                                            (currentPage - 1) *
-                                                entriesPerPage +
+                                            (currentPage - 1) * entriesPerPage +
                                             idx +
                                             1
                                         }}
                                     </td>
 
-                                    <!-- Nama & Angkatan (Angk. prefix removed, purely year) -->
+                                    <!-- Nama -->
                                     <td class="px-3 py-3">
                                         <p
                                             class="leading-snug font-black text-black dark:text-white"
                                         >
                                             {{ getStudentName(item) }}
                                         </p>
-                                        <span
-                                            class="font-mono text-[10px] font-normal text-black dark:text-slate-400"
-                                        >
-                                            {{ getStudentAngkatan(item) }}
-                                        </span>
                                     </td>
 
                                     <!-- NIM -->
                                     <td
-                                        class="px-3 py-3 font-mono font-normal whitespace-nowrap text-black dark:text-slate-400"
+                                        class="px-3 py-3 font-normal whitespace-nowrap text-black dark:text-slate-400"
                                     >
                                         {{ getStudentNim(item) }}
                                     </td>
@@ -1290,7 +1279,9 @@ const submitAcademicReview = (
                     <div
                         class="flex flex-col justify-between gap-3 border-t border-slate-100 p-4 text-xs font-normal text-black sm:flex-row sm:items-center dark:border-slate-800 dark:text-slate-400"
                     >
-                        <div class="text-xs font-semibold text-black dark:text-white">
+                        <div
+                            class="text-xs font-semibold text-black dark:text-white"
+                        >
                             Menampilkan
                             <b class="font-bold text-black dark:text-white">{{
                                 paginationStart
@@ -1386,7 +1377,9 @@ const submitAcademicReview = (
                         >
                             {{ getStudentName(selectedJudul) }}
                         </h4>
-                        <p class="font-mono text-[11px] font-normal text-black dark:text-slate-400">
+                        <p
+                            class="text-[11px] font-normal text-black dark:text-slate-400"
+                        >
                             NIM: {{ getStudentNim(selectedJudul) }} •
                             {{ getStudentAngkatan(selectedJudul) }}
                         </p>
@@ -1409,15 +1402,21 @@ const submitAcademicReview = (
                     >
                         <span
                             >Bidang:
-                            <b class="font-bold text-black dark:text-slate-300">{{
-                                selectedJudul.bidang_penelitian || 'Umum'
-                            }}</b></span
+                            <b
+                                class="font-bold text-black dark:text-slate-300"
+                                >{{
+                                    selectedJudul.bidang_penelitian || 'Umum'
+                                }}</b
+                            ></span
                         >
                         <span
                             >Tgl:
-                            <b class="font-bold text-black dark:text-slate-300">{{
-                                formatTanggal(selectedJudul.created_at)
-                            }}</b></span
+                            <b
+                                class="font-bold text-black dark:text-slate-300"
+                                >{{
+                                    formatTanggal(selectedJudul.created_at)
+                                }}</b
+                            ></span
                         >
                     </div>
                 </div>
@@ -1450,7 +1449,8 @@ const submitAcademicReview = (
                         <div
                             class="rounded-xl bg-slate-50 p-2.5 dark:bg-slate-800/40"
                         >
-                            <span class="text-[11px] font-normal text-black dark:text-slate-400"
+                            <span
+                                class="text-[11px] font-normal text-black dark:text-slate-400"
                                 >Pembimbing 1:
                             </span>
                             <b
@@ -1463,7 +1463,8 @@ const submitAcademicReview = (
                         <div
                             class="rounded-xl bg-slate-50 p-2.5 dark:bg-slate-800/40"
                         >
-                            <span class="text-[11px] font-normal text-black dark:text-slate-400"
+                            <span
+                                class="text-[11px] font-normal text-black dark:text-slate-400"
                                 >Pembimbing 2:
                             </span>
                             <b
@@ -1533,7 +1534,7 @@ const submitAcademicReview = (
                                 :class="[
                                     reviewDecision === 'disetujui'
                                         ? 'scale-[1.02] bg-emerald-600 text-white shadow-md ring-2 shadow-emerald-600/30 ring-emerald-500 ring-offset-2 dark:ring-offset-[#111827]'
-                                        : 'border border-slate-200 bg-slate-50 text-black font-bold hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
+                                        : 'border border-slate-200 bg-slate-50 font-bold text-black hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
                                 ]"
                             >
                                 Setujui
@@ -1549,7 +1550,7 @@ const submitAcademicReview = (
                                 :class="[
                                     reviewDecision === 'revisi'
                                         ? 'scale-[1.02] bg-purple-600 text-white shadow-md ring-2 shadow-purple-600/30 ring-purple-500 ring-offset-2 dark:ring-offset-[#111827]'
-                                        : 'border border-slate-200 bg-slate-50 text-black font-bold hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
+                                        : 'border border-slate-200 bg-slate-50 font-bold text-black hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
                                 ]"
                             >
                                 Revisi
@@ -1628,7 +1629,9 @@ const submitAcademicReview = (
 
                 <!-- KONDISI 3: PERLU REVISI (WARNA UNGU, MENUNGGU MAHASISWA REVISI, TIDAK ADA BUTTON LAGI) -->
                 <template
-                    v-else-if="getDisplayStatus(selectedJudul) === 'Perlu Revisi'"
+                    v-else-if="
+                        getDisplayStatus(selectedJudul) === 'Perlu Revisi'
+                    "
                 >
                     <!-- Catatan Arahan Revisi (jika ada) -->
                     <div
@@ -1718,12 +1721,12 @@ const submitAcademicReview = (
                 >
                     <ClipboardList class="h-6 w-6" />
                 </div>
-                <h3
-                    class="mt-3 text-sm font-black text-black dark:text-white"
-                >
+                <h3 class="mt-3 text-sm font-black text-black dark:text-white">
                     Telaah Usulan Judul
                 </h3>
-                <p class="mt-1 text-xs font-normal text-black dark:text-slate-400">
+                <p
+                    class="mt-1 text-xs font-normal text-black dark:text-slate-400"
+                >
                     Pilih salah satu mahasiswa dari tabel di sebelah kiri untuk
                     melihat detail usulan judul dan status keputusan review.
                 </p>

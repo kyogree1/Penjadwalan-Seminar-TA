@@ -40,6 +40,7 @@ const pengajuanDropdownOpen = ref(true);
 const dosenPengajuanOpen = ref(true);
 const kaprodiPengajuanOpen = ref(true);
 const kaprodiJadwalOpen = ref(true);
+const kaprodiPeriodeOpen = ref(true);
 
 const currentUrl = computed(() => page.url);
 
@@ -66,10 +67,20 @@ const isKaprodiPengajuanActive = computed(
 
 const isKaprodiJadwalActive = computed(
     () =>
-        currentUrl.value.startsWith('/kaprodi/penjadwalan') ||
-        currentUrl.value.startsWith('/koordinator/penjadwalan') ||
-        currentUrl.value.startsWith('/kaprodi/monitoring') ||
-        currentUrl.value.startsWith('/koordinator/monitoring'),
+        currentUrl.value.startsWith('/kaprodi/penjadwalan/plotting') ||
+        currentUrl.value.startsWith('/koordinator/penjadwalan/plotting') ||
+        ((currentUrl.value.startsWith('/kaprodi/penjadwalan') ||
+            currentUrl.value.startsWith('/koordinator/penjadwalan')) &&
+            !currentUrl.value.includes('/penjadwalan/sempro') &&
+            !currentUrl.value.includes('/penjadwalan/ta')),
+);
+
+const isKaprodiPeriodeActive = computed(
+    () =>
+        currentUrl.value.startsWith('/kaprodi/penjadwalan/sempro') ||
+        currentUrl.value.startsWith('/kaprodi/penjadwalan/ta') ||
+        currentUrl.value.startsWith('/koordinator/penjadwalan/sempro') ||
+        currentUrl.value.startsWith('/koordinator/penjadwalan/ta'),
 );
 </script>
 
@@ -336,7 +347,9 @@ const isKaprodiJadwalActive = computed(
                                 href="/dosen/persetujuan"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
-                                    currentUrl.startsWith('/dosen/persetujuan') &&
+                                    currentUrl.startsWith(
+                                        '/dosen/persetujuan',
+                                    ) &&
                                     !currentUrl.includes('section=sempro') &&
                                     !currentUrl.includes('section=sidang')
                                         ? 'font-bold text-white'
@@ -535,7 +548,70 @@ const isKaprodiJadwalActive = computed(
                         </div>
                     </div>
 
-                    <!-- SECTION 3: PENJADWALAN & PLOTTING PENGUJI (ACCORDION) -->
+                    <!-- SECTION 3: PERIODE GELOMBANG (ACCORDION) -->
+                    <div class="pt-2">
+                        <button
+                            type="button"
+                            class="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-1.5 text-xs font-semibold transition-all"
+                            :class="[
+                                isKaprodiPeriodeActive
+                                    ? 'text-white'
+                                    : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-200',
+                            ]"
+                            @click="kaprodiPeriodeOpen = !kaprodiPeriodeOpen"
+                        >
+                            <div class="flex items-center gap-3">
+                                <Calendar class="h-4 w-4 shrink-0" />
+                                <span v-if="!collapsed">Periode Gelombang</span>
+                            </div>
+                            <ChevronDown
+                                v-if="!collapsed"
+                                class="h-3.5 w-3.5 transition-transform"
+                                :class="{ '-rotate-90': !kaprodiPeriodeOpen }"
+                            />
+                        </button>
+
+                        <div
+                            v-if="kaprodiPeriodeOpen && !collapsed"
+                            class="mt-1 space-y-1 pl-9"
+                        >
+                            <Link
+                                href="/kaprodi/penjadwalan/sempro"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith(
+                                        '/kaprodi/penjadwalan/sempro',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/penjadwalan/sempro',
+                                    )
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Periode Sempro
+                            </Link>
+
+                            <Link
+                                href="/kaprodi/penjadwalan/ta"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith(
+                                        '/kaprodi/penjadwalan/ta',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/penjadwalan/ta',
+                                    )
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Periode Tugas Akhir
+                            </Link>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: PENJADWALAN & PLOTTING PENGUJI (ACCORDION) -->
                     <div class="pt-2">
                         <button
                             type="button"
@@ -549,7 +625,9 @@ const isKaprodiJadwalActive = computed(
                         >
                             <div class="flex items-center gap-3">
                                 <Cpu class="h-4 w-4 shrink-0" />
-                                <span v-if="!collapsed">Penjadwalan &amp; Plotting</span>
+                                <span v-if="!collapsed"
+                                    >Penjadwalan &amp; Plotting</span
+                                >
                             </div>
                             <ChevronDown
                                 v-if="!collapsed"
@@ -563,58 +641,38 @@ const isKaprodiJadwalActive = computed(
                             class="mt-1 space-y-1 pl-9"
                         >
                             <Link
-                                href="/kaprodi/penjadwalan"
-                                class="flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                href="/kaprodi/penjadwalan/plotting-sempro"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl.startsWith(
-                                        '/kaprodi/penjadwalan',
+                                        '/kaprodi/penjadwalan/plotting-sempro',
                                     ) ||
                                     currentUrl.startsWith(
-                                        '/koordinator/penjadwalan',
+                                        '/koordinator/penjadwalan/plotting-sempro',
+                                    ) ||
+                                    currentUrl === '/kaprodi/penjadwalan'
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Plotting Jadwal Sempro
+                            </Link>
+
+                            <Link
+                                href="/kaprodi/penjadwalan/plotting-ta"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith(
+                                        '/kaprodi/penjadwalan/plotting-ta',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/penjadwalan/plotting-ta',
                                     )
                                         ? 'font-bold text-white'
                                         : 'text-slate-400 hover:text-slate-200',
                                 ]"
                             >
-                                <span class="truncate"
-                                    >Plotting Jadwal (GA)</span
-                                >
-                                <span
-                                    class="py-0.2 rounded-full border border-blue-500/30 bg-blue-500/20 px-1.5 text-[9px] font-extrabold text-blue-400"
-                                >
-                                    GA
-                                </span>
-                            </Link>
-
-                            <Link
-                                href="/kaprodi/penjadwalan"
-                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
-                                :class="[
-                                    currentUrl.startsWith(
-                                        '/kaprodi/penjadwalan',
-                                    )
-                                        ? 'text-slate-300 hover:text-white'
-                                        : 'text-slate-400 hover:text-slate-200',
-                                ]"
-                            >
-                                Periode Gelombang
-                            </Link>
-
-                            <Link
-                                href="/kaprodi/monitoring"
-                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
-                                :class="[
-                                    currentUrl.startsWith(
-                                        '/kaprodi/monitoring',
-                                    ) ||
-                                    currentUrl.startsWith(
-                                        '/koordinator/monitoring',
-                                    )
-                                        ? 'font-bold text-white'
-                                        : 'text-slate-400 hover:text-slate-200',
-                                ]"
-                            >
-                                Monitoring Kemajuan TA
+                                Plotting Jadwal Sidang TA
                             </Link>
                         </div>
                     </div>

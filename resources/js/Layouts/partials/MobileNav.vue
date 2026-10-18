@@ -279,35 +279,42 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         <p
                             class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
                         >
+                            Periode Gelombang
+                        </p>
+                        <Link
+                            href="/kaprodi/penjadwalan/sempro"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <Calendar class="h-4 w-4" /> Periode Sempro
+                        </Link>
+                        <Link
+                            href="/kaprodi/penjadwalan/ta"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <Calendar class="h-4 w-4" /> Periode Tugas Akhir
+                        </Link>
+
+                        <p
+                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                        >
                             Penjadwalan &amp; Plotting
                         </p>
                         <Link
-                            href="/kaprodi/penjadwalan"
-                            class="flex items-center justify-between rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
-                            @click="emit('close')"
-                        >
-                            <div class="flex items-center gap-3">
-                                <Cpu class="h-4 w-4" /> Plotting Jadwal (GA)
-                            </div>
-                            <span
-                                class="rounded-full bg-blue-500/20 px-1.5 py-0.5 text-[9px] font-bold text-blue-400"
-                            >
-                                AI
-                            </span>
-                        </Link>
-                        <Link
-                            href="/kaprodi/penjadwalan"
+                            href="/kaprodi/penjadwalan/plotting-sempro"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <Clock class="h-4 w-4" /> Periode Gelombang
+                            <Cpu class="h-4 w-4" /> Plotting Jadwal Sempro
                         </Link>
                         <Link
-                            href="/kaprodi/monitoring"
+                            href="/kaprodi/penjadwalan/plotting-ta"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"
                         >
-                            <Activity class="h-4 w-4" /> Monitoring Kemajuan TA
+                            <Calendar class="h-4 w-4" /> Plotting Jadwal Sidang
+                            TA
                         </Link>
 
                         <p

@@ -266,35 +266,54 @@ watch(
     () => props.dbSempro,
     (newVal) => {
         if (newVal && newVal.length > 0) {
-            const mapped: SemproStudentItem[] = newVal.map((item: any, idx: number) => {
-                const angk =
-                    item.mahasiswa?.angkatan ||
-                    (item.mahasiswa?.nim_nip ? '20' + String(item.mahasiswa.nim_nip).substring(2, 4) : '2023');
-                return {
-                    id: item.id || idx + 100,
-                    nama: item.mahasiswa?.name || 'Mahasiswa ' + (idx + 1),
-                    nim: item.mahasiswa?.nim_nip || '—',
-                    angkatan: String(angk),
-                    roleTab: idx % 2 === 0 ? 'bimbingan' : 'uji',
-                    judul: item.judul_ta || item.judul || 'Judul Seminar Proposal',
-                    statusBerkas: item.status_akademik === 'disetujui' ? 'Berkas Valid' : (item.status_akademik === 'revisi' ? 'Perlu Revisi' : 'Menunggu Validasi'),
-                    persetujuan: item.status === 'disetujui' ? 'Disetujui Pembimbing' : 'Draf Pengajuan',
-                    bentukTa: item.bentuk_ta || 'Reguler',
-                    nilai: item.nilai || null,
-                    revisi: item.catatan_kaprodi || item.catatan || 'Tidak Ada',
-                    penguji1: item.penguji1 || 'Dr. Budi Wicaksono, M.Kom.',
-                    penguji1MatchScore: 95,
-                    penguji2: item.penguji2 || 'Dian Permata Sari, S.Kom., M.Kom.',
-                    hari: 'Selasa',
-                    tanggal: '29 Sep 2026',
-                    mulai: '09:00',
-                    selesai: '10:30',
-                    files: [
-                        { name: 'Draf_Proposal_Skripsi.pdf' },
-                        { name: 'Lembar_Persetujuan_Seminar.pdf' },
-                    ],
-                };
-            });
+            const mapped: SemproStudentItem[] = newVal.map(
+                (item: any, idx: number) => {
+                    const angk =
+                        item.mahasiswa?.angkatan ||
+                        (item.mahasiswa?.nim_nip
+                            ? '20' +
+                              String(item.mahasiswa.nim_nip).substring(2, 4)
+                            : '2023');
+                    return {
+                        id: item.id || idx + 100,
+                        nama: item.mahasiswa?.name || 'Mahasiswa ' + (idx + 1),
+                        nim: item.mahasiswa?.nim_nip || '—',
+                        angkatan: String(angk),
+                        roleTab: idx % 2 === 0 ? 'bimbingan' : 'uji',
+                        judul:
+                            item.judul_ta ||
+                            item.judul ||
+                            'Judul Seminar Proposal',
+                        statusBerkas:
+                            item.status_akademik === 'disetujui'
+                                ? 'Berkas Valid'
+                                : item.status_akademik === 'revisi'
+                                  ? 'Perlu Revisi'
+                                  : 'Menunggu Validasi',
+                        persetujuan:
+                            item.status === 'disetujui'
+                                ? 'Disetujui Pembimbing'
+                                : 'Draf Pengajuan',
+                        bentukTa: item.bentuk_ta || 'Reguler',
+                        nilai: item.nilai || null,
+                        revisi:
+                            item.catatan_kaprodi || item.catatan || 'Tidak Ada',
+                        penguji1: item.penguji1 || 'Dr. Budi Wicaksono, M.Kom.',
+                        penguji1MatchScore: 95,
+                        penguji2:
+                            item.penguji2 ||
+                            'Dian Permata Sari, S.Kom., M.Kom.',
+                        hari: 'Selasa',
+                        tanggal: '29 Sep 2026',
+                        mulai: '09:00',
+                        selesai: '10:30',
+                        files: [
+                            { name: 'Draf_Proposal_Skripsi.pdf' },
+                            { name: 'Lembar_Persetujuan_Seminar.pdf' },
+                        ],
+                    };
+                },
+            );
             studentsList.value = mapped;
         } else {
             studentsList.value = defaultDemoList;
@@ -333,7 +352,9 @@ const displayStudentsList = computed(() => {
 
 // Tab Counts
 const bimbinganCount = computed(
-    () => displayStudentsList.value.filter((s) => s.roleTab === 'bimbingan').length,
+    () =>
+        displayStudentsList.value.filter((s) => s.roleTab === 'bimbingan')
+            .length,
 );
 const ujiCount = computed(
     () => displayStudentsList.value.filter((s) => s.roleTab === 'uji').length,
@@ -382,7 +403,8 @@ const ajuanRescheduleCount = computed(
 const bimbinganRescheduleCount = computed(
     () =>
         displayStudentsList.value.filter(
-            (s) => s.roleTab === 'bimbingan' && !!rescheduledStudents.value[s.id],
+            (s) =>
+                s.roleTab === 'bimbingan' && !!rescheduledStudents.value[s.id],
         ).length,
 );
 const ujiRescheduleCount = computed(
@@ -406,7 +428,8 @@ const filteredStudents = computed(() => {
     return displayStudentsList.value.filter((s) => {
         const matchTab = s.roleTab === activeTab.value;
         const matchAngkatan =
-            filterAngkatan.value === 'all' || s.angkatan === filterAngkatan.value;
+            filterAngkatan.value === 'all' ||
+            s.angkatan === filterAngkatan.value;
         const q = searchQuery.value.toLowerCase().trim();
         const matchSearch =
             !q ||
@@ -425,8 +448,8 @@ watch([activeTab, filterAngkatan, searchQuery], () => {
     currentPage.value = 1;
 });
 
-const totalPages = computed(() =>
-    Math.ceil(filteredStudents.value.length / itemsPerPage) || 1,
+const totalPages = computed(
+    () => Math.ceil(filteredStudents.value.length / itemsPerPage) || 1,
 );
 
 const paginationStart = computed(() =>
@@ -436,10 +459,7 @@ const paginationStart = computed(() =>
 );
 
 const paginationEnd = computed(() =>
-    Math.min(
-        currentPage.value * itemsPerPage,
-        filteredStudents.value.length,
-    ),
+    Math.min(currentPage.value * itemsPerPage, filteredStudents.value.length),
 );
 
 const paginatedStudents = computed(() => {
@@ -481,7 +501,8 @@ const revisiNote = ref('');
 const openRevisiModal = () => {
     if (!selectedStudent.value) return;
     revisiNote.value =
-        selectedStudent.value.revisi && selectedStudent.value.revisi !== 'Tidak Ada'
+        selectedStudent.value.revisi &&
+        selectedStudent.value.revisi !== 'Tidak Ada'
             ? selectedStudent.value.revisi
             : 'Lengkapi dokumen lampiran Bab 3 dan lembar bimbingan';
     showRevisiModal.value = true;
@@ -527,10 +548,14 @@ const hitungGrade = (skor: number) => {
 
 const openModalNilai = (student: SemproStudentItem) => {
     if (!student) return;
-    const initialSkor = student.nilai === 'A' ? 88 : student.nilai === 'AB' ? 80 : 85;
+    const initialSkor =
+        student.nilai === 'A' ? 88 : student.nilai === 'AB' ? 80 : 85;
     formNilai.value = {
         skor: initialSkor,
-        revisi: student.revisi && student.revisi !== 'Tidak Ada' ? student.revisi : '',
+        revisi:
+            student.revisi && student.revisi !== 'Tidak Ada'
+                ? student.revisi
+                : '',
     };
     isModalNilaiOpen.value = true;
 };
@@ -538,7 +563,8 @@ const openModalNilai = (student: SemproStudentItem) => {
 const submitNilaiSempro = () => {
     if (!selectedStudent.value) return;
     selectedStudent.value.nilai = hitungGrade(formNilai.value.skor);
-    selectedStudent.value.revisi = formNilai.value.revisi || 'Sudah Bebas Revisi';
+    selectedStudent.value.revisi =
+        formNilai.value.revisi || 'Sudah Bebas Revisi';
     showToast(
         `Nilai seminar proposal (${selectedStudent.value.nilai}) untuk "${selectedStudent.value.nama}" berhasil disimpan!`,
     );
@@ -577,11 +603,14 @@ const submitReschedule = () => {
 const cancelReschedule = (student: SemproStudentItem) => {
     if (!student) return;
     delete rescheduledStudents.value[student.id];
-    showToast(`Pengajuan reschedule untuk "${student.nama}" berhasil dibatalkan.`);
+    showToast(
+        `Pengajuan reschedule untuk "${student.nama}" berhasil dibatalkan.`,
+    );
 };
 
 const toggleKonfirmasiHadir = (studentId: number) => {
-    confirmedAttendance.value[studentId] = !confirmedAttendance.value[studentId];
+    confirmedAttendance.value[studentId] =
+        !confirmedAttendance.value[studentId];
     if (confirmedAttendance.value[studentId]) {
         showToast('Kehadiran seminar proposal berhasil dikonfirmasi!');
     } else {
@@ -589,7 +618,10 @@ const toggleKonfirmasiHadir = (studentId: number) => {
     }
 };
 
-const isPengujiConfirmed = (student: SemproStudentItem, pengujiName: string) => {
+const isPengujiConfirmed = (
+    student: SemproStudentItem,
+    pengujiName: string,
+) => {
     if (pengujiName === currentUserName.value) {
         return !!confirmedAttendance.value[student.id];
     }
@@ -632,23 +664,31 @@ const getPersetujuanClass = (persetujuan: string) => {
                     : 'border-emerald-300 bg-emerald-50/95 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/90 dark:text-emerald-200',
             ]"
         >
-            <span class="text-xs font-bold sm:text-sm">{{ toast.message }}</span>
+            <span class="text-xs font-bold sm:text-sm">{{
+                toast.message
+            }}</span>
         </div>
 
         <!-- PAGE HEADER -->
-        <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div
+            class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
+        >
             <div>
                 <h1
                     class="text-2xl font-black tracking-tight text-black dark:text-white"
                 >
                     Seminar Proposal
                 </h1>
-                <p class="mt-0.5 text-xs font-normal text-black dark:text-slate-400">
+                <p
+                    class="mt-0.5 text-xs font-normal text-black dark:text-slate-400"
+                >
                     <template v-if="isKoorprodi">
-                        Data pengajuan seminar proposal, plotting penguji, dan verifikasi berkas akademik.
+                        Data pengajuan seminar proposal, plotting penguji, dan
+                        verifikasi berkas akademik.
                     </template>
                     <template v-else>
-                        Informasi jadwal seminar proposal mahasiswa bimbingan & uji, konfirmasi kehadiran, dan penilaian.
+                        Informasi jadwal seminar proposal mahasiswa bimbingan &
+                        uji, konfirmasi kehadiran, dan penilaian.
                     </template>
                 </p>
             </div>
@@ -664,9 +704,15 @@ const getPersetujuanClass = (persetujuan: string) => {
                     <p
                         class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-slate-400"
                     >
-                        {{ isKoorprodi ? 'Total Pendaftar Sempro' : 'Total Mahasiswa Sempro' }}
+                        {{
+                            isKoorprodi
+                                ? 'Total Pendaftar Sempro'
+                                : 'Total Mahasiswa Sempro'
+                        }}
                     </p>
-                    <p class="mt-1 text-2xl font-black text-black dark:text-white">
+                    <p
+                        class="mt-1 text-2xl font-black text-black dark:text-white"
+                    >
                         {{ totalSemproCount }} Mhs
                     </p>
                 </div>
@@ -685,16 +731,29 @@ const getPersetujuanClass = (persetujuan: string) => {
                     <p
                         class="text-[11px] font-bold tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
                     >
-                        {{ isKoorprodi ? 'Jadwal Tervalidasi' : 'Konfirmasi Kehadiran' }}
+                        {{
+                            isKoorprodi
+                                ? 'Jadwal Tervalidasi'
+                                : 'Konfirmasi Kehadiran'
+                        }}
                     </p>
-                    <p class="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-400">
-                        {{ isKoorprodi ? `${terjadwalCount} Mhs` : `${konfirmasiHadirCount} Mhs` }}
+                    <p
+                        class="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-400"
+                    >
+                        {{
+                            isKoorprodi
+                                ? `${terjadwalCount} Mhs`
+                                : `${konfirmasiHadirCount} Mhs`
+                        }}
                     </p>
                 </div>
                 <div
                     class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
                 >
-                    <component :is="isKoorprodi ? Calendar : CheckCircle2" class="h-5 w-5" />
+                    <component
+                        :is="isKoorprodi ? Calendar : CheckCircle2"
+                        class="h-5 w-5"
+                    />
                 </div>
             </div>
 
@@ -706,16 +765,29 @@ const getPersetujuanClass = (persetujuan: string) => {
                     <p
                         class="text-[11px] font-bold tracking-wider text-amber-700 uppercase dark:text-amber-400"
                     >
-                        {{ isKoorprodi ? 'Menunggu Validasi' : 'Ajuan Reschedule Jadwal' }}
+                        {{
+                            isKoorprodi
+                                ? 'Menunggu Validasi'
+                                : 'Ajuan Reschedule Jadwal'
+                        }}
                     </p>
-                    <p class="mt-1 text-2xl font-black text-amber-700 dark:text-amber-400">
-                        {{ isKoorprodi ? `${pendingValidationCount} Mhs` : `${ajuanRescheduleCount} Pengajuan` }}
+                    <p
+                        class="mt-1 text-2xl font-black text-amber-700 dark:text-amber-400"
+                    >
+                        {{
+                            isKoorprodi
+                                ? `${pendingValidationCount} Mhs`
+                                : `${ajuanRescheduleCount} Pengajuan`
+                        }}
                     </p>
                 </div>
                 <div
                     class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
                 >
-                    <component :is="isKoorprodi ? Clock : CalendarClock" class="h-5 w-5" />
+                    <component
+                        :is="isKoorprodi ? Clock : CalendarClock"
+                        class="h-5 w-5"
+                    />
                 </div>
             </div>
 
@@ -729,7 +801,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                     >
                         Selesai Dinilai
                     </p>
-                    <p class="mt-1 text-2xl font-black text-purple-700 dark:text-purple-400">
+                    <p
+                        class="mt-1 text-2xl font-black text-purple-700 dark:text-purple-400"
+                    >
                         {{ selesaiDinilaiCount }} Mhs
                     </p>
                 </div>
@@ -742,19 +816,23 @@ const getPersetujuanClass = (persetujuan: string) => {
         </div>
 
         <!-- MAIN LAYOUT: LEFT (PROFILE + TABLE) & RIGHT (INSPECTOR PANEL) -->
-        <div class="flex flex-col items-start gap-5 lg:flex-row w-full">
+        <div class="flex w-full flex-col items-start gap-5 lg:flex-row">
             <!-- LEFT SECTION: PROFILE & TABLE (FLEX-1) -->
             <div class="w-full min-w-0 flex-1 space-y-5">
                 <!-- DOSEN PROFILE CARD -->
                 <div
-                    class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs space-y-4 dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
                 >
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div
+                        class="flex flex-col gap-4 sm:flex-row sm:items-center"
+                    >
                         <!-- Avatar with online dot -->
                         <div
-                            class="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-slate-100 border-2 border-white shadow-xs dark:bg-slate-800 dark:border-slate-700 sm:h-16 sm:w-16"
+                            class="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-white bg-slate-100 shadow-xs sm:h-16 sm:w-16 dark:border-slate-700 dark:bg-slate-800"
                         >
-                            <UserIcon class="h-8 w-8 text-black dark:text-slate-300" />
+                            <UserIcon
+                                class="h-8 w-8 text-black dark:text-slate-300"
+                            />
                             <span
                                 class="absolute right-0.5 bottom-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#111827]"
                             />
@@ -767,7 +845,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 {{ currentUserName }}
                             </h2>
 
-                            <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                            <div
+                                class="flex flex-wrap items-center gap-2 pt-1 text-xs"
+                            >
                                 <span
                                     class="rounded-xl border border-blue-200 bg-blue-50 px-2.5 py-0.5 font-bold text-blue-800 dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-300"
                                 >
@@ -776,13 +856,19 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 <span
                                     class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-0.5 font-normal text-black dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                 >
-                                    <Mail class="h-3.5 w-3.5 text-black dark:text-slate-400" />
-                                    <span class="truncate">{{ currentUserEmail }}</span>
+                                    <Mail
+                                        class="h-3.5 w-3.5 text-black dark:text-slate-400"
+                                    />
+                                    <span class="truncate">{{
+                                        currentUserEmail
+                                    }}</span>
                                 </span>
                                 <span
                                     class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-0.5 font-bold text-black dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                 >
-                                    <GraduationCap class="h-3.5 w-3.5 text-black dark:text-slate-400" />
+                                    <GraduationCap
+                                        class="h-3.5 w-3.5 text-black dark:text-slate-400"
+                                    />
                                     <span>Dosen</span>
                                 </span>
                             </div>
@@ -791,7 +877,7 @@ const getPersetujuanClass = (persetujuan: string) => {
 
                     <!-- Subtabs: Mahasiswa Bimbingan & Mahasiswa Uji -->
                     <div
-                        class="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 dark:border-slate-800 sm:gap-3"
+                        class="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 sm:gap-3 dark:border-slate-800"
                     >
                         <button
                             type="button"
@@ -805,7 +891,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                         >
                             <span>Mahasiswa Bimbingan</span>
                             <span
-                                class="rounded-full px-1.5 py-0.2 text-[10px] font-black"
+                                class="py-0.2 rounded-full px-1.5 text-[10px] font-black"
                                 :class="
                                     activeTab === 'bimbingan'
                                         ? 'bg-white/20 text-white'
@@ -838,7 +924,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                         >
                             <span>Mahasiswa Uji</span>
                             <span
-                                class="rounded-full px-1.5 py-0.2 text-[10px] font-black"
+                                class="py-0.2 rounded-full px-1.5 text-[10px] font-black"
                                 :class="
                                     activeTab === 'uji'
                                         ? 'bg-white/20 text-white'
@@ -871,21 +957,23 @@ const getPersetujuanClass = (persetujuan: string) => {
                         class="flex flex-col justify-between gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:p-5 dark:border-slate-800"
                     >
                         <h3
-                            class="text-sm font-black leading-snug text-black sm:text-base dark:text-white"
+                            class="text-sm leading-snug font-black text-black sm:text-base dark:text-white"
                         >
                             Daftar Mahasiswa Seminar Proposal
                         </h3>
 
                         <div class="flex items-center gap-3">
                             <!-- Filter Angkatan -->
-                            <div class="flex items-center shrink-0">
+                            <div class="flex shrink-0 items-center">
                                 <select
                                     v-model="filterAngkatan"
                                     class="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-bold text-black focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                                 >
                                     <option value="all">Semua Angkatan</option>
                                     <option
-                                        v-for="angk in angkatanOptions.filter((a) => a !== 'all')"
+                                        v-for="angk in angkatanOptions.filter(
+                                            (a) => a !== 'all',
+                                        )"
                                         :key="angk"
                                         :value="angk"
                                     >
@@ -916,21 +1004,37 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 class="border-b border-slate-100 bg-slate-50/90 font-black tracking-wider text-black uppercase dark:border-slate-800 dark:bg-slate-800/60 dark:text-white"
                             >
                                 <tr>
-                                    <th class="w-8 px-2.5 py-3 text-center">NO</th>
-                                    <th class="min-w-[120px] px-2.5 py-3">NAMA</th>
+                                    <th class="w-8 px-2.5 py-3 text-center">
+                                        NO
+                                    </th>
+                                    <th class="min-w-[120px] px-2.5 py-3">
+                                        NAMA
+                                    </th>
                                     <th class="min-w-[85px] px-2 py-3">NIM</th>
-                                    <th class="min-w-[200px] px-2.5 py-3">JUDUL</th>
-                                    <th class="min-w-[100px] px-2 py-3 text-center">
+                                    <th class="min-w-[200px] px-2.5 py-3">
+                                        JUDUL
+                                    </th>
+                                    <th
+                                        class="min-w-[100px] px-2 py-3 text-center"
+                                    >
                                         STATUS
                                     </th>
-                                    <th class="min-w-[120px] px-2 py-3 text-center">
+                                    <th
+                                        class="min-w-[120px] px-2 py-3 text-center"
+                                    >
                                         PERSETUJUAN
                                     </th>
-                                    <th class="min-w-[80px] px-2 py-3 text-center">
+                                    <th
+                                        class="min-w-[80px] px-2 py-3 text-center"
+                                    >
                                         BENTUK
                                     </th>
-                                    <th class="w-12 px-2 py-3 text-center">NILAI</th>
-                                    <th class="min-w-[90px] px-2 py-3 text-center">
+                                    <th class="w-12 px-2 py-3 text-center">
+                                        NILAI
+                                    </th>
+                                    <th
+                                        class="min-w-[90px] px-2 py-3 text-center"
+                                    >
                                         REVISI
                                     </th>
                                 </tr>
@@ -944,7 +1048,8 @@ const getPersetujuanClass = (persetujuan: string) => {
                                     @click="selectStudent(mhs)"
                                     class="cursor-pointer transition-colors"
                                     :class="[
-                                        selectedStudent && selectedStudent.id === mhs.id
+                                        selectedStudent &&
+                                        selectedStudent.id === mhs.id
                                             ? 'bg-blue-50/80 ring-1 ring-blue-500/40 ring-inset dark:bg-blue-950/40'
                                             : 'hover:bg-slate-50/70 dark:hover:bg-slate-800/40',
                                     ]"
@@ -953,7 +1058,11 @@ const getPersetujuanClass = (persetujuan: string) => {
                                     <td
                                         class="px-2.5 py-3 text-center font-bold text-black dark:text-slate-400"
                                     >
-                                        {{ (currentPage - 1) * itemsPerPage + idx + 1 }}
+                                        {{
+                                            (currentPage - 1) * itemsPerPage +
+                                            idx +
+                                            1
+                                        }}
                                     </td>
 
                                     <!-- NAMA -->
@@ -967,7 +1076,7 @@ const getPersetujuanClass = (persetujuan: string) => {
 
                                     <!-- NIM -->
                                     <td
-                                        class="px-2 py-3 whitespace-nowrap font-normal text-black dark:text-slate-400"
+                                        class="px-2 py-3 font-normal whitespace-nowrap text-black dark:text-slate-400"
                                     >
                                         {{ mhs.nim }}
                                     </td>
@@ -982,9 +1091,15 @@ const getPersetujuanClass = (persetujuan: string) => {
                                     </td>
 
                                     <!-- STATUS BERKAS (NO DOTS) -->
-                                    <td class="px-2 py-3 text-center whitespace-nowrap">
+                                    <td
+                                        class="px-2 py-3 text-center whitespace-nowrap"
+                                    >
                                         <span
-                                            :class="getStatusBerkasClass(mhs.statusBerkas)"
+                                            :class="
+                                                getStatusBerkasClass(
+                                                    mhs.statusBerkas,
+                                                )
+                                            "
                                             class="inline-block rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-2xs"
                                         >
                                             {{ mhs.statusBerkas }}
@@ -992,9 +1107,15 @@ const getPersetujuanClass = (persetujuan: string) => {
                                     </td>
 
                                     <!-- PERSETUJUAN (NO DOTS) -->
-                                    <td class="px-2 py-3 text-center whitespace-nowrap">
+                                    <td
+                                        class="px-2 py-3 text-center whitespace-nowrap"
+                                    >
                                         <span
-                                            :class="getPersetujuanClass(mhs.persetujuan)"
+                                            :class="
+                                                getPersetujuanClass(
+                                                    mhs.persetujuan,
+                                                )
+                                            "
                                             class="inline-block rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-2xs"
                                         >
                                             {{ mhs.persetujuan }}
@@ -1039,7 +1160,8 @@ const getPersetujuanClass = (persetujuan: string) => {
                                                 <p
                                                     class="text-sm font-black text-black dark:text-slate-300"
                                                 >
-                                                    Belum ada data seminar proposal
+                                                    Belum ada data seminar
+                                                    proposal
                                                 </p>
                                                 <p
                                                     class="text-xs font-normal text-black dark:text-slate-400"
@@ -1117,9 +1239,7 @@ const getPersetujuanClass = (persetujuan: string) => {
             </div>
 
             <!-- RIGHT SECTION: INSPECTOR PANEL (FIXED WIDTH, STICKY) -->
-            <div
-                class="w-full shrink-0 space-y-4 lg:sticky lg:top-20 lg:w-96"
-            >
+            <div class="w-full shrink-0 space-y-4 lg:sticky lg:top-20 lg:w-96">
                 <!-- Active Selection Pill Banner (Visible when student selected) -->
                 <div
                     v-if="selectedStudent"
@@ -1155,7 +1275,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                         <h3
                             class="flex items-center gap-2 text-xs font-black tracking-wider text-black uppercase dark:text-white"
                         >
-                            <Users class="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                            <Users
+                                class="h-4 w-4 text-blue-600 dark:text-blue-400"
+                            />
                             <span>Dosen Penguji</span>
                         </h3>
                         <span
@@ -1167,7 +1289,10 @@ const getPersetujuanClass = (persetujuan: string) => {
                     </div>
 
                     <!-- Selected State -->
-                    <div v-if="selectedStudent" class="space-y-2.5 pt-1 text-xs">
+                    <div
+                        v-if="selectedStudent"
+                        class="space-y-2.5 pt-1 text-xs"
+                    >
                         <div
                             class="space-y-1 rounded-xl border border-slate-200/60 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60"
                         >
@@ -1180,22 +1305,31 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 <span
                                     class="rounded bg-purple-50 px-1.5 py-0.5 text-[10px] font-bold text-purple-700 dark:bg-purple-950 dark:text-purple-300"
                                 >
-                                    {{ selectedStudent.penguji1MatchScore }}% Match KBK
+                                    {{ selectedStudent.penguji1MatchScore }}%
+                                    Match KBK
                                 </span>
                             </div>
-                            <p class="text-xs font-bold text-black dark:text-white">
+                            <p
+                                class="text-xs font-bold text-black dark:text-white"
+                            >
                                 {{ selectedStudent.penguji1 }}
                             </p>
                             <p
                                 class="text-[10px] font-bold"
                                 :class="
-                                    isPengujiConfirmed(selectedStudent, selectedStudent.penguji1)
+                                    isPengujiConfirmed(
+                                        selectedStudent,
+                                        selectedStudent.penguji1,
+                                    )
                                         ? 'text-emerald-600 dark:text-emerald-400'
                                         : 'text-amber-600 dark:text-amber-400'
                                 "
                             >
                                 {{
-                                    isPengujiConfirmed(selectedStudent, selectedStudent.penguji1)
+                                    isPengujiConfirmed(
+                                        selectedStudent,
+                                        selectedStudent.penguji1,
+                                    )
                                         ? '✓ Konfirmasi Hadir'
                                         : 'Menunggu Konfirmasi'
                                 }}
@@ -1210,19 +1344,27 @@ const getPersetujuanClass = (persetujuan: string) => {
                             >
                                 Penguji 2
                             </span>
-                            <p class="text-xs font-bold text-black dark:text-white">
+                            <p
+                                class="text-xs font-bold text-black dark:text-white"
+                            >
                                 {{ selectedStudent.penguji2 }}
                             </p>
                             <p
                                 class="text-[10px] font-bold"
                                 :class="
-                                    isPengujiConfirmed(selectedStudent, selectedStudent.penguji2)
+                                    isPengujiConfirmed(
+                                        selectedStudent,
+                                        selectedStudent.penguji2,
+                                    )
                                         ? 'text-emerald-600 dark:text-emerald-400'
                                         : 'text-amber-600 dark:text-amber-400'
                                 "
                             >
                                 {{
-                                    isPengujiConfirmed(selectedStudent, selectedStudent.penguji2)
+                                    isPengujiConfirmed(
+                                        selectedStudent,
+                                        selectedStudent.penguji2,
+                                    )
                                         ? '✓ Konfirmasi Hadir'
                                         : 'Menunggu Konfirmasi'
                                 }}
@@ -1240,7 +1382,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                         >
                             <Users class="h-4 w-4" />
                         </div>
-                        <p class="font-normal">Klik nama mahasiswa untuk melihat penguji</p>
+                        <p class="font-normal">
+                            Klik nama mahasiswa untuk melihat penguji
+                        </p>
                     </div>
                 </div>
 
@@ -1252,7 +1396,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                         <h3
                             class="flex items-center gap-2 text-xs font-black tracking-wider text-black uppercase dark:text-white"
                         >
-                            <Calendar class="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                            <Calendar
+                                class="h-4 w-4 text-purple-600 dark:text-purple-400"
+                            />
                             <span>Jadwal</span>
                         </h3>
                     </div>
@@ -1263,15 +1409,27 @@ const getPersetujuanClass = (persetujuan: string) => {
                             class="space-y-2 rounded-xl border border-slate-200/60 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60"
                         >
                             <div class="flex items-center justify-between">
-                                <span class="font-normal text-black dark:text-slate-400">Hari & Tanggal:</span>
-                                <strong class="font-bold text-black dark:text-white">
-                                    {{ selectedStudent.hari }}, {{ selectedStudent.tanggal }}
+                                <span
+                                    class="font-normal text-black dark:text-slate-400"
+                                    >Hari & Tanggal:</span
+                                >
+                                <strong
+                                    class="font-bold text-black dark:text-white"
+                                >
+                                    {{ selectedStudent.hari }},
+                                    {{ selectedStudent.tanggal }}
                                 </strong>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="font-normal text-black dark:text-slate-400">Waktu:</span>
-                                <strong class="font-bold text-blue-700 dark:text-blue-400">
-                                    {{ selectedStudent.mulai }} - {{ selectedStudent.selesai }} WITA
+                                <span
+                                    class="font-normal text-black dark:text-slate-400"
+                                    >Waktu:</span
+                                >
+                                <strong
+                                    class="font-bold text-blue-700 dark:text-blue-400"
+                                >
+                                    {{ selectedStudent.mulai }} -
+                                    {{ selectedStudent.selesai }} WITA
                                 </strong>
                             </div>
                             <div
@@ -1285,8 +1443,13 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 v-if="rescheduledStudents[selectedStudent.id]"
                                 class="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50/80 p-2.5 text-[11px] font-medium text-amber-900 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300"
                             >
-                                <Clock class="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-                                <span>Pengajuan reschedule telah dikirimkan ke Koorprodi (Menunggu persetujuan).</span>
+                                <Clock
+                                    class="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400"
+                                />
+                                <span
+                                    >Pengajuan reschedule telah dikirimkan ke
+                                    Koorprodi (Menunggu persetujuan).</span
+                                >
                             </div>
 
                             <!-- Actions Jadwal Dosen (Bisa diajukan baik pada Bimbingan maupun Uji) -->
@@ -1295,7 +1458,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                             >
                                 <!-- Toggle Reschedule / Batalkan Reschedule -->
                                 <button
-                                    v-if="rescheduledStudents[selectedStudent.id]"
+                                    v-if="
+                                        rescheduledStudents[selectedStudent.id]
+                                    "
                                     type="button"
                                     @click="cancelReschedule(selectedStudent)"
                                     class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 py-2 text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100 dark:border-rose-800/60 dark:bg-rose-950/40 dark:text-rose-300"
@@ -1306,7 +1471,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 <button
                                     v-else
                                     type="button"
-                                    @click="openModalReschedule(selectedStudent)"
+                                    @click="
+                                        openModalReschedule(selectedStudent)
+                                    "
                                     class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 py-2 text-xs font-bold text-amber-900 transition-colors hover:bg-amber-100 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300"
                                 >
                                     <CalendarClock class="h-3.5 w-3.5" />
@@ -1317,16 +1484,24 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 <button
                                     v-if="selectedStudent.roleTab === 'uji'"
                                     type="button"
-                                    @click="toggleKonfirmasiHadir(selectedStudent.id)"
+                                    @click="
+                                        toggleKonfirmasiHadir(
+                                            selectedStudent.id,
+                                        )
+                                    "
                                     class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-bold transition-all"
                                     :class="[
                                         confirmedAttendance[selectedStudent.id]
                                             ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-300'
-                                            : 'border-blue-300 bg-blue-50 text-blue-800 hover:bg-blue-100 dark:border-blue-800/60 dark:bg-blue-950/40 dark:text-blue-300'
+                                            : 'border-blue-300 bg-blue-50 text-blue-800 hover:bg-blue-100 dark:border-blue-800/60 dark:bg-blue-950/40 dark:text-blue-300',
                                     ]"
                                 >
                                     <CheckCircle2 class="h-3.5 w-3.5" />
-                                    <span>{{ confirmedAttendance[selectedStudent.id] ? 'Kehadiran Terkonfirmasi' : 'Konfirmasi Hadir' }}</span>
+                                    <span>{{
+                                        confirmedAttendance[selectedStudent.id]
+                                            ? 'Kehadiran Terkonfirmasi'
+                                            : 'Konfirmasi Hadir'
+                                    }}</span>
                                 </button>
                             </div>
                         </div>
@@ -1342,7 +1517,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                         >
                             <Clock class="h-4 w-4" />
                         </div>
-                        <p class="font-normal">Klik nama mahasiswa untuk melihat jadwal</p>
+                        <p class="font-normal">
+                            Klik nama mahasiswa untuk melihat jadwal
+                        </p>
                     </div>
                 </div>
 
@@ -1354,7 +1531,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                         <h3
                             class="flex items-center gap-2 text-xs font-black tracking-wider text-black uppercase dark:text-white"
                         >
-                            <FileCheck class="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                            <FileCheck
+                                class="h-4 w-4 text-emerald-600 dark:text-emerald-400"
+                            />
                             <span>File Pendukung</span>
                         </h3>
                     </div>
@@ -1368,7 +1547,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 class="flex items-center justify-between gap-2 rounded-xl border border-slate-200/60 bg-slate-50 p-2.5 dark:border-slate-700/60 dark:bg-slate-800/60"
                             >
                                 <div class="flex min-w-0 items-center gap-2">
-                                    <span class="text-rose-500 font-bold">📄</span>
+                                    <span class="font-bold text-rose-500"
+                                        >📄</span
+                                    >
                                     <span
                                         class="truncate font-normal text-black dark:text-slate-200"
                                         :title="f.name"
@@ -1379,7 +1560,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 <button
                                     type="button"
                                     @click="downloadFile(f.name)"
-                                    class="cursor-pointer shrink-0 text-[11px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                                    class="shrink-0 cursor-pointer text-[11px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400"
                                 >
                                     Unduh
                                 </button>
@@ -1387,9 +1568,14 @@ const getPersetujuanClass = (persetujuan: string) => {
                         </div>
 
                         <!-- Actions: Validasi Berkas & Input Nilai -->
-                        <div class="space-y-2 border-t border-slate-100 pt-2 dark:border-slate-800">
+                        <div
+                            class="space-y-2 border-t border-slate-100 pt-2 dark:border-slate-800"
+                        >
                             <!-- Validasi Berkas (Proposal: "koorprodi bisa Validasi Berkas Seminar") -->
-                            <div v-if="isKoorprodi" class="flex items-center gap-2">
+                            <div
+                                v-if="isKoorprodi"
+                                class="flex items-center gap-2"
+                            >
                                 <button
                                     type="button"
                                     @click="approveBerkas"
@@ -1429,7 +1615,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                         >
                             <FileText class="h-4 w-4" />
                         </div>
-                        <p class="font-normal">Klik nama mahasiswa untuk melihat file</p>
+                        <p class="font-normal">
+                            Klik nama mahasiswa untuk melihat file
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1443,7 +1631,9 @@ const getPersetujuanClass = (persetujuan: string) => {
             <div
                 class="w-full max-w-md space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-800 dark:bg-[#111827]"
             >
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
+                <div
+                    class="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800"
+                >
                     <h3 class="text-sm font-black text-black dark:text-white">
                         Catatan Revisi Berkas Sempro
                     </h3>
@@ -1460,7 +1650,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                     <p class="text-xs font-bold text-black dark:text-white">
                         Mahasiswa: {{ selectedStudent?.nama }}
                     </p>
-                    <label class="block text-xs font-bold text-black dark:text-white pt-2">
+                    <label
+                        class="block pt-2 text-xs font-bold text-black dark:text-white"
+                    >
                         Instruksi / Catatan Revisi:
                     </label>
                     <textarea
@@ -1497,8 +1689,12 @@ const getPersetujuanClass = (persetujuan: string) => {
             <div
                 class="w-full max-w-md space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900"
             >
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
-                    <h3 class="text-base font-extrabold text-black dark:text-white">
+                <div
+                    class="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800"
+                >
+                    <h3
+                        class="text-base font-extrabold text-black dark:text-white"
+                    >
                         Form Penilaian Seminar Proposal
                     </h3>
                     <button
@@ -1525,7 +1721,8 @@ const getPersetujuanClass = (persetujuan: string) => {
                     <!-- Skor Nilai Angka -->
                     <div class="space-y-1">
                         <label class="font-bold text-black dark:text-slate-300">
-                            Skor Nilai Seminar (0 - 100) <span class="text-rose-500">*</span>
+                            Skor Nilai Seminar (0 - 100)
+                            <span class="text-rose-500">*</span>
                         </label>
                         <input
                             v-model.number="formNilai.skor"
@@ -1535,7 +1732,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                             placeholder="Contoh: 85.5"
                             class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-mono text-black focus:border-purple-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         />
-                        <p class="text-[11px] font-semibold text-black dark:text-slate-400">
+                        <p
+                            class="text-[11px] font-semibold text-black dark:text-slate-400"
+                        >
                             Konversi Nilai Huruf:
                             <b class="text-purple-600 dark:text-purple-400">{{
                                 hitungGrade(formNilai.skor)
@@ -1557,7 +1756,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
+                <div
+                    class="flex items-center justify-end gap-3 border-t border-slate-100 pt-3 dark:border-slate-800"
+                >
                     <button
                         type="button"
                         @click="isModalNilaiOpen = false"
@@ -1584,8 +1785,12 @@ const getPersetujuanClass = (persetujuan: string) => {
             <div
                 class="w-full max-w-md space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900"
             >
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
-                    <h3 class="text-base font-extrabold text-black dark:text-white">
+                <div
+                    class="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800"
+                >
+                    <h3
+                        class="text-base font-extrabold text-black dark:text-white"
+                    >
                         Pengajuan Reschedule Seminar
                     </h3>
                     <button
@@ -1604,23 +1809,36 @@ const getPersetujuanClass = (persetujuan: string) => {
                         <p class="font-bold text-black dark:text-white">
                             Mahasiswa: {{ selectedStudent.nama }}
                         </p>
-                        <p class="text-[11px] font-normal text-black dark:text-slate-300">
-                            Jadwal Saat Ini: {{ selectedStudent.hari }}, {{ selectedStudent.tanggal }} ({{ selectedStudent.mulai }} - {{ selectedStudent.selesai }} WITA)
+                        <p
+                            class="text-[11px] font-normal text-black dark:text-slate-300"
+                        >
+                            Jadwal Saat Ini: {{ selectedStudent.hari }},
+                            {{ selectedStudent.tanggal }} ({{
+                                selectedStudent.mulai
+                            }}
+                            - {{ selectedStudent.selesai }} WITA)
                         </p>
                     </div>
 
                     <!-- Alasan Reschedule -->
                     <div class="space-y-1">
                         <label class="font-bold text-black dark:text-slate-300">
-                            Alasan Berhalangan / Reschedule <span class="text-rose-500">*</span>
+                            Alasan Berhalangan / Reschedule
+                            <span class="text-rose-500">*</span>
                         </label>
                         <select
                             v-model="formReschedule.alasan"
                             class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs font-semibold text-black focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         >
-                            <option value="Bentrok Jadwal Mengajar / Kuliah">Bentrok Jadwal Mengajar / Kuliah</option>
-                            <option value="Tugas Dinas Luar / Konferensi">Tugas Dinas Luar / Konferensi</option>
-                            <option value="Keperluan Akademik Lain">Keperluan Akademik Lain</option>
+                            <option value="Bentrok Jadwal Mengajar / Kuliah">
+                                Bentrok Jadwal Mengajar / Kuliah
+                            </option>
+                            <option value="Tugas Dinas Luar / Konferensi">
+                                Tugas Dinas Luar / Konferensi
+                            </option>
+                            <option value="Keperluan Akademik Lain">
+                                Keperluan Akademik Lain
+                            </option>
                             <option value="Izin / Sakit">Izin / Sakit</option>
                         </select>
                     </div>
@@ -1628,7 +1846,10 @@ const getPersetujuanClass = (persetujuan: string) => {
                     <!-- Usulan Hari & Waktu -->
                     <div class="grid grid-cols-2 gap-3">
                         <div class="space-y-1">
-                            <label class="font-bold text-black dark:text-slate-300">Usulan Hari</label>
+                            <label
+                                class="font-bold text-black dark:text-slate-300"
+                                >Usulan Hari</label
+                            >
                             <input
                                 v-model="formReschedule.usulanHari"
                                 type="text"
@@ -1637,7 +1858,10 @@ const getPersetujuanClass = (persetujuan: string) => {
                             />
                         </div>
                         <div class="space-y-1">
-                            <label class="font-bold text-black dark:text-slate-300">Usulan Jam</label>
+                            <label
+                                class="font-bold text-black dark:text-slate-300"
+                                >Usulan Jam</label
+                            >
                             <input
                                 v-model="formReschedule.usulanWaktu"
                                 type="text"
@@ -1649,7 +1873,9 @@ const getPersetujuanClass = (persetujuan: string) => {
 
                     <!-- Catatan Tambahan -->
                     <div class="space-y-1">
-                        <label class="font-bold text-black dark:text-slate-300">Catatan Tambahan untuk Koorprodi</label>
+                        <label class="font-bold text-black dark:text-slate-300"
+                            >Catatan Tambahan untuk Koorprodi</label
+                        >
                         <textarea
                             v-model="formReschedule.catatan"
                             rows="2"
@@ -1659,7 +1885,9 @@ const getPersetujuanClass = (persetujuan: string) => {
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
+                <div
+                    class="flex items-center justify-end gap-3 border-t border-slate-100 pt-3 dark:border-slate-800"
+                >
                     <button
                         type="button"
                         @click="isModalRescheduleOpen = false"
