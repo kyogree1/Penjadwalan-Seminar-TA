@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
     BookOpen,
     Check,
@@ -14,6 +14,7 @@ import {
 } from 'lucide-vue-next';
 import Button from '@/Components/Button.vue';
 import Modal from '@/Components/Modal.vue';
+import Toast from '@/Components/Toast.vue';
 import type {
     LiveBimbinganSession,
     LiveAdvisee,
@@ -22,15 +23,21 @@ import type {
 
 const props = defineProps<LogbookProps>();
 
-// Fallback dataset matching Front-End mockData.js with 5 sessions per supervisor standard
-const defaultMockAdvisees: LiveAdvisee[] = [
+const page = usePage();
+const currentUser = computed(() => (page.props.auth as any)?.user);
+const currentDosenName = computed(
+    () => currentUser.value?.name || 'Dra. Nurul Rahmania, M.T.',
+);
+
+// Fallback dataset matching Front-End mockData with the lecturer assigned as supervisor
+const getMockAdvisees = (dosenName: string): LiveAdvisee[] => [
     {
         id: 1,
         nama: 'Muhammad Azka Yunastio',
         nim: '11231036',
         judul: 'Penerapan Algoritma Genetika dan Large Language Model pada Sistem Penjadwalan Seminar Tugas Akhir',
         roleAs: 'Pembimbing 1',
-        pembimbing1: 'Dra. Nurul Rahmania, M.T.',
+        pembimbing1: dosenName,
         pembimbing2: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
         sesiList: [
             {
@@ -94,7 +101,7 @@ const defaultMockAdvisees: LiveAdvisee[] = [
         nim: '11231030',
         judul: 'Pengembangan Antarmuka Sistem Informasi Akademik Tugas Akhir Berbasis Desain Komponen Reusable dan Responsif',
         roleAs: 'Pembimbing 1',
-        pembimbing1: 'Dian Permata Sari, S.Kom., M.Kom.',
+        pembimbing1: dosenName,
         pembimbing2: 'Rian Kurniawan, S.Kom., M.Eng.',
         sesiList: [
             {
@@ -141,8 +148,8 @@ const defaultMockAdvisees: LiveAdvisee[] = [
         nim: '11231034',
         judul: 'Rancang Bangun Arsitektur Microservices dan Keamanan Data pada Portal Layanan Ujian Tugas Akhir',
         roleAs: 'Pembimbing 1',
-        pembimbing1: 'Dr. Budi Wicaksono, M.Kom.',
-        pembimbing2: 'Rizki Pratama Nugraha, S.Si., M.Han.',
+        pembimbing1: dosenName,
+        pembimbing2: 'Dr. Budi Wicaksono, M.Kom.',
         sesiList: [
             {
                 id: 301,
@@ -182,7 +189,7 @@ const defaultMockAdvisees: LiveAdvisee[] = [
         judul: 'Optimasi Alokasi Dosen Penguji Ujian Skripsi dengan Pendekatan Constraint Satisfaction Problem dan Algoritma Genetika',
         roleAs: 'Pembimbing 2',
         pembimbing1: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
-        pembimbing2: 'Dra. Nurul Rahmania, M.T.',
+        pembimbing2: dosenName,
         sesiList: [
             {
                 id: 401,
@@ -239,7 +246,7 @@ const defaultMockAdvisees: LiveAdvisee[] = [
         nim: '11231006',
         judul: 'Rancang Bangun Frontend Dashboard Monitoring Progres Bimbingan Tugas Akhir Menggunakan Progressive Web Apps',
         roleAs: 'Pembimbing 1',
-        pembimbing1: 'Rian Kurniawan, S.Kom., M.Eng.',
+        pembimbing1: dosenName,
         pembimbing2: 'Dian Permata Sari, S.Kom., M.Kom.',
         sesiList: [
             {
@@ -294,18 +301,22 @@ const defaultMockAdvisees: LiveAdvisee[] = [
     },
 ];
 
-// Reactive advisees list: initialized with props.advisees (if passed) or defaultMockAdvisees
+// Reactive advisees list: initialized with props.advisees (if passed & non-empty) or getMockAdvisees
 const advisees = ref<LiveAdvisee[]>(
-    props.advisees !== undefined && props.advisees !== null
+    props.advisees && props.advisees.length > 0
         ? JSON.parse(JSON.stringify(props.advisees))
-        : defaultMockAdvisees,
+        : getMockAdvisees(currentDosenName.value),
+);
+
+const isMockMode = computed(
+    () => !props.advisees || props.advisees.length === 0,
 );
 
 // Keep synchronized if props change from server
 watch(
     () => props.advisees,
     (newVal) => {
-        if (newVal !== undefined && newVal !== null) {
+        if (newVal && newVal.length > 0) {
             advisees.value = JSON.parse(JSON.stringify(newVal));
         }
     },
@@ -313,13 +324,72 @@ watch(
 );
 
 const searchQuery = ref('');
+const filterStatus = ref<'all' | 'siap' | 'proses'>('all');
+const filterAngkatan = ref('all');
 const selectedAdviseeId = ref<number | null>(null);
 
+const angkatanList = computed(() => {
+    const list = advisees.value.map((a) => {
+        const nimStr = a.nim ?? '';
+        if (nimStr.length >= 4) {
+            return '20' + nimStr.substring(2, 4);
+        }
+        return '2023';
+    });
+    return [...new Set(list)].sort().reverse();
+});
+
 const filteredAdvisees = computed(() =>
-    advisees.value.filter((a) =>
-        [a.nama, a.nim ?? '', a.judul].some((v) =>
-            v.toLowerCase().includes(searchQuery.value.trim().toLowerCase()),
-        ),
+    advisees.value.filter((a) => {
+        const q = searchQuery.value.trim().toLowerCase();
+        const matchQuery =
+            !q ||
+            [a.nama, a.nim ?? '', a.judul].some((v) =>
+                v.toLowerCase().includes(q),
+            );
+
+        const approvedCount = getApprovedSessionCount(a);
+        const matchStatus =
+            filterStatus.value === 'all' ||
+            (filterStatus.value === 'siap' && approvedCount >= 5) ||
+            (filterStatus.value === 'proses' && approvedCount < 5);
+
+        const nimStr = a.nim ?? '';
+        const angkatan = nimStr.length >= 4 ? '20' + nimStr.substring(2, 4) : '';
+        const matchAngkatan =
+            filterAngkatan.value === 'all' || angkatan === filterAngkatan.value;
+
+        return matchQuery && matchStatus && matchAngkatan;
+    }),
+);
+
+// Pagination matching Daftar Judul (5 items per page)
+const currentPage = ref(1);
+const entriesPerPage = 5;
+
+watch([searchQuery, filterStatus, filterAngkatan], () => {
+    currentPage.value = 1;
+});
+
+const totalPages = computed(() =>
+    Math.max(1, Math.ceil(filteredAdvisees.value.length / entriesPerPage)),
+);
+
+const paginatedAdvisees = computed(() => {
+    const start = (currentPage.value - 1) * entriesPerPage;
+    return filteredAdvisees.value.slice(start, start + entriesPerPage);
+});
+
+const paginationStart = computed(() =>
+    filteredAdvisees.value.length
+        ? (currentPage.value - 1) * entriesPerPage + 1
+        : 0,
+);
+
+const paginationEnd = computed(() =>
+    Math.min(
+        currentPage.value * entriesPerPage,
+        filteredAdvisees.value.length,
     ),
 );
 
@@ -349,8 +419,10 @@ const getApprovedSessionCount = (mhs: LiveAdvisee) =>
 
 // 4 KPI Metrics (Standard 5 sessions per supervisor)
 const totalSesiGlobal = computed(() =>
-    advisees.value.reduce((n, a) => n + a.sesiList.length, 0),
+    advisees.value.reduce((n, a) => n + getApprovedSessionCount(a), 0),
 );
+
+const maxTargetSesi = computed(() => advisees.value.length * 5);
 
 const mhsEligibleCount = computed(
     () => advisees.value.filter((a) => getApprovedSessionCount(a) >= 5).length,
@@ -369,20 +441,39 @@ const avgSesiCount = computed(() =>
         : '0',
 );
 
-const toast = ref('');
+// Toast notification bubble state (Consistent with all other pages)
+const toast = ref<{ show: boolean; message: string; isError: boolean }>({
+    show: false,
+    message: '',
+    isError: false,
+});
+let toastTimeout: ReturnType<typeof setTimeout> | null = null;
+const showToast = (message: string, isError = false) => {
+    toast.value = { show: true, message, isError };
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.value.show = false;
+    }, 4000);
+};
+
+watch(
+    () => props.flash,
+    (flash) => {
+        if (flash?.error) {
+            showToast(flash.error, true);
+        } else if (flash?.success) {
+            showToast(flash.success, false);
+        }
+    },
+    { deep: true, immediate: true },
+);
+
 const errors = ref<Record<string, string>>({});
 const processing = ref(false);
 const showApprovalModal = ref(false);
 const activeLogbookId = ref<number | null>(null);
 const feedbackInput = ref('');
 const isAccBimbingan = ref(true);
-
-const showToast = (message: string) => {
-    toast.value = message;
-    setTimeout(() => {
-        if (toast.value === message) toast.value = '';
-    }, 4000);
-};
 
 const openReviewModal = (log: LiveBimbinganSession) => {
     if (processing.value) return;
@@ -407,18 +498,20 @@ const submitReview = () => {
         }
     }
 
-    showToast('Catatan pembimbing dan status paraf berhasil diperbarui!');
+    showToast('Catatan pembimbing dan status paraf berhasil diperbarui.');
     showApprovalModal.value = false;
 
-    // Send to backend
-    router.patch(
-        `/dosen/bimbingan/${activeLogbookId.value}/paraf`,
-        {
-            status: isAccBimbingan.value ? 'delivered' : 'process',
-            catatan_dosen: feedbackInput.value,
-        },
-        { preserveScroll: true, onError: () => {} },
-    );
+    // Send to backend only if not in mock mode
+    if (!isMockMode.value) {
+        router.patch(
+            `/dosen/bimbingan/${activeLogbookId.value}/paraf`,
+            {
+                status: isAccBimbingan.value ? 'delivered' : 'process',
+                catatan_dosen: feedbackInput.value,
+            },
+            { preserveScroll: true, onError: () => {} },
+        );
+    }
 };
 
 const quickParafSesi = (sesi: LiveBimbinganSession) => {
@@ -427,17 +520,19 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
     if (!sesi.catatanDosen) {
         sesi.catatanDosen = 'Disetujui pembimbing';
     }
-    showToast(`Sesi ke-${sesi.no} berhasil diparaf dosen!`);
+    showToast(`Sesi ke-${sesi.no} berhasil diparaf.`);
 
-    // Send to backend
-    router.patch(
-        `/dosen/bimbingan/${sesi.id}/paraf`,
-        {
-            status: 'delivered',
-            catatan_dosen: sesi.catatanDosen,
-        },
-        { preserveScroll: true, onError: () => {} },
-    );
+    // Send to backend only if not in mock mode
+    if (!isMockMode.value) {
+        router.patch(
+            `/dosen/bimbingan/${sesi.id}/paraf`,
+            {
+                status: 'delivered',
+                catatan_dosen: sesi.catatanDosen,
+            },
+            { preserveScroll: true, onError: () => {} },
+        );
+    }
 };
 </script>
 
@@ -458,13 +553,13 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
             </p>
         </div>
 
-        <!-- Toast Notice -->
-        <div
-            v-if="toast"
-            class="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-800 shadow-sm dark:border-emerald-900/60 dark:bg-emerald-950/60 dark:text-emerald-300"
-        >
-            {{ toast }}
-        </div>
+        <!-- Toast Notification Bubble (Fixed Top-Right, Consistent With Other Pages) -->
+        <Toast
+            :show="toast.show"
+            :message="toast.message"
+            :is-error="toast.isError"
+            @close="toast.show = false"
+        />
 
         <p
             v-for="(message, field) in errors"
@@ -490,7 +585,11 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                     <p
                         class="mt-1 text-2xl font-black text-black dark:text-white"
                     >
-                        {{ totalSesiGlobal }} Sesi
+                        {{ totalSesiGlobal }}/{{ maxTargetSesi }}
+                        <span
+                            class="text-xs font-normal text-black dark:text-slate-400"
+                            >Sesi</span
+                        >
                     </p>
                 </div>
                 <div
@@ -580,35 +679,98 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                 <div
                     class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
                 >
-                    <!-- Card Header -->
+                    <!-- Card Header with Filters (Matching Daftar Judul) -->
                     <div
-                        class="flex flex-col gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5 dark:border-slate-800"
+                        class="space-y-3 border-b border-slate-100 p-4 sm:p-5 dark:border-slate-800"
                     >
-                        <div class="flex items-center gap-2">
-                            <BookOpen
-                                class="h-4 w-4 text-blue-600 dark:text-blue-400"
-                            />
-                            <h2
-                                class="text-sm font-black text-black sm:text-base dark:text-white"
+                        <div
+                            class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center"
+                        >
+                            <div class="flex items-center gap-2">
+                                <BookOpen
+                                    class="h-4 w-4 text-blue-600 dark:text-blue-400"
+                                />
+                                <h2
+                                    class="text-sm font-black text-black sm:text-base dark:text-white"
+                                >
+                                    Daftar Bimbingan TA
+                                </h2>
+                            </div>
+
+                            <!-- Quick Status Badges Filter -->
+                            <div
+                                class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs sm:pb-0"
                             >
-                                Daftar Bimbingan TA
-                            </h2>
-                            <span class="text-xs font-normal text-black dark:text-slate-400">
-                                ({{ filteredAdvisees.length }} mahasiswa)
-                            </span>
+                                <button
+                                    type="button"
+                                    @click="filterStatus = 'all'"
+                                    class="cursor-pointer rounded-xl px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-all"
+                                    :class="[
+                                        filterStatus === 'all'
+                                            ? 'bg-blue-600 text-white shadow-sm'
+                                            : 'bg-slate-100 text-black hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
+                                    ]"
+                                >
+                                    Semua
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="filterStatus = 'siap'"
+                                    class="cursor-pointer rounded-xl px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-all"
+                                    :class="[
+                                        filterStatus === 'siap'
+                                            ? 'bg-emerald-600 text-white shadow-sm'
+                                            : 'bg-slate-100 text-black hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
+                                    ]"
+                                >
+                                    Terpenuhi
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="filterStatus = 'proses'"
+                                    class="cursor-pointer rounded-xl px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-all"
+                                    :class="[
+                                        filterStatus === 'proses'
+                                            ? 'bg-amber-600 text-white shadow-sm'
+                                            : 'bg-slate-100 text-black hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
+                                    ]"
+                                >
+                                    Belum Terpenuhi
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Search Input -->
-                        <div class="relative w-full sm:w-64">
-                            <Search
-                                class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-slate-400"
-                            />
-                            <input
-                                v-model="searchQuery"
-                                type="text"
-                                placeholder="Cari nama, NIM, atau judul..."
-                                class="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pr-3 pl-8 text-xs font-normal text-black placeholder:text-black/60 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:placeholder:text-slate-500"
-                            />
+                        <!-- Secondary Filters: Search & Angkatan -->
+                        <div
+                            class="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2"
+                        >
+                            <!-- Search Input -->
+                            <div class="relative">
+                                <input
+                                    v-model="searchQuery"
+                                    type="text"
+                                    placeholder="Cari nama, NIM, atau judul..."
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-8 text-xs font-medium text-black outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 placeholder:text-black dark:placeholder:text-slate-400"
+                                />
+                                <Search
+                                    class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-black dark:text-slate-400"
+                                />
+                            </div>
+
+                            <!-- Angkatan Filter -->
+                            <select
+                                v-model="filterAngkatan"
+                                class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-black outline-hidden dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-200"
+                            >
+                                <option value="all">Semua Angkatan</option>
+                                <option
+                                    v-for="angk in angkatanList"
+                                    :key="angk"
+                                    :value="angk"
+                                >
+                                    Angkatan {{ angk }}
+                                </option>
+                            </select>
                         </div>
                     </div>
 
@@ -616,24 +778,26 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                     <div class="w-full overflow-x-auto">
                         <table class="w-full text-left text-xs">
                             <thead
-                                class="border-b border-slate-100 bg-slate-50/90 font-black tracking-wider text-black uppercase dark:border-slate-800 dark:bg-slate-800/70 dark:text-white"
+                                class="border-b border-slate-200 bg-slate-50 font-black tracking-wider text-black uppercase dark:border-slate-800 dark:bg-slate-800/70 dark:text-slate-400"
                             >
                                 <tr>
-                                    <th class="w-10 px-3 py-3 text-center">
+                                    <th class="w-12 px-3 py-3 text-center">
                                         NO
                                     </th>
-                                    <th class="min-w-[150px] px-3 py-3">
+                                    <th class="min-w-[140px] px-3 py-3">
                                         NAMA
                                     </th>
-                                    <th class="min-w-[95px] px-3 py-3">NIM</th>
+                                    <th class="min-w-[90px] px-3 py-3">
+                                        NIM
+                                    </th>
                                     <th class="min-w-[240px] px-3 py-3">
-                                        JUDUL
+                                        JUDUL TA
                                     </th>
                                     <th class="min-w-[130px] px-3 py-3">
                                         LOG KONSULTASI
                                     </th>
                                     <th
-                                        class="min-w-[120px] px-3 py-3 text-center"
+                                        class="min-w-[110px] px-3 py-3 text-center"
                                     >
                                         STATUS SYARAT
                                     </th>
@@ -643,7 +807,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                 class="divide-y divide-slate-100 dark:divide-slate-800/60"
                             >
                                 <tr
-                                    v-for="(mhs, idx) in filteredAdvisees"
+                                    v-for="(mhs, idx) in paginatedAdvisees"
                                     :key="mhs.id"
                                     @click="selectStudent(mhs)"
                                     class="cursor-pointer transition-colors"
@@ -658,7 +822,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     <td
                                         class="px-3 py-3 text-center font-bold text-black dark:text-slate-400"
                                     >
-                                        {{ idx + 1 }}
+                                        {{ (currentPage - 1) * entriesPerPage + idx + 1 }}
                                     </td>
 
                                     <!-- NAMA -->
@@ -668,23 +832,11 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                         >
                                             {{ mhs.nama }}
                                         </p>
-                                        <span
-                                            class="text-[10px] font-normal text-black dark:text-slate-400"
-                                        >
-                                            Pembimbing:
-                                            {{
-                                                (
-                                                    mhs.pembimbing1 ||
-                                                    mhs.roleAs ||
-                                                    ''
-                                                ).split(',')[0]
-                                            }}
-                                        </span>
                                     </td>
 
-                                    <!-- NIM (Standard sans font, no font-mono, no bold) -->
+                                    <!-- NIM -->
                                     <td
-                                        class="px-3 py-3 whitespace-nowrap font-normal text-black dark:text-slate-400"
+                                        class="px-3 py-3 font-normal whitespace-nowrap text-black dark:text-slate-400"
                                     >
                                         {{ mhs.nim ?? '—' }}
                                     </td>
@@ -692,10 +844,15 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     <!-- JUDUL -->
                                     <td class="px-3 py-3">
                                         <p
-                                            class="line-clamp-2 text-[11px] leading-relaxed font-bold text-black dark:text-slate-200"
+                                            class="line-clamp-2 text-xs leading-relaxed font-bold text-black dark:text-slate-200"
                                         >
                                             {{ mhs.judul }}
                                         </p>
+                                        <span
+                                            class="text-[10px] font-normal text-black dark:text-slate-400"
+                                        >
+                                            Peran: <b class="font-bold text-blue-600 dark:text-blue-400">{{ mhs.roleAs }}</b>
+                                        </span>
                                     </td>
 
                                     <!-- LOG KONSULTASI (Hanya sesi yang sudah diparaf yang dihitung) -->
@@ -766,7 +923,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                         </div>
                                     </td>
 
-                                    <!-- STATUS SYARAT (Text only, NO ICONS!) -->
+                                    <!-- STATUS SYARAT -->
                                     <td
                                         class="px-3 py-3 text-center whitespace-nowrap"
                                     >
@@ -823,9 +980,65 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                         </table>
                     </div>
 
+                    <!-- Table Footer & Pagination (Matching Daftar Judul) -->
+                    <div
+                        class="flex flex-col justify-between gap-3 border-t border-slate-100 p-4 text-xs sm:flex-row sm:items-center dark:border-slate-800"
+                    >
+                        <div
+                            class="text-xs font-semibold text-slate-900 dark:text-white"
+                        >
+                            Menampilkan
+                            <b class="text-slate-900 dark:text-white">{{
+                                paginationStart
+                            }}</b>
+                            sampai
+                            <b class="text-slate-900 dark:text-white">{{
+                                paginationEnd
+                            }}</b>
+                            dari
+                            <b class="text-slate-900 dark:text-white">{{
+                                filteredAdvisees.length
+                            }}</b>
+                            mahasiswa
+                        </div>
+
+                        <div class="flex items-center gap-1">
+                            <button
+                                type="button"
+                                :disabled="currentPage === 1"
+                                class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-300 text-slate-900 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30 dark:border-slate-700 dark:text-white dark:hover:bg-slate-800"
+                                @click="currentPage--"
+                            >
+                                ‹
+                            </button>
+                            <button
+                                v-for="p in totalPages"
+                                :key="p"
+                                type="button"
+                                :class="
+                                    currentPage === p
+                                        ? 'border-blue-600 bg-blue-600 font-bold text-white shadow-xs'
+                                        : 'border border-slate-300 text-slate-900 hover:bg-slate-100 dark:border-slate-700 dark:text-white dark:hover:bg-slate-800'
+                                "
+                                class="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-semibold transition-colors"
+                                @click="currentPage = p"
+                            >
+                                {{ p }}
+                            </button>
+                            <button
+                                type="button"
+                                :disabled="currentPage === totalPages"
+                                class="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-300 text-slate-900 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30 dark:border-slate-700 dark:text-white dark:hover:bg-slate-800"
+                                @click="currentPage++"
+                            >
+                                ›
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Footer Academic Standard -->
                     <div
-                        class="border-t border-slate-100 p-4 text-xs font-normal text-black dark:border-slate-800 dark:text-slate-400"
+                        class="border-t border-slate-100 bg-slate-50/50 px-4 py-2 text-[11px] font-normal text-slate-500 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400"
                     >
                         Standar akademik ITK: Minimal 5 kali bimbingan per dosen
                         pembimbing tervalidasi untuk mengajukan Seminar Proposal
@@ -836,7 +1049,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
             <!-- RIGHT SECTION: DETAIL RIWAYAT SESI MAHASISWA (LEMBAR KENDALI BIMBINGAN) -->
             <div
                 v-if="selectedAdvisee"
-                class="sticky top-6 w-full shrink-0 space-y-5 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm lg:w-[460px] dark:border-slate-800/80 dark:bg-[#111827]"
+                class="sticky top-20 flex w-full shrink-0 flex-col space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs lg:w-96 dark:border-slate-800/80 dark:bg-[#111827]"
             >
                 <!-- Drawer Header -->
                 <div
@@ -884,34 +1097,32 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                         {{ selectedAdvisee.judul }}
                     </p>
                     <div
-                        class="flex items-center justify-between border-t border-slate-200/60 pt-2 text-[10px] font-normal text-black dark:border-slate-700/60 dark:text-slate-400"
+                        class="space-y-1.5 border-t border-slate-200/60 pt-2.5 text-[11px] dark:border-slate-700/60"
                     >
-                        <span>
-                            Pembimbing 1:
-                            <b class="font-bold text-black dark:text-white">{{
-                                (
-                                    selectedAdvisee.pembimbing1 ||
-                                    selectedAdvisee.roleAs ||
-                                    ''
-                                ).split(',')[0]
-                            }}</b>
-                            <span v-if="selectedAdvisee.pembimbing2">
-                                • Pembimbing 2:
-                                <b class="font-bold text-black dark:text-white">{{
-                                    selectedAdvisee.pembimbing2.split(',')[0]
-                                }}</b></span
+                        <div class="flex items-baseline gap-2">
+                            <span
+                                class="w-24 shrink-0 font-medium text-slate-500 dark:text-slate-400"
                             >
-                        </span>
-                        <span
-                            :class="
-                                getApprovedSessionCount(selectedAdvisee) >= 5
-                                    ? 'font-bold text-emerald-600 dark:text-emerald-400'
-                                    : 'font-bold text-amber-600 dark:text-amber-400'
-                            "
-                        >
-                            {{ getApprovedSessionCount(selectedAdvisee) }} / 5
-                            Sesi
-                        </span>
+                                Pembimbing 1 :
+                            </span>
+                            <span
+                                class="font-bold text-black dark:text-white leading-tight"
+                            >
+                                {{ selectedAdvisee.pembimbing1 || '—' }}
+                            </span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span
+                                class="w-24 shrink-0 font-medium text-slate-500 dark:text-slate-400"
+                            >
+                                Pembimbing 2 :
+                            </span>
+                            <span
+                                class="font-bold text-black dark:text-white leading-tight"
+                            >
+                                {{ selectedAdvisee.pembimbing2 || '—' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -1055,7 +1266,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
             <!-- Placeholder if drawer closed -->
             <div
                 v-else
-                class="w-full shrink-0 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center lg:w-[460px] dark:border-slate-700 dark:bg-[#111827]"
+                class="sticky top-20 flex w-full shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center lg:w-96 dark:border-slate-700 dark:bg-[#111827]"
             >
                 <div
                     class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400"
@@ -1083,13 +1294,6 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
         @close="!processing && (showApprovalModal = false)"
     >
         <div class="space-y-4">
-            <p
-                v-if="toast"
-                role="status"
-                class="text-xs text-slate-700 dark:text-slate-300"
-            >
-                {{ toast }}
-            </p>
             <p
                 v-for="(message, field) in errors"
                 :key="field"

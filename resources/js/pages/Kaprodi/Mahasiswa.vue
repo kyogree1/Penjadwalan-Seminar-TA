@@ -16,6 +16,7 @@ import Button from '@/Components/Button.vue';
 import DeleteConfirmModal from '@/Components/DeleteConfirmModal.vue';
 import Modal from '@/Components/Modal.vue';
 import StudentCsvImport from '@/Components/StudentCsvImport.vue';
+import Toast from '@/Components/Toast.vue';
 import type {
     StudentDirectoryEntry,
     StudentDirectoryProps,
@@ -162,15 +163,39 @@ const blankForm = () => ({
 const formMhs = ref(blankForm());
 const errors = ref<Record<string, string>>({});
 const processing = ref(false);
-const feedback = ref('');
-const feedbackError = ref(false);
+
+// Toast notification bubble state
+const toast = ref<{ show: boolean; message: string; isError: boolean }>({
+    show: false,
+    message: '',
+    isError: false,
+});
+let toastTimeout: ReturnType<typeof setTimeout> | null = null;
+const showToast = (message: string, isError = false) => {
+    toast.value = { show: true, message, isError };
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.value.show = false;
+    }, 4000);
+};
+
+watch(
+    () => props.flash,
+    (flash) => {
+        if (flash?.error) {
+            showToast(flash.error, true);
+        } else if (flash?.success) {
+            showToast(flash.success, false);
+        }
+    },
+    { deep: true, immediate: true },
+);
 
 const openModalTambah = () => {
     if (processing.value) return;
     editingMahasiswaId.value = null;
     formMhs.value = blankForm();
     errors.value = {};
-    feedback.value = '';
     isModalFormOpen.value = true;
 };
 
@@ -186,7 +211,6 @@ const openModalEdit = (mhs: StudentDirectoryEntry) => {
         statusTa: mhs.statusTa || 'Aktif TA',
     };
     errors.value = {};
-    feedback.value = '';
     isModalFormOpen.value = true;
 };
 
@@ -206,29 +230,25 @@ const requestOptions = (closeForm = false) => ({
         const flash = page.props.flash as
             | StudentDirectoryProps['flash']
             | undefined;
-        feedback.value =
-            flash?.error ||
-            flash?.success ||
-            'Konfirmasi data dari server berhasil.';
-        feedbackError.value = !flash?.success || !!flash?.error;
+        if (flash?.error) {
+            showToast(flash.error, true);
+        } else if (flash?.success) {
+            showToast(flash.success, false);
+        }
         if (closeForm && flash?.success && !flash?.error) {
             isModalFormOpen.value = false;
         }
     },
     onError: (serverErrors: Record<string, string>) => {
         errors.value = serverErrors;
-        feedbackError.value = true;
-        feedback.value =
-            'Permintaan gagal. Periksa kembali isian formulir dan coba lagi.';
+        showToast('Permintaan gagal. Periksa kembali isian formulir dan coba lagi.', true);
     },
     onNetworkError: () => {
-        feedbackError.value = true;
-        feedback.value = 'Koneksi gagal. Periksa jaringan Anda.';
+        showToast('Koneksi gagal. Periksa jaringan Anda.', true);
         return false;
     },
     onHttpException: () => {
-        feedbackError.value = true;
-        feedback.value = 'Server tidak dapat memproses permintaan.';
+        showToast('Server tidak dapat memproses permintaan.', true);
         return false;
     },
     onFinish: () => {
@@ -331,19 +351,13 @@ const executeDeleteMahasiswa = () => {
             </div>
         </div>
 
-        <!-- Feedback Alert -->
-        <div
-            v-if="feedback || flash.error || flash.success"
-            role="status"
-            :class="
-                (feedback ? feedbackError : !!flash.error)
-                    ? 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/60 dark:text-rose-300'
-                    : 'border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/60 dark:text-emerald-300'
-            "
-            class="rounded-xl border p-3.5 text-xs font-semibold"
-        >
-            {{ feedback || flash.error || flash.success }}
-        </div>
+        <!-- Toast Notification Bubble (Fixed Top-Right) -->
+        <Toast
+            :show="toast.show"
+            :message="toast.message"
+            :is-error="toast.isError"
+            @close="toast.show = false"
+        />
 
         <!-- 4 KPI SUMMARY CARDS (Matching Daftar Judul) -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
