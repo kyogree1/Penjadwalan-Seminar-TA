@@ -355,7 +355,8 @@ const filteredAdvisees = computed(() =>
             (filterStatus.value === 'proses' && approvedCount < 5);
 
         const nimStr = a.nim ?? '';
-        const angkatan = nimStr.length >= 4 ? '20' + nimStr.substring(2, 4) : '';
+        const angkatan =
+            nimStr.length >= 4 ? '20' + nimStr.substring(2, 4) : '';
         const matchAngkatan =
             filterAngkatan.value === 'all' || angkatan === filterAngkatan.value;
 
@@ -387,10 +388,7 @@ const paginationStart = computed(() =>
 );
 
 const paginationEnd = computed(() =>
-    Math.min(
-        currentPage.value * entriesPerPage,
-        filteredAdvisees.value.length,
-    ),
+    Math.min(currentPage.value * entriesPerPage, filteredAdvisees.value.length),
 );
 
 // selectedAdvisee defaults to the first student on initial load
@@ -547,7 +545,9 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
             >
                 Bimbingan Tugas Akhir
             </h1>
-            <p class="mt-0.5 text-xs font-normal text-black dark:text-slate-400">
+            <p
+                class="mt-0.5 text-xs font-normal text-black dark:text-slate-400"
+            >
                 Pencatatan sesi konsultasi, paraf digital dosen pembimbing,
                 serta pemantauan syarat kelayakan seminar.
             </p>
@@ -659,7 +659,8 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                         class="mt-1 text-2xl font-black text-purple-600 dark:text-purple-400"
                     >
                         {{ avgSesiCount }}
-                        <span class="text-xs font-normal text-black dark:text-slate-400"
+                        <span
+                            class="text-xs font-normal text-black dark:text-slate-400"
                             >/ Mhs</span
                         >
                     </p>
@@ -741,16 +742,14 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                         </div>
 
                         <!-- Secondary Filters: Search & Angkatan -->
-                        <div
-                            class="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2"
-                        >
+                        <div class="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
                             <!-- Search Input -->
                             <div class="relative">
                                 <input
                                     v-model="searchQuery"
                                     type="text"
                                     placeholder="Cari nama, NIM, atau judul..."
-                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-8 text-xs font-medium text-black outline-hidden focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 placeholder:text-black dark:placeholder:text-slate-400"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-8 text-xs font-medium text-black outline-hidden placeholder:text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:placeholder:text-slate-400"
                                 />
                                 <Search
                                     class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-black dark:text-slate-400"
@@ -787,9 +786,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     <th class="min-w-[140px] px-3 py-3">
                                         NAMA
                                     </th>
-                                    <th class="min-w-[90px] px-3 py-3">
-                                        NIM
-                                    </th>
+                                    <th class="min-w-[90px] px-3 py-3">NIM</th>
                                     <th class="min-w-[240px] px-3 py-3">
                                         JUDUL TA
                                     </th>
@@ -822,7 +819,11 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     <td
                                         class="px-3 py-3 text-center font-bold text-black dark:text-slate-400"
                                     >
-                                        {{ (currentPage - 1) * entriesPerPage + idx + 1 }}
+                                        {{
+                                            (currentPage - 1) * entriesPerPage +
+                                            idx +
+                                            1
+                                        }}
                                     </td>
 
                                     <!-- NAMA -->
@@ -851,7 +852,11 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                         <span
                                             class="text-[10px] font-normal text-black dark:text-slate-400"
                                         >
-                                            Peran: <b class="font-bold text-blue-600 dark:text-blue-400">{{ mhs.roleAs }}</b>
+                                            Peran:
+                                            <b
+                                                class="font-bold text-blue-600 dark:text-blue-400"
+                                                >{{ mhs.roleAs }}</b
+                                            >
                                         </span>
                                     </td>
 
@@ -1106,7 +1111,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                 Pembimbing 1 :
                             </span>
                             <span
-                                class="font-bold text-black dark:text-white leading-tight"
+                                class="leading-tight font-bold text-black dark:text-white"
                             >
                                 {{ selectedAdvisee.pembimbing1 || '—' }}
                             </span>
@@ -1118,7 +1123,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                 Pembimbing 2 :
                             </span>
                             <span
-                                class="font-bold text-black dark:text-white leading-tight"
+                                class="leading-tight font-bold text-black dark:text-white"
                             >
                                 {{ selectedAdvisee.pembimbing2 || '—' }}
                             </span>
@@ -1160,7 +1165,9 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                         }}
                                     </span>
                                 </div>
-                                <span class="text-[10px] font-normal text-black dark:text-slate-400">
+                                <span
+                                    class="text-[10px] font-normal text-black dark:text-slate-400"
+                                >
                                     {{ sesi.tanggal }}
                                 </span>
                             </div>
@@ -1175,7 +1182,9 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     >
                                         Rangkuman Pembahasan:
                                     </span>
-                                    <p class="leading-relaxed font-normal text-black dark:text-slate-300">
+                                    <p
+                                        class="leading-relaxed font-normal text-black dark:text-slate-300"
+                                    >
                                         {{ sesi.rangkuman }}
                                     </p>
                                 </div>
@@ -1273,12 +1282,12 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                 >
                     <ClipboardList class="h-6 w-6" />
                 </div>
-                <h3
-                    class="mt-3 text-sm font-black text-black dark:text-white"
-                >
+                <h3 class="mt-3 text-sm font-black text-black dark:text-white">
                     Lembar Kendali Bimbingan
                 </h3>
-                <p class="mt-1 text-xs font-normal text-black dark:text-slate-400">
+                <p
+                    class="mt-1 text-xs font-normal text-black dark:text-slate-400"
+                >
                     Pilih salah satu mahasiswa dari tabel di sebelah kiri untuk
                     melihat riwayat logbook dan status paraf bimbingan.
                 </p>

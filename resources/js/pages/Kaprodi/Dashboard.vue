@@ -19,7 +19,6 @@ import {
     Layers,
     ShieldAlert,
     ShieldCheck,
-    Sparkles,
     UserCheck,
     Users,
 } from 'lucide-vue-next';
