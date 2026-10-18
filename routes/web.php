@@ -111,10 +111,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/bimbingan', [DosenBimbinganController::class, 'index'])->name('bimbingan');
 
         Route::get('/penjadwalan', [KaprodiPenjadwalanController::class, 'index'])->name('penjadwalan');
+        Route::get('/penjadwalan/sempro', [KaprodiPenjadwalanController::class, 'semproIndex'])->name('penjadwalan.sempro');
+        Route::get('/penjadwalan/ta', [KaprodiPenjadwalanController::class, 'taIndex'])->name('penjadwalan.ta');
+        Route::get('/penjadwalan/plotting-sempro', [KaprodiPenjadwalanController::class, 'plottingSemproIndex'])->name('penjadwalan.plotting-sempro');
+        Route::get('/penjadwalan/plotting-ta', [KaprodiPenjadwalanController::class, 'plottingTaIndex'])->name('penjadwalan.plotting-ta');
+        Route::post('/penjadwalan/periods/toggle/{id}', [KaprodiPenjadwalanController::class, 'togglePeriodStatus'])->name('penjadwalan.periods.toggle');
+        Route::post('/penjadwalan/periods/toggle-publish/{id}', [KaprodiPenjadwalanController::class, 'togglePublish'])->name('penjadwalan.periods.toggle-publish');
+        Route::post('/penjadwalan/periods/{id}/sync-calendar', [KaprodiPenjadwalanController::class, 'syncCalendar'])->name('penjadwalan.periods.sync-calendar');
+        Route::get('/penjadwalan/periods/{id}/export-ics', [KaprodiPenjadwalanController::class, 'exportIcs'])->name('penjadwalan.periods.export-ics');
+        Route::delete('/penjadwalan/periods/{id}', [KaprodiPenjadwalanController::class, 'destroyPeriod'])->name('penjadwalan.periods.destroy');
         Route::post('/penjadwalan/generate-ga', [KaprodiPenjadwalanController::class, 'generateGa'])->name('penjadwalan.generate-ga');
         Route::post('/penjadwalan/simpan', [KaprodiPenjadwalanController::class, 'simpan'])->name('penjadwalan.simpan');
         Route::post('/penjadwalan/periods', [KaprodiPenjadwalanController::class, 'storePeriod'])->name('penjadwalan.periods.store');
         Route::patch('/penjadwalan/periods/{id}', [KaprodiPenjadwalanController::class, 'storePeriod'])->name('penjadwalan.periods.update');
+        Route::patch('/penjadwalan/plotting/{id}', [KaprodiPenjadwalanController::class, 'updatePlotting'])->name('penjadwalan.plotting.update');
         Route::patch('/penjadwalan/{id}', [KaprodiPenjadwalanController::class, 'update'])->name('penjadwalan.update');
 
         Route::inertia('/monitoring', 'Kaprodi/Monitoring')->name('monitoring');
@@ -148,7 +158,11 @@ Route::middleware('auth')->group(function () {
     // Backward compatibility aliases for /koordinator routes
     Route::middleware('role:kaprodi,koordinator')->prefix('koordinator')->name('koordinator.')->group(function () {
         Route::get('/penjadwalan', fn () => redirect()->route('kaprodi.penjadwalan'))->name('penjadwalan');
-        Route::get('/monitoring', fn () => redirect()->route('kaprodi.monitoring'))->name('monitoring');
+        Route::get('/penjadwalan/sempro', fn () => redirect()->route('kaprodi.penjadwalan.sempro'))->name('penjadwalan.sempro');
+        Route::get('/penjadwalan/ta', fn () => redirect()->route('kaprodi.penjadwalan.ta'))->name('penjadwalan.ta');
+        Route::get('/penjadwalan/plotting-sempro', fn () => redirect()->route('kaprodi.penjadwalan.plotting-sempro'))->name('penjadwalan.plotting-sempro');
+        Route::get('/penjadwalan/plotting-ta', fn () => redirect()->route('kaprodi.penjadwalan.plotting-ta'))->name('penjadwalan.plotting-ta');
+        Route::get('/monitoring', fn () => redirect()->route('kaprodi.dashboard'))->name('monitoring');
         Route::get('/mahasiswa', fn () => redirect()->route('kaprodi.mahasiswa'))->name('mahasiswa');
     });
 
