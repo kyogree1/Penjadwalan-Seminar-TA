@@ -241,7 +241,10 @@ const requestOptions = (closeForm = false) => ({
     },
     onError: (serverErrors: Record<string, string>) => {
         errors.value = serverErrors;
-        showToast('Permintaan gagal. Periksa kembali isian formulir dan coba lagi.', true);
+        showToast(
+            'Permintaan gagal. Periksa kembali isian formulir dan coba lagi.',
+            true,
+        );
     },
     onNetworkError: () => {
         showToast('Koneksi gagal. Periksa jaringan Anda.', true);
@@ -325,8 +328,11 @@ const executeDeleteMahasiswa = () => {
                 >
                     Data Mahasiswa
                 </h1>
-                <p class="mt-0.5 text-xs font-normal text-slate-500 dark:text-slate-400">
-                    Kelola data akun mahasiswa aktif tugas akhir, nomor kontak, serta status kelayakan ujian seminar.
+                <p
+                    class="mt-0.5 text-xs font-normal text-slate-500 dark:text-slate-400"
+                >
+                    Kelola data akun mahasiswa aktif tugas akhir, nomor kontak,
+                    serta status kelayakan ujian seminar.
                 </p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -926,7 +932,11 @@ const executeDeleteMahasiswa = () => {
         <DeleteConfirmModal
             :show="showDeleteModal"
             title="Hapus Data Mahasiswa"
-            :item-name="mhsToDelete?.nama ? `${mhsToDelete.nama} (${mhsToDelete.nim})` : ''"
+            :item-name="
+                mhsToDelete?.nama
+                    ? `${mhsToDelete.nama} (${mhsToDelete.nim})`
+                    : ''
+            "
             item-type="data mahasiswa"
             :processing="processing"
             @close="showDeleteModal = false"

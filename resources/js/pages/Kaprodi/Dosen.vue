@@ -168,13 +168,16 @@ const saveLocalMeta = (key: string | number, meta: DosenCustomMeta) => {
     localMetadata.value = {
         ...localMetadata.value,
         [k]: {
-            ...(localMetadata.value[k] || {}),
+            ...localMetadata.value[k],
             ...meta,
         },
     };
     if (typeof window !== 'undefined') {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(localMetadata.value));
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(localMetadata.value),
+            );
         } catch {
             // ignore storage errors
         }
@@ -205,8 +208,7 @@ const dosenList = computed(() => {
                     ? staticMeta.maxQuota
                     : 10;
 
-        const roleVal =
-            savedMeta.role ?? d.role ?? staticMeta.role ?? 'Dosen';
+        const roleVal = savedMeta.role ?? d.role ?? staticMeta.role ?? 'Dosen';
 
         const bidangKeahlianVal =
             savedMeta.bidangKeahlian ??
@@ -527,7 +529,8 @@ const isFormValid = computed(() => {
     const hasNip = Boolean(formDosen.value.nip?.trim());
     const hasProdi = Boolean(
         formDosen.value.tipe === 'Dosen Eksternal'
-            ? formDosen.value.asalInstansi?.trim() || formDosen.value.prodi?.trim()
+            ? formDosen.value.asalInstansi?.trim() ||
+                  formDosen.value.prodi?.trim()
             : formDosen.value.prodi?.trim(),
     );
     return hasName && hasEmail && hasNip && hasProdi;
@@ -664,7 +667,8 @@ const executeDeleteDosen = () => {
             :message="toast.message"
             :is-error="toast.isError"
             @close="toast.show = false"
-        >{{ toast.message }}</Toast>
+            >{{ toast.message }}</Toast
+        >
 
         <!-- Header & Actions -->
         <div
@@ -676,8 +680,12 @@ const executeDeleteDosen = () => {
                 >
                     Data Dosen
                 </h1>
-                <p class="mt-0.5 text-xs font-normal text-slate-500 dark:text-slate-400">
-                    Kelola data dosen pembimbing &amp; penguji, asal program studi/instansi, serta batas beban menguji untuk Algoritma Genetika.
+                <p
+                    class="mt-0.5 text-xs font-normal text-slate-500 dark:text-slate-400"
+                >
+                    Kelola data dosen pembimbing &amp; penguji, asal program
+                    studi/instansi, serta batas beban menguji untuk Algoritma
+                    Genetika.
                 </p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -806,24 +814,32 @@ const executeDeleteDosen = () => {
             <div
                 class="space-y-3 border-b border-slate-100 p-4 sm:p-5 dark:border-slate-800"
             >
-                <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                <div
+                    class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center"
+                >
                     <div class="flex items-center gap-2">
-                        <GraduationCap class="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                        <h2 class="text-sm font-black text-black sm:text-base dark:text-white">
+                        <GraduationCap
+                            class="h-4 w-4 text-blue-600 dark:text-blue-400"
+                        />
+                        <h2
+                            class="text-sm font-black text-black sm:text-base dark:text-white"
+                        >
                             Daftar Pengajar &amp; Penguji
                         </h2>
                     </div>
 
                     <!-- Quick Prodi Filter Pills -->
-                    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs sm:pb-0">
+                    <div
+                        class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs sm:pb-0"
+                    >
                         <button
                             type="button"
                             :class="
                                 filterProdi === 'all'
-                                    ? 'bg-blue-600 text-white font-bold'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                    ? 'bg-blue-600 font-bold text-white'
+                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                             "
-                            class="cursor-pointer rounded-xl px-3 py-1.5 transition-all whitespace-nowrap"
+                            class="cursor-pointer rounded-xl px-3 py-1.5 whitespace-nowrap transition-all"
                             @click="filterProdi = 'all'"
                         >
                             Semua Prodi
@@ -832,10 +848,10 @@ const executeDeleteDosen = () => {
                             type="button"
                             :class="
                                 filterProdi === 'Informatika'
-                                    ? 'bg-blue-600 text-white font-bold'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                    ? 'bg-blue-600 font-bold text-white'
+                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                             "
-                            class="cursor-pointer rounded-xl px-3 py-1.5 transition-all whitespace-nowrap"
+                            class="cursor-pointer rounded-xl px-3 py-1.5 whitespace-nowrap transition-all"
                             @click="filterProdi = 'Informatika'"
                         >
                             Informatika
@@ -844,10 +860,10 @@ const executeDeleteDosen = () => {
                             type="button"
                             :class="
                                 filterProdi === 'lintas'
-                                    ? 'bg-amber-600 text-white font-bold'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                    ? 'bg-amber-600 font-bold text-white'
+                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                             "
-                            class="cursor-pointer rounded-xl px-3 py-1.5 transition-all whitespace-nowrap"
+                            class="cursor-pointer rounded-xl px-3 py-1.5 whitespace-nowrap transition-all"
                             @click="filterProdi = 'lintas'"
                         >
                             Lintas Prodi / Eksternal
@@ -856,7 +872,9 @@ const executeDeleteDosen = () => {
                 </div>
 
                 <!-- Search & Dropdown Filters (Search, Semua Jabatan, Semua Role) -->
-                <div class="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2 md:grid-cols-4">
+                <div
+                    class="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2 md:grid-cols-4"
+                >
                     <!-- Search Input -->
                     <div class="relative sm:col-span-2 md:col-span-2">
                         <Search
@@ -917,7 +935,9 @@ const executeDeleteDosen = () => {
                             <option value="Koorprodi">Koorprodi</option>
                             <option value="Tim KBK">Tim KBK</option>
                             <option value="Dosen Penguji">Dosen Penguji</option>
-                            <option value="Penguji Eksternal">Penguji Eksternal</option>
+                            <option value="Penguji Eksternal">
+                                Penguji Eksternal
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -947,9 +967,15 @@ const executeDeleteDosen = () => {
                             <th class="w-12 px-3 py-3.5 text-center">NO</th>
                             <th class="min-w-[200px] px-3 py-3.5">NAMA</th>
                             <th class="min-w-[140px] px-3 py-3.5">NIP</th>
-                            <th class="min-w-[150px] px-3 py-3.5 text-center">PRODI / INSTANSI</th>
-                            <th class="min-w-[120px] px-3 py-3.5 text-center">ROLE</th>
-                            <th class="min-w-[140px] px-3 py-3.5">BEBAN MENGUJI (GA)</th>
+                            <th class="min-w-[150px] px-3 py-3.5 text-center">
+                                PRODI / INSTANSI
+                            </th>
+                            <th class="min-w-[120px] px-3 py-3.5 text-center">
+                                ROLE
+                            </th>
+                            <th class="min-w-[140px] px-3 py-3.5">
+                                BEBAN MENGUJI (GA)
+                            </th>
                             <th class="min-w-[180px] px-3 py-3.5">EMAIL</th>
                             <th class="w-24 px-3 py-3.5 text-center">AKSI</th>
                         </tr>
@@ -973,7 +999,9 @@ const executeDeleteDosen = () => {
                             <td
                                 class="px-3 py-3.5 text-slate-900 dark:text-white"
                             >
-                                <p class="font-bold leading-snug">{{ dosen.name }}</p>
+                                <p class="leading-snug font-bold">
+                                    {{ dosen.name }}
+                                </p>
                                 <p
                                     v-if="dosen.bidangKeahlian"
                                     class="mt-0.5 max-w-[220px] truncate text-[10px] font-medium text-blue-600 dark:text-blue-400"
@@ -998,7 +1026,9 @@ const executeDeleteDosen = () => {
                             </td>
 
                             <!-- Role Pill (Centered) -->
-                            <td class="px-3 py-3.5 text-center whitespace-nowrap">
+                            <td
+                                class="px-3 py-3.5 text-center whitespace-nowrap"
+                            >
                                 <span
                                     v-if="dosen.role"
                                     :class="getRoleBadgeClass(dosen.role)"
@@ -1006,27 +1036,49 @@ const executeDeleteDosen = () => {
                                 >
                                     {{ dosen.role }}
                                 </span>
-                                <span v-else class="text-[11px] text-slate-400">—</span>
+                                <span v-else class="text-[11px] text-slate-400"
+                                    >—</span
+                                >
                             </td>
 
                             <!-- Beban Menguji & Quota Bar -->
                             <td class="px-3 py-3.5">
                                 <div class="min-w-[120px] space-y-1">
-                                    <div class="flex items-center justify-between text-[10px]">
-                                        <span class="font-bold text-slate-700 dark:text-slate-300">
-                                            {{ dosen.currentQuota ?? 0 }} / {{ dosen.maxQuota ?? 10 }} Mhs
+                                    <div
+                                        class="flex items-center justify-between text-[10px]"
+                                    >
+                                        <span
+                                            class="font-bold text-slate-700 dark:text-slate-300"
+                                        >
+                                            {{ dosen.currentQuota ?? 0 }} /
+                                            {{ dosen.maxQuota ?? 10 }} Mhs
                                         </span>
                                         <span
                                             class="font-extrabold text-emerald-600 dark:text-emerald-400"
                                         >
-                                            {{ Math.round((((dosen.currentQuota ?? 0) / (dosen.maxQuota ?? 10)) || 0) * 100) }}%
+                                            {{
+                                                Math.round(
+                                                    ((dosen.currentQuota ?? 0) /
+                                                        (dosen.maxQuota ??
+                                                            10) || 0) * 100,
+                                                )
+                                            }}%
                                         </span>
                                     </div>
-                                    <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                    <div
+                                        class="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+                                    >
                                         <div
                                             class="h-full rounded-full bg-emerald-500 transition-all duration-300"
                                             :style="{
-                                                width: Math.min((((dosen.currentQuota ?? 0) / (dosen.maxQuota ?? 10)) || 0) * 100, 100) + '%',
+                                                width:
+                                                    Math.min(
+                                                        ((dosen.currentQuota ??
+                                                            0) /
+                                                            (dosen.maxQuota ??
+                                                                10) || 0) * 100,
+                                                        100,
+                                                    ) + '%',
                                             }"
                                         ></div>
                                     </div>
@@ -1097,8 +1149,9 @@ const executeDeleteDosen = () => {
                                             }}
                                         </p>
                                         <p class="text-xs text-slate-400">
-                                            Tidak ada data dosen yang cocok dengan
-                                            kriteria filter atau pencarian Anda.
+                                            Tidak ada data dosen yang cocok
+                                            dengan kriteria filter atau
+                                            pencarian Anda.
                                         </p>
                                     </div>
                                     <button
@@ -1244,7 +1297,8 @@ const executeDeleteDosen = () => {
                             for="dosen-nip"
                             class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                         >
-                            NIP/NUPTK/ID Karyawan <span class="text-rose-500">*</span>
+                            NIP/NUPTK/ID Karyawan
+                            <span class="text-rose-500">*</span>
                         </label>
                         <input
                             id="dosen-nip"
@@ -1272,7 +1326,8 @@ const executeDeleteDosen = () => {
                             for="dosen-jabatan"
                             class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                         >
-                            Jabatan Akademik <span class="text-rose-500">*</span>
+                            Jabatan Akademik
+                            <span class="text-rose-500">*</span>
                         </label>
                         <select
                             id="dosen-jabatan"
@@ -1281,9 +1336,16 @@ const executeDeleteDosen = () => {
                             :aria-invalid="!!errors.jabatan"
                             class="w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         >
-                            <option disabled value="">Pilih Jabatan Akademik</option>
+                            <option disabled value="">
+                                Pilih Jabatan Akademik
+                            </option>
                             <option
-                                v-if="formDosen.jabatan && !standardJabatans.includes(formDosen.jabatan)"
+                                v-if="
+                                    formDosen.jabatan &&
+                                    !standardJabatans.includes(
+                                        formDosen.jabatan,
+                                    )
+                                "
                                 :value="formDosen.jabatan"
                             >
                                 {{ formDosen.jabatan }}
@@ -1292,8 +1354,12 @@ const executeDeleteDosen = () => {
                             <option value="Lektor Kepala">Lektor Kepala</option>
                             <option value="Lektor">Lektor</option>
                             <option value="Asisten Ahli">Asisten Ahli</option>
-                            <option value="Tenaga Pengajar">Tenaga Pengajar</option>
-                            <option value="Praktisi Ahli">Praktisi Ahli (Eksternal)</option>
+                            <option value="Tenaga Pengajar">
+                                Tenaga Pengajar
+                            </option>
+                            <option value="Praktisi Ahli">
+                                Praktisi Ahli (Eksternal)
+                            </option>
                         </select>
                         <p
                             v-if="errors.jabatan"
@@ -1307,15 +1373,17 @@ const executeDeleteDosen = () => {
 
                 <!-- Info Box (Matches Front-End data-dosen.html) -->
                 <div
-                    class="rounded-xl border border-blue-200/80 bg-blue-50/80 p-3 text-blue-900 space-y-1 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300"
+                    class="space-y-1 rounded-xl border border-blue-200/80 bg-blue-50/80 p-3 text-blue-900 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300"
                 >
                     <div class="flex items-center gap-1.5 text-xs font-bold">
                         <span>ℹ️</span>
                         <span>Info:</span>
                     </div>
                     <p class="text-[11px] leading-relaxed">
-                        <b>Dosen Internal ITK:</b> Pilih Program Studi + isi NIP resmi ITK.<br />
-                        <b>Dosen Eksternal:</b> Isi Asal Instansi + NIP/NUPTK/ID Karyawan dari instansi asal.
+                        <b>Dosen Internal ITK:</b> Pilih Program Studi + isi NIP
+                        resmi ITK.<br />
+                        <b>Dosen Eksternal:</b> Isi Asal Instansi + NIP/NUPTK/ID
+                        Karyawan dari instansi asal.
                     </p>
                 </div>
 
@@ -1352,26 +1420,44 @@ const executeDeleteDosen = () => {
                             for="dosen-prodi"
                             class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                         >
-                            Program Studi <span class="font-normal text-slate-400">(Internal ITK)</span>
+                            Program Studi
+                            <span class="font-normal text-slate-400"
+                                >(Internal ITK)</span
+                            >
                         </label>
                         <select
                             id="dosen-prodi"
                             v-model="formDosen.prodi"
-                            :disabled="processing || formDosen.tipe === 'Dosen Eksternal'"
+                            :disabled="
+                                processing ||
+                                formDosen.tipe === 'Dosen Eksternal'
+                            "
                             class="w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden disabled:opacity-40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         >
                             <option
-                                v-if="formDosen.prodi && !standardProdis.includes(formDosen.prodi) && formDosen.prodi !== 'S1 Informatika'"
+                                v-if="
+                                    formDosen.prodi &&
+                                    !standardProdis.includes(formDosen.prodi) &&
+                                    formDosen.prodi !== 'S1 Informatika'
+                                "
                                 :value="formDosen.prodi"
                             >
                                 {{ formDosen.prodi }}
                             </option>
                             <option value="Informatika">Informatika</option>
-                            <option value="Sistem Informasi">Sistem Informasi</option>
+                            <option value="Sistem Informasi">
+                                Sistem Informasi
+                            </option>
                             <option value="Teknik Mesin">Teknik Mesin</option>
-                            <option value="Teknik Perkapalan">Teknik Perkapalan</option>
-                            <option value="Teknik Biomedis">Teknik Biomedis</option>
-                            <option value="Teknik Elektro">Teknik Elektro</option>
+                            <option value="Teknik Perkapalan">
+                                Teknik Perkapalan
+                            </option>
+                            <option value="Teknik Biomedis">
+                                Teknik Biomedis
+                            </option>
+                            <option value="Teknik Elektro">
+                                Teknik Elektro
+                            </option>
                         </select>
                         <p
                             v-if="errors.prodi"
@@ -1386,11 +1472,16 @@ const executeDeleteDosen = () => {
                         <label
                             class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                         >
-                            Asal Instansi <span class="font-normal text-slate-400">(Eksternal)</span>
+                            Asal Instansi
+                            <span class="font-normal text-slate-400"
+                                >(Eksternal)</span
+                            >
                         </label>
                         <input
                             v-model="formDosen.asalInstansi"
-                            :disabled="processing || formDosen.tipe === 'Internal ITK'"
+                            :disabled="
+                                processing || formDosen.tipe === 'Internal ITK'
+                            "
                             type="text"
                             placeholder="Contoh: PT. Pertamina, Unmul, dll."
                             class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden disabled:opacity-40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
@@ -1412,10 +1503,16 @@ const executeDeleteDosen = () => {
                             class="w-full cursor-pointer rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="Dosen">Dosen Biasa</option>
-                            <option value="Koorprodi">Koordinator Program Studi (Koorprodi)</option>
-                            <option value="Tim KBK">Tim Kelompok Bidang Keahlian (KBK)</option>
+                            <option value="Koorprodi">
+                                Koordinator Program Studi (Koorprodi)
+                            </option>
+                            <option value="Tim KBK">
+                                Tim Kelompok Bidang Keahlian (KBK)
+                            </option>
                             <option value="Dosen Penguji">Dosen Penguji</option>
-                            <option value="Penguji Eksternal">Penguji Eksternal</option>
+                            <option value="Penguji Eksternal">
+                                Penguji Eksternal
+                            </option>
                         </select>
                     </div>
 
@@ -1423,7 +1520,11 @@ const executeDeleteDosen = () => {
                         <label
                             class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                         >
-                            Batas Kuota Menguji <span class="font-normal text-blue-600 dark:text-blue-400">(Variabel Batas GA)</span>
+                            Batas Kuota Menguji
+                            <span
+                                class="font-normal text-blue-600 dark:text-blue-400"
+                                >(Variabel Batas GA)</span
+                            >
                         </label>
                         <input
                             v-model.number="formDosen.maxQuota"
@@ -1431,7 +1532,7 @@ const executeDeleteDosen = () => {
                             min="1"
                             max="25"
                             :disabled="processing"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                            class="w-full [appearance:textfield] rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                         />
                     </div>
                 </div>
@@ -1441,7 +1542,8 @@ const executeDeleteDosen = () => {
                     <label
                         class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                     >
-                        Bidang Keahlian / Minat Riset <span class="text-rose-500">*</span>
+                        Bidang Keahlian / Minat Riset
+                        <span class="text-rose-500">*</span>
                     </label>
                     <input
                         v-model="formDosen.bidangKeahlian"
@@ -1483,11 +1585,7 @@ const executeDeleteDosen = () => {
             <LecturerCsvImport />
 
             <template #footer>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    @click="showImport = false"
-                >
+                <Button variant="outline" size="sm" @click="showImport = false">
                     Tutup
                 </Button>
             </template>
