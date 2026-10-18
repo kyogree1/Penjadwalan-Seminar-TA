@@ -24,7 +24,7 @@ class DosenController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'nip' => $user->nim_nip,
+                'nip' => $user->nim_nip !== null ? preg_replace('/^NIP:\s*/i', '', $user->nim_nip) : null,
                 'prodi' => $user->prodi,
                 'jabatan' => $user->jabatan,
             ]);

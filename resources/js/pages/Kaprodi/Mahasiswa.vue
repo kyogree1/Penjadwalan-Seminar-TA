@@ -13,9 +13,8 @@ import {
 } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import Button from '@/Components/Button.vue';
-import Card from '@/Components/Card.vue';
+import DeleteConfirmModal from '@/Components/DeleteConfirmModal.vue';
 import Modal from '@/Components/Modal.vue';
-import PageHeaderBox from '@/Components/PageHeaderBox.vue';
 import StudentCsvImport from '@/Components/StudentCsvImport.vue';
 import type {
     StudentDirectoryEntry,
@@ -259,19 +258,36 @@ const saveMahasiswa = () => {
     }
 };
 
+const mhsToDelete = ref<StudentDirectoryEntry | null>(null);
+const showDeleteModal = ref(false);
+
 const confirmDeleteMahasiswa = (mhs: StudentDirectoryEntry) => {
-    if (
-        processing.value ||
-        !confirm(
-            `Apakah Anda yakin ingin menghapus data mahasiswa "${mhs.nama}" (${mhs.nim})?`,
-        )
-    ) {
-        return;
-    }
+    if (processing.value) return;
+    mhsToDelete.value = mhs;
+    showDeleteModal.value = true;
+};
+
+const executeDeleteMahasiswa = () => {
+    if (!mhsToDelete.value || processing.value) return;
     processing.value = true;
     errors.value = {};
     feedback.value = '';
-    router.delete(`/kaprodi/mahasiswa/${mhs.id}`, requestOptions());
+    const id = mhsToDelete.value.id;
+    router.delete(`/kaprodi/mahasiswa/${id}`, {
+        ...requestOptions(),
+        onSuccess: (page) => {
+            showDeleteModal.value = false;
+            mhsToDelete.value = null;
+            requestOptions().onSuccess(page);
+        },
+        onError: (errs) => {
+            showDeleteModal.value = false;
+            requestOptions().onError(errs);
+        },
+        onFinish: () => {
+            processing.value = false;
+        },
+    });
 };
 </script>
 
@@ -279,35 +295,41 @@ const confirmDeleteMahasiswa = (mhs: StudentDirectoryEntry) => {
     <Head title="Data Master Mahasiswa • Kaprodi IF ITK" />
 
     <div class="space-y-6">
-        <!-- Header Box -->
-        <PageHeaderBox
-            badge="Data Master Mahasiswa"
-            title="Daftar Mahasiswa"
-            subtitle="Kelola data akun mahasiswa aktif tugas akhir, nomor kontak, serta status kelayakan ujian seminar."
+        <!-- Header & Actions -->
+        <div
+            class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
         >
-            <template #action>
-                <div class="flex items-center gap-2">
-                    <Button
-                        variant="success"
-                        size="md"
-                        :disabled="processing"
-                        @click="isModalImportOpen = true"
-                    >
-                        <Upload class="mr-1.5 h-4 w-4" />
-                        Import Data
-                    </Button>
-                    <Button
-                        variant="primary"
-                        size="md"
-                        :disabled="processing"
-                        @click="openModalTambah"
-                    >
-                        <Plus class="mr-1.5 h-4 w-4" />
-                        Tambah
-                    </Button>
-                </div>
-            </template>
-        </PageHeaderBox>
+            <div>
+                <h1
+                    class="text-2xl font-black tracking-tight text-slate-900 dark:text-white"
+                >
+                    Data Mahasiswa
+                </h1>
+                <p class="mt-0.5 text-xs font-normal text-slate-500 dark:text-slate-400">
+                    Kelola data akun mahasiswa aktif tugas akhir, nomor kontak, serta status kelayakan ujian seminar.
+                </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <Button
+                    variant="success"
+                    size="md"
+                    :disabled="processing"
+                    @click="isModalImportOpen = true"
+                >
+                    <Upload class="mr-1.5 h-4 w-4" />
+                    Import Data
+                </Button>
+                <Button
+                    variant="primary"
+                    size="md"
+                    :disabled="processing"
+                    @click="openModalTambah"
+                >
+                    <Plus class="mr-1.5 h-4 w-4" />
+                    Tambah Mahasiswa
+                </Button>
+            </div>
+        </div>
 
         <!-- Feedback Alert -->
         <div
@@ -323,26 +345,26 @@ const confirmDeleteMahasiswa = (mhs: StudentDirectoryEntry) => {
             {{ feedback || flash.error || flash.success }}
         </div>
 
-        <!-- 4 KPI SUMMARY CARDS -->
+        <!-- 4 KPI SUMMARY CARDS (Matching Daftar Judul) -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <!-- 1. Total Mahasiswa -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs transition-shadow duration-200 dark:border-slate-800 dark:bg-slate-900"
+                class="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-slate-900 uppercase dark:text-white"
+                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-slate-400"
                     >
                         Total Mahasiswa
                     </p>
                     <p
-                        class="mt-1 text-2xl font-black text-slate-900 dark:text-white"
+                        class="mt-1 text-2xl font-black text-black dark:text-white"
                     >
                         {{ totalMhsCount }}
                     </p>
                 </div>
                 <div
-                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-900 dark:border-slate-700/60 dark:bg-slate-800 dark:text-white"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
                 >
                     <Users class="h-5 w-5" />
                 </div>
@@ -350,22 +372,22 @@ const confirmDeleteMahasiswa = (mhs: StudentDirectoryEntry) => {
 
             <!-- 2. Aktif Tugas Akhir -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-blue-200/80 bg-white p-4 shadow-xs transition-shadow duration-200 dark:border-blue-900/40 dark:bg-slate-900"
+                class="flex items-center justify-between rounded-2xl border border-blue-200/80 bg-white p-4 shadow-xs dark:border-blue-900/40 dark:bg-[#111827]"
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-blue-600 uppercase dark:text-blue-400"
+                        class="text-[11px] font-bold tracking-wider text-blue-700 uppercase dark:text-blue-400"
                     >
                         Aktif Tugas Akhir
                     </p>
                     <p
-                        class="mt-1 text-2xl font-black text-blue-600 dark:text-blue-400"
+                        class="mt-1 text-2xl font-black text-blue-700 dark:text-blue-400"
                     >
                         {{ aktifTaCount }}
                     </p>
                 </div>
                 <div
-                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
                 >
                     <FileText class="h-5 w-5" />
                 </div>
@@ -373,22 +395,22 @@ const confirmDeleteMahasiswa = (mhs: StudentDirectoryEntry) => {
 
             <!-- 3. Tahap Sempro & Uji -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-amber-200/80 bg-white p-4 shadow-xs transition-shadow duration-200 dark:border-amber-900/40 dark:bg-slate-900"
+                class="flex items-center justify-between rounded-2xl border border-amber-200/80 bg-white p-4 shadow-xs dark:border-amber-900/40 dark:bg-[#111827]"
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-amber-600 uppercase dark:text-amber-400"
+                        class="text-[11px] font-bold tracking-wider text-amber-700 uppercase dark:text-amber-400"
                     >
                         Tahap Sempro &amp; Uji
                     </p>
                     <p
-                        class="mt-1 text-2xl font-black text-amber-600 dark:text-amber-400"
+                        class="mt-1 text-2xl font-black text-amber-700 dark:text-amber-400"
                     >
                         {{ semproCount }}
                     </p>
                 </div>
                 <div
-                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
                 >
                     <Award class="h-5 w-5" />
                 </div>
@@ -396,34 +418,51 @@ const confirmDeleteMahasiswa = (mhs: StudentDirectoryEntry) => {
 
             <!-- 4. Alumni / Lulus -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-emerald-200/80 bg-white p-4 shadow-xs transition-shadow duration-200 dark:border-emerald-900/40 dark:bg-slate-900"
+                class="flex items-center justify-between rounded-2xl border border-emerald-200/80 bg-white p-4 shadow-xs dark:border-emerald-900/40 dark:bg-[#111827]"
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-emerald-600 uppercase dark:text-emerald-400"
+                        class="text-[11px] font-bold tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
                     >
                         Alumni / Lulus
                     </p>
                     <p
-                        class="mt-1 text-2xl font-black text-emerald-600 dark:text-emerald-400"
+                        class="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-400"
                     >
                         {{ lulusCount }}
                     </p>
                 </div>
                 <div
-                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
                 >
                     <GraduationCap class="h-5 w-5" />
                 </div>
             </div>
         </div>
 
-        <!-- MAIN TABLE CARD -->
-        <Card class="overflow-hidden">
-            <!-- Filter Bar & Search -->
+        <!-- MAIN TABLE CONTAINER (Matching Daftar Judul & Data Dosen) -->
+        <div
+            class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+        >
+            <!-- Card Header with Filters -->
             <div
-                class="space-y-3 border-b border-slate-200 p-5 dark:border-slate-800"
+                class="space-y-3 border-b border-slate-100 p-4 sm:p-5 dark:border-slate-800"
             >
+                <div
+                    class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center"
+                >
+                    <div class="flex items-center gap-2">
+                        <Users
+                            class="h-4 w-4 text-blue-600 dark:text-blue-400"
+                        />
+                        <h2
+                            class="text-sm font-black text-black sm:text-base dark:text-white"
+                        >
+                            Daftar Mahasiswa
+                        </h2>
+                    </div>
+                </div>
+
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <!-- Search Input -->
                     <div class="relative flex-1">
@@ -682,7 +721,7 @@ const confirmDeleteMahasiswa = (mhs: StudentDirectoryEntry) => {
                     </button>
                 </div>
             </div>
-        </Card>
+        </div>
 
         <!-- MODAL FORM: TAMBAH / EDIT MAHASISWA -->
         <Modal
@@ -868,5 +907,16 @@ const confirmDeleteMahasiswa = (mhs: StudentDirectoryEntry) => {
                 </Button>
             </template>
         </Modal>
+
+        <!-- MODAL KONFIRMASI HAPUS MAHASISWA -->
+        <DeleteConfirmModal
+            :show="showDeleteModal"
+            title="Hapus Data Mahasiswa"
+            :item-name="mhsToDelete?.nama ? `${mhsToDelete.nama} (${mhsToDelete.nim})` : ''"
+            item-type="data mahasiswa"
+            :processing="processing"
+            @close="showDeleteModal = false"
+            @confirm="executeDeleteMahasiswa"
+        />
     </div>
 </template>

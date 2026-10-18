@@ -67,7 +67,9 @@ const isKaprodiPengajuanActive = computed(
 const isKaprodiJadwalActive = computed(
     () =>
         currentUrl.value.startsWith('/kaprodi/penjadwalan') ||
-        currentUrl.value.startsWith('/koordinator/penjadwalan'),
+        currentUrl.value.startsWith('/koordinator/penjadwalan') ||
+        currentUrl.value.startsWith('/kaprodi/monitoring') ||
+        currentUrl.value.startsWith('/koordinator/monitoring'),
 );
 </script>
 
@@ -596,6 +598,23 @@ const isKaprodiJadwalActive = computed(
                                 ]"
                             >
                                 Periode Gelombang
+                            </Link>
+
+                            <Link
+                                href="/kaprodi/monitoring"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith(
+                                        '/kaprodi/monitoring',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/monitoring',
+                                    )
+                                        ? 'font-bold text-white'
+                                        : 'text-slate-400 hover:text-slate-200',
+                                ]"
+                            >
+                                Monitoring Kemajuan TA
                             </Link>
                         </div>
                     </div>

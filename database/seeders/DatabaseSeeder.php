@@ -173,45 +173,137 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 2. Dosen (Pembimbing & Penguji)
+        // 2. Data Master Dosen (Matches Front-End masterDosenList)
+        $dosenSeedData = [
+            [
+                'name' => "Dr.Eng. Devy Setiorini Sa'adiyah, S.T., M.S.",
+                'username' => '199201212024062001',
+                'nim_nip' => '199201212024062001',
+                'prodi' => 'Teknik Mesin',
+                'email' => 'devysetiorini@lecturer.itk.ac.id',
+                'jabatan' => 'Lektor',
+            ],
+            [
+                'name' => 'Dr.Eng., Samsu Dlukha Nurcholik, S.T., M.Sc.',
+                'username' => '198903222019031008',
+                'nim_nip' => '198903222019031008',
+                'prodi' => 'Teknik Perkapalan',
+                'email' => 'dlukha@lecturer.itk.ac.id',
+                'jabatan' => 'Lektor Kepala',
+            ],
+            [
+                'name' => 'Rosa Eliviani, S.Kom., M.T.',
+                'username' => '199808102025062011',
+                'nim_nip' => '199808102025062011',
+                'prodi' => 'Teknik Biomedis',
+                'email' => 'rosa.eliviani@lecturer.itk.ac.id',
+                'jabatan' => 'Asisten Ahli',
+            ],
+            [
+                'name' => 'Nisa Rizqiya Fadhliana, S.Kom., M.T.',
+                'username' => '198804102019032020',
+                'nim_nip' => '198804102019032020',
+                'prodi' => 'Informatika',
+                'email' => 'nisafadhliana@lecturer.itk.ac.id',
+                'jabatan' => 'Lektor Kepala',
+            ],
+            [
+                'name' => 'Nur Fajri Azhar, S.Kom., M.Kom.',
+                'username' => '199205182019031015',
+                'nim_nip' => '199205182019031015',
+                'prodi' => 'Informatika',
+                'email' => 'fajri@lecturer.itk.ac.id',
+                'jabatan' => 'Lektor',
+            ],
+            [
+                'name' => 'Ramadhan Paninggalih, S.Si., M.Si., M.Sc.',
+                'username' => '199502272020121006',
+                'nim_nip' => '199502272020121006',
+                'prodi' => 'Informatika',
+                'email' => 'ramadhanpaninggalih@lecturer.itk.ac.id',
+                'jabatan' => 'Asisten Ahli',
+            ],
+            [
+                'name' => 'Riska Kurniyanto Abdullah, S.T., M.Kom.',
+                'username' => '198803082020121011',
+                'nim_nip' => '198803082020121011',
+                'prodi' => 'Informatika',
+                'email' => 'riska.abdullah@lecturer.itk.ac.id',
+                'jabatan' => 'Lektor',
+            ],
+            [
+                'name' => 'Rizal Kusuma Putra, M.T.',
+                'username' => '199809162024061001',
+                'nim_nip' => '199809162024061001',
+                'prodi' => 'Informatika',
+                'email' => 'rizal.putra@lecturer.itk.ac.id',
+                'jabatan' => 'Tenaga Pengajar',
+            ],
+            [
+                'name' => 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
+                'username' => '198901122019031012',
+                'nim_nip' => '198901122019031012',
+                'prodi' => 'Informatika',
+                'email' => 'faisal.ridwan@lecturer.itk.ac.id',
+                'jabatan' => 'Lektor Kepala',
+            ],
+            [
+                'name' => 'Dian Permata Sari, S.Kom., M.Kom.',
+                'username' => '199205182019032015',
+                'nim_nip' => '199205182019032015',
+                'prodi' => 'Informatika',
+                'email' => 'dian.permata@lecturer.itk.ac.id',
+                'jabatan' => 'Lektor',
+            ],
+            [
+                'name' => 'Dr. Budi Wicaksono, M.Kom.',
+                'username' => '198506152015041003',
+                'nim_nip' => '198506152015041003',
+                'prodi' => 'Informatika',
+                'email' => 'budi.wicaksono@lecturer.itk.ac.id',
+                'jabatan' => 'Lektor Kepala',
+            ],
+            [
+                'name' => 'Ir. Hendra Gunawan, S.T., M.T.',
+                'username' => 'EXT-2026-PERTAMINA-01',
+                'nim_nip' => 'EXT-2026-PERTAMINA-01',
+                'prodi' => 'Industri Energi & Migas',
+                'email' => 'hendra.gunawan@pertamina.com',
+                'jabatan' => 'Praktisi Ahli',
+            ],
+        ];
+
+        foreach ($dosenSeedData as $d) {
+            User::updateOrCreate(
+                ['email' => $d['email']],
+                [
+                    'name' => $d['name'],
+                    'username' => $d['username'],
+                    'role' => 'dosen',
+                    'nim_nip' => $d['nim_nip'],
+                    'prodi' => $d['prodi'],
+                    'jabatan' => $d['jabatan'],
+                    'password' => bcrypt('password'),
+                ]
+            );
+        }
+
         $dosenTejo = User::updateOrCreate(
             ['email' => 'tejo.wahyu@lecturer.itk.ac.id'],
             [
                 'name' => 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
                 'username' => '198504122010121003',
                 'role' => 'dosen',
-                'nim_nip' => 'NIP: 198504122010121003',
-                'prodi' => 'S1 Informatika',
-                'jabatan' => 'Dosen Pembimbing & Penguji',
+                'nim_nip' => '198504122010121003',
+                'prodi' => 'Informatika',
+                'jabatan' => 'Lektor',
                 'password' => bcrypt('password'),
             ]
         );
 
-        $dosenFaisal = User::updateOrCreate(
-            ['email' => 'faisal.ridwan@lecturer.itk.ac.id'],
-            [
-                'name' => 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
-                'username' => '198901122019031012',
-                'role' => 'dosen',
-                'nim_nip' => 'NIP: 198901122019031012',
-                'prodi' => 'S1 Informatika',
-                'jabatan' => 'Dosen Pembimbing & Penguji',
-                'password' => bcrypt('password'),
-            ]
-        );
-
-        $dosenDian = User::updateOrCreate(
-            ['email' => 'dian.permata@lecturer.itk.ac.id'],
-            [
-                'name' => 'Dian Permata Sari, S.Kom., M.Kom.',
-                'username' => '199205182019032015',
-                'role' => 'dosen',
-                'nim_nip' => 'NIP: 199205182019032015',
-                'prodi' => 'S1 Informatika',
-                'jabatan' => 'Dosen Pembimbing & Penguji',
-                'password' => bcrypt('password'),
-            ]
-        );
+        $dosenFaisal = User::where('email', 'faisal.ridwan@lecturer.itk.ac.id')->first();
+        $dosenDian = User::where('email', 'dian.permata@lecturer.itk.ac.id')->first();
+        $dosenBudi = User::where('email', 'budi.wicaksono@lecturer.itk.ac.id')->first();
 
         $dosenRian = User::updateOrCreate(
             ['email' => 'rian.kurniawan@lecturer.itk.ac.id'],
@@ -219,22 +311,9 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Rian Kurniawan, S.Kom., M.Eng.',
                 'username' => '199103202020121011',
                 'role' => 'dosen',
-                'nim_nip' => 'NIP: 199103202020121011',
-                'prodi' => 'S1 Informatika',
-                'jabatan' => 'Dosen Pembimbing & Penguji',
-                'password' => bcrypt('password'),
-            ]
-        );
-
-        $dosenBudi = User::updateOrCreate(
-            ['email' => 'budi.wicaksono@lecturer.itk.ac.id'],
-            [
-                'name' => 'Dr. Budi Wicaksono, M.Kom.',
-                'username' => '198506152015041003',
-                'role' => 'dosen',
-                'nim_nip' => 'NIP: 198506152015041003',
-                'prodi' => 'S1 Informatika',
-                'jabatan' => 'Dosen Pembimbing & Penguji',
+                'nim_nip' => '199103202020121011',
+                'prodi' => 'Informatika',
+                'jabatan' => 'Asisten Ahli',
                 'password' => bcrypt('password'),
             ]
         );
@@ -246,8 +325,8 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Prof. Dr. Eng. Muhammad Ridwan, S.T., M.T.',
                 'username' => '198003152005011002',
                 'role' => 'kaprodi',
-                'nim_nip' => 'NIP: 198003152005011002',
-                'prodi' => 'S1 Informatika',
+                'nim_nip' => '198003152005011002',
+                'prodi' => 'Informatika',
                 'jabatan' => 'Ketua Program Studi Informatika',
                 'password' => bcrypt('password'),
             ]
@@ -260,8 +339,8 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Dra. Nurul Rahmania, M.T.',
                 'username' => 'koorprodi',
                 'role' => 'koordinator',
-                'nim_nip' => 'NIP: 198801012015041001',
-                'prodi' => 'S1 Informatika',
+                'nim_nip' => '198801012015041001',
+                'prodi' => 'Informatika',
                 'jabatan' => 'Koordinator Tugas Akhir (Koorpro)',
                 'password' => bcrypt('password'),
             ]
@@ -274,7 +353,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Siti Nurhaliza, S.Kom.',
                 'username' => '199208192018032001',
                 'role' => 'tendik',
-                'nim_nip' => 'NIP: 199208192018032001',
+                'nim_nip' => '199208192018032001',
                 'prodi' => 'Fakultas Sains & Teknologi Informasi',
                 'jabatan' => 'Tenaga Kependidikan / Staf Akademik',
                 'password' => bcrypt('password'),

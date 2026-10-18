@@ -117,7 +117,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/penjadwalan/periods/{id}', [KaprodiPenjadwalanController::class, 'storePeriod'])->name('penjadwalan.periods.update');
         Route::patch('/penjadwalan/{id}', [KaprodiPenjadwalanController::class, 'update'])->name('penjadwalan.update');
 
-        Route::inertia('/monitoring', 'Koordinator/Monitoring')->name('monitoring');
+        Route::inertia('/monitoring', 'Kaprodi/Monitoring')->name('monitoring');
 
         Route::get('/dosen/template', [KaprodiDosenController::class, 'template'])->name('dosen.template');
         Route::post('/dosen/import/preview', [KaprodiDosenController::class, 'previewImport'])->name('dosen.import.preview');

@@ -6,7 +6,7 @@ import ts from 'typescript';
 import { computed, ref } from 'vue';
 
 const source = fs.readFileSync(
-    'resources/js/pages/Koordinator/Penjadwalan.vue',
+    'resources/js/pages/Kaprodi/Penjadwalan.vue',
     'utf8',
 );
 const script = source

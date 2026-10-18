@@ -98,7 +98,7 @@ function mount(path, additions = {}, props = {}) {
 }
 
 test('actual monitoring SFC exposes unavailable data instead of fixtures and inactive export', () => {
-    const root = mount('resources/js/pages/Koordinator/Monitoring.vue');
+    const root = mount('resources/js/pages/Kaprodi/Monitoring.vue');
     expect(text(root)).toContain('Monitoring terpadu belum tersedia');
     expect(text(root)).toContain('Ekspor laporan belum tersedia');
     expect(text(root)).not.toContain('Akmal');

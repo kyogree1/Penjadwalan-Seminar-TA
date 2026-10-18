@@ -16,6 +16,7 @@ import {
     X,
 } from 'lucide-vue-next';
 import Button from '@/Components/Button.vue';
+import DeleteConfirmModal from '@/Components/DeleteConfirmModal.vue';
 import Modal from '@/Components/Modal.vue';
 import SemproSection from './Partials/SemproSection.vue';
 import SidangSection from './Partials/SidangSection.vue';
@@ -669,17 +670,19 @@ const saveDecision = () => {
     });
 };
 
-// Delete proposal method
+const judulToDelete = ref<JudulReview | null>(null);
+const showDeleteJudulModal = ref(false);
+
 const confirmDeleteJudul = (item: JudulReview) => {
     if (saving.value) return;
+    judulToDelete.value = item;
+    showDeleteJudulModal.value = true;
+};
+
+const executeDeleteJudul = () => {
+    const item = judulToDelete.value;
+    if (!item || saving.value) return;
     const studentName = getStudentName(item);
-    if (
-        !confirm(
-            `Apakah Anda yakin ingin menghapus pengajuan judul dari "${studentName}"?`,
-        )
-    ) {
-        return;
-    }
 
     // Untuk item demo (id > 100), hapus dari list lokal langsung
     if (item.id > 100) {
@@ -690,6 +693,8 @@ const confirmDeleteJudul = (item: JudulReview) => {
             selectedJudulId.value =
                 filteredJudulList.value[0]?.id ?? null;
         }
+        showDeleteJudulModal.value = false;
+        judulToDelete.value = null;
         showToast(`Pengajuan judul "${studentName}" berhasil dihapus.`);
         return;
     }
@@ -698,6 +703,8 @@ const confirmDeleteJudul = (item: JudulReview) => {
     router.delete(`/kaprodi/persetujuan/judul/${item.id}`, {
         preserveScroll: true,
         onSuccess: (page) => {
+            showDeleteJudulModal.value = false;
+            judulToDelete.value = null;
             const flash = page.props.flash as {
                 success?: string;
                 error?: string;
@@ -717,6 +724,7 @@ const confirmDeleteJudul = (item: JudulReview) => {
             }
         },
         onError: (errs) => {
+            showDeleteJudulModal.value = false;
             showToast(
                 Object.values(errs).join(' ') ||
                     'Gagal menghapus pengajuan judul.',
@@ -1790,4 +1798,15 @@ const submitAcademicReview = (
             </div>
         </div>
     </Modal>
+
+    <!-- MODAL KONFIRMASI HAPUS JUDUL -->
+    <DeleteConfirmModal
+        :show="showDeleteJudulModal"
+        title="Hapus Pengajuan Judul"
+        :item-name="judulToDelete ? getStudentName(judulToDelete) : ''"
+        item-type="pengajuan judul dari"
+        :processing="saving"
+        @close="showDeleteJudulModal = false"
+        @confirm="executeDeleteJudul"
+    />
 </template>

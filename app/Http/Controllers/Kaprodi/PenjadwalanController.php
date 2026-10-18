@@ -21,7 +21,7 @@ class PenjadwalanController extends Controller
     {
         $period = SchedulePeriod::find($request->integer('period_id'));
 
-        return Inertia::render('Koordinator/Penjadwalan', [
+        return Inertia::render('Kaprodi/Penjadwalan', [
             'periods' => SchedulePeriod::orderBy('start_date')->get(),
             'selectedPeriodId' => $period?->id,
             'penjadwalanList' => Penjadwalan::with(['mahasiswa:id,name,nim_nip,username', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])

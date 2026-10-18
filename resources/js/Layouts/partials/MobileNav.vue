@@ -3,6 +3,7 @@ import { onMounted, onUnmounted } from 'vue';
 import { dialog as vDialog } from '@/lib/dialog';
 import { Link, router } from '@inertiajs/vue3';
 import {
+    Activity,
     Award,
     BookOpen,
     Building2,
@@ -300,6 +301,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                             @click="emit('close')"
                         >
                             <Clock class="h-4 w-4" /> Periode Gelombang
+                        </Link>
+                        <Link
+                            href="/kaprodi/monitoring"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <Activity class="h-4 w-4" /> Monitoring Kemajuan TA
                         </Link>
 
                         <p
