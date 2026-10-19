@@ -138,9 +138,13 @@ const handleAccordionClick = (
                     :title="collapsed ? 'SIPTA IF - Informatika ITK' : ''"
                 >
                     <div
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/30"
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-white p-1 shadow-xs dark:border-slate-700/80 dark:bg-slate-800"
                     >
-                        <GraduationCap class="h-5 w-5 shrink-0" />
+                        <img
+                            src="/images/logo_if.png"
+                            alt="Logo Informatika ITK"
+                            class="h-6 w-6 object-contain"
+                        />
                     </div>
                     <div v-if="!collapsed" class="min-w-0">
                         <h1
@@ -177,15 +181,6 @@ const handleAccordionClick = (
                 </button>
             </div>
 
-            <!-- Role Badge (Only shown when expanded) -->
-            <div v-if="!collapsed" class="shrink-0 px-4 pt-3 pb-1">
-                <div
-                    class="rounded-xl border px-3 py-1.5 text-center text-[10px] font-bold"
-                    :class="roleInfo.color"
-                >
-                    {{ roleInfo.title }}
-                </div>
-            </div>
             <!-- Navigation Links -->
             <nav
                 class="min-h-0 flex-1 space-y-1 p-3"

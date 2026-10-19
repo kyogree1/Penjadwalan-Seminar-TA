@@ -70,9 +70,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                 >
                     <div class="flex items-center gap-2.5">
                         <div
-                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white"
+                            class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white p-1 shadow-xs dark:border-slate-700/80 dark:bg-slate-800"
                         >
-                            <GraduationCap class="h-4 w-4" />
+                            <img
+                                src="/images/logo_if.png"
+                                alt="Logo Informatika ITK"
+                                class="h-5 w-5 object-contain"
+                            />
                         </div>
                         <span class="text-sm font-bold text-slate-900 dark:text-white"
                             >SIPTA IF</span
