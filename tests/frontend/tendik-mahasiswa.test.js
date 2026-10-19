@@ -160,6 +160,11 @@ const click = (root, label) => {
     expect(el).toBeDefined();
     el.onClick();
 };
+const clickRow = (root) => {
+    const el = walk(root).find((el) => el.tagName === 'TR' && el.onClick);
+    expect(el).toBeDefined();
+    el.onClick();
+};
 const mount = (list = []) => {
     requests.length = 0;
     const props = reactive({
@@ -303,7 +308,7 @@ describe('student directory actual SFC', () => {
         requests[2][3].onFinish();
         await nextTick();
         expect(text(root)).toContain('Created on server');
-        click(root, 'Edit');
+        clickRow(root);
         await nextTick();
         set('Nama mahasiswa', 'Updated');
         click(root, 'Simpan Akun');
@@ -318,6 +323,8 @@ describe('student directory actual SFC', () => {
         requests[3][3].onFinish();
         await nextTick();
         expect(props.dbStudents[0].name).toBe('Aktual 0');
+        clickRow(root);
+        await nextTick();
         click(root, 'Hapus');
         await nextTick();
         expect(text(root)).toContain('riwayat akademik');
@@ -373,6 +380,8 @@ describe('student directory actual SFC', () => {
     });
     test('reset posts persisted ID once, reports server confirmation and recoverable failures', async () => {
         const { root, props } = mount(rows());
+        clickRow(root);
+        await nextTick();
         click(root, 'Reset Password');
         await nextTick();
         click(root, 'Ya, Reset Password');

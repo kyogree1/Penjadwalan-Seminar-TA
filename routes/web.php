@@ -22,7 +22,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Tendik\ArsipController as TendikArsipController;
 use App\Http\Controllers\Tendik\DashboardController as TendikDashboardController;
 use App\Http\Controllers\Tendik\MahasiswaController as TendikMahasiswaController;
-use App\Http\Controllers\Tendik\RuanganController as TendikRuanganController;
 use App\Http\Controllers\Tendik\VerifikasiController as TendikVerifikasiController;
 use Illuminate\Support\Facades\Route;
 
