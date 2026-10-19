@@ -249,7 +249,7 @@ const pipelineStages = computed(() => {
                 :value="props.pendingCounts.sempro"
                 subtitle="Seminar proposal terjadwal minggu ini"
                 :icon="Calendar"
-                icon-color="purple"
+                icon-color="indigo"
             />
             <StatCard
                 title="Sidang TA Minggu Ini"
