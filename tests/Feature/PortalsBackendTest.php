@@ -7,6 +7,7 @@ use App\Models\PengajuanJudul;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class PortalsBackendTest extends TestCase
@@ -84,6 +85,38 @@ class PortalsBackendTest extends TestCase
             'catatan_kaprodi' => 'Judul sangat relevan dengan keilmuan prodi. Disetujui.',
             'disetujui_oleh' => $kaprodi->id,
         ]);
+    }
+
+    public function test_kaprodi_can_access_penjadwalan_and_monitoring(): void
+    {
+        $kaprodi = User::factory()->create(['role' => 'kaprodi']);
+
+        $this->actingAs($kaprodi)
+            ->get('/kaprodi/penjadwalan')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Kaprodi/Penjadwalan'));
+
+        $this->actingAs($kaprodi)
+            ->get('/kaprodi/monitoring')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Kaprodi/Monitoring'));
+    }
+
+    public function test_koordinator_routes_redirect_to_kaprodi(): void
+    {
+        $koor = User::factory()->create(['role' => 'koordinator']);
+
+        $this->actingAs($koor)
+            ->get('/koordinator/penjadwalan')
+            ->assertRedirect(route('kaprodi.penjadwalan'));
+
+        $this->actingAs($koor)
+            ->get('/koordinator/monitoring')
+            ->assertRedirect(route('kaprodi.monitoring'));
+
+        $this->actingAs($koor)
+            ->get('/koordinator/mahasiswa')
+            ->assertRedirect(route('kaprodi.mahasiswa'));
     }
 
     /* -------------------------------------------------------------

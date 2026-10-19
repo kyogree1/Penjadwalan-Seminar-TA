@@ -24,10 +24,12 @@ void createInertiaApp({
     },
     setup({ el, App, props, plugin }) {
         initializeTheme();
-        createApp({ render: () => h(App, props) })
+        const vueApp = createApp({ render: () => h(App, props) })
             .use(plugin)
-            .directive('dialog', dialog)
-            .mount(el);
+            .directive('dialog', dialog);
+        if (el) {
+            vueApp.mount(el);
+        }
     },
     progress: {
         color: '#2563eb', // Blue-600 Tailwind

@@ -4,14 +4,22 @@ const isDarkMode = ref(false);
 
 const applyTheme = (dark: boolean) => {
     isDarkMode.value = dark;
-    document.documentElement.classList.toggle('dark', dark);
+    if (typeof document !== 'undefined') {
+        document.documentElement.classList.toggle('dark', dark);
+    }
 
-    try {
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
-    } catch {}
+    if (typeof localStorage !== 'undefined') {
+        try {
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
+        } catch {}
+    }
 };
 
 export const initializeTheme = () => {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
     let savedTheme: string | null = null;
 
     try {

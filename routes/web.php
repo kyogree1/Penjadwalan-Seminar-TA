@@ -7,6 +7,7 @@ use App\Http\Controllers\Dosen\ExamDocumentController;
 use App\Http\Controllers\Dosen\PenilaianController as DosenPenilaianController;
 use App\Http\Controllers\Kaprodi\DashboardController as KaprodiDashboardController;
 use App\Http\Controllers\Kaprodi\DosenController as KaprodiDosenController;
+use App\Http\Controllers\Kaprodi\MahasiswaController as KaprodiMahasiswaController;
 use App\Http\Controllers\Kaprodi\PenjadwalanController as KaprodiPenjadwalanController;
 use App\Http\Controllers\Kaprodi\PersetujuanController as KaprodiPersetujuanController;
 use App\Http\Controllers\Kaprodi\ScheduleExportController;
@@ -28,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 // 1. Entry point (Home & Login) - Defaults to Login page
 Route::get('/', [AuthController::class, 'showLogin'])->name('home');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('guest')->group(function () {
@@ -81,7 +82,7 @@ Route::middleware('auth')->group(function () {
     // ==========================================
     // PORTAL DOSEN (PEMBIMBING & PENGUJI)
     // ==========================================
-    Route::middleware('role:dosen')->prefix('dosen')->name('dosen.')->group(function () {
+    Route::middleware('role:dosen,kaprodi,koordinator')->prefix('dosen')->name('dosen.')->group(function () {
         Route::get('/dashboard', [DosenDashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/bimbingan', [DosenBimbinganController::class, 'index'])->name('bimbingan');
@@ -91,6 +92,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/penilaian/{id}/dokumen/{field}', ExamDocumentController::class)->name('penilaian.dokumen');
         Route::get('/penilaian', [DosenPenilaianController::class, 'index'])->name('penilaian');
         Route::post('/penilaian/{id}', [DosenPenilaianController::class, 'store'])->name('penilaian.store');
+
+        Route::get('/persetujuan', [KaprodiPersetujuanController::class, 'index'])->name('persetujuan');
+        Route::get('/sempro', [KaprodiPersetujuanController::class, 'index'])->name('sempro');
+        Route::get('/sidang', [KaprodiPersetujuanController::class, 'index'])->name('sidang');
+        Route::patch('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'updateJudul'])->name('persetujuan.judul');
+        Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul'])->name('persetujuan.judul.destroy');
+        Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro'])->name('persetujuan.sempro');
+        Route::patch('/persetujuan/sidang/{id}', [KaprodiPersetujuanController::class, 'updateSidang'])->name('persetujuan.sidang');
     });
 
     // ==========================================
@@ -99,14 +108,26 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:kaprodi,koordinator')->prefix('kaprodi')->name('kaprodi.')->group(function () {
         Route::get('/dashboard', [KaprodiDashboardController::class, 'index'])->name('dashboard');
 
+        Route::get('/bimbingan', [DosenBimbinganController::class, 'index'])->name('bimbingan');
+
         Route::get('/penjadwalan', [KaprodiPenjadwalanController::class, 'index'])->name('penjadwalan');
+        Route::get('/penjadwalan/sempro', [KaprodiPenjadwalanController::class, 'semproIndex'])->name('penjadwalan.sempro');
+        Route::get('/penjadwalan/ta', [KaprodiPenjadwalanController::class, 'taIndex'])->name('penjadwalan.ta');
+        Route::get('/penjadwalan/plotting-sempro', [KaprodiPenjadwalanController::class, 'plottingSemproIndex'])->name('penjadwalan.plotting-sempro');
+        Route::get('/penjadwalan/plotting-ta', [KaprodiPenjadwalanController::class, 'plottingTaIndex'])->name('penjadwalan.plotting-ta');
+        Route::post('/penjadwalan/periods/toggle/{id}', [KaprodiPenjadwalanController::class, 'togglePeriodStatus'])->name('penjadwalan.periods.toggle');
+        Route::post('/penjadwalan/periods/toggle-publish/{id}', [KaprodiPenjadwalanController::class, 'togglePublish'])->name('penjadwalan.periods.toggle-publish');
+        Route::post('/penjadwalan/periods/{id}/sync-calendar', [KaprodiPenjadwalanController::class, 'syncCalendar'])->name('penjadwalan.periods.sync-calendar');
+        Route::get('/penjadwalan/periods/{id}/export-ics', [KaprodiPenjadwalanController::class, 'exportIcs'])->name('penjadwalan.periods.export-ics');
+        Route::delete('/penjadwalan/periods/{id}', [KaprodiPenjadwalanController::class, 'destroyPeriod'])->name('penjadwalan.periods.destroy');
         Route::post('/penjadwalan/generate-ga', [KaprodiPenjadwalanController::class, 'generateGa'])->name('penjadwalan.generate-ga');
         Route::post('/penjadwalan/simpan', [KaprodiPenjadwalanController::class, 'simpan'])->name('penjadwalan.simpan');
         Route::post('/penjadwalan/periods', [KaprodiPenjadwalanController::class, 'storePeriod'])->name('penjadwalan.periods.store');
         Route::patch('/penjadwalan/periods/{id}', [KaprodiPenjadwalanController::class, 'storePeriod'])->name('penjadwalan.periods.update');
+        Route::patch('/penjadwalan/plotting/{id}', [KaprodiPenjadwalanController::class, 'updatePlotting'])->name('penjadwalan.plotting.update');
         Route::patch('/penjadwalan/{id}', [KaprodiPenjadwalanController::class, 'update'])->name('penjadwalan.update');
 
-        Route::inertia('/monitoring', 'Koordinator/Monitoring')->name('monitoring');
+        Route::inertia('/monitoring', 'Kaprodi/Monitoring')->name('monitoring');
 
         Route::get('/dosen/template', [KaprodiDosenController::class, 'template'])->name('dosen.template');
         Route::post('/dosen/import/preview', [KaprodiDosenController::class, 'previewImport'])->name('dosen.import.preview');
@@ -117,8 +138,19 @@ Route::middleware('auth')->group(function () {
         Route::put('/dosen/{id}', [KaprodiDosenController::class, 'update'])->name('dosen.update');
         Route::delete('/dosen/{id}', [KaprodiDosenController::class, 'destroy'])->name('dosen.destroy');
 
+        Route::get('/mahasiswa/template', [KaprodiMahasiswaController::class, 'template'])->name('mahasiswa.template');
+        Route::post('/mahasiswa/import-preview', [KaprodiMahasiswaController::class, 'previewImport'])->name('mahasiswa.import.preview');
+        Route::post('/mahasiswa/import', [KaprodiMahasiswaController::class, 'import'])->name('mahasiswa.import');
+        Route::get('/mahasiswa', [KaprodiMahasiswaController::class, 'index'])->name('mahasiswa');
+        Route::post('/mahasiswa', [KaprodiMahasiswaController::class, 'store'])->name('mahasiswa.store');
+        Route::put('/mahasiswa/{id}', [KaprodiMahasiswaController::class, 'update'])->name('mahasiswa.update');
+        Route::delete('/mahasiswa/{id}', [KaprodiMahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
+
         Route::get('/persetujuan', [KaprodiPersetujuanController::class, 'index'])->name('persetujuan');
+        Route::get('/sempro', [KaprodiPersetujuanController::class, 'index'])->name('sempro');
+        Route::get('/sidang', [KaprodiPersetujuanController::class, 'index'])->name('sidang');
         Route::patch('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'updateJudul'])->name('persetujuan.judul');
+        Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul'])->name('persetujuan.judul.destroy');
         Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro'])->name('persetujuan.sempro');
         Route::patch('/persetujuan/sidang/{id}', [KaprodiPersetujuanController::class, 'updateSidang'])->name('persetujuan.sidang');
     });
@@ -126,7 +158,12 @@ Route::middleware('auth')->group(function () {
     // Backward compatibility aliases for /koordinator routes
     Route::middleware('role:kaprodi,koordinator')->prefix('koordinator')->name('koordinator.')->group(function () {
         Route::get('/penjadwalan', fn () => redirect()->route('kaprodi.penjadwalan'))->name('penjadwalan');
-        Route::get('/monitoring', fn () => redirect()->route('kaprodi.monitoring'))->name('monitoring');
+        Route::get('/penjadwalan/sempro', fn () => redirect()->route('kaprodi.penjadwalan.sempro'))->name('penjadwalan.sempro');
+        Route::get('/penjadwalan/ta', fn () => redirect()->route('kaprodi.penjadwalan.ta'))->name('penjadwalan.ta');
+        Route::get('/penjadwalan/plotting-sempro', fn () => redirect()->route('kaprodi.penjadwalan.plotting-sempro'))->name('penjadwalan.plotting-sempro');
+        Route::get('/penjadwalan/plotting-ta', fn () => redirect()->route('kaprodi.penjadwalan.plotting-ta'))->name('penjadwalan.plotting-ta');
+        Route::get('/monitoring', fn () => redirect()->route('kaprodi.dashboard'))->name('monitoring');
+        Route::get('/mahasiswa', fn () => redirect()->route('kaprodi.mahasiswa'))->name('mahasiswa');
     });
 
     // ==========================================

@@ -18,19 +18,28 @@ class PersetujuanController extends Controller
 {
     public function index(): Response
     {
-        $judulList = PengajuanJudul::with([
-            'mahasiswa:id,name,username,nim_nip',
+        $user = Auth::user();
+
+        $judulQuery = PengajuanJudul::with([
+            'mahasiswa:id,name,username,nim_nip,angkatan',
             'pembimbing1:id,name',
             'pembimbing2:id,name',
-        ])
+        ]);
+
+        if ($user) {
+            $judulQuery->where(function ($query) use ($user) {
+                $query->where('pembimbing_1_id', $user->id)
+                    ->orWhere('pembimbing_2_id', $user->id);
+            });
+        }
+
+        $judulList = $judulQuery->latest()->get();
+
+        $semproList = PendaftaranSempro::with('mahasiswa:id,name,username,nim_nip,angkatan')
             ->latest()
             ->get();
 
-        $semproList = PendaftaranSempro::with('mahasiswa:id,name,username,nim_nip')
-            ->latest()
-            ->get();
-
-        $sidangList = PendaftaranSidang::with('mahasiswa:id,name,username,nim_nip')
+        $sidangList = PendaftaranSidang::with('mahasiswa:id,name,username,nim_nip,angkatan')
             ->latest()
             ->get();
 
@@ -47,14 +56,28 @@ class PersetujuanController extends Controller
         $validated = $request->validate([
             'status' => ['required', 'in:disetujui,ditolak,revisi'],
             'catatan_kaprodi' => ['nullable', 'string'],
-            'pembimbing_1_id' => ['nullable', 'integer', Rule::exists('users', 'id')->where('role', 'dosen')],
-            'pembimbing_2_id' => ['nullable', 'integer', Rule::exists('users', 'id')->where('role', 'dosen')],
+            'pembimbing_1_id' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id')->where(function ($query) {
+                    $query->whereIn('role', ['dosen', 'kaprodi', 'koordinator']);
+                }),
+            ],
+            'pembimbing_2_id' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id')->where(function ($query) {
+                    $query->whereIn('role', ['dosen', 'kaprodi', 'koordinator']);
+                }),
+            ],
         ]);
 
         $judul = PengajuanJudul::findOrFail($id);
         $user = Auth::user();
-        $p1 = $validated['pembimbing_1_id'] ?? $judul->pembimbing_1_id;
-        $p2 = $validated['pembimbing_2_id'] ?? $judul->pembimbing_2_id;
+        $p1 = array_key_exists('pembimbing_1_id', $validated) ? $validated['pembimbing_1_id'] : $judul->pembimbing_1_id;
+        $p2 = array_key_exists('pembimbing_2_id', $validated) ? $validated['pembimbing_2_id'] : $judul->pembimbing_2_id;
         if ($p1 && $p1 === $p2) {
             throw ValidationException::withMessages(['pembimbing_2_id' => 'Pembimbing harus berbeda.']);
         }
@@ -62,16 +85,29 @@ class PersetujuanController extends Controller
             throw ValidationException::withMessages(['status' => 'Draft belum diajukan.']);
         }
 
-        $judul->update([
+        $updateData = [
             'status' => $validated['status'],
             'catatan_kaprodi' => $validated['catatan_kaprodi'] ?? null,
             'disetujui_oleh' => $validated['status'] === 'disetujui' ? $user->id : null,
             'disetujui_at' => $validated['status'] === 'disetujui' ? now() : null,
-            'pembimbing_1_id' => $validated['pembimbing_1_id'] ?? $judul->pembimbing_1_id,
-            'pembimbing_2_id' => $validated['pembimbing_2_id'] ?? $judul->pembimbing_2_id,
-        ]);
+        ];
+        if (array_key_exists('pembimbing_1_id', $validated)) {
+            $updateData['pembimbing_1_id'] = $validated['pembimbing_1_id'];
+        }
+        if (array_key_exists('pembimbing_2_id', $validated)) {
+            $updateData['pembimbing_2_id'] = $validated['pembimbing_2_id'];
+        }
+        $judul->update($updateData);
 
         return redirect()->back()->with('success', 'Keputusan persetujuan judul berhasil disimpan!');
+    }
+
+    public function destroyJudul($id)
+    {
+        $judul = PengajuanJudul::findOrFail($id);
+        $judul->delete();
+
+        return redirect()->back()->with('success', 'Pengajuan judul berhasil dihapus!');
     }
 
     public function updateSempro(Request $request, $id)

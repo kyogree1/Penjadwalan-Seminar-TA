@@ -11,12 +11,12 @@ globalThis.Document = class {};
 globalThis.ShadowRoot = class {};
 // Compile the actual SFC; only visual wrappers and Inertia navigation are stubbed.
 const source = readFileSync(
-    'resources/js/pages/Koordinator/Penjadwalan.vue',
+    'resources/js/pages/Kaprodi/Penjadwalan.vue',
     'utf8',
 );
 const { descriptor } = parse(
     source.replace("'@/types/scheduling'", "'../../types/scheduling'"),
-    { filename: 'resources/js/pages/Koordinator/Penjadwalan.vue' },
+    { filename: 'resources/js/pages/Kaprodi/Penjadwalan.vue' },
 );
 const compiled = compileScript(descriptor, {
     id: 'dashboard-test',

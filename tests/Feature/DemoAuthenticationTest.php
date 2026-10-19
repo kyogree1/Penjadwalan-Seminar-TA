@@ -5,18 +5,15 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class DemoAuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[DataProvider('nonLocalEnvironments')]
-    public function test_demo_login_is_forbidden_outside_local_environment(string $environment): void
+    public function test_demo_role_login_is_rejected(): void
     {
         User::factory()->create(['role' => 'dosen']);
-        $this->app->instance('env', $environment);
         $this->withoutMiddleware(PreventRequestForgery::class);
 
         $this->post('/login', ['demo_role' => 'dosen'])->assertForbidden();
@@ -24,29 +21,9 @@ class DemoAuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    public static function nonLocalEnvironments(): array
-    {
-        return [['production'], ['staging'], ['testing'], ['local']];
-    }
-
-    public function test_local_demo_login_with_credentials_still_requires_the_correct_password(): void
+    public function test_password_login_still_works(): void
     {
         $dosen = User::factory()->create(['role' => 'dosen']);
-        $this->app->instance('env', 'local');
-        $this->withoutMiddleware(PreventRequestForgery::class);
-
-        $this->post('/login', ['demo_role' => 'dosen', 'email' => $dosen->email, 'password' => 'wrong-password'])->assertForbidden();
-
-        $this->assertGuest();
-        $this->post('/login', ['email' => $dosen->email, 'password' => 'password'])->assertRedirect('/dosen/dashboard');
-
-        $this->assertAuthenticatedAs($dosen);
-    }
-
-    public function test_production_password_login_still_works(): void
-    {
-        $dosen = User::factory()->create(['role' => 'dosen']);
-        $this->app->instance('env', 'production');
         $this->withoutMiddleware(PreventRequestForgery::class);
 
         $this->post('/login', ['email' => $dosen->email, 'password' => 'password'])

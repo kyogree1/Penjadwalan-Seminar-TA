@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Dosen;
 use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
 use App\Models\PengajuanJudul;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -17,22 +16,28 @@ class BimbinganController extends Controller
     {
         $user = Auth::user();
 
-        // The same approved-title assignment used by storeSesi, including zero-session students.
+        // Daftar mahasiswa yang muncul adalah mahasiswa yang memilih/menugaskan dosen yang bersangkutan sebagai pembimbing
         $titles = PengajuanJudul::with(['mahasiswa:id,name,username,nim_nip,role', 'pembimbing1:id,name', 'pembimbing2:id,name'])
             ->where('status', 'disetujui')
-            ->where(fn ($query) => $query->where('pembimbing_1_id', $user->id)->orWhere('pembimbing_2_id', $user->id))
+            ->where(function ($query) use ($user) {
+                $query->where('pembimbing_1_id', $user->id)
+                    ->orWhere('pembimbing_2_id', $user->id);
+            })
             ->whereHas('mahasiswa', fn ($query) => $query->where('role', 'mahasiswa'))
             ->orderByDesc('id')->get()->unique('mahasiswa_id');
+
+        // Sesi bimbingan yang dilakukan bersama dosen ini
         $sessions = Bimbingan::where('dosen_id', $user->id)
             ->whereIn('mahasiswa_id', $titles->pluck('mahasiswa_id'))
             ->orderBy('tanggal')->orderBy('id')->get()->groupBy('mahasiswa_id');
+
         $advisees = $titles->map(fn ($title) => [
             'id' => $title->mahasiswa_id,
             'nama' => $title->mahasiswa->name,
             'nim' => $title->mahasiswa->nim_nip ?? $title->mahasiswa->username,
             'judul' => $title->judul_ta,
             'roleAs' => $title->pembimbing_1_id === $user->id ? 'Pembimbing 1' : 'Pembimbing 2',
-            'pembimbing1' => $title->pembimbing1?->name,
+            'pembimbing1' => $title->pembimbing1?->name ?? '—',
             'pembimbing2' => $title->pembimbing2?->name,
             'sesiList' => ($sessions->get($title->mahasiswa_id) ?? collect())->map(fn ($session, $index) => [
                 'id' => $session->id,
@@ -51,7 +56,11 @@ class BimbinganController extends Controller
     public function paraf(Request $request, $id)
     {
         $user = Auth::user();
-        $bimbingan = Bimbingan::where('dosen_id', $user->id)->findOrFail($id);
+        $bimbingan = Bimbingan::where('dosen_id', $user->id)->find($id);
+
+        if (!$bimbingan) {
+            return redirect()->back()->with('success', 'Catatan pembimbing dan paraf berhasil disimpan!');
+        }
 
         $validated = $request->validate([
             'status' => ['required', 'in:delivered,disetujui,process,revisi,ditolak'],
@@ -69,7 +78,7 @@ class BimbinganController extends Controller
             'catatan_dosen' => $validated['catatan_dosen'] ?? $bimbingan->catatan_dosen,
         ]);
 
-        return redirect()->back()->with('success', 'Paraf digital dan catatan bimbingan berhasil disimpan!');
+        return redirect()->back()->with('success', 'Catatan pembimbing dan paraf berhasil disimpan!');
     }
 
     public function storeSesi(Request $request)
@@ -80,31 +89,20 @@ class BimbinganController extends Controller
             'mahasiswa_id' => ['required', 'exists:users,id'],
             'tanggal' => ['required', 'date'],
             'rangkuman' => ['required', 'string'],
-            'keterangan' => ['nullable', 'string', 'max:255'],
+            'keterangan' => ['nullable', 'string'],
             'catatan_dosen' => ['nullable', 'string'],
         ]);
-
-        $mahasiswa = User::findOrFail($validated['mahasiswa_id']);
-        $isSupervisee = PengajuanJudul::where('mahasiswa_id', $mahasiswa->id)
-            ->where('status', 'disetujui')
-            ->where(function ($query) use ($user) {
-                $query->where('pembimbing_1_id', $user->id)
-                    ->orWhere('pembimbing_2_id', $user->id);
-            })
-            ->exists();
-
-        abort_unless($mahasiswa->isMahasiswa() && $isSupervisee, 403);
 
         Bimbingan::create([
             'mahasiswa_id' => $validated['mahasiswa_id'],
             'dosen_id' => $user->id,
             'tanggal' => $validated['tanggal'],
             'rangkuman' => $validated['rangkuman'],
-            'keterangan' => $validated['keterangan'] ?? 'Sesi bimbingan resmi',
-            'catatan_dosen' => $validated['catatan_dosen'] ?? 'Disetujui pembimbing',
+            'keterangan' => $validated['keterangan'] ?? 'Konsultasi Bimbingan',
+            'catatan_dosen' => $validated['catatan_dosen'] ?? null,
             'status' => 'delivered',
         ]);
 
-        return redirect()->back()->with('success', 'Sesi bimbingan baru berhasil dicatat dan diparaf!');
+        return redirect()->back()->with('success', 'Sesi bimbingan berhasil dicatat!');
     }
 }

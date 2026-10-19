@@ -19,16 +19,238 @@ class PenjadwalanController extends Controller
 {
     public function index(Request $request)
     {
-        $period = SchedulePeriod::find($request->integer('period_id'));
+        $tipe = $request->query('tipe');
+        if ($tipe === 'sidang' || $tipe === 'ta') {
+            return redirect()->route('kaprodi.penjadwalan.plotting-ta', $request->query());
+        }
 
-        return Inertia::render('Koordinator/Penjadwalan', [
-            'periods' => SchedulePeriod::orderBy('start_date')->get(),
-            'selectedPeriodId' => $period?->id,
-            'penjadwalanList' => Penjadwalan::with(['mahasiswa:id,name,nim_nip,username', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])
-                ->when($period, fn ($query) => $query->where('period_id', $period->id))->orderBy('tanggal')->get(),
-            'dosenOptions' => User::where('role', 'dosen')->get(['id', 'name', 'nim_nip', 'prodi', 'jabatan']),
-            'capabilities' => ['lecturerKbk' => false, 'availability' => false, 'lecturerQuota' => false],
+        return redirect()->route('kaprodi.penjadwalan.plotting-sempro', $request->query());
+    }
+
+    public function plottingSemproIndex(Request $request)
+    {
+        $periods = SchedulePeriod::where('tipe', 'sempro')
+            ->orderBy('gelombang')
+            ->get()
+            ->map(function ($period) {
+                return [
+                    'id' => $period->id,
+                    'name' => $this->formatPeriodYear($period->name),
+                    'tipe' => $period->tipe,
+                    'semester' => $period->semester ?? 'Gasal',
+                    'prodi' => $period->prodi ?? 'Informatika',
+                    'gelombang' => $period->gelombang,
+                    'capacity' => $period->capacity,
+                    'start_date' => $period->start_date ? $period->start_date->format('Y-m-d') : null,
+                    'end_date' => $period->end_date ? $period->end_date->format('Y-m-d') : null,
+                    'is_open' => (bool) $period->is_open,
+                    'is_published' => (bool) $period->is_published,
+                    'slots' => $period->slots ?? [],
+                ];
+            });
+
+        $selectedPeriodId = $request->integer('period_id');
+        if (! $selectedPeriodId) {
+            $defaultPeriod = $periods->firstWhere('is_open', true) ?? $periods->first();
+            $selectedPeriodId = $defaultPeriod ? $defaultPeriod['id'] : null;
+        }
+        $selectedPeriod = $selectedPeriodId ? $periods->firstWhere('id', $selectedPeriodId) : null;
+
+        $schedules = [];
+        if ($selectedPeriodId) {
+            $schedules = $this->getSchedulesForPeriod($selectedPeriodId, 'sempro');
+        }
+
+        $dosenListAll = User::where('role', 'dosen')->orderBy('name')->pluck('name')->values()->all();
+        $dosenOptions = User::where('role', 'dosen')->orderBy('name')->get(['id', 'name', 'nim_nip', 'prodi', 'jabatan']);
+
+        return Inertia::render('Kaprodi/PlottingSempro', [
+            'periods' => $periods,
+            'selectedPeriodId' => $selectedPeriodId,
+            'selectedPeriod' => $selectedPeriod,
+            'schedules' => $schedules,
+            'dosenListAll' => $dosenListAll,
+            'dosenOptions' => $dosenOptions,
         ]);
+    }
+
+    public function plottingTaIndex(Request $request)
+    {
+        $periods = SchedulePeriod::where('tipe', 'sidang')
+            ->orderBy('gelombang')
+            ->get()
+            ->map(function ($period) {
+                return [
+                    'id' => $period->id,
+                    'name' => $this->formatPeriodYear($period->name),
+                    'tipe' => $period->tipe,
+                    'semester' => $period->semester ?? 'Gasal',
+                    'prodi' => $period->prodi ?? 'Informatika',
+                    'gelombang' => $period->gelombang,
+                    'capacity' => $period->capacity,
+                    'start_date' => $period->start_date ? $period->start_date->format('Y-m-d') : null,
+                    'end_date' => $period->end_date ? $period->end_date->format('Y-m-d') : null,
+                    'is_open' => (bool) $period->is_open,
+                    'is_published' => (bool) $period->is_published,
+                    'slots' => $period->slots ?? [],
+                ];
+            });
+
+        $selectedPeriodId = $request->integer('period_id');
+        if (! $selectedPeriodId) {
+            $defaultPeriod = $periods->firstWhere('is_open', true) ?? $periods->first();
+            $selectedPeriodId = $defaultPeriod ? $defaultPeriod['id'] : null;
+        }
+        $selectedPeriod = $selectedPeriodId ? $periods->firstWhere('id', $selectedPeriodId) : null;
+
+        $schedules = [];
+        if ($selectedPeriodId) {
+            $schedules = $this->getSchedulesForPeriod($selectedPeriodId, 'sidang');
+        }
+
+        $dosenListAll = User::where('role', 'dosen')->orderBy('name')->pluck('name')->values()->all();
+        $dosenOptions = User::where('role', 'dosen')->orderBy('name')->get(['id', 'name', 'nim_nip', 'prodi', 'jabatan']);
+
+        return Inertia::render('Kaprodi/PlottingTA', [
+            'periods' => $periods,
+            'selectedPeriodId' => $selectedPeriodId,
+            'selectedPeriod' => $selectedPeriod,
+            'schedules' => $schedules,
+            'dosenListAll' => $dosenListAll,
+            'dosenOptions' => $dosenOptions,
+        ]);
+    }
+
+    public function semproIndex(Request $request)
+    {
+        $periods = SchedulePeriod::where('tipe', 'sempro')
+            ->orderBy('gelombang')
+            ->get()
+            ->map(function ($period) {
+                $registeredStudents = PendaftaranSempro::with(['mahasiswa:id,name,nim_nip,prodi'])
+                    ->where('gelombang', $period->gelombang)
+                    ->get();
+
+                return [
+                    'id' => $period->id,
+                    'name' => $this->formatPeriodYear($period->name),
+                    'tipe' => $period->tipe,
+                    'semester' => $period->semester ?? 'Gasal',
+                    'prodi' => $period->prodi ?? 'Informatika',
+                    'gelombang' => $period->gelombang,
+                    'capacity' => $period->capacity,
+                    'start_date' => $period->start_date ? $period->start_date->format('Y-m-d') : null,
+                    'end_date' => $period->end_date ? $period->end_date->format('Y-m-d') : null,
+                    'is_open' => (bool) $period->is_open,
+                    'is_published' => (bool) $period->is_published,
+                    'google_calendar_synced' => (bool) $period->google_calendar_synced,
+                    'google_calendar_synced_at' => $period->google_calendar_synced_at ? $period->google_calendar_synced_at->format('d/m/Y H:i') : null,
+                    'slots' => $period->slots ?? [],
+                    'mahasiswa_count' => $registeredStudents->count(),
+                    'mahasiswa_list' => $registeredStudents->map(fn ($reg) => [
+                        'id' => $reg->id,
+                        'mahasiswa_id' => $reg->mahasiswa_id,
+                        'name' => $reg->mahasiswa?->name ?? 'Mahasiswa',
+                        'nim' => $reg->mahasiswa?->nim_nip ?? '-',
+                        'prodi' => $reg->mahasiswa?->prodi ?? 'Informatika',
+                        'judul_ta' => $reg->judul_ta,
+                        'status' => $reg->status,
+                        'status_akademik' => $reg->status_akademik,
+                    ]),
+                    'schedules' => $period->penjadwalan()->with(['mahasiswa:id,name,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name', 'ruangan:id,nama'])->get()->map(fn ($s) => [
+                        'id' => $s->id,
+                        'mahasiswa' => $s->mahasiswa?->name ?? 'Mahasiswa',
+                        'nim' => $s->mahasiswa?->nim_nip ?? '-',
+                        'judul' => $s->catatan ?? 'Seminar Proposal',
+                        'pembimbing_1' => $s->pembimbing1?->name ?? '-',
+                        'pembimbing_2' => $s->pembimbing2?->name ?? '-',
+                        'penguji_1' => $s->penguji1?->name ?? '-',
+                        'penguji_2' => $s->penguji2?->name ?? '-',
+                        'ruangan' => $s->ruangan?->nama ?? ($s->link_online ?? 'Ruang Seminar'),
+                        'tanggal' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '-',
+                        'jam_mulai' => $s->jam_mulai,
+                        'jam_selesai' => $s->jam_selesai,
+                    ]),
+                ];
+            });
+
+        $activePeriod = $periods->firstWhere('is_open', true);
+
+        return Inertia::render('Kaprodi/PeriodeSempro', [
+            'periods' => $periods,
+            'activePeriod' => $activePeriod,
+        ]);
+    }
+
+    public function taIndex(Request $request)
+    {
+        $periods = SchedulePeriod::where('tipe', 'sidang')
+            ->orderBy('gelombang')
+            ->get()
+            ->map(function ($period) {
+                $registeredStudents = PendaftaranSidang::with(['mahasiswa:id,name,nim_nip,prodi'])
+                    ->where('gelombang', $period->gelombang)
+                    ->get();
+
+                return [
+                    'id' => $period->id,
+                    'name' => $this->formatPeriodYear($period->name),
+                    'tipe' => $period->tipe,
+                    'semester' => $period->semester ?? 'Gasal',
+                    'prodi' => $period->prodi ?? 'Informatika',
+                    'gelombang' => $period->gelombang,
+                    'capacity' => $period->capacity,
+                    'start_date' => $period->start_date ? $period->start_date->format('Y-m-d') : null,
+                    'end_date' => $period->end_date ? $period->end_date->format('Y-m-d') : null,
+                    'is_open' => (bool) $period->is_open,
+                    'is_published' => (bool) $period->is_published,
+                    'google_calendar_synced' => (bool) $period->google_calendar_synced,
+                    'google_calendar_synced_at' => $period->google_calendar_synced_at ? $period->google_calendar_synced_at->format('d/m/Y H:i') : null,
+                    'slots' => $period->slots ?? [],
+                    'mahasiswa_count' => $registeredStudents->count(),
+                    'mahasiswa_list' => $registeredStudents->map(fn ($reg) => [
+                        'id' => $reg->id,
+                        'mahasiswa_id' => $reg->mahasiswa_id,
+                        'name' => $reg->mahasiswa?->name ?? 'Mahasiswa',
+                        'nim' => $reg->mahasiswa?->nim_nip ?? '-',
+                        'prodi' => $reg->mahasiswa?->prodi ?? 'Informatika',
+                        'judul_ta' => $reg->judul_ta,
+                        'status' => $reg->status,
+                        'status_akademik' => $reg->status_akademik,
+                    ]),
+                    'schedules' => $period->penjadwalan()->with(['mahasiswa:id,name,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name', 'ruangan:id,nama'])->get()->map(fn ($s) => [
+                        'id' => $s->id,
+                        'mahasiswa' => $s->mahasiswa?->name ?? 'Mahasiswa',
+                        'nim' => $s->mahasiswa?->nim_nip ?? '-',
+                        'judul' => $s->catatan ?? 'Sidang Tugas Akhir',
+                        'pembimbing_1' => $s->pembimbing1?->name ?? '-',
+                        'pembimbing_2' => $s->pembimbing2?->name ?? '-',
+                        'penguji_1' => $s->penguji1?->name ?? '-',
+                        'penguji_2' => $s->penguji2?->name ?? '-',
+                        'ruangan' => $s->ruangan?->nama ?? ($s->link_online ?? 'Ruang Sidang'),
+                        'tanggal' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '-',
+                        'jam_mulai' => $s->jam_mulai,
+                        'jam_selesai' => $s->jam_selesai,
+                    ]),
+                ];
+            });
+
+        return Inertia::render('Kaprodi/PeriodeTA', [
+            'periods' => $periods,
+            'activePeriod' => $periods->firstWhere('is_open', true),
+        ]);
+    }
+
+    private function formatPeriodYear(?string $name): string
+    {
+        if (! $name) {
+            return '2026/2027';
+        }
+        if (preg_match('/\d{4}\/\d{4}/', $name, $matches)) {
+            return $matches[0];
+        }
+
+        return $name;
     }
 
     private function registrationClass(string $type): string
@@ -111,12 +333,44 @@ class PenjadwalanController extends Controller
 
     public function storePeriod(Request $request, ?int $id = null)
     {
-        $data = $request->validate(['name' => ['required', 'string', 'max:150'], 'tipe' => ['required', 'in:sempro,sidang'], 'gelombang' => ['required', 'integer', 'min:1'], 'capacity' => ['required', 'integer', 'min:1', 'max:1000'], 'start_date' => ['required', 'date_format:Y-m-d'], 'end_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:start_date'], 'is_open' => ['required', 'boolean'], 'slots' => ['required', 'array', 'min:1', 'max:100'], 'slots.*.tanggal' => ['required', 'date_format:Y-m-d'], 'slots.*.jam_mulai' => ['required', 'date_format:H:i:s'], 'slots.*.jam_selesai' => ['required', 'date_format:H:i:s']]);
-        foreach ($data['slots'] as $slot) {
-            if ($slot['tanggal'] < $data['start_date'] || $slot['tanggal'] > $data['end_date'] || $slot['jam_mulai'] >= $slot['jam_selesai']) {
-                throw ValidationException::withMessages(['slots' => 'Slot harus di dalam periode dengan waktu selesai sesudah mulai.']);
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'tipe' => ['required', 'in:sempro,sidang'],
+            'semester' => ['nullable', 'string', 'max:50'],
+            'prodi' => ['nullable', 'string', 'max:100'],
+            'gelombang' => ['required', 'integer', 'min:1'],
+            'capacity' => ['nullable', 'integer', 'min:1', 'max:1000'],
+            'start_date' => ['nullable', 'date_format:Y-m-d'],
+            'end_date' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:start_date'],
+            'is_open' => ['nullable', 'boolean'],
+            'slots' => ['nullable', 'array', 'max:100'],
+            'slots.*.tanggal' => ['required_with:slots', 'date_format:Y-m-d'],
+            'slots.*.jam_mulai' => ['required_with:slots', 'date_format:H:i:s'],
+            'slots.*.jam_selesai' => ['required_with:slots', 'date_format:H:i:s'],
+        ]);
+
+        $data['semester'] = $data['semester'] ?? 'Gasal';
+        $data['prodi'] = $data['prodi'] ?? 'Informatika';
+        $data['capacity'] = $data['capacity'] ?? 25;
+        $data['start_date'] = $data['start_date'] ?? now()->format('Y-m-d');
+        $data['end_date'] = $data['end_date'] ?? now()->addDays(30)->format('Y-m-d');
+        $data['is_open'] = (bool) ($data['is_open'] ?? false);
+
+        if (empty($data['slots'])) {
+            $defaultDate = $data['start_date'];
+            $data['slots'] = [
+                ['tanggal' => $defaultDate, 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00'],
+                ['tanggal' => $defaultDate, 'jam_mulai' => '10:30:00', 'jam_selesai' => '12:00:00'],
+                ['tanggal' => $defaultDate, 'jam_mulai' => '13:30:00', 'jam_selesai' => '15:00:00'],
+            ];
+        } else {
+            foreach ($data['slots'] as $slot) {
+                if ($slot['tanggal'] < $data['start_date'] || $slot['tanggal'] > $data['end_date'] || $slot['jam_mulai'] >= $slot['jam_selesai']) {
+                    throw ValidationException::withMessages(['slots' => 'Slot harus di dalam periode dengan waktu selesai sesudah mulai.']);
+                }
             }
         }
+
         DB::transaction(function () use ($id, $data) {
             $period = $id ? SchedulePeriod::lockForUpdate()->findOrFail($id) : new SchedulePeriod;
             $period->fill($data);
@@ -130,6 +384,139 @@ class PenjadwalanController extends Controller
         });
 
         return back()->with('success', 'Periode tersimpan.');
+    }
+
+    public function togglePeriodStatus(Request $request, int $id)
+    {
+        $period = SchedulePeriod::findOrFail($id);
+
+        DB::transaction(function () use ($period) {
+            if (!$period->is_open) {
+                SchedulePeriod::where('tipe', $period->tipe)
+                    ->where('id', '!=', $period->id)
+                    ->update(['is_open' => false]);
+                $period->is_open = true;
+            } else {
+                $period->is_open = false;
+            }
+            $period->save();
+        });
+
+        return back()->with('success', 'Status periode gelombang diperbarui.');
+    }
+
+    public function togglePublish(Request $request, int $id)
+    {
+        $period = SchedulePeriod::findOrFail($id);
+        $period->is_published = ! $period->is_published;
+        $period->save();
+
+        $statusText = $period->is_published ? 'dipublikasikan ke Mahasiswa & Dosen' : 'disembunyikan (Draft)';
+
+        return back()->with('success', "Jadwal Gelombang {$period->gelombang} berhasil {$statusText}.");
+    }
+
+    public function syncCalendar(Request $request, int $id)
+    {
+        $period = SchedulePeriod::findOrFail($id);
+        $period->google_calendar_synced = true;
+        $period->google_calendar_synced_at = now();
+        $period->save();
+
+        $tipeLabel = $period->tipe === 'sempro' ? 'Seminar Proposal' : 'Sidang Tugas Akhir';
+
+        return back()->with('success', "Jadwal {$tipeLabel} Gelombang {$period->gelombang} berhasil disinkronkan ke Google Calendar Informatika.");
+    }
+
+    public function exportIcs(int $id)
+    {
+        $period = SchedulePeriod::with(['penjadwalan.mahasiswa', 'penjadwalan.pembimbing1', 'penjadwalan.pembimbing2', 'penjadwalan.penguji1', 'penjadwalan.penguji2', 'penjadwalan.ruangan'])->findOrFail($id);
+
+        $events = [];
+        $tipeName = $period->tipe === 'sempro' ? 'Seminar Proposal' : 'Sidang Tugas Akhir';
+
+        foreach ($period->penjadwalan as $jadwal) {
+            $studentName = $jadwal->mahasiswa?->name ?? 'Mahasiswa';
+            $nim = $jadwal->mahasiswa?->nim_nip ?? '-';
+            $ruangan = $jadwal->ruangan?->nama ?? ($jadwal->link_online ?? 'Ruang Seminar');
+
+            $startStr = $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_mulai;
+            $endStr = $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_selesai;
+            $start = \Carbon\Carbon::parse($startStr, 'Asia/Makassar')->setTimezone('UTC')->format('Ymd\THis\Z');
+            $end = \Carbon\Carbon::parse($endStr, 'Asia/Makassar')->setTimezone('UTC')->format('Ymd\THis\Z');
+
+            $summary = "{$tipeName}: {$studentName} ({$nim})";
+            $description = "Jadwal {$tipeName}\\n".
+                "Mahasiswa: {$studentName} ({$nim})\\n".
+                'Judul: '.addslashes($jadwal->catatan ?? 'Tugas Akhir').'\\n'.
+                'Pembimbing 1: '.($jadwal->pembimbing1?->name ?? '-').'\\n'.
+                'Pembimbing 2: '.($jadwal->pembimbing2?->name ?? '-').'\\n'.
+                'Penguji 1: '.($jadwal->penguji1?->name ?? '-').'\\n'.
+                'Penguji 2: '.($jadwal->penguji2?->name ?? '-');
+
+            $uid = "jadwal-{$jadwal->id}-{$period->id}@sipta.itk.ac.id";
+
+            $events[] = implode("\r\n", [
+                'BEGIN:VEVENT',
+                "UID:{$uid}",
+                'DTSTAMP:'.gmdate('Ymd\THis\Z'),
+                "DTSTART:{$start}",
+                "DTEND:{$end}",
+                "SUMMARY:{$summary}",
+                "DESCRIPTION:{$description}",
+                "LOCATION:{$ruangan}",
+                'STATUS:CONFIRMED',
+                'END:VEVENT',
+            ]);
+        }
+
+        if (empty($events)) {
+            $start = \Carbon\Carbon::parse($period->start_date)->setTimezone('UTC')->format('Ymd\THis\Z');
+            $end = \Carbon\Carbon::parse($period->end_date)->setTimezone('UTC')->format('Ymd\THis\Z');
+            $summary = "Periode {$tipeName} Gelombang {$period->gelombang} Informatika ITK";
+            $events[] = implode("\r\n", [
+                'BEGIN:VEVENT',
+                "UID:periode-{$period->id}@sipta.itk.ac.id",
+                'DTSTAMP:'.gmdate('Ymd\THis\Z'),
+                "DTSTART:{$start}",
+                "DTEND:{$end}",
+                "SUMMARY:{$summary}",
+                "DESCRIPTION:Periode {$tipeName} Gelombang {$period->gelombang} TA {$period->name}",
+                'LOCATION:Program Studi Informatika ITK',
+                'STATUS:CONFIRMED',
+                'END:VEVENT',
+            ]);
+        }
+
+        $ics = implode("\r\n", [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//SIPTA ITK//Informatika Schedule//ID',
+            'CALSCALE:GREGORIAN',
+            'METHOD:PUBLISH',
+            'X-WR-CALNAME:Jadwal '.$tipeName.' Gelombang '.$period->gelombang.' Informatika ITK',
+            'X-WR-TIMEZONE:Asia/Makassar',
+            implode("\r\n", $events),
+            'END:VCALENDAR',
+        ]);
+
+        $fileName = "jadwal_{$period->tipe}_gelombang_{$period->gelombang}.ics";
+
+        return response($ics, 200, [
+            'Content-Type' => 'text/calendar; charset=utf-8',
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+        ]);
+    }
+
+    public function destroyPeriod(int $id)
+    {
+        $period = SchedulePeriod::findOrFail($id);
+        if (Penjadwalan::where('period_id', $id)->exists()) {
+            throw ValidationException::withMessages(['period' => 'Periode tidak dapat dihapus karena sudah memiliki jadwal tersimpan.']);
+        }
+        $period->delete();
+
+        return back()->with('success', 'Periode gelombang berhasil dihapus.');
     }
 
     public function simpan(Request $request)
@@ -207,5 +594,118 @@ class PenjadwalanController extends Controller
         $this->publish($schedule->period_id, [$row], $request->user()->id, $id);
 
         return back()->with('success', 'Penyesuaian tersimpan.');
+    }
+
+    public function updatePlotting(Request $request, int $id)
+    {
+        $data = $request->validate([
+            'penguji1' => ['nullable', 'string'],
+            'penguji2' => ['nullable', 'string'],
+            'tanggal' => ['nullable', 'string'],
+            'mulai' => ['nullable', 'string'],
+            'selesai' => ['nullable', 'string'],
+            'ruangan' => ['nullable', 'string'],
+        ]);
+
+        $schedule = Penjadwalan::find($id);
+        if ($schedule) {
+            if (! empty($data['penguji1'])) {
+                $d1 = User::where('name', $data['penguji1'])->first();
+                if ($d1) {
+                    $schedule->penguji_1_id = $d1->id;
+                }
+            }
+            if (! empty($data['penguji2'])) {
+                $d2 = User::where('name', $data['penguji2'])->first();
+                if ($d2) {
+                    $schedule->penguji_2_id = $d2->id;
+                }
+            }
+            if (! empty($data['mulai'])) {
+                $schedule->jam_mulai = strlen($data['mulai']) === 5 ? $data['mulai'] . ':00' : $data['mulai'];
+            }
+            if (! empty($data['selesai'])) {
+                $schedule->jam_selesai = strlen($data['selesai']) === 5 ? $data['selesai'] . ':00' : $data['selesai'];
+            }
+            if (! empty($data['tanggal'])) {
+                try {
+                    $schedule->tanggal = \Carbon\Carbon::parse($data['tanggal'])->format('Y-m-d');
+                } catch (\Exception $e) {
+                    // keep existing date
+                }
+            }
+            if (isset($data['ruangan'])) {
+                $schedule->link_online = $data['ruangan'];
+            }
+            $schedule->save();
+        }
+
+        return back()->with('success', 'Jadwal dan plotting berhasil diperbarui.');
+    }
+
+    private function getSchedulesForPeriod(int $periodId, string $tipe): array
+    {
+        return Penjadwalan::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji1', 'penguji2', 'ruangan'])
+            ->where('period_id', $periodId)
+            ->where('tipe', $tipe)
+            ->orderBy('tanggal')
+            ->orderBy('jam_mulai')
+            ->get()
+            ->map(function ($s) {
+                $judul = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('judul_ta') ?? $s->catatan;
+                $kbk = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('bidang_penelitian') ?? ($s->mode === 'offline' ? 'AI & Data Science' : $s->mode);
+
+                return [
+                    'id' => $s->id,
+                    'mahasiswa_id' => $s->mahasiswa_id,
+                    'nama' => $s->mahasiswa?->name ?? 'Mahasiswa',
+                    'nim' => $s->mahasiswa?->nim_nip ?? '-',
+                    'angkatan' => $this->extractAngkatan($s->mahasiswa?->nim_nip),
+                    'judul' => $judul ?? 'Seminar Proposal',
+                    'kbk' => $kbk ?: 'AI & Data Science',
+                    'pembimbing1' => $s->pembimbing1?->name ?? '-',
+                    'pembimbing2' => $s->pembimbing2?->name ?? '',
+                    'penguji1' => $s->penguji1?->name ?? '-',
+                    'penguji1_id' => $s->penguji_1_id,
+                    'penguji1MatchScore' => 95,
+                    'penguji2' => $s->penguji2?->name ?? '-',
+                    'penguji2_id' => $s->penguji_2_id,
+                    'hari' => $s->tanggal ? $this->getHariIndonesia((int) $s->tanggal->format('N')) : 'Senin',
+                    'tanggal' => $s->tanggal ? $s->tanggal->format('d M Y') : '28 Sep 2026',
+                    'tanggal_raw' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '2026-09-28',
+                    'mulai' => $s->jam_mulai ? substr($s->jam_mulai, 0, 5) : '09:00',
+                    'selesai' => $s->jam_selesai ? substr($s->jam_selesai, 0, 5) : '10:30',
+                    'ruangan' => $s->ruangan?->nama ?? ($s->link_online ?? '-'),
+                    'nilai' => null,
+                ];
+            })
+            ->all();
+    }
+
+    private function extractAngkatan(?string $nim): string
+    {
+        if (! $nim) {
+            return '2023';
+        }
+        if (preg_match('/^11(20|21|22|23|24)/', $nim, $matches)) {
+            return '20' . $matches[1];
+        }
+
+        return '2023';
+    }
+
+    private function getHariIndonesia(int $dayOfWeek): string
+    {
+        $days = [
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+            7 => 'Minggu',
+        ];
+
+        return $days[$dayOfWeek] ?? 'Senin';
     }
 }

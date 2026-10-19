@@ -38,3 +38,62 @@ main table {
         scroll-behavior: auto !important;
     }
 }
+
+/* ==========================================================================
+   GLOBAL THEME & TYPOGRAPHY SYSTEM (Light Mode vs Dark Mode)
+   - Light Mode:
+       * Teks biasa / deskripsi: Hitam (#000000).
+       * Teks penting / heading / bold: Hitam tebal (#000000 font-bold/font-black).
+   - Dark Mode:
+       * Teks yang di-bold: Otomatis berwarna putih (#ffffff).
+       * Teks yang tidak di-bold (deskripsi/reguler): Otomatis berwarna abu-abu (#94a3b8 / text-slate-400).
+   ========================================================================== */
+
+@layer base {
+    body {
+        color: #000000;
+    }
+    .dark body {
+        color: #94a3b8;
+    }
+
+    /* Headings, table headers, and bold elements */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    th,
+    b,
+    strong,
+    dt {
+        color: #000000;
+        font-weight: 700;
+    }
+    .dark h1,
+    .dark h2,
+    .dark h3,
+    .dark h4,
+    .dark h5,
+    .dark h6,
+    .dark th,
+    .dark b,
+    .dark strong,
+    .dark dt {
+        color: #ffffff;
+    }
+}
+
+@layer utilities {
+    /* Semantic Utility Classes for Clean, Consistent Typography across all pages */
+    .text-title {
+        @apply font-bold text-black dark:text-white;
+    }
+    .text-title-black {
+        @apply font-black text-black dark:text-white;
+    }
+    .text-desc {
+        @apply font-normal text-black dark:text-slate-400;
+    }
+}

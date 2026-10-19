@@ -1,4 +1,4 @@
-// Run: bun tests/penjadwalan-logic.check.js
+// Run: node tests/penjadwalan-logic.check.js
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
@@ -6,7 +6,7 @@ import ts from 'typescript';
 import { computed, ref } from 'vue';
 
 const source = fs.readFileSync(
-    'resources/js/pages/Koordinator/Penjadwalan.vue',
+    'resources/js/pages/Kaprodi/Penjadwalan.vue',
     'utf8',
 );
 const script = source
