@@ -111,7 +111,7 @@ class MonitoringController extends Controller
                 'gelombang'   => $j->gelombang,
             ]);
 
-        return Inertia::render('Koordinator/Monitoring', [
+        return Inertia::render('Kaprodi/Monitoring', [
             'totalMahasiswa' => $totalMahasiswa,
             'progressCounts' => $progressCounts,
             'bimbinganRekap' => $bimbinganRekap,
