@@ -1,26 +1,32 @@
-export interface TendikRoom {
-    id: number;
-    nama_ruangan: string;
-    gedung: string | null;
-    lantai: string | null;
-    kapasitas: number;
-    status: 'tersedia' | 'tidak_tersedia';
-    keterangan: string | null;
-}
-export interface TendikRoomProps {
-    dbRuanganList: TendikRoom[];
-}
 export interface TendikDashboardProps {
     stats: {
         antreanVerifikasi: number;
         antreanSempro: number;
         antreanSidang: number;
         totalMahasiswa: number;
+        totalTerjadwal: number;
     };
 }
 export interface TendikArchiveProps {
     archiveCapabilities: {
-        persistence: false;
-        printing: false;
+        persistence: boolean;
+        printing: boolean;
     };
+    summary: {
+        totalSelesaiSempro: number;
+        totalSelesaiSidang: number;
+        totalLulus: number;
+        periodeTerakhir: string | null;
+    };
+    arsipList: ArsipItem[];
+}
+
+export interface ArsipItem {
+    id: number;
+    tipe: 'Seminar Proposal' | 'Sidang Tugas Akhir';
+    mahasiswa: string | null;
+    nim: string | null;
+    prodi: string | null;
+    judul: string;
+    tanggal_selesai: string | null;
 }

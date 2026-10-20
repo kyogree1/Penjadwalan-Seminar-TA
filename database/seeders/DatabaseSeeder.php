@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Bimbingan;
 use App\Models\PendaftaranSempro;
 use App\Models\PengajuanJudul;
-use App\Models\Ruangan;
 use App\Models\SchedulePeriod;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
