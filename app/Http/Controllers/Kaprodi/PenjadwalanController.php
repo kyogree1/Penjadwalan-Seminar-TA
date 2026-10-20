@@ -157,7 +157,7 @@ class PenjadwalanController extends Controller
                         'status' => $reg->status,
                         'status_akademik' => $reg->status_akademik,
                     ]),
-                    'schedules' => $period->penjadwalan()->with(['mahasiswa:id,name,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name', 'ruangan:id,nama'])->get()->map(fn ($s) => [
+                    'schedules' => $period->penjadwalan()->with(['mahasiswa:id,name,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])->get()->map(fn ($s) => [
                         'id' => $s->id,
                         'mahasiswa' => $s->mahasiswa?->name ?? 'Mahasiswa',
                         'nim' => $s->mahasiswa?->nim_nip ?? '-',
@@ -166,7 +166,7 @@ class PenjadwalanController extends Controller
                         'pembimbing_2' => $s->pembimbing2?->name ?? '-',
                         'penguji_1' => $s->penguji1?->name ?? '-',
                         'penguji_2' => $s->penguji2?->name ?? '-',
-                        'ruangan' => $s->ruangan?->nama ?? ($s->link_online ?? 'Ruang Seminar'),
+                        'ruangan' => $s->link_online ?? 'Ruang Seminar',
                         'tanggal' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '-',
                         'jam_mulai' => $s->jam_mulai,
                         'jam_selesai' => $s->jam_selesai,
@@ -218,7 +218,7 @@ class PenjadwalanController extends Controller
                         'status' => $reg->status,
                         'status_akademik' => $reg->status_akademik,
                     ]),
-                    'schedules' => $period->penjadwalan()->with(['mahasiswa:id,name,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name', 'ruangan:id,nama'])->get()->map(fn ($s) => [
+                    'schedules' => $period->penjadwalan()->with(['mahasiswa:id,name,nim_nip', 'pembimbing1:id,name', 'pembimbing2:id,name', 'penguji1:id,name', 'penguji2:id,name'])->get()->map(fn ($s) => [
                         'id' => $s->id,
                         'mahasiswa' => $s->mahasiswa?->name ?? 'Mahasiswa',
                         'nim' => $s->mahasiswa?->nim_nip ?? '-',
@@ -227,7 +227,7 @@ class PenjadwalanController extends Controller
                         'pembimbing_2' => $s->pembimbing2?->name ?? '-',
                         'penguji_1' => $s->penguji1?->name ?? '-',
                         'penguji_2' => $s->penguji2?->name ?? '-',
-                        'ruangan' => $s->ruangan?->nama ?? ($s->link_online ?? 'Ruang Sidang'),
+                        'ruangan' => $s->link_online ?? 'Ruang Sidang',
                         'tanggal' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '-',
                         'jam_mulai' => $s->jam_mulai,
                         'jam_selesai' => $s->jam_selesai,
@@ -430,7 +430,7 @@ class PenjadwalanController extends Controller
 
     public function exportIcs(int $id)
     {
-        $period = SchedulePeriod::with(['penjadwalan.mahasiswa', 'penjadwalan.pembimbing1', 'penjadwalan.pembimbing2', 'penjadwalan.penguji1', 'penjadwalan.penguji2', 'penjadwalan.ruangan'])->findOrFail($id);
+        $period = SchedulePeriod::with(['penjadwalan.mahasiswa', 'penjadwalan.pembimbing1', 'penjadwalan.pembimbing2', 'penjadwalan.penguji1', 'penjadwalan.penguji2'])->findOrFail($id);
 
         $events = [];
         $tipeName = $period->tipe === 'sempro' ? 'Seminar Proposal' : 'Sidang Tugas Akhir';
@@ -438,7 +438,7 @@ class PenjadwalanController extends Controller
         foreach ($period->penjadwalan as $jadwal) {
             $studentName = $jadwal->mahasiswa?->name ?? 'Mahasiswa';
             $nim = $jadwal->mahasiswa?->nim_nip ?? '-';
-            $ruangan = $jadwal->ruangan?->nama ?? ($jadwal->link_online ?? 'Ruang Seminar');
+            $ruangan = $jadwal->link_online ?? 'Ruang Seminar';
 
             $startStr = $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_mulai;
             $endStr = $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_selesai;
@@ -645,7 +645,7 @@ class PenjadwalanController extends Controller
 
     private function getSchedulesForPeriod(int $periodId, string $tipe): array
     {
-        return Penjadwalan::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji1', 'penguji2', 'ruangan'])
+        return Penjadwalan::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji1', 'penguji2'])
             ->where('period_id', $periodId)
             ->where('tipe', $tipe)
             ->orderBy('tanggal')
@@ -675,7 +675,7 @@ class PenjadwalanController extends Controller
                     'tanggal_raw' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '2026-09-28',
                     'mulai' => $s->jam_mulai ? substr($s->jam_mulai, 0, 5) : '09:00',
                     'selesai' => $s->jam_selesai ? substr($s->jam_selesai, 0, 5) : '10:30',
-                    'ruangan' => $s->ruangan?->nama ?? ($s->link_online ?? '-'),
+                    'ruangan' => $s->link_online ?? '-',
                     'nilai' => null,
                 ];
             })

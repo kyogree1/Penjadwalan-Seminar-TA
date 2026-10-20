@@ -388,7 +388,6 @@ const handleDelete = () => {
                         >Masuk ke Penentuan Jadwal (Gel.
                         {{ activeGelombangNum }})</span
                     >
-                    <span>→</span>
                 </Link>
             </div>
         </div>
@@ -860,7 +859,7 @@ const handleDelete = () => {
                 <div>
                     <div class="mb-2 flex items-center justify-between">
                         <h4
-                            class="text-xs font-bold tracking-wider text-slate-400 uppercase"
+                            class="text-xs font-bold tracking-wider text-slate-400"
                         >
                             Daftar Agenda Jadwal Sidang TA ({{
                                 selectedPeriodForCalendar?.schedules?.length ||

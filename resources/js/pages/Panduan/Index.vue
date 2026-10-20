@@ -197,7 +197,13 @@ const filteredGuideItems = computed(() => {
 </script>
 
 <template>
-    <Head :title="isTendik ? 'Panduan Operasional Tendik - SIPTA IF' : 'Panduan SIPTA IF'" />
+    <Head
+        :title="
+            isTendik
+                ? 'Panduan Operasional Tendik - SIPTA IF'
+                : 'Panduan SIPTA IF'
+        "
+    />
 
     <div class="mx-auto max-w-7xl space-y-6">
         <!-- Header Title Box -->
@@ -219,7 +225,11 @@ const filteredGuideItems = computed(() => {
             <h1
                 class="mt-1 text-xl font-bold tracking-tight text-slate-900 dark:text-white"
             >
-                {{ isTendik ? 'Panduan Operasional Tendik' : 'Panduan Layanan Mahasiswa' }}
+                {{
+                    isTendik
+                        ? 'Panduan Operasional Tendik'
+                        : 'Panduan Layanan Mahasiswa'
+                }}
             </h1>
             <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 {{
@@ -236,7 +246,9 @@ const filteredGuideItems = computed(() => {
         >
             <div>
                 <h2 class="text-base font-bold text-slate-900 dark:text-white">
-                    {{ isTendik ? 'Prosedur & SOP Tendik' : 'Panduan Mahasiswa' }}
+                    {{
+                        isTendik ? 'Prosedur & SOP Tendik' : 'Panduan Mahasiswa'
+                    }}
                 </h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
                     {{
@@ -289,7 +301,9 @@ const filteredGuideItems = computed(() => {
                             >
                                 {{ item.title }}
                             </h3>
-                            <p class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
+                            <p
+                                class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500"
+                            >
                                 {{ item.menu }}
                             </p>
                         </div>
@@ -337,7 +351,14 @@ const filteredGuideItems = computed(() => {
                         :href="item.link"
                         class="mt-4 inline-flex items-center gap-2 rounded-xl bg-slate-100 px-4 py-2 text-xs font-bold text-slate-800 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                     >
-                        <span>Buka {{ item.menu.replace('Menu: ', '').replace('Layanan ', '') }}</span>
+                        <span
+                            >Buka
+                            {{
+                                item.menu
+                                    .replace('Menu: ', '')
+                                    .replace('Layanan ', '')
+                            }}</span
+                        >
                         <svg
                             class="h-3.5 w-3.5"
                             fill="none"

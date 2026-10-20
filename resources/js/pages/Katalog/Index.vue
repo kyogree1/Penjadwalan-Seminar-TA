@@ -152,7 +152,9 @@ const generateCitation = (item: SkripsiItem | null) => {
         .slice(0, -1)
         .map((p) => p[0] + '.')
         .join(' ');
-    const authorStr = firstInitials ? `${lastName}, ${firstInitials}` : lastName;
+    const authorStr = firstInitials
+        ? `${lastName}, ${firstInitials}`
+        : lastName;
     const doiStr = item.doi ? ` DOI: ${item.doi}` : '';
     return `${authorStr} (${item.tahun}). ${item.judul}. Skripsi, Program Studi Informatika, Institut Teknologi Kalimantan.${doiStr}`;
 };
@@ -163,7 +165,8 @@ const copyCitation = (item: SkripsiItem | null) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
         navigator.clipboard.writeText(cit).then(() => {
             if (copyTimeout) clearTimeout(copyTimeout);
-            copySuccessMsg.value = 'Format sitasi APA berhasil disalin ke clipboard.';
+            copySuccessMsg.value =
+                'Format sitasi APA berhasil disalin ke clipboard.';
             copyTimeout = setTimeout(() => {
                 copySuccessMsg.value = '';
             }, 3000);
@@ -176,7 +179,14 @@ const isSimilarityModalOpen = ref(false);
 const inputTestTitle = ref('');
 const hasRunSimilarity = ref(false);
 const similarityScore = ref(0);
-const similarTitles = ref<Array<{ judul: string; penulis: string; tahun: string | number; score: number }>>([]);
+const similarTitles = ref<
+    Array<{
+        judul: string;
+        penulis: string;
+        tahun: string | number;
+        score: number;
+    }>
+>([]);
 
 const openSimilarityModal = () => {
     isSimilarityModalOpen.value = true;
@@ -201,9 +211,18 @@ const runSimilarityCheck = () => {
     if (!qTokens.length) return;
 
     // Use persisted server catalogue if available, or reference corpus from ITK repository archive
-    const corpus = skripsiList.value.length > 0
-        ? skripsiList.value.map((s) => ({ judul: s.judul, penulis: s.penulis, tahun: s.tahun }))
-        : mockKatalogList.map((m) => ({ judul: m.judul, penulis: m.penulis, tahun: m.tahunLulus }));
+    const corpus =
+        skripsiList.value.length > 0
+            ? skripsiList.value.map((s) => ({
+                  judul: s.judul,
+                  penulis: s.penulis,
+                  tahun: s.tahun,
+              }))
+            : mockKatalogList.map((m) => ({
+                  judul: m.judul,
+                  penulis: m.penulis,
+                  tahun: m.tahunLulus,
+              }));
 
     const scored = corpus.map((c) => {
         const itemTokens = c.judul
@@ -241,7 +260,9 @@ const runSimilarityCheck = () => {
         <div
             class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white px-6 py-4 shadow-xs dark:border-slate-800"
         >
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div>
                     <h2
                         class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
@@ -249,7 +270,8 @@ const runSimilarityCheck = () => {
                         Katalog TA
                     </h2>
                     <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                        Eksplorasi arsip penelitian dan naskah skripsi Program Studi Informatika ITK.
+                        Eksplorasi arsip penelitian dan naskah skripsi Program
+                        Studi Informatika ITK.
                     </p>
                 </div>
                 <button
@@ -257,7 +279,9 @@ const runSimilarityCheck = () => {
                     class="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-800 shadow-2xs transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                     @click="openSimilarityModal"
                 >
-                    <ShieldCheck class="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <ShieldCheck
+                        class="h-4 w-4 text-blue-600 dark:text-blue-400"
+                    />
                     <span>Cek Kemiripan Kata Kunci</span>
                 </button>
             </div>
@@ -281,17 +305,29 @@ const runSimilarityCheck = () => {
         <div
             class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800"
         >
-            <div class="flex flex-col gap-2 pb-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-2 pb-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div>
-                    <h3 class="text-base font-bold text-slate-900 dark:text-white">
+                    <h3
+                        class="text-base font-bold text-slate-900 dark:text-white"
+                    >
                         Daftar Katalog TA yang sudah dipublikasikan
                     </h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">
-                        Pencarian dan penelusuran naskah skripsi terbitan mahasiswa.
+                        Pencarian dan penelusuran naskah skripsi terbitan
+                        mahasiswa.
                     </p>
                 </div>
                 <button
-                    v-if="searchQuery || filterTahun || filterBidang || filterProdi || filterMetode || onlyBookmarks"
+                    v-if="
+                        searchQuery ||
+                        filterTahun ||
+                        filterBidang ||
+                        filterProdi ||
+                        filterMetode ||
+                        onlyBookmarks
+                    "
                     type="button"
                     class="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600 hover:text-rose-700 dark:text-rose-400"
                     @click="resetFilters"
@@ -335,18 +371,32 @@ const runSimilarityCheck = () => {
                     >
                         <option value="">Semua Program Studi</option>
                         <option value="Informatika">Informatika</option>
-                        <option value="Sistem Informasi">Sistem Informasi</option>
+                        <option value="Sistem Informasi">
+                            Sistem Informasi
+                        </option>
                     </select>
                     <select
                         v-model="filterBidang"
                         class="rounded-xl border border-slate-200 bg-white p-2 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
                     >
                         <option value="">Semua Bidang Kajian</option>
-                        <option value="Artificial Intelligence & NLP">AI & NLP</option>
-                        <option value="Computational Intelligence & Optimasi">Computational Intelligence</option>
-                        <option value="Human-Computer Interaction & Software Eng.">RPL & HCI</option>
-                        <option value="Cloud Computing & Cyber Security">Cyber Security</option>
-                        <option value="Data Science & Sistem Rekomendasi">Data Science</option>
+                        <option value="Artificial Intelligence & NLP">
+                            AI & NLP
+                        </option>
+                        <option value="Computational Intelligence & Optimasi">
+                            Computational Intelligence
+                        </option>
+                        <option
+                            value="Human-Computer Interaction & Software Eng."
+                        >
+                            RPL & HCI
+                        </option>
+                        <option value="Cloud Computing & Cyber Security">
+                            Cyber Security
+                        </option>
+                        <option value="Data Science & Sistem Rekomendasi">
+                            Data Science
+                        </option>
                     </select>
                     <select
                         v-model="filterMetode"
@@ -410,45 +460,73 @@ const runSimilarityCheck = () => {
                     class="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xs transition-all hover:border-blue-400 hover:shadow-xs dark:border-slate-800 dark:bg-slate-900"
                 >
                     <!-- Card Top Header -->
-                    <div class="border-b border-slate-100 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-800/40">
+                    <div
+                        class="border-b border-slate-100 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-800/40"
+                    >
                         <div class="flex items-center justify-between">
-                            <span class="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            <span
+                                class="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                            >
                                 S1 {{ item.prodi }} • {{ item.tahun }}
                             </span>
                             <button
                                 type="button"
-                                class="rounded-lg p-1 text-slate-400 hover:text-amber-500 transition-colors"
-                                :title="isBookmarked(item.id) ? 'Hapus dari Tersimpan' : 'Simpan Bookmark'"
+                                class="rounded-lg p-1 text-slate-400 transition-colors hover:text-amber-500"
+                                :title="
+                                    isBookmarked(item.id)
+                                        ? 'Hapus dari Tersimpan'
+                                        : 'Simpan Bookmark'
+                                "
                                 @click.stop="toggleBookmark(item.id)"
                             >
                                 <Bookmark
                                     class="h-4 w-4"
-                                    :class="{ 'fill-amber-500 text-amber-500': isBookmarked(item.id) }"
+                                    :class="{
+                                        'fill-amber-500 text-amber-500':
+                                            isBookmarked(item.id),
+                                    }"
                                 />
                             </button>
                         </div>
                     </div>
 
                     <!-- Card Body -->
-                    <div class="flex flex-1 flex-col justify-between space-y-3 p-5">
+                    <div
+                        class="flex flex-1 flex-col justify-between space-y-3 p-5"
+                    >
                         <div>
-                            <span class="inline-block text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                            <span
+                                class="inline-block text-[10px] font-semibold text-slate-500 dark:text-slate-400"
+                            >
                                 {{ item.bidang }}
                             </span>
-                            <h4 class="mt-1 line-clamp-2 text-xs font-bold leading-snug text-slate-900 dark:text-white">
+                            <h4
+                                class="mt-1 line-clamp-2 text-xs leading-snug font-bold text-slate-900 dark:text-white"
+                            >
                                 {{ item.judul }}
                             </h4>
-                            <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                            <p
+                                class="mt-1 text-[11px] text-slate-500 dark:text-slate-400"
+                            >
                                 {{ item.penulis }} • NIM: {{ item.nim }}
                             </p>
-                            <p class="mt-2.5 line-clamp-3 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+                            <p
+                                class="mt-2.5 line-clamp-3 text-xs leading-relaxed text-slate-600 dark:text-slate-400"
+                            >
                                 {{ item.abstrak_id }}
                             </p>
                         </div>
 
-                        <div class="space-y-3 border-t border-slate-100 pt-3 dark:border-slate-800">
-                            <div class="flex flex-wrap gap-1 text-[10px] text-slate-400">
-                                <span v-for="tag in (item.tags || []).slice(0, 3)" :key="tag">
+                        <div
+                            class="space-y-3 border-t border-slate-100 pt-3 dark:border-slate-800"
+                        >
+                            <div
+                                class="flex flex-wrap gap-1 text-[10px] text-slate-400"
+                            >
+                                <span
+                                    v-for="tag in (item.tags || []).slice(0, 3)"
+                                    :key="tag"
+                                >
                                     #{{ tag }}
                                 </span>
                             </div>
@@ -484,7 +562,8 @@ const runSimilarityCheck = () => {
                     <p
                         class="text-xs leading-relaxed text-slate-500 dark:text-slate-400"
                     >
-                        Arsip publikasi belum tersedia pada server saat ini, atau coba sesuaikan kata kunci pencarian.
+                        Arsip publikasi belum tersedia pada server saat ini,
+                        atau coba sesuaikan kata kunci pencarian.
                     </p>
                 </div>
             </div>
@@ -523,7 +602,10 @@ const runSimilarityCheck = () => {
                             >
                                 Arsip Tugas Akhir
                             </span>
-                            <span v-if="selectedItem.doi" class="text-xs text-slate-400">
+                            <span
+                                v-if="selectedItem.doi"
+                                class="text-xs text-slate-400"
+                            >
                                 {{ selectedItem.doi }}
                             </span>
                         </div>
@@ -541,12 +623,17 @@ const runSimilarityCheck = () => {
                     <div class="mt-4 space-y-4">
                         <div>
                             <h3
-                                class="text-base font-bold leading-snug text-slate-900 dark:text-white"
+                                class="text-base leading-snug font-bold text-slate-900 dark:text-white"
                             >
                                 {{ selectedItem.judul }}
                             </h3>
-                            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                {{ selectedItem.penulis }} • NIM: {{ selectedItem.nim }} • {{ selectedItem.prodi }} (Lulus: {{ selectedItem.tahun }})
+                            <p
+                                class="mt-1 text-xs text-slate-500 dark:text-slate-400"
+                            >
+                                {{ selectedItem.penulis }} • NIM:
+                                {{ selectedItem.nim }} •
+                                {{ selectedItem.prodi }} (Lulus:
+                                {{ selectedItem.tahun }})
                             </p>
                         </div>
 
@@ -555,18 +642,26 @@ const runSimilarityCheck = () => {
                             class="grid grid-cols-2 gap-3 rounded-xl border border-slate-200/90 bg-slate-50/70 p-3.5 text-xs dark:border-slate-800 dark:bg-slate-900/60"
                         >
                             <div>
-                                <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                <p
+                                    class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                                >
                                     Dosen Pembimbing I
                                 </p>
-                                <p class="mt-0.5 font-semibold text-slate-900 dark:text-white">
+                                <p
+                                    class="mt-0.5 font-semibold text-slate-900 dark:text-white"
+                                >
                                     {{ selectedItem.pembimbing_1 }}
                                 </p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                <p
+                                    class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                                >
                                     Dosen Pembimbing II
                                 </p>
-                                <p class="mt-0.5 font-semibold text-slate-900 dark:text-white">
+                                <p
+                                    class="mt-0.5 font-semibold text-slate-900 dark:text-white"
+                                >
                                     {{ selectedItem.pembimbing_2 }}
                                 </p>
                             </div>
@@ -606,14 +701,22 @@ const runSimilarityCheck = () => {
                             <p
                                 class="mt-3 text-xs leading-relaxed text-slate-700 dark:text-slate-300"
                             >
-                                {{ activeTab === 'id' ? selectedItem.abstrak_id : selectedItem.abstrak_en }}
+                                {{
+                                    activeTab === 'id'
+                                        ? selectedItem.abstrak_id
+                                        : selectedItem.abstrak_en
+                                }}
                             </p>
                         </div>
 
                         <!-- Generator Sitasi Format APA -->
-                        <div class="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3.5 text-xs dark:border-slate-800 dark:bg-slate-900/40">
+                        <div
+                            class="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3.5 text-xs dark:border-slate-800 dark:bg-slate-900/40"
+                        >
                             <div class="flex items-center justify-between">
-                                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                                <span
+                                    class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                                >
                                     Format Sitasi (APA 7th)
                                 </span>
                                 <button
@@ -625,10 +728,15 @@ const runSimilarityCheck = () => {
                                     <span>Salin Sitasi</span>
                                 </button>
                             </div>
-                            <p class="mt-1 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-slate-300 select-all">
+                            <p
+                                class="mt-1 font-mono text-[11px] leading-relaxed text-slate-700 select-all dark:text-slate-300"
+                            >
                                 {{ generateCitation(selectedItem) }}
                             </p>
-                            <p v-if="copySuccessMsg" class="mt-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                            <p
+                                v-if="copySuccessMsg"
+                                class="mt-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400"
+                            >
                                 {{ copySuccessMsg }}
                             </p>
                         </div>
@@ -639,7 +747,8 @@ const runSimilarityCheck = () => {
                         class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 text-xs dark:border-slate-800"
                     >
                         <span class="text-[11px] text-slate-400">
-                            Naskah lengkap fisik dapat diakses di Perpustakaan ITK
+                            Naskah lengkap fisik dapat diakses di Perpustakaan
+                            ITK
                         </span>
                         <button
                             type="button"
@@ -655,20 +764,30 @@ const runSimilarityCheck = () => {
     </Teleport>
 
     <!-- MODAL CEK KEMIRIPAN KATA KUNCI (ANTI-SLOP) -->
-    <Modal :show="isSimilarityModalOpen" max-width="lg" @close="closeSimilarityModal">
+    <Modal
+        :show="isSimilarityModalOpen"
+        max-width="lg"
+        @close="closeSimilarityModal"
+    >
         <div class="space-y-4 p-6">
             <div>
                 <h3 class="text-base font-bold text-slate-900 dark:text-white">
                     Pencocokan Kata Kunci Judul Terdahulu
                 </h3>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Uji draf judul rencana Tugas Akhir Anda untuk melihat penelitian terdahulu yang memiliki fokus bahasan serupa di Program Studi Informatika.
+                <p
+                    class="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400"
+                >
+                    Uji draf judul rencana Tugas Akhir Anda untuk melihat
+                    penelitian terdahulu yang memiliki fokus bahasan serupa di
+                    Program Studi Informatika.
                 </p>
             </div>
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <label
+                        class="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                    >
                         Draf Judul Rencana Tugas Akhir:
                     </label>
                     <textarea
@@ -689,7 +808,10 @@ const runSimilarityCheck = () => {
             </div>
 
             <!-- Hasil Analisis -->
-            <div v-if="hasRunSimilarity" class="space-y-3 border-t border-slate-100 pt-3 dark:border-slate-800">
+            <div
+                v-if="hasRunSimilarity"
+                class="space-y-3 border-t border-slate-100 pt-3 dark:border-slate-800"
+            >
                 <div
                     class="rounded-xl p-3 text-xs"
                     :class="
@@ -711,7 +833,9 @@ const runSimilarityCheck = () => {
                 </div>
 
                 <div v-if="similarTitles.length > 0" class="space-y-2">
-                    <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                    <p
+                        class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                    >
                         Referensi Judul Terdahulu Terkait:
                     </p>
                     <div
@@ -720,21 +844,29 @@ const runSimilarityCheck = () => {
                         class="flex items-start justify-between gap-3 rounded-xl border border-slate-200/80 bg-slate-50/60 p-3 text-xs dark:border-slate-800 dark:bg-slate-900/40"
                     >
                         <div class="min-w-0">
-                            <p class="font-semibold text-slate-900 dark:text-white">
+                            <p
+                                class="font-semibold text-slate-900 dark:text-white"
+                            >
                                 {{ s.judul }}
                             </p>
-                            <p class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+                            <p
+                                class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400"
+                            >
                                 {{ s.penulis }} • Lulus {{ s.tahun }}
                             </p>
                         </div>
-                        <span class="shrink-0 font-mono text-[11px] font-bold text-blue-600 dark:text-blue-400">
+                        <span
+                            class="shrink-0 font-mono text-[11px] font-bold text-blue-600 dark:text-blue-400"
+                        >
                             {{ s.score }}% kata sama
                         </span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex justify-end border-t border-slate-100 pt-3 dark:border-slate-800">
+            <div
+                class="flex justify-end border-t border-slate-100 pt-3 dark:border-slate-800"
+            >
                 <button
                     type="button"
                     class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"

@@ -719,7 +719,7 @@ const executeDeleteDosen = () => {
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-slate-400"
+                        class="text-[11px] font-bold tracking-wider text-black dark:text-slate-400"
                     >
                         Total Dosen Terdata
                     </p>
@@ -742,7 +742,7 @@ const executeDeleteDosen = () => {
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-blue-700 uppercase dark:text-blue-400"
+                        class="text-[11px] font-bold tracking-wider text-blue-700 dark:text-blue-400"
                     >
                         Dosen Informatika ITK
                     </p>
@@ -765,7 +765,7 @@ const executeDeleteDosen = () => {
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-amber-700 uppercase dark:text-amber-400"
+                        class="text-[11px] font-bold tracking-wider text-amber-700 dark:text-amber-400"
                     >
                         Dosen Lintas Prodi / Mitra
                     </p>
@@ -788,7 +788,7 @@ const executeDeleteDosen = () => {
             >
                 <div>
                     <p
-                        class="text-[11px] font-bold tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
+                        class="text-[11px] font-bold tracking-wider text-emerald-700 dark:text-emerald-400"
                     >
                         Rata-rata Beban Uji (GA)
                     </p>
@@ -1136,7 +1136,7 @@ const executeDeleteDosen = () => {
                                     <div
                                         class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-2xl text-slate-400 dark:bg-slate-800/80"
                                     >
-                                        🔍
+                                        <Search class="h-6 w-6" />
                                     </div>
                                     <div class="space-y-1">
                                         <p

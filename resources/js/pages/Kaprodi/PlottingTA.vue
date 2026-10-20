@@ -400,78 +400,65 @@ const downloadJadwal = () => {
             </div>
         </div>
 
-        <!-- AI OPTIMIZATION BANNER (Genetic Algorithm) -->
         <div
-            class="relative overflow-hidden rounded-2xl border border-blue-700/40 bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 p-6 text-white shadow-xl shadow-blue-950/20 md:p-8"
+            class="flex flex-col gap-6 rounded-2xl border border-slate-200/80 bg-white p-5 lg:flex-row lg:items-center lg:justify-between dark:border-slate-800 dark:bg-[#0E1626]"
         >
-            <div
-                class="pointer-events-none absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"
-            ></div>
-            <div
-                class="pointer-events-none absolute top-4 right-20 h-32 w-32 rounded-full bg-blue-400/10 blur-2xl"
-            ></div>
-
-            <div
-                class="relative z-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-center"
-            >
-                <div class="max-w-xl space-y-2">
-                    <div
-                        class="inline-flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/20 px-3 py-1 text-xs font-bold text-blue-300"
-                    >
-                        <Cpu class="h-3.5 w-3.5 text-blue-400" />
-                        <span>Optimasi Algoritma Genetika (GA)</span>
-                    </div>
-                    <h2
-                        class="text-lg font-bold tracking-tight text-white md:text-xl"
-                    >
-                        Plotting Dosen Penguji Sidang TA Bebas Bentrok Jadwal
-                    </h2>
-                    <p class="text-xs leading-relaxed text-slate-300">
-                        Algoritma Genetika secara otomatis mencocokkan bidang
-                        keahlian dosen (KBK) dengan topik skripsi, meratakan
-                        beban menguji, dan menyinkronkan waktu luang dosen.
-                    </p>
-                </div>
-
-                <!-- Metrics stacked above Jalankan Optimasi GA button -->
+            <div class="max-w-xl space-y-2">
                 <div
-                    class="flex shrink-0 flex-col items-stretch gap-2.5 sm:items-end lg:ml-auto"
+                    class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
                 >
-                    <div class="flex items-center gap-2.5 sm:gap-3">
-                        <div
-                            class="flex-1 rounded-xl border border-slate-700/60 bg-white/5 px-3.5 py-1.5 text-center backdrop-blur-md sm:flex-initial sm:px-4 sm:py-2"
-                        >
-                            <span
-                                class="block text-[10px] font-bold text-blue-300 uppercase"
-                                >Fitness Score</span
-                            >
-                            <span
-                                class="text-base font-bold text-emerald-400 sm:text-lg"
-                                >0.990</span
-                            >
-                        </div>
-                        <div
-                            class="flex-1 rounded-xl border border-slate-700/60 bg-white/5 px-3.5 py-1.5 text-center backdrop-blur-md sm:flex-initial sm:px-4 sm:py-2"
-                        >
-                            <span
-                                class="block text-[10px] font-bold text-blue-300 uppercase"
-                                >Konflik Waktu</span
-                            >
-                            <span
-                                class="text-base font-bold text-emerald-400 sm:text-lg"
-                                >0 Bentrok</span
-                            >
-                        </div>
-                    </div>
-                    <button
-                        type="button"
-                        @click="openGaModal"
-                        class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-500 active:scale-95"
-                    >
-                        <Cpu class="h-4 w-4 text-blue-200" />
-                        <span>Jalankan Optimasi Jadwal (GA)</span>
-                    </button>
+                    <Cpu class="h-3.5 w-3.5" />
+                    <span>Optimasi Algoritma Genetika</span>
                 </div>
+                <h2
+                    class="text-base font-semibold text-slate-900 md:text-lg dark:text-white"
+                >
+                    Plotting dosen penguji sidang TA bebas bentrok jadwal
+                </h2>
+                <p
+                    class="text-sm leading-relaxed text-slate-500 dark:text-slate-400"
+                >
+                    Algoritma Genetika mencocokkan bidang keahlian dosen (KBK)
+                    dengan topik skripsi, meratakan beban menguji, dan
+                    menyinkronkan waktu luang dosen.
+                </p>
+            </div>
+
+            <div
+                class="flex shrink-0 flex-col gap-2.5 sm:flex-row sm:items-center"
+            >
+                <div
+                    class="rounded-xl border border-slate-200 px-4 py-2 text-center dark:border-slate-700"
+                >
+                    <span
+                        class="block text-xs text-slate-500 dark:text-slate-400"
+                        >Fitness score</span
+                    >
+                    <span
+                        class="text-base font-semibold text-slate-900 tabular-nums dark:text-white"
+                        >0.990</span
+                    >
+                </div>
+                <div
+                    class="rounded-xl border border-slate-200 px-4 py-2 text-center dark:border-slate-700"
+                >
+                    <span
+                        class="block text-xs text-slate-500 dark:text-slate-400"
+                        >Konflik waktu</span
+                    >
+                    <span
+                        class="text-base font-semibold text-slate-900 tabular-nums dark:text-white"
+                        >0 bentrok</span
+                    >
+                </div>
+                <button
+                    type="button"
+                    @click="openGaModal"
+                    class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700 active:bg-blue-800"
+                >
+                    <Cpu class="h-4 w-4" />
+                    <span>Jalankan optimasi jadwal</span>
+                </button>
             </div>
         </div>
 
@@ -667,7 +654,7 @@ const downloadJadwal = () => {
 
                             <td class="px-4 py-4">
                                 <span
-                                    class="font-bold text-slate-900 uppercase dark:text-white"
+                                    class="font-bold text-slate-900 dark:text-white"
                                     >{{ row.nama }}</span
                                 >
                             </td>
@@ -855,7 +842,7 @@ const downloadJadwal = () => {
                     <!-- Parameters -->
                     <div class="space-y-3">
                         <h4
-                            class="text-xs font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+                            class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Parameter Komputasi GA
                         </h4>
@@ -864,7 +851,7 @@ const downloadJadwal = () => {
                                 class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/70"
                             >
                                 <span
-                                    class="block text-[10px] font-bold text-slate-500 uppercase dark:text-slate-400"
+                                    class="block text-[10px] font-bold text-slate-500 dark:text-slate-400"
                                     >Ukuran Populasi</span
                                 >
                                 <input
@@ -877,7 +864,7 @@ const downloadJadwal = () => {
                                 class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/70"
                             >
                                 <span
-                                    class="block text-[10px] font-bold text-slate-500 uppercase dark:text-slate-400"
+                                    class="block text-[10px] font-bold text-slate-500 dark:text-slate-400"
                                     >Maks. Generasi</span
                                 >
                                 <input
@@ -890,7 +877,7 @@ const downloadJadwal = () => {
                                 class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/70"
                             >
                                 <span
-                                    class="block text-[10px] font-bold text-slate-500 uppercase dark:text-slate-400"
+                                    class="block text-[10px] font-bold text-slate-500 dark:text-slate-400"
                                     >Crossover Rate</span
                                 >
                                 <input
@@ -904,7 +891,7 @@ const downloadJadwal = () => {
                                 class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/70"
                             >
                                 <span
-                                    class="block text-[10px] font-bold text-slate-500 uppercase dark:text-slate-400"
+                                    class="block text-[10px] font-bold text-slate-500 dark:text-slate-400"
                                     >Mutasi Gen</span
                                 >
                                 <input
@@ -920,7 +907,7 @@ const downloadJadwal = () => {
                     <!-- Constraints checklist -->
                     <div class="space-y-2">
                         <h4
-                            class="text-xs font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+                            class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Variabel Pembatas (Constraints Check)
                         </h4>
@@ -1006,7 +993,7 @@ const downloadJadwal = () => {
                             class="h-2 w-full overflow-hidden rounded-full bg-slate-800"
                         >
                             <div
-                                class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all duration-100"
+                                class="h-full bg-blue-600 transition-all duration-100"
                                 :style="{ width: gaProgress + '%' }"
                             ></div>
                         </div>
@@ -1106,7 +1093,9 @@ const downloadJadwal = () => {
                                 >{{ editingRow.nim }}</span
                             >
                         </div>
-                        <p class="text-xs font-bold text-slate-900 dark:text-white">
+                        <p
+                            class="text-xs font-bold text-slate-900 dark:text-white"
+                        >
                             {{ editingRow.judul }}
                         </p>
                         <div

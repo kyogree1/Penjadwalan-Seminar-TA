@@ -59,13 +59,22 @@ const userRoleTitle = computed(() => {
         if (typeof usePage === 'function') {
             const authUser = (
                 usePage()?.props?.auth as
-                    | { user?: { name?: string; role?: string; jabatan?: string } }
+                    | {
+                          user?: {
+                              name?: string;
+                              role?: string;
+                              jabatan?: string;
+                          };
+                      }
                     | undefined
             )?.user;
             if (authUser?.jabatan) {
                 return `${authUser.jabatan} • Informatika ITK`;
             }
-            if (authUser?.role === 'kaprodi' || authUser?.role === 'koordinator') {
+            if (
+                authUser?.role === 'kaprodi' ||
+                authUser?.role === 'koordinator'
+            ) {
                 return 'Koordinator Tugas Akhir & Dosen Pembimbing • Informatika ITK';
             }
             if (authUser?.role === 'dosen') {
@@ -198,34 +207,15 @@ const pipelineStages = computed(() => {
     <Head title="Dashboard Kaprodi - Informatika ITK" />
 
     <div class="space-y-6">
-        <!-- 1. HERO BANNER WITH QUICK ACTION PILLS (STYLE SIPTA PENJADWALAN-SEMINAR-TA) -->
-        <div
-            class="relative overflow-hidden rounded-2xl border border-blue-700/40 bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 p-6 text-white shadow-xl shadow-blue-950/20 md:p-8"
-        >
-            <div
-                class="pointer-events-none absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"
-            />
-            <div
-                class="pointer-events-none absolute top-4 right-20 h-32 w-32 rounded-full bg-blue-400/10 blur-2xl"
-            />
-
-            <div class="relative z-10 space-y-2.5">
-                <h1
-                    class="text-xl font-extrabold tracking-tight !text-white sm:text-2xl lg:text-3xl"
-                >
-                    Selamat Datang, {{ kaprodiName }}
-                </h1>
-                <p class="text-xs font-semibold tracking-wide !text-white/90">
-                    {{ userRoleTitle }}
-                </p>
-                <p
-                    class="w-full text-xs leading-relaxed !text-white/80 sm:text-sm"
-                >
-                    Platform SIPTA IF mengintegrasikan penjadwalan seminar
-                    proposal dan hasil dengan dukungan kecerdasan buatan
-                    (Algoritma Genetika) bebas bentrok jadwal.
-                </p>
-            </div>
+        <div class="space-y-1">
+            <h1
+                class="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl dark:text-white"
+            >
+                Selamat datang, {{ kaprodiName }}
+            </h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+                {{ userRoleTitle }}
+            </p>
         </div>
 
         <!-- 2. KPI STAT CARDS (PRESERVING EXACT KEYS FOR TEST SUITE) -->
@@ -351,11 +341,13 @@ const pipelineStages = computed(() => {
                     <div
                         class="border-b border-slate-100 pb-3 dark:border-slate-800"
                     >
-                        <div class="flex items-center gap-3 overflow-x-auto pb-0.5">
+                        <div
+                            class="flex items-center gap-3 overflow-x-auto pb-0.5"
+                        >
                             <button
                                 type="button"
                                 @click="activeTab = 'judul'"
-                                class="flex items-center gap-2 pb-2 text-xs font-bold transition-all sm:text-sm shrink-0"
+                                class="flex shrink-0 items-center gap-2 pb-2 text-xs font-bold transition-all sm:text-sm"
                                 :class="[
                                     activeTab === 'judul'
                                         ? 'border-b-2 border-blue-600 text-blue-600 dark:text-blue-400'
@@ -373,7 +365,7 @@ const pipelineStages = computed(() => {
                             <button
                                 type="button"
                                 @click="activeTab = 'bimbingan'"
-                                class="flex items-center gap-2 pb-2 text-xs font-bold transition-all sm:text-sm shrink-0"
+                                class="flex shrink-0 items-center gap-2 pb-2 text-xs font-bold transition-all sm:text-sm"
                                 :class="[
                                     activeTab === 'bimbingan'
                                         ? 'border-b-2 border-blue-600 text-blue-600 dark:text-blue-400'
@@ -507,7 +499,7 @@ const pipelineStages = computed(() => {
                             </div>
                         </div>
 
-                        <div class="pt-2 flex justify-end">
+                        <div class="flex justify-end pt-2">
                             <Link
                                 href="/kaprodi/persetujuan"
                                 class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400"
@@ -519,7 +511,10 @@ const pipelineStages = computed(() => {
                     </div>
 
                     <!-- TAB 2: MAHASISWA BIMBINGAN SAYA -->
-                    <div v-show="activeTab === 'bimbingan'" class="mt-4 space-y-3">
+                    <div
+                        v-show="activeTab === 'bimbingan'"
+                        class="mt-4 space-y-3"
+                    >
                         <div class="flex items-center justify-between">
                             <div>
                                 <h3
@@ -528,7 +523,9 @@ const pipelineStages = computed(() => {
                                     Mahasiswa Bimbingan Anda
                                 </h3>
                                 <p class="mt-1 text-xs text-slate-500">
-                                    Pantau kemajuan skripsi, logbook TA-04, dan tahapan akademik mahasiswa bimbingan langsung Anda.
+                                    Pantau kemajuan skripsi, logbook TA-04, dan
+                                    tahapan akademik mahasiswa bimbingan
+                                    langsung Anda.
                                 </p>
                             </div>
                         </div>
@@ -580,7 +577,7 @@ const pipelineStages = computed(() => {
                                         </div>
 
                                         <p
-                                            class="text-xs text-slate-600 line-clamp-1 dark:text-slate-300"
+                                            class="line-clamp-1 text-xs text-slate-600 dark:text-slate-300"
                                         >
                                             {{ student.judul }}
                                         </p>
@@ -614,7 +611,7 @@ const pipelineStages = computed(() => {
                                     >
                                         <Link
                                             href="/dosen/bimbingan"
-                                            class="flex items-center gap-1 rounded-xl bg-blue-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-2xs hover:bg-blue-700 transition-all"
+                                            class="flex items-center gap-1 rounded-xl bg-blue-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-2xs transition-all hover:bg-blue-700"
                                         >
                                             <span>Buka Bimbingan</span>
                                             <ArrowUpRight class="h-3.5 w-3.5" />
@@ -624,12 +621,15 @@ const pipelineStages = computed(() => {
                             </div>
                         </div>
 
-                        <div class="pt-2 flex justify-end">
+                        <div class="flex justify-end pt-2">
                             <Link
                                 href="/dosen/bimbingan"
                                 class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400"
                             >
-                                <span>Lihat Seluruh Mahasiswa Bimbingan Anda</span>
+                                <span
+                                    >Lihat Seluruh Mahasiswa Bimbingan
+                                    Anda</span
+                                >
                                 <ArrowUpRight class="h-4 w-4" />
                             </Link>
                         </div>
@@ -646,7 +646,7 @@ const pipelineStages = computed(() => {
                     >
                         <div>
                             <h3
-                                class="text-xs font-extrabold tracking-wider text-slate-800 uppercase dark:text-white"
+                                class="text-xs font-extrabold tracking-wider text-slate-800 dark:text-white"
                             >
                                 Periode Gelombang Aktif
                             </h3>
@@ -742,8 +742,9 @@ const pipelineStages = computed(() => {
                         v-if="props.deadlines === null"
                         class="hidden text-[10px] text-slate-400 dark:text-slate-500"
                     >
-                        Data batas waktu periode belum tersedia dari sinkronisasi
-                        server; mengacu pada ketetapan kalender prodi.
+                        Data batas waktu periode belum tersedia dari
+                        sinkronisasi server; mengacu pada ketetapan kalender
+                        prodi.
                     </p>
                 </Card>
 
@@ -753,7 +754,7 @@ const pipelineStages = computed(() => {
                         class="border-b border-slate-100 pb-3 dark:border-slate-800"
                     >
                         <h3
-                            class="text-xs font-extrabold tracking-wider text-slate-800 uppercase dark:text-white"
+                            class="text-xs font-extrabold tracking-wider text-slate-800 dark:text-white"
                         >
                             Kuota Bimbingan Dosen
                         </h3>
@@ -824,13 +825,16 @@ const pipelineStages = computed(() => {
 
                         <div
                             v-if="props.lecturers.length > 5"
-                            class="pt-2 flex justify-end"
+                            class="flex justify-end pt-2"
                         >
                             <Link
                                 href="/kaprodi/dosen"
                                 class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
                             >
-                                <span>+{{ props.lecturers.length - 5 }} Dosen Lainnya di Master Dosen</span>
+                                <span
+                                    >+{{ props.lecturers.length - 5 }} Dosen
+                                    Lainnya di Master Dosen</span
+                                >
                                 <ArrowUpRight class="h-3.5 w-3.5" />
                             </Link>
                         </div>

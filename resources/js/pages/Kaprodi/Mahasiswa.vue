@@ -34,7 +34,10 @@ const initialStatus = (() => {
     try {
         if (typeof window !== 'undefined' && window.location?.search) {
             const p = new URLSearchParams(window.location.search).get('status');
-            if (p && (p.toLowerCase() === 'alumni' || p.toLowerCase() === 'lulus')) {
+            if (
+                p &&
+                (p.toLowerCase() === 'alumni' || p.toLowerCase() === 'lulus')
+            ) {
                 return 'Lulus';
             }
         }
@@ -594,7 +597,7 @@ const executeDeleteMahasiswa = () => {
                                     <div
                                         class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-2xl text-slate-400 dark:bg-slate-800/80"
                                     >
-                                        🔍
+                                        <Search class="h-6 w-6" />
                                     </div>
                                     <div class="space-y-1">
                                         <p

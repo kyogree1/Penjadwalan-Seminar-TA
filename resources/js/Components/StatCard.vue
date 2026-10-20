@@ -44,7 +44,7 @@ const colorClasses = computed(() => {
     >
         <div class="flex items-center justify-between">
             <span
-                class="text-sm font-medium text-slate-600 dark:text-slate-400"
+                class="min-h-10 text-sm leading-snug font-medium text-slate-600 dark:text-slate-400"
             >
                 {{ title }}
             </span>

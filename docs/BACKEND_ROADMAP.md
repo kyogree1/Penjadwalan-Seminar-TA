@@ -1,5 +1,7 @@
 # Roadmap Backend — Penjadwalan Seminar TA
 
+> Catatan 2026-10-20: bagian "Kondisi sekarang" di bawah sudah usang (ditulis sebelum merge backend). P0 dan hampir seluruh P1 sudah jalan. Daftar job yang masih terbuka ada di P1.5 dan P2–P3.
+
 ## Kondisi sekarang
 
 - `app/` hanya: `AuthController.php`, `User.php`, 2 middleware. `database/migrations/` masih default Laravel.
@@ -30,6 +32,21 @@ Buat migrasi + model dalam urutan ini (tiap tabel langsung ganti satu `ref()` fr
 | 6   | `assessments` (session_id, dosen_id, rubrik json, nilai, revisi_note)                              | `Dosen/Penilaian.vue`                  | `PenilaianController@store`                                                                        |
 
 Relasi: `User hasMany ThesisTitle/GuidanceLog/ExamRegistration`; `ExamPeriod hasMany ScheduleSession`; `ScheduleSession belongsToMany User (examiners)` via pivot `examiner_session`.
+
+### P1.5 — Kontrak nilai sidang untuk Kaprodi (temuan 2026-10-20)
+
+Nilai sidang sudah tersimpan benar di tabel `penilaian` (input penguji via `Dosen/PenilaianController@store`, `nilai_akhir` = rata-rata 2 penguji). Masalahnya halaman Kaprodi tidak membacanya:
+
+- `Kaprodi/PersetujuanController@index:49` mengirim `dbSidang` = `PendaftaranSidang` saja — tidak ada nilai.
+- `Kaprodi/Partials/SidangSection.vue:224` mengisi `nilai: item.nilai || (idx % 2 === 0 ? 'A' : 'AB')` → grade palsu.
+- `SidangSection.vue:459-478` modal "Form Penilaian Sidang TA" hanya mengubah `ref` lokal + toast, tidak ada request.
+
+Job:
+
+1. `PersetujuanController@index` (atau endpoint `Kaprodi/SidangController` baru): eager-load `penjadwalan.penilaian`, kirim per mahasiswa `nilai_akhir` (rata-rata, null bila `jumlah_penilai < 2`), `jumlah_penilai`, `status_jadwal`.
+2. `SidangSection.vue`: hapus fallback `'A'/'AB'` dan data fiktif lain (nama/penguji/tanggal default), tampilkan `—` bila belum dinilai.
+3. Hapus modal penilaian Kaprodi — nilai adalah wewenang penguji. Kalau kaprodi butuh koreksi, sediakan `POST /kaprodi/penilaian/{id}/override` dengan policy + alasan, bukan edit di client.
+4. Test: 0 penilai → `null`, 1 penilai → `null`, 2 penilai → rata-rata; kaprodi tidak bisa menulis `penilaian` langsung.
 
 ### P2 — Otorisasi + alur peran
 

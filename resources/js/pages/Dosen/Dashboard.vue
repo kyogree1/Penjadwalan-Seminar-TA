@@ -79,7 +79,8 @@ const upcomingExams = [
     {
         id: 1,
         tipe: 'Seminar Proposal',
-        tipeBadge: 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300',
+        tipeBadge:
+            'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300',
         mahasiswa: 'Dimas Wahyu Ramadhan',
         nim: '11231024',
         judul: 'Rancang Bangun Sistem Timegraph dan Monitoring Berkas Terdistribusi',
@@ -92,7 +93,8 @@ const upcomingExams = [
     {
         id: 2,
         tipe: 'Sidang Tugas Akhir',
-        tipeBadge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+        tipeBadge:
+            'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
         mahasiswa: 'Siti Rahmawati',
         nim: '11221038',
         judul: 'Peramalan Kuantitas Penjualan Harian Produk Retail Menggunakan Hybrid ARIMA-LSTM',
@@ -106,10 +108,38 @@ const upcomingExams = [
 
 // Pipeline tahapan mahasiswa bimbingan dosen
 const adviseeStages = [
-    { name: 'Usulan Judul', count: 1, pct: 20, barColor: 'bg-amber-500', dotColor: 'bg-amber-500', href: '/dosen/persetujuan' },
-    { name: 'Bimbingan Berjalan', count: 2, pct: 40, barColor: 'bg-indigo-600', dotColor: 'bg-indigo-600', href: '/dosen/bimbingan' },
-    { name: 'Seminar Proposal', count: 1, pct: 20, barColor: 'bg-blue-600', dotColor: 'bg-blue-600', href: '/dosen/sempro' },
-    { name: 'Sidang Tugas Akhir', count: 1, pct: 20, barColor: 'bg-emerald-600', dotColor: 'bg-emerald-600', href: '/dosen/sidang' },
+    {
+        name: 'Usulan Judul',
+        count: 1,
+        pct: 20,
+        barColor: 'bg-amber-500',
+        dotColor: 'bg-amber-500',
+        href: '/dosen/persetujuan',
+    },
+    {
+        name: 'Bimbingan Berjalan',
+        count: 2,
+        pct: 40,
+        barColor: 'bg-indigo-600',
+        dotColor: 'bg-indigo-600',
+        href: '/dosen/bimbingan',
+    },
+    {
+        name: 'Seminar Proposal',
+        count: 1,
+        pct: 20,
+        barColor: 'bg-blue-600',
+        dotColor: 'bg-blue-600',
+        href: '/dosen/sempro',
+    },
+    {
+        name: 'Sidang Tugas Akhir',
+        count: 1,
+        pct: 20,
+        barColor: 'bg-emerald-600',
+        dotColor: 'bg-emerald-600',
+        href: '/dosen/sidang',
+    },
 ];
 </script>
 
@@ -117,33 +147,17 @@ const adviseeStages = [
     <Head title="Dashboard Dosen • SIPTA IF" />
 
     <div class="space-y-6">
-        <!-- 1. HERO BANNER PORTAL DOSEN (MATCHING GRADIENT KATALOG & KOORDINATOR) -->
         <div
-            class="relative overflow-hidden rounded-2xl border border-blue-700/40 bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 p-6 text-white shadow-xl shadow-blue-950/20 md:p-8"
+            class="rounded-xl border border-[#0b3084] bg-[#0b3084] px-5 py-4 dark:border-[#1b45a8] dark:bg-[#0b3084]"
         >
-            <div
-                class="pointer-events-none absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"
-            />
-            <div
-                class="pointer-events-none absolute top-4 right-20 h-32 w-32 rounded-full bg-blue-400/10 blur-2xl"
-            />
-
-            <div class="relative z-10 space-y-2.5">
-                <h1
-                    class="text-xl font-extrabold tracking-tight !text-white sm:text-2xl lg:text-3xl"
-                >
-                    Selamat Datang, {{ lecturer?.name ?? 'Bapak/Ibu Dosen' }}
-                </h1>
-                <p class="text-xs font-semibold tracking-wide !text-white/90">
-                    NIP: {{ lecturer?.nim_nip ?? 'Belum tersedia' }} • {{ lecturer?.jabatan ?? 'Dosen Pembimbing & Penguji TA' }}
-                </p>
-                <p
-                    class="w-full text-xs leading-relaxed !text-white/80 sm:text-sm"
-                >
-                    Kelola bimbingan tugas akhir mahasiswa (TA-04), validasi logbook bimbingan,
-                    serta pantau jadwal penugasan penguji seminar proposal dan sidang secara terpadu.
-                </p>
-            </div>
+            <h1
+                class="text-lg font-semibold tracking-tight text-white sm:text-xl"
+            >
+                Selamat datang, {{ lecturer?.name ?? 'Bapak/Ibu Dosen' }}
+            </h1>
+            <p class="mt-1 text-sm text-blue-100">
+                {{ lecturer?.jabatan ?? 'Dosen Pembimbing & Penguji TA' }}
+            </p>
         </div>
 
         <!-- 2. KPI STAT CARDS (PRESERVING EXACT KEYS & SUBTITLES FOR TEST SUITE COMPATIBILITY) -->
@@ -192,7 +206,8 @@ const adviseeStages = [
                         Distribusi Tahapan Mahasiswa Bimbingan Anda
                     </h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">
-                        Sebaran tahapan mahasiswa tugas akhir yang sedang Anda bimbing saat ini
+                        Sebaran tahapan mahasiswa tugas akhir yang sedang Anda
+                        bimbing saat ini
                     </p>
                 </div>
                 <span
@@ -214,14 +229,19 @@ const adviseeStages = [
                         'h-full transition-all duration-500',
                     ]"
                     :style="{ width: stage.pct + '%' }"
-                    :title="stage.name + ': ' + stage.count + ' mhs (' + stage.pct + '%)'"
+                    :title="
+                        stage.name +
+                        ': ' +
+                        stage.count +
+                        ' mhs (' +
+                        stage.pct +
+                        '%)'
+                    "
                 />
             </div>
 
             <!-- Segment Legend Cards -->
-            <div
-                class="grid grid-cols-2 gap-3 pt-2 sm:grid-cols-4"
-            >
+            <div class="grid grid-cols-2 gap-3 pt-2 sm:grid-cols-4">
                 <Link
                     v-for="stage in adviseeStages"
                     :key="stage.name"
@@ -254,11 +274,11 @@ const adviseeStages = [
         </div>
 
         <!-- 4. MAIN 2-COLUMN SECTION -->
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
+        <div class="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-12">
             <!-- LEFT COLUMN: MAHASISWA BIMBINGAN & LOGBOOK (7 COLS) -->
             <div class="flex flex-col justify-between space-y-6 lg:col-span-7">
                 <!-- CARD: MAHASISWA BIMBINGAN & LOGBOOK TA-04 -->
-                <Card class="flex flex-col justify-between p-5 sm:p-6 flex-1">
+                <Card class="flex flex-1 flex-col justify-between p-5 sm:p-6">
                     <div>
                         <div
                             class="flex items-center justify-between border-b border-slate-100 pb-3 sm:pb-4 dark:border-slate-800"
@@ -269,15 +289,18 @@ const adviseeStages = [
                                 >
                                     Mahasiswa Bimbingan &amp; Logbook TA-04
                                 </h2>
-                                <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                                    Pantau progres penulisan skripsi dan validasi lembar konsultasi mahasiswa
+                                <p
+                                    class="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
+                                >
+                                    Pantau progres penulisan skripsi dan
+                                    validasi lembar konsultasi mahasiswa
                                 </p>
                             </div>
                             <Link
                                 href="/dosen/bimbingan"
-                                class="text-xs font-bold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 shrink-0"
+                                class="shrink-0 text-xs font-bold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400"
                             >
-                                Semua →
+                                Lihat semua
                             </Link>
                         </div>
 
@@ -288,7 +311,9 @@ const adviseeStages = [
                                 class="rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 shadow-2xs transition-all hover:border-blue-400/50 dark:border-slate-800 dark:bg-slate-900/50"
                             >
                                 <div class="space-y-1.5">
-                                    <div class="flex flex-wrap items-center gap-2">
+                                    <div
+                                        class="flex flex-wrap items-center gap-2"
+                                    >
                                         <span
                                             class="text-sm font-bold text-slate-900 dark:text-white"
                                         >
@@ -316,7 +341,7 @@ const adviseeStages = [
                                     </div>
 
                                     <p
-                                        class="text-xs text-slate-600 line-clamp-1 dark:text-slate-300"
+                                        class="line-clamp-1 text-xs text-slate-600 dark:text-slate-300"
                                     >
                                         {{ student.judul }}
                                     </p>
@@ -329,7 +354,8 @@ const adviseeStages = [
                                             <div
                                                 class="h-full rounded-full bg-blue-600 transition-all duration-500"
                                                 :style="{
-                                                    width: student.progress + '%',
+                                                    width:
+                                                        student.progress + '%',
                                                 }"
                                             />
                                         </div>
@@ -340,7 +366,8 @@ const adviseeStages = [
                                         </span>
                                     </div>
                                     <p class="text-[10px] text-slate-400">
-                                        Konsultasi terakhir: {{ student.terakhirBimbingan }}
+                                        Konsultasi terakhir:
+                                        {{ student.terakhirBimbingan }}
                                     </p>
                                 </div>
                             </div>
@@ -359,15 +386,18 @@ const adviseeStages = [
                             >
                                 Usulan Judul
                             </h3>
-                            <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                                Mahasiswa yang memilih Anda sebagai calon Pembimbing 1 atau 2
+                            <p
+                                class="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
+                            >
+                                Mahasiswa yang memilih Anda sebagai calon
+                                Pembimbing 1 atau 2
                             </p>
                         </div>
                         <Link
                             href="/dosen/persetujuan"
-                            class="text-xs font-bold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 shrink-0"
+                            class="shrink-0 text-xs font-bold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400"
                         >
-                            Semua →
+                            Lihat semua
                         </Link>
                     </div>
 
@@ -381,19 +411,32 @@ const adviseeStages = [
                                 >
                                     Menunggu review
                                 </span>
-                                <span class="text-[11px] text-slate-400">18 Okt 2026</span>
+                                <span class="text-[11px] text-slate-400"
+                                    >18 Okt 2026</span
+                                >
                             </div>
                             <h4
                                 class="mt-2 text-xs font-bold text-slate-900 dark:text-white"
                             >
                                 Fajar Nugraha (NIM: 11231045)
                             </h4>
-                            <p class="mt-1 text-xs text-slate-600 line-clamp-1 dark:text-slate-300">
-                                Implementasi Federative Learning pada Sistem Deteksi Penyakit Tanaman Padi
+                            <p
+                                class="mt-1 line-clamp-1 text-xs text-slate-600 dark:text-slate-300"
+                            >
+                                Implementasi Federative Learning pada Sistem
+                                Deteksi Penyakit Tanaman Padi
                             </p>
-                            <div class="mt-2 flex items-center justify-between pt-1">
-                                <span class="text-[11px] text-slate-500 dark:text-slate-400">
-                                    Posisi: <strong class="text-slate-700 dark:text-slate-200">Pembimbing 1</strong>
+                            <div
+                                class="mt-2 flex items-center justify-between pt-1"
+                            >
+                                <span
+                                    class="text-[11px] text-slate-500 dark:text-slate-400"
+                                >
+                                    Posisi:
+                                    <strong
+                                        class="text-slate-700 dark:text-slate-200"
+                                        >Pembimbing 1</strong
+                                    >
                                 </span>
                             </div>
                         </div>
@@ -404,7 +447,7 @@ const adviseeStages = [
             <!-- RIGHT COLUMN: JADWAL MENGUJI & AGENDA (5 COLS) -->
             <div class="flex flex-col justify-between space-y-6 lg:col-span-5">
                 <!-- CARD: JADWAL MENGUJI TERDEKAT -->
-                <Card class="flex flex-col justify-between p-5 sm:p-6 flex-1">
+                <Card class="flex flex-1 flex-col justify-between p-5 sm:p-6">
                     <div>
                         <div
                             class="flex items-center justify-between border-b border-slate-100 pb-3 sm:pb-4 dark:border-slate-800"
@@ -415,15 +458,17 @@ const adviseeStages = [
                                 >
                                     Jadwal Menguji Terdekat
                                 </h3>
-                                <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                                <p
+                                    class="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
+                                >
                                     Penugasan seminar &amp; sidang terdaftar
                                 </p>
                             </div>
                             <Link
                                 href="/dosen/sempro"
-                                class="text-xs font-bold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 shrink-0"
+                                class="shrink-0 text-xs font-bold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400"
                             >
-                                Semua →
+                                Lihat semua
                             </Link>
                         </div>
 
@@ -433,7 +478,9 @@ const adviseeStages = [
                                 :key="exam.id"
                                 class="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3.5 transition-all hover:border-blue-400/50 dark:border-slate-800 dark:bg-slate-900/50"
                             >
-                                <div class="flex items-center justify-between gap-2">
+                                <div
+                                    class="flex items-center justify-between gap-2"
+                                >
                                     <span
                                         class="rounded-full px-2.5 py-0.5 text-[10px] font-bold"
                                         :class="exam.tipeBadge"
@@ -451,21 +498,34 @@ const adviseeStages = [
                                     class="mt-2 text-xs font-bold text-slate-900 dark:text-white"
                                 >
                                     {{ exam.mahasiswa }}
-                                    <span class="font-mono text-[11px] font-normal text-slate-400">
+                                    <span
+                                        class="font-mono text-[11px] font-normal text-slate-400"
+                                    >
                                         ({{ exam.nim }})
                                     </span>
                                 </p>
-                                <p class="mt-1 text-xs text-slate-600 line-clamp-1 dark:text-slate-300">
+                                <p
+                                    class="mt-1 line-clamp-1 text-xs text-slate-600 dark:text-slate-300"
+                                >
                                     {{ exam.judul }}
                                 </p>
 
-                                <div class="mt-2.5 space-y-1 border-t border-slate-200/60 pt-2 text-[11px] text-slate-500 dark:border-slate-800/80 dark:text-slate-400">
+                                <div
+                                    class="mt-2.5 space-y-1 border-t border-slate-200/60 pt-2 text-[11px] text-slate-500 dark:border-slate-800/80 dark:text-slate-400"
+                                >
                                     <div class="flex items-center gap-1.5">
-                                        <Clock class="h-3.5 w-3.5 text-slate-400" />
-                                        <span>{{ exam.tanggal }} • {{ exam.jam }}</span>
+                                        <Clock
+                                            class="h-3.5 w-3.5 text-slate-400"
+                                        />
+                                        <span
+                                            >{{ exam.tanggal }} •
+                                            {{ exam.jam }}</span
+                                        >
                                     </div>
                                     <div class="flex items-center gap-1.5">
-                                        <Layers class="h-3.5 w-3.5 text-slate-400" />
+                                        <Layers
+                                            class="h-3.5 w-3.5 text-slate-400"
+                                        />
                                         <span>{{ exam.ruang }}</span>
                                     </div>
                                 </div>
@@ -485,8 +545,11 @@ const adviseeStages = [
                             >
                                 Batas Waktu Periode Aktif
                             </h3>
-                            <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                                Ketetapan batas waktu ujian dan entri nilai prodi
+                            <p
+                                class="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
+                            >
+                                Ketetapan batas waktu ujian dan entri nilai
+                                prodi
                             </p>
                         </div>
                     </div>
@@ -498,7 +561,9 @@ const adviseeStages = [
                             <span class="text-slate-700 dark:text-slate-300">
                                 Batas Nilai Sempro Gel. 2
                             </span>
-                            <span class="font-bold text-rose-600 dark:text-rose-400">
+                            <span
+                                class="font-bold text-rose-600 dark:text-rose-400"
+                            >
                                 25 Okt 2026
                             </span>
                         </div>
@@ -508,7 +573,9 @@ const adviseeStages = [
                             <span class="text-slate-700 dark:text-slate-300">
                                 Penutupan Pendaftaran Sidang
                             </span>
-                            <span class="font-bold text-amber-600 dark:text-amber-400">
+                            <span
+                                class="font-bold text-amber-600 dark:text-amber-400"
+                            >
                                 30 Okt 2026
                             </span>
                         </div>

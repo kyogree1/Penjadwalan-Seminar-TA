@@ -14,6 +14,7 @@ import {
 } from 'lucide-vue-next';
 import Button from '@/Components/Button.vue';
 import Modal from '@/Components/Modal.vue';
+import StatCard from '@/Components/StatCard.vue';
 import Toast from '@/Components/Toast.vue';
 import type {
     LiveBimbinganSession,
@@ -572,105 +573,30 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
 
         <!-- 4 KPI SUMMARY CARDS -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <!-- 1. Total Sesi Bimbingan (Adjusted to Supervisees List) -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-slate-400"
-                    >
-                        Total Sesi Bimbingan
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-black dark:text-white"
-                    >
-                        {{ totalSesiGlobal }}/{{ maxTargetSesi }}
-                        <span
-                            class="text-xs font-normal text-black dark:text-slate-400"
-                            >Sesi</span
-                        >
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                >
-                    <BookOpen class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- 2. Memenuhi Syarat (≥ 5x) -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-emerald-200/80 bg-white p-4 shadow-xs dark:border-emerald-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-emerald-600 uppercase"
-                    >
-                        Memenuhi Syarat (≥ 5x)
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-emerald-600 dark:text-emerald-400"
-                    >
-                        {{ mhsEligibleCount }} Mhs
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
-                >
-                    <CheckCircle2 class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- 3. Menunggu Paraf -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-amber-200/80 bg-white p-4 shadow-xs dark:border-amber-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-amber-600 uppercase"
-                    >
-                        Menunggu Paraf
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-amber-600 dark:text-amber-400"
-                    >
-                        {{ pendingParafCount }} Sesi
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
-                >
-                    <Clock class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- 4. Rata-rata Konsultasi -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-purple-200/80 bg-white p-4 shadow-xs dark:border-purple-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-purple-600 uppercase"
-                    >
-                        Rata-rata Konsultasi
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-purple-600 dark:text-purple-400"
-                    >
-                        {{ avgSesiCount }}
-                        <span
-                            class="text-xs font-normal text-black dark:text-slate-400"
-                            >/ Mhs</span
-                        >
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400"
-                >
-                    <TrendingUp class="h-5 w-5" />
-                </div>
-            </div>
+            <StatCard
+                title="Total Sesi Bimbingan"
+                :value="`${totalSesiGlobal}/${maxTargetSesi} sesi`"
+                :icon="BookOpen"
+                icon-color="blue"
+            />
+            <StatCard
+                title="Memenuhi Syarat (≥ 5x)"
+                :value="`${mhsEligibleCount} mhs`"
+                :icon="CheckCircle2"
+                icon-color="emerald"
+            />
+            <StatCard
+                title="Menunggu Paraf"
+                :value="`${pendingParafCount} sesi`"
+                :icon="Clock"
+                icon-color="amber"
+            />
+            <StatCard
+                title="Rata-rata Konsultasi"
+                :value="`${avgSesiCount} / mhs`"
+                :icon="TrendingUp"
+                icon-color="slate"
+            />
         </div>
 
         <!-- MAIN LAYOUT: TABEL DAFTAR MAHASISWA & LEMBAR KENDALI BIMBINGAN -->
@@ -1135,7 +1061,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                 <div class="space-y-3">
                     <div>
                         <span
-                            class="text-[11px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                            class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                         >
                             Riwayat Catatan Konsultasi
                         </span>
@@ -1178,7 +1104,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     class="rounded-lg border border-slate-100 bg-white p-2.5 text-black dark:border-slate-800 dark:bg-[#111827] dark:text-slate-300"
                                 >
                                     <span
-                                        class="mb-0.5 block text-[10px] font-black text-black uppercase dark:text-slate-400"
+                                        class="mb-0.5 block text-[10px] font-black text-black dark:text-slate-400"
                                     >
                                         Rangkuman Pembahasan:
                                     </span>
@@ -1196,7 +1122,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                 class="space-y-0.5 rounded-lg border border-amber-200/60 bg-amber-50/60 p-2.5 text-xs dark:border-amber-900/40 dark:bg-amber-950/30"
                             >
                                 <span
-                                    class="text-[10px] font-black text-amber-800 uppercase dark:text-amber-300"
+                                    class="text-[10px] font-black text-amber-800 dark:text-amber-300"
                                 >
                                     Arahan / Catatan Pembimbing:
                                 </span>

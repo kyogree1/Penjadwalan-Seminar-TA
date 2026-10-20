@@ -2,7 +2,6 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
-    ArrowRight,
     BookOpen,
     Check,
     CheckCircle2,
@@ -18,6 +17,7 @@ import {
 import Button from '@/Components/Button.vue';
 import DeleteConfirmModal from '@/Components/DeleteConfirmModal.vue';
 import Modal from '@/Components/Modal.vue';
+import StatCard from '@/Components/StatCard.vue';
 import SemproSection from './Partials/SemproSection.vue';
 import SidangSection from './Partials/SidangSection.vue';
 import type {
@@ -776,7 +776,10 @@ watch(
         if (!newUrl) return;
         if (newUrl.includes('section=sempro') || newUrl.includes('/sempro')) {
             activeSection.value = 'sempro';
-        } else if (newUrl.includes('section=sidang') || newUrl.includes('/sidang')) {
+        } else if (
+            newUrl.includes('section=sidang') ||
+            newUrl.includes('/sidang')
+        ) {
             activeSection.value = 'sidang';
         } else {
             activeSection.value = 'judul';
@@ -884,106 +887,36 @@ const submitAcademicReview = (
                     class="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-bold text-black transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                     <span>Lanjut ke Sempro</span>
-                    <ArrowRight
-                        class="h-3.5 w-3.5 font-black text-blue-600 dark:text-blue-400"
-                    />
                 </button>
             </div>
         </div>
 
-        <!-- 4 KPI SUMMARY CARDS (Lucide icons, no AI slop) -->
+        <!-- 4 KPI SUMMARY CARDS -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <!-- Total Pengajuan -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-slate-400"
-                    >
-                        Total Pengajuan
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-black dark:text-white"
-                    >
-                        {{ totalCount }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                >
-                    <BookOpen class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- Menunggu Review -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-amber-200/80 bg-white p-4 shadow-xs dark:border-amber-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-amber-700 uppercase dark:text-amber-400"
-                    >
-                        Menunggu Review
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-amber-700 dark:text-amber-400"
-                    >
-                        {{ pendingCount }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
-                >
-                    <Clock class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- Judul Disetujui -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-emerald-200/80 bg-white p-4 shadow-xs dark:border-emerald-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
-                    >
-                        Judul Disetujui
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-400"
-                    >
-                        {{ approvedCount }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
-                >
-                    <CheckCircle2 class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- Perlu Revisi -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-purple-200/80 bg-white p-4 shadow-xs dark:border-purple-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-purple-700 uppercase dark:text-purple-400"
-                    >
-                        Perlu Revisi
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-purple-700 dark:text-purple-400"
-                    >
-                        {{ revisionCount }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400"
-                >
-                    <FileEdit class="h-5 w-5" />
-                </div>
-            </div>
+            <StatCard
+                title="Total Pengajuan"
+                :value="totalCount"
+                :icon="BookOpen"
+                icon-color="blue"
+            />
+            <StatCard
+                title="Menunggu Review"
+                :value="pendingCount"
+                :icon="Clock"
+                icon-color="amber"
+            />
+            <StatCard
+                title="Judul Disetujui"
+                :value="approvedCount"
+                :icon="CheckCircle2"
+                icon-color="emerald"
+            />
+            <StatCard
+                title="Perlu Revisi"
+                :value="revisionCount"
+                :icon="FileEdit"
+                icon-color="rose"
+            />
         </div>
 
         <!-- MAIN LAYOUT: TABLE ON LEFT, INSPECTOR DRAWER ON RIGHT -->
@@ -1397,7 +1330,7 @@ const submitAcademicReview = (
                     class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-800/50"
                 >
                     <div
-                        class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 text-sm font-black text-white shadow-xs"
+                        class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-700 text-sm font-black text-white shadow-xs"
                     >
                         {{ getStudentName(selectedJudul).charAt(0) }}
                     </div>
@@ -1419,7 +1352,7 @@ const submitAcademicReview = (
                 <!-- Title & Topic Details -->
                 <div class="space-y-2">
                     <span
-                        class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                        class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                         >Judul Penelitian</span
                     >
                     <p
@@ -1454,7 +1387,7 @@ const submitAcademicReview = (
                 <!-- Abstract / Summary -->
                 <div class="space-y-1.5">
                     <span
-                        class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                        class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                         >Ringkasan Ide / Abstrak</span
                     >
                     <p
@@ -1472,7 +1405,7 @@ const submitAcademicReview = (
                     class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                 >
                     <span
-                        class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                        class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                         >Calon Pembimbing</span
                     >
                     <div class="space-y-1.5 text-xs">
@@ -1517,7 +1450,7 @@ const submitAcademicReview = (
                         class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                             >Catatan Review / Feedback</span
                         >
                         <textarea
@@ -1533,11 +1466,11 @@ const submitAcademicReview = (
                     >
                         <div class="flex items-center justify-between">
                             <span
-                                class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                                class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                                 >Keputusan Review</span
                             >
                             <span
-                                class="rounded-full px-2 py-0.5 text-[9px] font-black tracking-wide uppercase"
+                                class="rounded-full px-2 py-0.5 text-[9px] font-black tracking-wide"
                                 :class="[
                                     reviewDecision === 'disetujui'
                                         ? 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
@@ -1622,7 +1555,7 @@ const submitAcademicReview = (
                         class="space-y-1.5 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                             >Catatan Review / Feedback</span
                         >
                         <p
@@ -1637,7 +1570,7 @@ const submitAcademicReview = (
                         class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                             >Keputusan Review</span
                         >
                         <div
@@ -1669,7 +1602,7 @@ const submitAcademicReview = (
                         class="space-y-1.5 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                             >Catatan Arahan Revisi</span
                         >
                         <p
@@ -1684,7 +1617,7 @@ const submitAcademicReview = (
                         class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                             >Keputusan Review</span
                         >
                         <div
@@ -1711,7 +1644,7 @@ const submitAcademicReview = (
                         class="space-y-1.5 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                             >Catatan</span
                         >
                         <p
@@ -1725,7 +1658,7 @@ const submitAcademicReview = (
                         class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black uppercase dark:text-slate-400"
+                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
                             >Keputusan Review</span
                         >
                         <div

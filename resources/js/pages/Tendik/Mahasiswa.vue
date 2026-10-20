@@ -325,7 +325,9 @@ const executeResetPassword = () => {
             role="status"
             class="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300"
         >
-            <CheckCircle2 class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2
+                class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+            />
             <span>{{ managementSuccess }}</span>
         </div>
 
@@ -334,13 +336,17 @@ const executeResetPassword = () => {
             role="status"
             class="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300"
         >
-            <CheckCircle2 class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2
+                class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+            />
             <span>{{ csvNotice }}</span>
         </div>
 
         <!-- Import Section (Collapsible / Card) -->
         <Card class="space-y-4 p-6">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div class="flex items-center gap-3">
                     <div
                         class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
@@ -348,11 +354,14 @@ const executeResetPassword = () => {
                         <FileSpreadsheet class="h-5 w-5" />
                     </div>
                     <div>
-                        <h2 class="text-sm font-bold text-slate-900 dark:text-white">
+                        <h2
+                            class="text-sm font-bold text-slate-900 dark:text-white"
+                        >
                             Import CSV Mahasiswa
                         </h2>
                         <p class="text-xs text-slate-500 dark:text-slate-400">
-                            Unggah berkas spreadsheet CSV untuk mendaftarkan akun baru secara massal.
+                            Unggah berkas spreadsheet CSV untuk mendaftarkan
+                            akun baru secara massal.
                         </p>
                     </div>
                 </div>
@@ -368,18 +377,31 @@ const executeResetPassword = () => {
                 </div>
             </div>
 
-            <div class="space-y-4 border-t border-slate-100 pt-4 dark:border-slate-800">
+            <div
+                class="space-y-4 border-t border-slate-100 pt-4 dark:border-slate-800"
+            >
                 <div
                     class="flex items-start gap-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400"
                 >
                     <Info class="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
                     <p class="leading-relaxed">
-                        CSV UTF-8 maksimal 1 MiB / 500 baris, kolom <code class="font-bold text-slate-700 dark:text-slate-300">name,email</code>. Hanya membuat akun baru; email duplikat semua peran atau dalam file ditolak. Tidak ada pembaruan atau import parsial. Username/NIM dan akses login memerlukan provisioning terpisah; password acak tidak ditampilkan. Format XLSX tidak tersedia.
+                        CSV UTF-8 maksimal 1 MiB / 500 baris, kolom
+                        <code
+                            class="font-bold text-slate-700 dark:text-slate-300"
+                            >name,email</code
+                        >. Hanya membuat akun baru; email duplikat semua peran
+                        atau dalam file ditolak. Tidak ada pembaruan atau import
+                        parsial. Username/NIM dan akses login memerlukan
+                        provisioning terpisah; password acak tidak ditampilkan.
+                        Format XLSX tidak tersedia.
                     </p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300" for="student-csv">
+                    <label
+                        class="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                        for="student-csv"
+                    >
                         Pilih CSV mahasiswa
                     </label>
                     <input
@@ -392,8 +414,14 @@ const executeResetPassword = () => {
                     />
                 </div>
 
-                <div v-if="csvBusy || csvImporting" role="status" class="flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
-                    <div class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent dark:border-blue-400" />
+                <div
+                    v-if="csvBusy || csvImporting"
+                    role="status"
+                    class="flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400"
+                >
+                    <div
+                        class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent dark:border-blue-400"
+                    />
                     <span>Memproses…</span>
                 </div>
 
@@ -402,14 +430,24 @@ const executeResetPassword = () => {
                     role="alert"
                     class="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300"
                 >
-                    <Info class="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400" />
+                    <Info
+                        class="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400"
+                    />
                     <span>{{ csvError }}</span>
                 </div>
 
-                <div v-if="csvRows" class="space-y-3 rounded-xl border border-slate-200/90 bg-white p-4 dark:border-slate-800 dark:bg-slate-900/60">
+                <div
+                    v-if="csvRows"
+                    class="space-y-3 rounded-xl border border-slate-200/90 bg-white p-4 dark:border-slate-800 dark:bg-slate-900/60"
+                >
                     <div class="flex items-center justify-between">
-                        <p class="text-xs font-semibold text-slate-800 dark:text-slate-200">
-                            Preview server: <span class="text-blue-600 dark:text-blue-400">{{ csvRows.length }} akun baru</span>. Server memvalidasi ulang saat import.
+                        <p
+                            class="text-xs font-semibold text-slate-800 dark:text-slate-200"
+                        >
+                            Preview server:
+                            <span class="text-blue-600 dark:text-blue-400"
+                                >{{ csvRows.length }} akun baru</span
+                            >. Server memvalidasi ulang saat import.
                         </p>
                         <Button
                             size="sm"
@@ -421,18 +459,36 @@ const executeResetPassword = () => {
                         </Button>
                     </div>
 
-                    <div class="max-h-60 overflow-y-auto rounded-lg border border-slate-200/80 dark:border-slate-800">
+                    <div
+                        class="max-h-60 overflow-y-auto rounded-lg border border-slate-200/80 dark:border-slate-800"
+                    >
                         <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 text-[11px] font-semibold text-slate-600 uppercase dark:bg-slate-900/80 dark:text-slate-400">
+                            <thead
+                                class="bg-slate-50 text-[11px] font-semibold text-slate-600 uppercase dark:bg-slate-900/80 dark:text-slate-400"
+                            >
                                 <tr>
                                     <th class="px-3 py-2">Nama</th>
                                     <th class="px-3 py-2">Email</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                                <tr v-for="row in csvRows" :key="row.email" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
-                                    <td class="px-3 py-2 font-medium text-slate-900 dark:text-white">{{ row.name }}</td>
-                                    <td class="px-3 py-2 text-slate-500 dark:text-slate-400">{{ row.email }}</td>
+                            <tbody
+                                class="divide-y divide-slate-100 dark:divide-slate-800"
+                            >
+                                <tr
+                                    v-for="row in csvRows"
+                                    :key="row.email"
+                                    class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40"
+                                >
+                                    <td
+                                        class="px-3 py-2 font-medium text-slate-900 dark:text-white"
+                                    >
+                                        {{ row.name }}
+                                    </td>
+                                    <td
+                                        class="px-3 py-2 text-slate-500 dark:text-slate-400"
+                                    >
+                                        {{ row.email }}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -447,11 +503,14 @@ const executeResetPassword = () => {
                 class="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800"
             >
                 <div class="space-y-1">
-                    <h3 class="text-base font-bold text-slate-900 dark:text-white">
+                    <h3
+                        class="text-base font-bold text-slate-900 dark:text-white"
+                    >
                         Daftar Mahasiswa
                     </h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">
-                        Total {{ filteredStudents.length }} akun mahasiswa terdaftar pada direktori prodi.
+                        Total {{ filteredStudents.length }} akun mahasiswa
+                        terdaftar pada direktori prodi.
                     </p>
                 </div>
 
@@ -505,17 +564,25 @@ const executeResetPassword = () => {
                             @click="openManagement('edit', s)"
                         >
                             <td class="px-4 py-3.5">
-                                <p class="truncate font-semibold text-slate-900 dark:text-white">
+                                <p
+                                    class="truncate font-semibold text-slate-900 dark:text-white"
+                                >
                                     {{ s.name }}
                                 </p>
-                                <p class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
+                                <p
+                                    class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500"
+                                >
                                     {{ s.prodi }}
                                 </p>
                             </td>
-                            <td class="px-4 py-3.5 tabular-nums text-slate-700 dark:text-slate-300">
+                            <td
+                                class="px-4 py-3.5 text-slate-700 tabular-nums dark:text-slate-300"
+                            >
                                 {{ s.nim_nip || s.username || '—' }}
                             </td>
-                            <td class="px-4 py-3.5 truncate text-slate-600 dark:text-slate-400">
+                            <td
+                                class="truncate px-4 py-3.5 text-slate-600 dark:text-slate-400"
+                            >
                                 {{ s.email }}
                             </td>
                         </tr>
@@ -538,7 +605,8 @@ const executeResetPassword = () => {
                                         <p
                                             class="mt-1 text-xs text-slate-500 dark:text-slate-400"
                                         >
-                                            Coba ubah kata kunci pencarian nama, email, atau NIM.
+                                            Coba ubah kata kunci pencarian nama,
+                                            email, atau NIM.
                                         </p>
                                     </div>
                                 </div>
@@ -562,7 +630,8 @@ const executeResetPassword = () => {
                     Sebelumnya
                 </Button>
                 <span class="text-slate-500 dark:text-slate-400">
-                    Halaman {{ currentPage }} dari {{ totalPages }} • {{ filteredStudents.length }} mahasiswa
+                    Halaman {{ currentPage }} dari {{ totalPages }} •
+                    {{ filteredStudents.length }} mahasiswa
                 </span>
                 <Button
                     variant="outline"
@@ -577,7 +646,12 @@ const executeResetPassword = () => {
     </div>
 
     <!-- Management Modal (Create / Edit / Delete) -->
-    <Modal :show="managementMode !== null" :closeable="!managing" max-width="md" @close="closeManagement">
+    <Modal
+        :show="managementMode !== null"
+        :closeable="!managing"
+        max-width="md"
+        @close="closeManagement"
+    >
         <div class="space-y-4 p-6">
             <h2 class="text-base font-bold text-slate-900 dark:text-white">
                 {{
@@ -602,7 +676,9 @@ const executeResetPassword = () => {
                 >
                     <p class="font-semibold">Konfirmasi Penghapusan</p>
                     <p class="mt-1 leading-relaxed">
-                        Hapus akun {{ managementStudent?.name }}? Akun dengan riwayat akademik tidak dapat dihapus. Server memeriksa riwayat sebelum menghapus.
+                        Hapus akun {{ managementStudent?.name }}? Akun dengan
+                        riwayat akademik tidak dapat dihapus. Server memeriksa
+                        riwayat sebelum menghapus.
                     </p>
                 </div>
             </template>
@@ -615,18 +691,30 @@ const executeResetPassword = () => {
                 >
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                            <p
+                                class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                            >
                                 NIM (Username)
                             </p>
-                            <p class="mt-0.5 font-bold text-slate-900 dark:text-white tabular-nums">
-                                {{ managementStudent.nim_nip || managementStudent.username || '—' }}
+                            <p
+                                class="mt-0.5 font-bold text-slate-900 tabular-nums dark:text-white"
+                            >
+                                {{
+                                    managementStudent.nim_nip ||
+                                    managementStudent.username ||
+                                    '—'
+                                }}
                             </p>
                         </div>
                         <div>
-                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                            <p
+                                class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                            >
                                 Program Studi
                             </p>
-                            <p class="mt-0.5 font-semibold text-slate-900 dark:text-white">
+                            <p
+                                class="mt-0.5 font-semibold text-slate-900 dark:text-white"
+                            >
                                 {{ managementStudent.prodi }}
                             </p>
                         </div>
@@ -635,7 +723,9 @@ const executeResetPassword = () => {
 
                 <div class="space-y-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        <label
+                            class="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                        >
                             Nama mahasiswa
                             <input
                                 v-model="accountForm.name"
@@ -649,7 +739,9 @@ const executeResetPassword = () => {
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        <label
+                            class="block text-xs font-semibold text-slate-700 dark:text-slate-300"
+                        >
                             Email mahasiswa
                             <input
                                 v-model="accountForm.email"
@@ -668,15 +760,23 @@ const executeResetPassword = () => {
                         v-if="managementMode === 'edit' && managementStudent"
                         class="space-y-2.5 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
-                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                        <p
+                            class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                        >
                             Keamanan & Tindakan Akun
                         </p>
-                        <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+                        <div
+                            class="flex items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-slate-900/40"
+                        >
                             <div>
-                                <p class="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                                <p
+                                    class="text-xs font-semibold text-slate-800 dark:text-slate-200"
+                                >
                                     Reset Password
                                 </p>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                                <p
+                                    class="text-[11px] text-slate-500 dark:text-slate-400"
+                                >
                                     Kembalikan password ke nilai default akun.
                                 </p>
                             </div>
@@ -687,17 +787,25 @@ const executeResetPassword = () => {
                                 :disabled="managing || resetting"
                                 @click="openResetModal(managementStudent)"
                             >
-                                <KeyRound class="mr-1 h-3.5 w-3.5 text-amber-500" />
+                                <KeyRound
+                                    class="mr-1 h-3.5 w-3.5 text-amber-500"
+                                />
                                 Reset Password
                             </Button>
                         </div>
 
-                        <div class="flex items-center justify-between gap-3 rounded-xl border border-rose-200/70 bg-rose-50/30 p-3 dark:border-rose-900/50 dark:bg-rose-950/20">
+                        <div
+                            class="flex items-center justify-between gap-3 rounded-xl border border-rose-200/70 bg-rose-50/30 p-3 dark:border-rose-900/50 dark:bg-rose-950/20"
+                        >
                             <div>
-                                <p class="text-xs font-semibold text-rose-800 dark:text-rose-300">
+                                <p
+                                    class="text-xs font-semibold text-rose-800 dark:text-rose-300"
+                                >
                                     Hapus Akun
                                 </p>
-                                <p class="text-[11px] text-rose-600/80 dark:text-rose-400">
+                                <p
+                                    class="text-[11px] text-rose-600/80 dark:text-rose-400"
+                                >
                                     Hapus akun jika belum ada riwayat akademik.
                                 </p>
                             </div>
@@ -707,7 +815,9 @@ const executeResetPassword = () => {
                                 variant="outline"
                                 :disabled="managing || resetting"
                                 class="border-rose-200 text-rose-700 hover:bg-rose-50 dark:border-rose-900 dark:text-rose-300 dark:hover:bg-rose-950"
-                                @click="openManagement('delete', managementStudent)"
+                                @click="
+                                    openManagement('delete', managementStudent)
+                                "
                             >
                                 <Trash2 class="mr-1 h-3.5 w-3.5" />
                                 Hapus
@@ -717,8 +827,14 @@ const executeResetPassword = () => {
                 </div>
             </template>
 
-            <div v-if="managing" role="status" class="flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
-                <div class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent dark:border-blue-400" />
+            <div
+                v-if="managing"
+                role="status"
+                class="flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400"
+            >
+                <div
+                    class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent dark:border-blue-400"
+                />
                 <span>Memproses…</span>
             </div>
 
@@ -727,11 +843,15 @@ const executeResetPassword = () => {
                 role="alert"
                 class="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300"
             >
-                <Info class="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400" />
+                <Info
+                    class="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400"
+                />
                 <span>{{ managementError }}</span>
             </div>
 
-            <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-800">
+            <div
+                class="flex items-center justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-800"
+            >
                 <Button
                     :disabled="managing"
                     variant="secondary"
@@ -742,18 +862,29 @@ const executeResetPassword = () => {
                 </Button>
                 <Button
                     :disabled="managing"
-                    :variant="managementMode === 'delete' ? 'danger' : 'primary'"
+                    :variant="
+                        managementMode === 'delete' ? 'danger' : 'primary'
+                    "
                     size="sm"
                     @click="submitManagement"
                 >
-                    {{ managementMode === 'delete' ? 'Ya, Hapus Akun' : 'Simpan Akun' }}
+                    {{
+                        managementMode === 'delete'
+                            ? 'Ya, Hapus Akun'
+                            : 'Simpan Akun'
+                    }}
                 </Button>
             </div>
         </div>
     </Modal>
 
     <!-- Reset Password Modal -->
-    <Modal :show="showResetModal" max-width="md" :closeable="!resetting" @close="closeReset">
+    <Modal
+        :show="showResetModal"
+        max-width="md"
+        :closeable="!resetting"
+        @close="closeReset"
+    >
         <div class="p-6">
             <h3 class="text-base font-bold text-slate-900 dark:text-white">
                 Konfirmasi Reset Password Mahasiswa
@@ -764,23 +895,36 @@ const executeResetPassword = () => {
                     <p class="text-slate-600 dark:text-slate-400">
                         Apakah Anda yakin ingin mereset password akun untuk:
                     </p>
-                    <div class="mt-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-900/50">
+                    <div
+                        class="mt-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-900/50"
+                    >
                         <p class="font-bold text-slate-900 dark:text-white">
                             {{ selectedStudent.name }}
                         </p>
                         <p class="mt-0.5 text-slate-500 dark:text-slate-400">
-                            NIM: {{ selectedStudent.nim_nip || selectedStudent.username || '—' }} • {{ selectedStudent.email }}
+                            NIM:
+                            {{
+                                selectedStudent.nim_nip ||
+                                selectedStudent.username ||
+                                '—'
+                            }}
+                            • {{ selectedStudent.email }}
                         </p>
                     </div>
-                    <p class="mt-2 text-slate-500 dark:text-slate-400 leading-relaxed">
-                        Reset mengikuti kebijakan default akun yang berlaku. Nilai password tidak ditampilkan.
+                    <p
+                        class="mt-2 leading-relaxed text-slate-500 dark:text-slate-400"
+                    >
+                        Reset mengikuti kebijakan default akun yang berlaku.
+                        Nilai password tidak ditampilkan.
                     </p>
 
                     <div
                         v-if="resetSuccessMsg"
                         class="mt-3.5 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2.5 text-xs text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300"
                     >
-                        <CheckCircle2 class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                        <CheckCircle2
+                            class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+                        />
                         <span>{{ resetSuccessMsg }}</span>
                     </div>
                 </div>
@@ -790,7 +934,9 @@ const executeResetPassword = () => {
                     role="alert"
                     class="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300"
                 >
-                    <Info class="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400" />
+                    <Info
+                        class="h-4 w-4 shrink-0 text-rose-600 dark:text-rose-400"
+                    />
                     <span>{{ resetError }}</span>
                 </div>
 
@@ -799,7 +945,9 @@ const executeResetPassword = () => {
                 </p>
             </div>
 
-            <div class="mt-6 flex w-full items-center justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-800">
+            <div
+                class="mt-6 flex w-full items-center justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-800"
+            >
                 <Button
                     variant="secondary"
                     size="sm"

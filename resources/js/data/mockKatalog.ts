@@ -46,7 +46,8 @@ export const mockKatalogList: KatalogItem[] = [
     {
         id: 1,
         judul: 'Penerapan Algoritma Genetika dan Large Language Model pada Sistem Otomasi Penjadwalan Seminar Tugas Akhir',
-        judulEn: 'Implementation of Genetic Algorithm and Large Language Model in Final Project Seminar Scheduling Automation System',
+        judulEn:
+            'Implementation of Genetic Algorithm and Large Language Model in Final Project Seminar Scheduling Automation System',
         penulis: 'Muhammad Azka Yunastio',
         nim: '11231036',
         angkatan: '2023',
@@ -78,7 +79,8 @@ export const mockKatalogList: KatalogItem[] = [
     {
         id: 2,
         judul: 'Sistem Deteksi Retinopati Diabetik pada Citra Fundus Mata Menggunakan Arsitektur EfficientNet-B4 dengan Perhatian Spasial',
-        judulEn: 'Diabetic Retinopathy Detection System on Eye Fundus Images Using EfficientNet-B4 Architecture with Spatial Attention',
+        judulEn:
+            'Diabetic Retinopathy Detection System on Eye Fundus Images Using EfficientNet-B4 Architecture with Spatial Attention',
         penulis: 'Fenny Melina Br Sihombing',
         nim: '11191009',
         angkatan: '2019',
@@ -110,7 +112,8 @@ export const mockKatalogList: KatalogItem[] = [
     {
         id: 3,
         judul: 'Analisis Perbandingan Protokol Konsensus Proof of Authority dan RAFT pada Jaringan Blockchain Hyperledger Besu',
-        judulEn: 'Comparative Analysis of Proof of Authority and RAFT Consensus Protocols on Hyperledger Besu Blockchain Network',
+        judulEn:
+            'Comparative Analysis of Proof of Authority and RAFT Consensus Protocols on Hyperledger Besu Blockchain Network',
         penulis: 'Rizky Wahyu Saputra',
         nim: '11201045',
         angkatan: '2020',
@@ -142,7 +145,8 @@ export const mockKatalogList: KatalogItem[] = [
     {
         id: 4,
         judul: 'Pengembangan Arsitektur Komponen Reusable Berbasis Vue 3 dan Tailwind CSS untuk Sistem Informasi Akademik Terintegrasi',
-        judulEn: 'Development of Reusable Component Architecture Based on Vue 3 and Tailwind CSS for Integrated Academic Information Systems',
+        judulEn:
+            'Development of Reusable Component Architecture Based on Vue 3 and Tailwind CSS for Integrated Academic Information Systems',
         penulis: 'Hari Yatun Nasifa',
         nim: '11231030',
         angkatan: '2023',
@@ -174,7 +178,8 @@ export const mockKatalogList: KatalogItem[] = [
     {
         id: 5,
         judul: 'Implementasi Algoritma Naive Bayes dan IndoBERT untuk Klasifikasi Sentimen Ulasan Pengguna Aplikasi Edukasi Kampus',
-        judulEn: 'Implementation of Naive Bayes and IndoBERT Algorithms for Sentiment Classification of Campus Educational App Reviews',
+        judulEn:
+            'Implementation of Naive Bayes and IndoBERT Algorithms for Sentiment Classification of Campus Educational App Reviews',
         penulis: 'Ahmad Fauzan Pratama',
         nim: '11231015',
         angkatan: '2023',
@@ -206,7 +211,8 @@ export const mockKatalogList: KatalogItem[] = [
     {
         id: 6,
         judul: 'Sistem Deteksi Intrusi Jaringan Berbasis Deep Autoencoder untuk Mengidentifikasi Serangan DDoS pada Lingkungan Kampus',
-        judulEn: 'Deep Autoencoder-Based Network Intrusion Detection System for DDoS Attack Identification in Campus Environment',
+        judulEn:
+            'Deep Autoencoder-Based Network Intrusion Detection System for DDoS Attack Identification in Campus Environment',
         penulis: 'Bagus Setiawan',
         nim: '11211018',
         angkatan: '2021',
@@ -238,7 +244,8 @@ export const mockKatalogList: KatalogItem[] = [
     {
         id: 7,
         judul: 'Penerapan Algoritma Collaborative Filtering dan Matrix Factorization pada Sistem Rekomendasi Buku Perpustakaan Digital',
-        judulEn: 'Application of Collaborative Filtering and Matrix Factorization Algorithms in Digital Library Book Recommendation Systems',
+        judulEn:
+            'Application of Collaborative Filtering and Matrix Factorization Algorithms in Digital Library Book Recommendation Systems',
         penulis: 'Putri Ayu Wandira',
         nim: '11211052',
         angkatan: '2021',
@@ -270,7 +277,8 @@ export const mockKatalogList: KatalogItem[] = [
     {
         id: 8,
         judul: 'Rancang Bangun Sistem Monitoring Kualitas Udara Ruang Laboratorium Komputer Berbasis IoT Menggunakan MQTT dan ESP32',
-        judulEn: 'Design and Implementation of IoT-Based Computer Laboratory Air Quality Monitoring System Using MQTT and ESP32',
+        judulEn:
+            'Design and Implementation of IoT-Based Computer Laboratory Air Quality Monitoring System Using MQTT and ESP32',
         penulis: 'Fajar Nugroho',
         nim: '11201029',
         angkatan: '2020',

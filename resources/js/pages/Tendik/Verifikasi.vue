@@ -128,7 +128,9 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
             role="status"
             class="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300"
         >
-            <CheckCircle2 class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2
+                class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+            />
             <span>{{ success }}</span>
         </div>
         <PageHeaderBox
@@ -213,7 +215,9 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                         <tr>
                             <th class="w-48 px-4 py-3">Nama Mahasiswa</th>
                             <th class="w-36 px-4 py-3">Tipe</th>
-                            <th class="min-w-[240px] px-4 py-3">Judul Tugas Akhir</th>
+                            <th class="min-w-[240px] px-4 py-3">
+                                Judul Tugas Akhir
+                            </th>
                             <th class="w-32 px-4 py-3">Tanggal Unggah</th>
                             <th class="w-36 px-4 py-3">Status</th>
                             <th class="w-32 px-4 py-3 text-right">Aksi</th>
@@ -234,7 +238,9 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                                 >
                                     {{ app.nama }}
                                 </p>
-                                <p class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
+                                <p
+                                    class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500"
+                                >
                                     NIM: {{ app.nim }}
                                 </p>
                             </td>
@@ -261,7 +267,9 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                                     {{ app.judul }}
                                 </p>
                             </td>
-                            <td class="px-4 py-3.5 tabular-nums text-slate-500 dark:text-slate-400">
+                            <td
+                                class="px-4 py-3.5 text-slate-500 tabular-nums dark:text-slate-400"
+                            >
                                 {{ formatTanggal(app.tanggalDaftar) }}
                             </td>
                             <td class="px-4 py-3.5">
@@ -312,7 +320,12 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
     </div>
 
     <!-- Document Checklist Modal -->
-    <Modal :show="showModal" max-width="lg" :closeable="!saving" @close="closeModal">
+    <Modal
+        :show="showModal"
+        max-width="lg"
+        :closeable="!saving"
+        @close="closeModal"
+    >
         <template #header>
             <div class="space-y-1">
                 <div class="flex items-center gap-2">
@@ -337,7 +350,10 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                         }}
                     </span>
                 </div>
-                <p v-if="activeApplicant" class="text-xs text-slate-500 dark:text-slate-400">
+                <p
+                    v-if="activeApplicant"
+                    class="text-xs text-slate-500 dark:text-slate-400"
+                >
                     {{ activeApplicant.nama }} • NIM: {{ activeApplicant.nim }}
                 </p>
             </div>
@@ -348,21 +364,37 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
             <div
                 class="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-900/40"
             >
-                <p class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <p
+                    class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase dark:text-slate-500"
+                >
                     Judul Tugas Akhir
                 </p>
-                <p class="mt-1 text-xs font-medium leading-relaxed text-slate-800 dark:text-slate-200">
+                <p
+                    class="mt-1 text-xs leading-relaxed font-medium text-slate-800 dark:text-slate-200"
+                >
                     {{ activeApplicant.judul }}
                 </p>
-                <div class="mt-2.5 flex items-center justify-between border-t border-slate-200/60 pt-2 text-[11px] text-slate-500 dark:border-slate-800/80 dark:text-slate-400">
-                    <span>Tanggal Masuk: {{ formatTanggal(activeApplicant.tanggalDaftar) }}</span>
-                    <span>Status: <strong class="capitalize">{{ activeApplicant.status.replace('_', ' ') }}</strong></span>
+                <div
+                    class="mt-2.5 flex items-center justify-between border-t border-slate-200/60 pt-2 text-[11px] text-slate-500 dark:border-slate-800/80 dark:text-slate-400"
+                >
+                    <span
+                        >Tanggal Masuk:
+                        {{ formatTanggal(activeApplicant.tanggalDaftar) }}</span
+                    >
+                    <span
+                        >Status:
+                        <strong class="capitalize">{{
+                            activeApplicant.status.replace('_', ' ')
+                        }}</strong></span
+                    >
                 </div>
             </div>
 
             <!-- Daftar Dokumen Syarat -->
             <div class="space-y-2.5">
-                <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                <p
+                    class="text-xs font-semibold text-slate-700 dark:text-slate-300"
+                >
                     Daftar Dokumen Persyaratan
                 </p>
                 <div
@@ -382,10 +414,14 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                             <FileText class="h-3.5 w-3.5" />
                         </div>
                         <div class="min-w-0">
-                            <p class="font-semibold text-slate-900 dark:text-white">
+                            <p
+                                class="font-semibold text-slate-900 dark:text-white"
+                            >
                                 {{ item.label }}
                             </p>
-                            <p class="mt-0.5 truncate text-[11px] text-slate-500 dark:text-slate-400">
+                            <p
+                                class="mt-0.5 truncate text-[11px] text-slate-500 dark:text-slate-400"
+                            >
                                 {{ item.path || 'Berkas belum diunggah' }}
                             </p>
                         </div>
@@ -429,7 +465,9 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
             <span>{{ error }}</span>
         </div>
 
-        <p v-if="!activeApplicant" class="mt-4 text-xs text-slate-500">Data pendaftaran tidak lagi tersedia.</p>
+        <p v-if="!activeApplicant" class="mt-4 text-xs text-slate-500">
+            Data pendaftaran tidak lagi tersedia.
+        </p>
 
         <div
             class="mt-4 flex items-start gap-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-[11px] text-slate-500 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-400"
