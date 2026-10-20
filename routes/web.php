@@ -8,6 +8,7 @@ use App\Http\Controllers\Dosen\PenilaianController as DosenPenilaianController;
 use App\Http\Controllers\Kaprodi\DashboardController as KaprodiDashboardController;
 use App\Http\Controllers\Kaprodi\DosenController as KaprodiDosenController;
 use App\Http\Controllers\Kaprodi\MahasiswaController as KaprodiMahasiswaController;
+use App\Http\Controllers\Kaprodi\MonitoringController as KaprodiMonitoringController;
 use App\Http\Controllers\Kaprodi\PenjadwalanController as KaprodiPenjadwalanController;
 use App\Http\Controllers\Kaprodi\PersetujuanController as KaprodiPersetujuanController;
 use App\Http\Controllers\Kaprodi\ScheduleExportController;
@@ -127,7 +128,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/penjadwalan/plotting/{id}', [KaprodiPenjadwalanController::class, 'updatePlotting'])->name('penjadwalan.plotting.update');
         Route::patch('/penjadwalan/{id}', [KaprodiPenjadwalanController::class, 'update'])->name('penjadwalan.update');
 
-        Route::inertia('/monitoring', 'Kaprodi/Monitoring')->name('monitoring');
+        Route::get('/monitoring', [KaprodiMonitoringController::class, 'index'])->name('monitoring');
 
         Route::get('/dosen/template', [KaprodiDosenController::class, 'template'])->name('dosen.template');
         Route::post('/dosen/import/preview', [KaprodiDosenController::class, 'previewImport'])->name('dosen.import.preview');

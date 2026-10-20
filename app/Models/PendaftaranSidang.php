@@ -18,6 +18,7 @@ class PendaftaranSidang extends Model
         'lokasi_mitra',
         'skor_iaet',
         'skor_iaet_file',
+        'skor_iaet',
         'draft_laporan_file',
         'turnitin_file',
         'gelombang',

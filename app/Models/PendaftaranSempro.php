@@ -22,6 +22,7 @@ class PendaftaranSempro extends Model
         'proposal_file',
         'turnitin_file',
         'iaet_file',
+        'skor_iaet',
         'gelombang',
         'status',
         'catatan',

@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -46,6 +47,14 @@ class User extends Authenticatable
     public function isTendik(): bool
     {
         return $this->role === 'tendik';
+    }
+
+    /**
+     * Semua pengajuan judul TA milik mahasiswa ini.
+     */
+    public function pengajuanJudul(): HasMany
+    {
+        return $this->hasMany(PengajuanJudul::class, 'mahasiswa_id');
     }
 
     /**
