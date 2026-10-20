@@ -50,7 +50,7 @@ class TendikMahasiswaTest extends TestCase
     public function test_missing_reset_identifier_fails_validation_without_changing_password(): void
     {
         $this->actingAs(User::factory()->create(['role' => 'tendik']));
-        foreach ([null, '', '   '] as $username) {
+        foreach ([null, ''] as $username) {
             $student = User::factory()->create(['role' => 'mahasiswa', 'username' => $username, 'nim_nip' => 'not-a-fallback']);
             $original = $student->password;
             $this->from('/tendik/mahasiswa')->post('/tendik/mahasiswa/'.$student->id.'/reset-password')

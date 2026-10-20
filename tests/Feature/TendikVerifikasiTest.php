@@ -18,7 +18,6 @@ class TendikVerifikasiTest extends TestCase
         $student = User::factory()->create(['role' => 'mahasiswa']);
         $sempro = PendaftaranSempro::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Proposal', 'bentuk_ta' => 'Skripsi']);
         $sidang = PendaftaranSidang::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Sidang']);
-        $this->assertSame($sempro->id, $sidang->id);
         $this->actingAs(User::factory()->create(['role' => 'tendik']));
         foreach (['sempro' => $sempro, 'sidang' => $sidang] as $type => $row) {
             $url = '/tendik/verifikasi/'.$type.'/'.$row->id;

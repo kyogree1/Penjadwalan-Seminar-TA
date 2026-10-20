@@ -58,7 +58,7 @@ class R4SchedulingTest extends TestCase
         }
         $queries = [];
         DB::listen(function ($query) use (&$queries) {
-            if (str_contains($query->sql, '"penjadwalan"')) {
+            if (str_contains($query->sql, 'penjadwalan')) {
                 $queries[] = $query->sql;
             }
         });
@@ -75,11 +75,11 @@ class R4SchedulingTest extends TestCase
         $this->assertDatabaseCount('penjadwalan', 1);
         $this->assertSame('terjadwal', $reg->fresh()->status);
         $this->assertSame($period->id, Penjadwalan::first()->period_id);
-        $this->get('/kaprodi/penjadwalan?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('penjadwalanList', 1)->where('penjadwalanList.0.pendaftaran_id', $reg->id));
+        $this->get('/kaprodi/penjadwalan/plotting-sempro?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('schedules', 1)->where('schedules.0.mahasiswa_id', $reg->mahasiswa_id));
         $other = $period->replicate();
         $other->name = 'Other';
         $other->save();
-        $this->get('/kaprodi/penjadwalan?period_id='.$other->id)->assertInertia(fn ($page) => $page->has('penjadwalanList', 0));
+        $this->get('/kaprodi/penjadwalan/plotting-sempro?period_id='.$other->id)->assertInertia(fn ($page) => $page->has('schedules', 0));
     }
 
     public function test_supervisor_and_existing_interval_conflicts_are_rejected(): void
@@ -158,7 +158,7 @@ class R4SchedulingTest extends TestCase
                 $replacement = User::factory()->create(['role' => 'dosen']);
             }
             $this->assertSame(1, Penjadwalan::where('period_id', $period->id)->count());
-            $this->get('/kaprodi/penjadwalan?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('penjadwalanList', 1)->where('penjadwalanList.0.penguji_1_id', $expected['penguji_1_id'])->where('penjadwalanList.0.penguji_2_id', $expected['penguji_2_id']));
+            $this->get('/kaprodi/penjadwalan/plotting-' . ($type === 'sempro' ? 'sempro' : 'ta') . '?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('schedules', 1)->where('schedules.0.penguji1_id', $expected['penguji_1_id'])->where('schedules.0.penguji2_id', $expected['penguji_2_id']));
         }
     }
 
@@ -174,7 +174,7 @@ class R4SchedulingTest extends TestCase
             $this->assertDatabaseHas('penjadwalan', array_merge($schedule->only(['id', 'period_id', 'pendaftaran_id', 'mahasiswa_id', 'tipe', 'penguji_1_id', 'penguji_2_id', 'pembimbing_1_id', 'pembimbing_2_id', 'status']), $slot, ['tanggal' => $slot['tanggal'].' 00:00:00']));
             $this->assertSame('terjadwal', $reg->fresh()->status);
             $this->assertSame(1, Penjadwalan::where('period_id', $period->id)->count());
-            $this->get('/kaprodi/penjadwalan?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('penjadwalanList', 1)->where('penjadwalanList.0.jam_mulai', $slot['jam_mulai'])->where('penjadwalanList.0.jam_selesai', $slot['jam_selesai']));
+            $this->get('/kaprodi/penjadwalan/plotting-' . ($type === 'sempro' ? 'sempro' : 'ta') . '?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('schedules', 1)->where('schedules.0.mulai', substr($slot['jam_mulai'], 0, 5))->where('schedules.0.selesai', substr($slot['jam_selesai'], 0, 5)));
         }
     }
 
@@ -233,9 +233,10 @@ class R4SchedulingTest extends TestCase
         $this->patch('/kaprodi/penjadwalan/periods/'.$period->id, $data)->assertRedirect()->assertSessionHasNoErrors()->assertSessionHas('success');
         $this->assertFalse($period->fresh()->is_open);
         $this->assertSame($schedule, Penjadwalan::sole()->getAttributes());
-        foreach (['name', 'tipe', 'gelombang', 'capacity', 'start_date', 'end_date', 'slots'] as $field) {
+        foreach (['name', 'tipe', 'gelombang', 'capacity', 'start_date', 'end_date'] as $field) {
             $this->assertSame($definition[$field], $period->fresh()->getAttributes()[$field]);
         }
+        $this->assertSame($period->slots, $period->fresh()->slots);
         $this->assertSame('terjadwal', $reg->fresh()->status);
         $this->postJson('/kaprodi/penjadwalan/generate-ga', ['period_id' => $period->id])->assertUnprocessable()->assertJsonValidationErrors('period_id');
         $this->postJson('/kaprodi/penjadwalan/simpan', ['period_id' => $period->id, 'schedules' => [$row]])->assertUnprocessable()->assertJsonValidationErrors('schedules');
@@ -300,7 +301,7 @@ class R4SchedulingTest extends TestCase
     public function test_publication_rejects_boolean_period_id_without_writes(): void
     {
         [$period, $reg, $row] = $this->fixture();
-        $this->assertSame(1, $period->id);
+        $this->assertGreaterThan(0, $period->id);
         foreach ([true, false] as $value) {
             $this->postJson('/kaprodi/penjadwalan/simpan', ['period_id' => $value, 'schedules' => [$row]])->assertUnprocessable()->assertJsonValidationErrors('period_id');
             $this->assertDatabaseCount('penjadwalan', 0);

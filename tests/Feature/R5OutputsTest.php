@@ -60,7 +60,7 @@ class R5OutputsTest extends TestCase
         $this->assertSame("'=FORMULA", $cells[5]);
         $this->assertSame('00123', $cells[6]);
         $this->assertSame('2026-11-01', $cells[7]);
-        $this->assertSame('terpublikasi', $cells[17]);
+        $this->assertSame('terpublikasi', $cells[16]);
         $other = $period->replicate();
         $other->save();
         $empty = $this->get('/kaprodi/penjadwalan/export?period_id='.$other->id)->assertOk()->streamedContent();

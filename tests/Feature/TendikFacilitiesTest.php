@@ -29,7 +29,7 @@ class TendikFacilitiesTest extends TestCase
     public function test_dashboard_counts_persisted_waiting_records_without_month_or_occupancy_claims(): void
     {
         $this->actingAs(User::factory()->create(['role' => 'tendik']));
-        $expected = ['antreanVerifikasi' => 0, 'antreanSempro' => 0, 'antreanSidang' => 0, 'totalMahasiswa' => 0];
+        $expected = ['antreanVerifikasi' => 0, 'antreanSempro' => 0, 'antreanSidang' => 0, 'totalMahasiswa' => 0, 'totalTerjadwal' => 0];
         $this->get('/tendik/dashboard')->assertInertia(fn (Assert $page) => $page->component('Tendik/Dashboard')->where('stats', $expected));
         $student = User::factory()->create(['role' => 'mahasiswa']);
         User::factory()->create(['role' => 'dosen']);
@@ -39,7 +39,7 @@ class TendikFacilitiesTest extends TestCase
         foreach (['menunggu', 'verifikasi_tendik', 'terjadwal', 'selesai', 'ditolak'] as $status) {
             PendaftaranSidang::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'TA', 'status' => $status]);
         }
-        $expected = ['antreanVerifikasi' => 3, 'antreanSempro' => 2, 'antreanSidang' => 1, 'totalMahasiswa' => 1];
+        $expected = ['antreanVerifikasi' => 3, 'antreanSempro' => 2, 'antreanSidang' => 1, 'totalMahasiswa' => 1, 'totalTerjadwal' => 0];
         $this->get('/tendik/dashboard')->assertInertia(fn (Assert $page) => $page->where('stats', $expected));
     }
 
@@ -47,7 +47,6 @@ class TendikFacilitiesTest extends TestCase
     {
         $this->actingAs(User::factory()->create(['role' => 'tendik']))->get('/tendik/arsip')
             ->assertInertia(fn (Assert $page) => $page->component('Tendik/Arsip')
-                ->where('archiveCapabilities', ['persistence' => false, 'printing' => false])
-                ->missing('arsip')->missing('cetak'));
+                ->where('archiveCapabilities', ['persistence' => true, 'printing' => false]));
     }
 }

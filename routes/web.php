@@ -162,7 +162,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/penjadwalan/ta', fn () => redirect()->route('kaprodi.penjadwalan.ta'))->name('penjadwalan.ta');
         Route::get('/penjadwalan/plotting-sempro', fn () => redirect()->route('kaprodi.penjadwalan.plotting-sempro'))->name('penjadwalan.plotting-sempro');
         Route::get('/penjadwalan/plotting-ta', fn () => redirect()->route('kaprodi.penjadwalan.plotting-ta'))->name('penjadwalan.plotting-ta');
-        Route::get('/monitoring', fn () => redirect()->route('kaprodi.dashboard'))->name('monitoring');
+        Route::get('/monitoring', fn () => redirect()->route('kaprodi.monitoring'))->name('monitoring');
         Route::get('/mahasiswa', fn () => redirect()->route('kaprodi.mahasiswa'))->name('mahasiswa');
     });
 

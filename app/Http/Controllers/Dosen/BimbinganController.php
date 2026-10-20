@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dosen;
 use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
 use App\Models\PengajuanJudul;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -56,11 +57,7 @@ class BimbinganController extends Controller
     public function paraf(Request $request, $id)
     {
         $user = Auth::user();
-        $bimbingan = Bimbingan::where('dosen_id', $user->id)->find($id);
-
-        if (!$bimbingan) {
-            return redirect()->back()->with('success', 'Catatan pembimbing dan paraf berhasil disimpan!');
-        }
+        $bimbingan = Bimbingan::where('dosen_id', $user->id)->findOrFail($id);
 
         $validated = $request->validate([
             'status' => ['required', 'in:delivered,disetujui,process,revisi,ditolak'],
@@ -89,9 +86,20 @@ class BimbinganController extends Controller
             'mahasiswa_id' => ['required', 'exists:users,id'],
             'tanggal' => ['required', 'date'],
             'rangkuman' => ['required', 'string'],
-            'keterangan' => ['nullable', 'string'],
+            'keterangan' => ['nullable', 'string', 'max:255'],
             'catatan_dosen' => ['nullable', 'string'],
         ]);
+
+        $mahasiswa = User::findOrFail($validated['mahasiswa_id']);
+        $isSupervisee = PengajuanJudul::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'disetujui')
+            ->where(function ($query) use ($user) {
+                $query->where('pembimbing_1_id', $user->id)
+                    ->orWhere('pembimbing_2_id', $user->id);
+            })
+            ->exists();
+
+        abort_unless($mahasiswa->isMahasiswa() && $isSupervisee, 403);
 
         Bimbingan::create([
             'mahasiswa_id' => $validated['mahasiswa_id'],
