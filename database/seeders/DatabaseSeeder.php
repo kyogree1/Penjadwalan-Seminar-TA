@@ -3,8 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Bimbingan;
+use App\Models\Notification;
 use App\Models\PendaftaranSempro;
+use App\Models\PendaftaranSidang;
 use App\Models\PengajuanJudul;
+use App\Models\Penilaian;
+use App\Models\Penjadwalan;
 use App\Models\SchedulePeriod;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -635,6 +639,126 @@ class DatabaseSeeder extends Seeder
                     'status_akademik' => 'disetujui',
                     'catatan' => 'Berkas proposal lengkap.',
                     'catatan_kaprodi' => 'Disetujui maju seminar proposal.',
+                ]
+            );
+        }
+
+        // Data mahasiswa lulus sidang (untuk Katalog TA & Arsip Tendik)
+        $mhsIqbal = User::where('email', '11191004@student.itk.ac.id')->first();
+        if ($mhsIqbal) {
+            PengajuanJudul::updateOrCreate(
+                ['mahasiswa_id' => $mhsIqbal->id],
+                [
+                    'judul_ta' => 'Rancang Bangun Sistem Pengenalan Pola Wajah Real-Time Berbasis Deep Learning',
+                    'bidang_penelitian' => 'Kecerdasan Buatan (AI) & Computer Vision',
+                    'pembimbing_1_id' => $dosenTejo->id,
+                    'pembimbing_2_id' => $koorprodi->id,
+                    'telah_konsultasi' => true,
+                    'status' => 'disetujui',
+                    'disetujui_oleh' => $kaprodi->id,
+                    'disetujui_at' => now()->subMonths(2),
+                ]
+            );
+
+            $sidangIqbal = PendaftaranSidang::updateOrCreate(
+                ['mahasiswa_id' => $mhsIqbal->id],
+                [
+                    'judul_ta' => 'Rancang Bangun Sistem Pengenalan Pola Wajah Real-Time Berbasis Deep Learning',
+                    'gelombang' => 1,
+                    'status' => 'selesai',
+                    'status_akademik' => 'disetujui',
+                    'catatan' => 'Lulus ujian sidang skripsi dengan predikat sangat memuaskan.',
+                ]
+            );
+
+            $jadwalIqbal = Penjadwalan::updateOrCreate(
+                ['tipe' => 'sidang', 'pendaftaran_id' => $sidangIqbal->id],
+                [
+                    'mahasiswa_id' => $mhsIqbal->id,
+                    'pembimbing_1_id' => $dosenTejo->id,
+                    'pembimbing_2_id' => $koorprodi->id,
+                    'penguji_1_id' => $dosenFaisal->id,
+                    'penguji_2_id' => $dosenDian->id,
+                    'tanggal' => now()->subMonths(1)->toDateString(),
+                    'jam_mulai' => '09:00:00',
+                    'jam_selesai' => '10:30:00',
+                    'mode' => 'offline',
+                    'status' => 'selesai',
+                ]
+            );
+
+            \App\Models\Penilaian::updateOrCreate(
+                ['penjadwalan_id' => $jadwalIqbal->id, 'dosen_id' => $dosenFaisal->id],
+                ['nilai' => 88.5, 'catatan' => 'Pemaparan dan penguasaan materi sangat baik.']
+            );
+
+            \App\Models\Penilaian::updateOrCreate(
+                ['penjadwalan_id' => $jadwalIqbal->id, 'dosen_id' => $dosenDian->id],
+                ['nilai' => 86.0, 'catatan' => 'Dokumentasi rapi dan metodologi tepat.']
+            );
+        }
+
+        // 9. Notifikasi Demo Lintas Portal
+        $demoUsers = User::whereIn('email', [
+            'akmal.falah@student.itk.ac.id',
+            'tejo.wahyu@lecturer.itk.ac.id',
+            'kaprodi.if@itk.ac.id',
+            'tendik.fsti@itk.ac.id',
+        ])->get()->keyBy('email');
+
+        if (isset($demoUsers['akmal.falah@student.itk.ac.id'])) {
+            \App\Models\Notification::updateOrCreate(
+                ['user_id' => $demoUsers['akmal.falah@student.itk.ac.id']->id, 'title' => 'Verifikasi Berkas Sempro Diterima'],
+                [
+                    'message' => 'Tendik telah memverifikasi kelengkapan berkas pendaftaran Seminar Proposal TA Anda.',
+                    'type' => 'success',
+                    'link' => '/pendaftaran/sempro',
+                    'read_at' => null,
+                ]
+            );
+            \App\Models\Notification::updateOrCreate(
+                ['user_id' => $demoUsers['akmal.falah@student.itk.ac.id']->id, 'title' => 'Validasi Logbook Bimbingan'],
+                [
+                    'message' => 'Dosen Pembimbing menyetujui catatan bimbingan Bab 4 Anda.',
+                    'type' => 'info',
+                    'link' => '/pendaftaran/bimbingan',
+                    'read_at' => null,
+                ]
+            );
+        }
+
+        if (isset($demoUsers['tejo.wahyu@lecturer.itk.ac.id'])) {
+            \App\Models\Notification::updateOrCreate(
+                ['user_id' => $demoUsers['tejo.wahyu@lecturer.itk.ac.id']->id, 'title' => 'Jadwal Ujian Menguji Ditetapkan'],
+                [
+                    'message' => 'Anda ditugaskan sebagai Penguji pada Seminar Proposal mahasiswa Akmal Falah Maulana.',
+                    'type' => 'calendar',
+                    'link' => '/dosen/penilaian',
+                    'read_at' => null,
+                ]
+            );
+        }
+
+        if (isset($demoUsers['kaprodi.if@itk.ac.id'])) {
+            \App\Models\Notification::updateOrCreate(
+                ['user_id' => $demoUsers['kaprodi.if@itk.ac.id']->id, 'title' => 'Pengajuan Judul TA Baru'],
+                [
+                    'message' => 'Terdapat pengajuan judul baru yang menunggu persetujuan Kaprodi.',
+                    'type' => 'warning',
+                    'link' => '/kaprodi/persetujuan',
+                    'read_at' => null,
+                ]
+            );
+        }
+
+        if (isset($demoUsers['tendik.fsti@itk.ac.id'])) {
+            \App\Models\Notification::updateOrCreate(
+                ['user_id' => $demoUsers['tendik.fsti@itk.ac.id']->id, 'title' => 'Berkas Pendaftaran Sempro Baru'],
+                [
+                    'message' => 'Mahasiswa baru saja mengunggah berkas pendaftaran Seminar Proposal untuk diverifikasi.',
+                    'type' => 'info',
+                    'link' => '/tendik/verifikasi',
+                    'read_at' => null,
                 ]
             );
         }

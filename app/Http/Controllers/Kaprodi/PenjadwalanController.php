@@ -645,7 +645,7 @@ class PenjadwalanController extends Controller
 
     private function getSchedulesForPeriod(int $periodId, string $tipe): array
     {
-        return Penjadwalan::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji1', 'penguji2'])
+        return Penjadwalan::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji1', 'penguji2', 'penilaian'])
             ->where('period_id', $periodId)
             ->where('tipe', $tipe)
             ->orderBy('tanggal')
@@ -654,6 +654,14 @@ class PenjadwalanController extends Controller
             ->map(function ($s) {
                 $judul = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('judul_ta') ?? $s->catatan;
                 $kbk = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('bidang_penelitian') ?? ($s->mode === 'offline' ? 'AI & Data Science' : $s->mode);
+
+                $nilaiHuruf = null;
+                if ($s->penilaian && $s->penilaian->isNotEmpty()) {
+                    $avgScore = $s->penilaian->avg('nilai');
+                    if ($avgScore !== null) {
+                        $nilaiHuruf = $avgScore >= 85 ? 'A' : ($avgScore >= 80 ? 'AB' : ($avgScore >= 75 ? 'B' : ($avgScore >= 70 ? 'BC' : ($avgScore >= 65 ? 'C' : ($avgScore >= 50 ? 'D' : 'E')))));
+                    }
+                }
 
                 return [
                     'id' => $s->id,
@@ -667,7 +675,7 @@ class PenjadwalanController extends Controller
                     'pembimbing2' => $s->pembimbing2?->name ?? '',
                     'penguji1' => $s->penguji1?->name ?? '-',
                     'penguji1_id' => $s->penguji_1_id,
-                    'penguji1MatchScore' => 95,
+                    'penguji1MatchScore' => $s->penguji_1_id ? 95 : 0,
                     'penguji2' => $s->penguji2?->name ?? '-',
                     'penguji2_id' => $s->penguji_2_id,
                     'hari' => $s->tanggal ? $this->getHariIndonesia((int) $s->tanggal->format('N')) : 'Senin',
@@ -676,7 +684,7 @@ class PenjadwalanController extends Controller
                     'mulai' => $s->jam_mulai ? substr($s->jam_mulai, 0, 5) : '09:00',
                     'selesai' => $s->jam_selesai ? substr($s->jam_selesai, 0, 5) : '10:30',
                     'ruangan' => $s->link_online ?? '-',
-                    'nilai' => null,
+                    'nilai' => $nilaiHuruf,
                 ];
             })
             ->all();

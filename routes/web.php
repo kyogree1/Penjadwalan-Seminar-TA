@@ -14,6 +14,7 @@ use App\Http\Controllers\Kaprodi\PersetujuanController as KaprodiPersetujuanCont
 use App\Http\Controllers\Kaprodi\ScheduleExportController;
 use App\Http\Controllers\Mahasiswa\BimbinganController;
 use App\Http\Controllers\KatalogController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJadwalController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJudulController;
@@ -51,6 +52,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 
     // ==========================================
     // PORTAL MAHASISWA

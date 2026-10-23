@@ -61,7 +61,7 @@ class ArsipController extends Controller
             ]);
 
         // ── Gabungkan & urutkan berdasarkan tanggal terbaru ──────────
-        $arsipList = $arsipSempro->merge($arsipSidang)
+        $arsipList = $arsipSempro->concat($arsipSidang)
             ->sortByDesc('tanggal_selesai')
             ->values();
 

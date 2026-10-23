@@ -41,6 +41,26 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'notifications' => fn () => $request->user()
+                ? \App\Models\Notification::where('user_id', $request->user()->id)
+                    ->latest()
+                    ->take(10)
+                    ->get()
+                    ->map(fn ($n) => [
+                        'id' => $n->id,
+                        'title' => $n->title,
+                        'message' => $n->message,
+                        'time' => $n->created_at->diffForHumans(),
+                        'read' => ! is_null($n->read_at),
+                        'type' => $n->type,
+                        'link' => $n->link,
+                    ])
+                : [],
+            'unreadNotificationsCount' => fn () => $request->user()
+                ? \App\Models\Notification::where('user_id', $request->user()->id)
+                    ->whereNull('read_at')
+                    ->count()
+                : 0,
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
