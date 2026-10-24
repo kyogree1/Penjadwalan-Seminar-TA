@@ -184,6 +184,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/verifikasi/sidang/{id}', [TendikVerifikasiController::class, 'verifySidang'])->name('verifikasi.sidang');
 
         Route::get('/arsip', [TendikArsipController::class, 'index'])->name('arsip');
+        Route::get('/arsip/export', [TendikArsipController::class, 'exportCsv'])->name('arsip.export');
 
         Route::get('/mahasiswa', [TendikMahasiswaController::class, 'index'])->name('mahasiswa');
         Route::get('/mahasiswa/template', [TendikMahasiswaController::class, 'template'])->name('mahasiswa.template');
