@@ -19,6 +19,7 @@ import {
     CalendarClock,
     CheckCircle2,
 } from 'lucide-vue-next';
+import StatCard from '@/Components/StatCard.vue';
 
 interface SidangFile {
     name: string;
@@ -71,12 +72,17 @@ const userRole = computed(() => authUser.value?.role || 'kaprodi');
 
 // Koorprodi permission check
 const isKoorprodi = computed(() => {
-    const role = userRole.value;
+    const r = authUser.value?.role;
     const jabatan = (authUser.value?.jabatan || '').toLowerCase();
-    if (role === 'dosen') {
-        return jabatan.includes('koordinator') || jabatan.includes('kaprodi');
+    if (r === 'kaprodi' || r === 'koordinator') return true;
+    if (r === 'dosen') {
+        return (
+            jabatan.includes('koordinator') ||
+            jabatan.includes('kaprodi') ||
+            jabatan.includes('koorprodi')
+        );
     }
-    return true; // kaprodi / koordinator / default
+    return false;
 });
 
 // Dosen permission check (Koorprodi is ALSO an active Dosen)
@@ -220,7 +226,7 @@ watch(
                         statusBerkas: item.status_berkas || 'Selesai Validasi',
                         persetujuan:
                             item.status_persetujuan || 'Disetujui Pembimbing',
-                        nilai: item.nilai || (idx % 2 === 0 ? 'A' : 'AB'),
+                        nilai: item.nilai || '—',
                         revisi: item.revisi || 'Perbaiki format lampiran',
                         penguji1:
                             item.penguji1 ||
@@ -667,123 +673,48 @@ const getPersetujuanBadge = (persetujuan: string) => {
 
         <!-- 4 KPI SUMMARY CARDS -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <!-- 1. Total Mahasiswa Sidang -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-black uppercase dark:text-slate-400"
-                    >
-                        {{
-                            isKoorprodi
-                                ? 'Total Pendaftar Sidang'
-                                : 'Total Mahasiswa Sidang'
-                        }}
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-black dark:text-white"
-                    >
-                        {{ totalSidangCount }} Mhs
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                >
-                    <GraduationCap class="h-5 w-5" />
-                </div>
-            </div>
-
-            <!-- 2. Jadwal Tervalidasi (Koorprodi) vs Konfirmasi Kehadiran (Dosen) -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-emerald-200/80 bg-white p-4 shadow-xs dark:border-emerald-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
-                    >
-                        {{
-                            isKoorprodi
-                                ? 'Jadwal Tervalidasi'
-                                : 'Konfirmasi Kehadiran'
-                        }}
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-400"
-                    >
-                        {{
-                            isKoorprodi
-                                ? `${terjadwalCount} Mhs`
-                                : `${konfirmasiHadirCount} Mhs`
-                        }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
-                >
-                    <component
-                        :is="isKoorprodi ? Calendar : CheckCircle2"
-                        class="h-5 w-5"
-                    />
-                </div>
-            </div>
-
-            <!-- 3. Menunggu Validasi (Koorprodi) vs Ajuan Reschedule Jadwal (Dosen) -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-amber-200/80 bg-white p-4 shadow-xs dark:border-amber-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-amber-700 uppercase dark:text-amber-400"
-                    >
-                        {{
-                            isKoorprodi
-                                ? 'Menunggu Validasi'
-                                : 'Ajuan Reschedule Jadwal'
-                        }}
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-amber-700 dark:text-amber-400"
-                    >
-                        {{
-                            isKoorprodi
-                                ? `${pendingValidationCount} Mhs`
-                                : `${ajuanRescheduleCount} Pengajuan`
-                        }}
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
-                >
-                    <component
-                        :is="isKoorprodi ? Clock : CalendarClock"
-                        class="h-5 w-5"
-                    />
-                </div>
-            </div>
-
-            <!-- 4. Selesai Dinilai -->
-            <div
-                class="flex items-center justify-between rounded-2xl border border-purple-200/80 bg-white p-4 shadow-xs dark:border-purple-900/40 dark:bg-[#111827]"
-            >
-                <div>
-                    <p
-                        class="text-[11px] font-bold tracking-wider text-purple-700 uppercase dark:text-purple-400"
-                    >
-                        Selesai Dinilai
-                    </p>
-                    <p
-                        class="mt-1 text-2xl font-black text-purple-700 dark:text-purple-400"
-                    >
-                        {{ selesaiDinilaiCount }} Mhs
-                    </p>
-                </div>
-                <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400"
-                >
-                    <FileCheck class="h-5 w-5" />
-                </div>
-            </div>
+            <StatCard
+                :title="
+                    isKoorprodi
+                        ? 'Total Pendaftar Sidang'
+                        : 'Total Mahasiswa Sidang'
+                "
+                :value="`${totalSidangCount} mhs`"
+                :icon="GraduationCap"
+                icon-color="blue"
+            />
+            <StatCard
+                :title="
+                    isKoorprodi ? 'Jadwal Tervalidasi' : 'Konfirmasi Kehadiran'
+                "
+                :value="
+                    isKoorprodi
+                        ? `${terjadwalCount} mhs`
+                        : `${konfirmasiHadirCount} mhs`
+                "
+                :icon="isKoorprodi ? Calendar : CheckCircle2"
+                icon-color="emerald"
+            />
+            <StatCard
+                :title="
+                    isKoorprodi
+                        ? 'Menunggu Validasi'
+                        : 'Ajuan Reschedule Jadwal'
+                "
+                :value="
+                    isKoorprodi
+                        ? `${pendingValidationCount} mhs`
+                        : `${ajuanRescheduleCount} pengajuan`
+                "
+                :icon="isKoorprodi ? Clock : CalendarClock"
+                icon-color="amber"
+            />
+            <StatCard
+                title="Selesai Dinilai"
+                :value="`${selesaiDinilaiCount} mhs`"
+                :icon="FileCheck"
+                icon-color="slate"
+            />
         </div>
 
         <!-- MAIN LAYOUT: LEFT (PROFILE + TABLE) & RIGHT (INSPECTOR PANEL) -->
@@ -1209,7 +1140,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                 >
                     <div class="truncate">
                         <span
-                            class="block text-[10px] font-black tracking-wider text-blue-700 uppercase dark:text-blue-400"
+                            class="block text-[10px] font-black tracking-wider text-blue-700 dark:text-blue-400"
                         >
                             Mahasiswa Terpilih
                         </span>
@@ -1235,7 +1166,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                 >
                     <div class="flex items-center justify-between">
                         <h3
-                            class="flex items-center gap-2 text-xs font-black tracking-wider text-black uppercase dark:text-white"
+                            class="flex items-center gap-2 text-xs font-black tracking-wider text-black dark:text-white"
                         >
                             <Users
                                 class="h-4 w-4 text-blue-600 dark:text-blue-400"
@@ -1259,7 +1190,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                             class="space-y-1 rounded-xl border border-slate-200/60 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60"
                         >
                             <span
-                                class="block text-[10px] font-black text-black uppercase dark:text-slate-400"
+                                class="block text-[10px] font-black text-black dark:text-slate-400"
                             >
                                 Penguji 1 (Ketua)
                             </span>
@@ -1293,7 +1224,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                             class="space-y-1 rounded-xl border border-slate-200/60 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60"
                         >
                             <span
-                                class="block text-[10px] font-black text-black uppercase dark:text-slate-400"
+                                class="block text-[10px] font-black text-black dark:text-slate-400"
                             >
                                 Penguji 2
                             </span>
@@ -1347,7 +1278,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                 >
                     <div class="flex items-center justify-between">
                         <h3
-                            class="flex items-center gap-2 text-xs font-black tracking-wider text-black uppercase dark:text-white"
+                            class="flex items-center gap-2 text-xs font-black tracking-wider text-black dark:text-white"
                         >
                             <Calendar
                                 class="h-4 w-4 text-purple-600 dark:text-purple-400"
@@ -1397,39 +1328,49 @@ const getPersetujuanBadge = (persetujuan: string) => {
                                 <Clock
                                     class="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400"
                                 />
-                                <span
+                                <span v-if="!isKoorprodi"
                                     >Pengajuan reschedule telah dikirimkan ke
                                     Koorprodi (Menunggu persetujuan).</span
                                 >
+                                <span v-else
+                                    >Dosen mengajukan permohonan reschedule untuk sidang ini. Silakan tinjau pada menu
+                                    <Link
+                                        href="/kaprodi/persetujuan?section=reschedule"
+                                        class="font-bold underline text-amber-800 dark:text-amber-200 hover:text-amber-950 dark:hover:text-amber-100"
+                                    >Reschedule</Link>.
+                                </span>
                             </div>
 
                             <!-- Actions Jadwal Dosen (Bisa diajukan baik pada Bimbingan maupun Uji) -->
                             <div
+                                v-if="!isKoorprodi || selectedStudent.subtab === 'uji'"
                                 class="space-y-2 border-t border-slate-200/50 pt-2 dark:border-slate-700/50"
                             >
-                                <!-- Toggle Reschedule / Batalkan Reschedule -->
-                                <button
-                                    v-if="
-                                        rescheduledStudents[selectedStudent.id]
-                                    "
-                                    type="button"
-                                    @click="cancelReschedule(selectedStudent)"
-                                    class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 py-2 text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100 dark:border-rose-800/60 dark:bg-rose-950/40 dark:text-rose-300"
-                                >
-                                    <X class="h-3.5 w-3.5" />
-                                    <span>Batalkan Reschedule</span>
-                                </button>
-                                <button
-                                    v-else
-                                    type="button"
-                                    @click="
-                                        openModalReschedule(selectedStudent)
-                                    "
-                                    class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 py-2 text-xs font-bold text-amber-900 transition-colors hover:bg-amber-100 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300"
-                                >
-                                    <CalendarClock class="h-3.5 w-3.5" />
-                                    <span>Ajukan Reschedule Jadwal</span>
-                                </button>
+                                <!-- Toggle Reschedule / Batalkan Reschedule (Hanya Dosen yang minta reschedule, Koorprodi menyetujui di menu Reschedule) -->
+                                <template v-if="!isKoorprodi">
+                                    <button
+                                        v-if="
+                                            rescheduledStudents[selectedStudent.id]
+                                        "
+                                        type="button"
+                                        @click="cancelReschedule(selectedStudent)"
+                                        class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 py-2 text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100 dark:border-rose-800/60 dark:bg-rose-950/40 dark:text-rose-300"
+                                    >
+                                        <X class="h-3.5 w-3.5" />
+                                        <span>Batalkan Reschedule</span>
+                                    </button>
+                                    <button
+                                        v-else
+                                        type="button"
+                                        @click="
+                                            openModalReschedule(selectedStudent)
+                                        "
+                                        class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 py-2 text-xs font-bold text-amber-900 transition-colors hover:bg-amber-100 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300"
+                                    >
+                                        <CalendarClock class="h-3.5 w-3.5" />
+                                        <span>Ajukan Reschedule Jadwal</span>
+                                    </button>
+                                </template>
 
                                 <!-- Konfirmasi Hadir hanya jika dosen penguji di subtab uji -->
                                 <button
@@ -1480,7 +1421,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                 >
                     <div class="flex items-center justify-between">
                         <h3
-                            class="flex items-center gap-2 text-xs font-black tracking-wider text-black uppercase dark:text-white"
+                            class="flex items-center gap-2 text-xs font-black tracking-wider text-black dark:text-white"
                         >
                             <FileText
                                 class="h-4 w-4 text-emerald-600 dark:text-emerald-400"
@@ -1498,9 +1439,9 @@ const getPersetujuanBadge = (persetujuan: string) => {
                                 class="flex items-center justify-between gap-2 rounded-xl border border-slate-200/80 bg-slate-50 p-2.5 dark:border-slate-700/60 dark:bg-slate-800/60"
                             >
                                 <div class="flex items-center gap-2 truncate">
-                                    <span class="font-bold text-rose-500"
-                                        >📄</span
-                                    >
+                                    <FileText
+                                        class="h-4 w-4 shrink-0 text-rose-500"
+                                    />
                                     <span
                                         class="truncate font-medium text-black dark:text-slate-200"
                                     >
@@ -1547,7 +1488,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                                 v-if="selectedStudent.subtab === 'uji'"
                                 type="button"
                                 @click="openModalNilai(selectedStudent)"
-                                class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 py-2 text-xs font-bold text-white shadow-xs transition-all hover:from-purple-800 hover:to-indigo-700 active:scale-95"
+                                class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-indigo-700 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-indigo-800 active:scale-95"
                             >
                                 <Edit3 class="h-3.5 w-3.5" />
                                 <span>Input / Edit Nilai Sidang</span>

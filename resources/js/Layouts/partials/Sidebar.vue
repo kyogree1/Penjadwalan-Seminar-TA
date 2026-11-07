@@ -64,7 +64,8 @@ const isKaprodiPengajuanActive = computed(
     () =>
         currentUrl.value.startsWith('/kaprodi/persetujuan') ||
         currentUrl.value.startsWith('/dosen/bimbingan') ||
-        currentUrl.value.startsWith('/kaprodi/bimbingan'),
+        currentUrl.value.startsWith('/kaprodi/bimbingan') ||
+        currentUrl.value.startsWith('/kaprodi/reschedule'),
 );
 
 const isKaprodiJadwalActive = computed(
@@ -130,7 +131,9 @@ const handleAccordionClick = (
             <!-- Brand Header -->
             <div
                 class="relative flex h-16 shrink-0 items-center border-b border-slate-200/80 dark:border-slate-800/80"
-                :class="collapsed ? 'justify-center px-2' : 'justify-between px-4'"
+                :class="
+                    collapsed ? 'justify-center px-2' : 'justify-between px-4'
+                "
             >
                 <Link
                     :href="roleInfo.homePath"
@@ -138,9 +141,13 @@ const handleAccordionClick = (
                     :title="collapsed ? 'SIPTA IF - Informatika ITK' : ''"
                 >
                     <div
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/30"
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-white p-1 shadow-xs dark:border-slate-700/80 dark:bg-slate-800"
                     >
-                        <GraduationCap class="h-5 w-5" />
+                        <img
+                            src="/images/logo_if.png"
+                            alt="Logo Informatika ITK"
+                            class="h-6 w-6 object-contain"
+                        />
                     </div>
                     <div v-if="!collapsed" class="min-w-0">
                         <h1
@@ -161,7 +168,7 @@ const handleAccordionClick = (
                     class="flex cursor-pointer items-center justify-center text-slate-400 transition-colors hover:text-slate-700 dark:hover:text-white"
                     :class="
                         collapsed
-                            ? 'absolute -right-3 top-5 z-40 h-6 w-6 rounded-full border border-slate-200 bg-white shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700'
+                            ? 'absolute top-5 -right-3 z-40 h-6 w-6 rounded-full border border-slate-200 bg-white shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700'
                             : 'h-7 w-7 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800'
                     "
                     :title="collapsed ? 'Buka Sidebar' : 'Tutup Sidebar'"
@@ -177,16 +184,6 @@ const handleAccordionClick = (
                 </button>
             </div>
 
-            <!-- Role Badge (Only shown when expanded) -->
-            <div v-if="!collapsed" class="shrink-0 px-4 pt-3 pb-1">
-                <div
-                    class="rounded-xl border px-3 py-1.5 text-center text-[10px] font-bold"
-                    :class="roleInfo.color"
-                >
-                    {{ roleInfo.title }}
-                </div>
-            </div>
-
             <!-- Navigation Links -->
             <nav
                 class="min-h-0 flex-1 space-y-1 p-3"
@@ -197,15 +194,16 @@ const handleAccordionClick = (
                 <!-- ============================================== -->
                 <template v-if="userRole === 'mahasiswa'">
                     <!-- Dashboard -->
-                    <div class="relative group">
+                    <div class="group relative">
                         <Link
                             href="/dashboard"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
-                                currentUrl === '/dashboard' || currentUrl === '/'
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
+                                currentUrl === '/dashboard' ||
+                                currentUrl === '/'
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
                             ]"
@@ -215,26 +213,30 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Dashboard
                         </div>
                     </div>
 
                     <!-- Pengajuan TA (Accordion & Flyout) -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <button
                             type="button"
                             class="flex w-full cursor-pointer items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 justify-between',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'justify-between px-3 py-2',
                                 isPengajuanActive
-                                    ? 'text-blue-600 dark:text-white font-bold bg-blue-50/70 dark:bg-slate-800/50'
+                                    ? 'bg-blue-50/70 font-bold text-blue-600 dark:bg-slate-800/50 dark:text-white'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
                             ]"
-                            :title="collapsed ? 'Pengajuan TA (Klik untuk buka)' : ''"
+                            :title="
+                                collapsed
+                                    ? 'Pengajuan TA (Klik untuk buka)'
+                                    : ''
+                            "
                             @click="handleAccordionClick('pengajuan')"
                         >
                             <div
@@ -263,8 +265,8 @@ const handleAccordionClick = (
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl === '/pendaftaran/judul'
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Pengajuan Judul
@@ -274,8 +276,8 @@ const handleAccordionClick = (
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl === '/pendaftaran/bimbingan'
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Bimbingan (TA-04)
@@ -285,8 +287,8 @@ const handleAccordionClick = (
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl === '/pendaftaran/sempro'
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Seminar Proposal
@@ -296,8 +298,8 @@ const handleAccordionClick = (
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl === '/pendaftaran/sidang'
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Sidang Tugas Akhir
@@ -307,13 +309,13 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
-                                    class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
+                                    class="text-[11px] font-bold tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Pengajuan TA
                                 </span>
@@ -324,11 +326,13 @@ const handleAccordionClick = (
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
                                         currentUrl === '/pendaftaran/judul'
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Pengajuan Judul</span>
                                 </Link>
                                 <Link
@@ -336,11 +340,13 @@ const handleAccordionClick = (
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
                                         currentUrl === '/pendaftaran/bimbingan'
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Bimbingan (TA-04)</span>
                                 </Link>
                                 <Link
@@ -348,11 +354,13 @@ const handleAccordionClick = (
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
                                         currentUrl === '/pendaftaran/sempro'
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Seminar Proposal</span>
                                 </Link>
                                 <Link
@@ -360,11 +368,13 @@ const handleAccordionClick = (
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
                                         currentUrl === '/pendaftaran/sidang'
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Sidang Tugas Akhir</span>
                                 </Link>
                             </div>
@@ -372,14 +382,14 @@ const handleAccordionClick = (
                     </div>
 
                     <!-- Pendaftar & Jadwal -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <Link
                             href="/pendaftaran/jadwal"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
                                 currentUrl.startsWith('/pendaftaran/jadwal')
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -390,21 +400,21 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Pendaftar & Jadwal
                         </div>
                     </div>
 
                     <!-- Prosedur TA -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <Link
                             href="/prosedur"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
                                 currentUrl.startsWith('/prosedur')
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -415,21 +425,21 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Prosedur TA
                         </div>
                     </div>
 
                     <!-- Katalog TA -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <Link
                             href="/katalog"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
                                 currentUrl.startsWith('/katalog')
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -440,21 +450,21 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Katalog TA
                         </div>
                     </div>
 
                     <!-- Panduan Website -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <Link
                             href="/panduan"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
                                 currentUrl.startsWith('/panduan')
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -465,7 +475,7 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Panduan Website
                         </div>
@@ -480,7 +490,7 @@ const handleAccordionClick = (
                     <div class="space-y-1">
                         <p
                             v-if="!collapsed"
-                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Manajemen Utama
                         </p>
@@ -489,14 +499,14 @@ const handleAccordionClick = (
                             class="mx-2 my-2 border-t border-slate-100 dark:border-slate-800/80"
                         ></div>
 
-                        <div class="relative group">
+                        <div class="group relative">
                             <Link
                                 href="/dosen/dashboard"
                                 class="flex items-center rounded-xl text-xs font-semibold transition-all"
                                 :class="[
                                     collapsed
-                                        ? 'h-10 w-10 mx-auto justify-center p-0'
-                                        : 'px-3 py-2 gap-3',
+                                        ? 'mx-auto h-10 w-10 justify-center p-0'
+                                        : 'gap-3 px-3 py-2',
                                     currentUrl === '/dosen/dashboard'
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -507,7 +517,7 @@ const handleAccordionClick = (
                             </Link>
                             <div
                                 v-if="collapsed"
-                                class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                                class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                             >
                                 Dashboard
                             </div>
@@ -515,19 +525,23 @@ const handleAccordionClick = (
                     </div>
 
                     <!-- SECTION 2: DATA PENGAJUAN (ACCORDION & FLYOUT) -->
-                    <div class="relative group pt-2">
+                    <div class="group relative pt-2">
                         <button
                             type="button"
                             class="flex w-full cursor-pointer items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-1.5 justify-between',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'justify-between px-3 py-1.5',
                                 isDosenPengajuanActive
-                                    ? 'text-blue-600 dark:text-white font-bold bg-blue-50/70 dark:bg-slate-800/50'
+                                    ? 'bg-blue-50/70 font-bold text-blue-600 dark:bg-slate-800/50 dark:text-white'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
                             ]"
-                            :title="collapsed ? 'Data Pengajuan (Klik untuk buka)' : ''"
+                            :title="
+                                collapsed
+                                    ? 'Data Pengajuan (Klik untuk buka)'
+                                    : ''
+                            "
                             @click="handleAccordionClick('dosenPengajuan')"
                         >
                             <div
@@ -553,11 +567,13 @@ const handleAccordionClick = (
                                 href="/dosen/persetujuan"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
-                                    currentUrl.startsWith('/dosen/persetujuan') &&
+                                    currentUrl.startsWith(
+                                        '/dosen/persetujuan',
+                                    ) &&
                                     !currentUrl.includes('section=sempro') &&
                                     !currentUrl.includes('section=sidang')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Daftar Judul
@@ -567,8 +583,8 @@ const handleAccordionClick = (
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl.startsWith('/dosen/bimbingan')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Bimbingan TA
@@ -578,13 +594,13 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
-                                    class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
+                                    class="text-[11px] font-bold tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Data Pengajuan
                                 </span>
@@ -594,26 +610,36 @@ const handleAccordionClick = (
                                     href="/dosen/persetujuan"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/dosen/persetujuan') &&
-                                        !currentUrl.includes('section=sempro') &&
+                                        currentUrl.startsWith(
+                                            '/dosen/persetujuan',
+                                        ) &&
+                                        !currentUrl.includes(
+                                            'section=sempro',
+                                        ) &&
                                         !currentUrl.includes('section=sidang')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Daftar Judul</span>
                                 </Link>
                                 <Link
                                     href="/dosen/bimbingan"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/dosen/bimbingan')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                        currentUrl.startsWith(
+                                            '/dosen/bimbingan',
+                                        )
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Bimbingan TA</span>
                                 </Link>
                             </div>
@@ -621,19 +647,21 @@ const handleAccordionClick = (
                     </div>
 
                     <!-- SECTION: PENJADWALAN (ACCORDION & FLYOUT) -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <button
                             type="button"
                             class="flex w-full cursor-pointer items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-1.5 justify-between',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'justify-between px-3 py-1.5',
                                 isDosenJadwalActive
-                                    ? 'text-blue-600 dark:text-white font-bold bg-blue-50/70 dark:bg-slate-800/50'
+                                    ? 'bg-blue-50/70 font-bold text-blue-600 dark:bg-slate-800/50 dark:text-white'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
                             ]"
-                            :title="collapsed ? 'Penjadwalan (Klik untuk buka)' : ''"
+                            :title="
+                                collapsed ? 'Penjadwalan (Klik untuk buka)' : ''
+                            "
                             @click="handleAccordionClick('dosenJadwal')"
                         >
                             <div
@@ -660,8 +688,8 @@ const handleAccordionClick = (
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl.startsWith('/dosen/sempro')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Seminar Proposal
@@ -671,8 +699,8 @@ const handleAccordionClick = (
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl.startsWith('/dosen/sidang')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Sidang TA
@@ -682,13 +710,13 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
-                                    class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
+                                    class="text-[11px] font-bold tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Penjadwalan
                                 </span>
@@ -699,11 +727,13 @@ const handleAccordionClick = (
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
                                         currentUrl.startsWith('/dosen/sempro')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Seminar Proposal</span>
                                 </Link>
                                 <Link
@@ -711,11 +741,13 @@ const handleAccordionClick = (
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
                                         currentUrl.startsWith('/dosen/sidang')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Sidang TA</span>
                                 </Link>
                             </div>
@@ -726,7 +758,7 @@ const handleAccordionClick = (
                     <div class="space-y-1 pt-2">
                         <p
                             v-if="!collapsed"
-                            class="px-3 text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+                            class="px-3 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Panduan &amp; Lainnya
                         </p>
@@ -736,14 +768,14 @@ const handleAccordionClick = (
                         ></div>
 
                         <!-- Katalog TA -->
-                        <div class="relative group">
+                        <div class="group relative">
                             <Link
                                 href="/katalog"
                                 class="flex items-center rounded-xl text-xs font-semibold transition-all"
                                 :class="[
                                     collapsed
-                                        ? 'h-10 w-10 mx-auto justify-center p-0'
-                                        : 'px-3 py-2 gap-3',
+                                        ? 'mx-auto h-10 w-10 justify-center p-0'
+                                        : 'gap-3 px-3 py-2',
                                     currentUrl.startsWith('/katalog')
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -754,21 +786,21 @@ const handleAccordionClick = (
                             </Link>
                             <div
                                 v-if="collapsed"
-                                class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                                class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                             >
                                 Katalog TA
                             </div>
                         </div>
 
                         <!-- Panduan Website -->
-                        <div class="relative group pt-1">
+                        <div class="group relative pt-1">
                             <Link
                                 href="/panduan"
                                 class="flex items-center rounded-xl text-xs font-semibold transition-all"
                                 :class="[
                                     collapsed
-                                        ? 'h-10 w-10 mx-auto justify-center p-0'
-                                        : 'px-3 py-2 gap-3',
+                                        ? 'mx-auto h-10 w-10 justify-center p-0'
+                                        : 'gap-3 px-3 py-2',
                                     currentUrl.startsWith('/panduan')
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -779,7 +811,7 @@ const handleAccordionClick = (
                             </Link>
                             <div
                                 v-if="collapsed"
-                                class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                                class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                             >
                                 Panduan Website
                             </div>
@@ -795,7 +827,7 @@ const handleAccordionClick = (
                     <div class="space-y-1">
                         <p
                             v-if="!collapsed"
-                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Manajemen Utama
                         </p>
@@ -804,14 +836,14 @@ const handleAccordionClick = (
                             class="mx-2 my-2 border-t border-slate-100 dark:border-slate-800/80"
                         ></div>
 
-                        <div class="relative group">
+                        <div class="group relative">
                             <Link
                                 href="/kaprodi/dashboard"
                                 class="flex items-center rounded-xl text-xs font-semibold transition-all"
                                 :class="[
                                     collapsed
-                                        ? 'h-10 w-10 mx-auto justify-center p-0'
-                                        : 'px-3 py-2 gap-3',
+                                        ? 'mx-auto h-10 w-10 justify-center p-0'
+                                        : 'gap-3 px-3 py-2',
                                     currentUrl === '/kaprodi/dashboard'
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -822,7 +854,7 @@ const handleAccordionClick = (
                             </Link>
                             <div
                                 v-if="collapsed"
-                                class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                                class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                             >
                                 Dashboard
                             </div>
@@ -830,19 +862,23 @@ const handleAccordionClick = (
                     </div>
 
                     <!-- SECTION 2: DATA PENGAJUAN (ACCORDION & FLYOUT) -->
-                    <div class="relative group pt-2">
+                    <div class="group relative pt-2">
                         <button
                             type="button"
                             class="flex w-full cursor-pointer items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-1.5 justify-between',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'justify-between px-3 py-1.5',
                                 isKaprodiPengajuanActive
-                                    ? 'text-blue-600 dark:text-white font-bold bg-blue-50/70 dark:bg-slate-800/50'
+                                    ? 'bg-blue-50/70 font-bold text-blue-600 dark:bg-slate-800/50 dark:text-white'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
                             ]"
-                            :title="collapsed ? 'Data Pengajuan (Klik untuk buka)' : ''"
+                            :title="
+                                collapsed
+                                    ? 'Data Pengajuan (Klik untuk buka)'
+                                    : ''
+                            "
                             @click="handleAccordionClick('kaprodiPengajuan')"
                         >
                             <div
@@ -870,11 +906,14 @@ const handleAccordionClick = (
                                 href="/kaprodi/persetujuan"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
-                                    currentUrl.startsWith('/kaprodi/persetujuan') &&
+                                    currentUrl.startsWith(
+                                        '/kaprodi/persetujuan',
+                                    ) &&
                                     !currentUrl.includes('section=sempro') &&
-                                    !currentUrl.includes('section=sidang')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                    !currentUrl.includes('section=sidang') &&
+                                    !currentUrl.includes('section=reschedule')
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Daftar Judul
@@ -885,8 +924,8 @@ const handleAccordionClick = (
                                 :class="[
                                     currentUrl.startsWith('/dosen/bimbingan') ||
                                     currentUrl.startsWith('/kaprodi/bimbingan')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Bimbingan TA
@@ -896,8 +935,8 @@ const handleAccordionClick = (
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl.includes('section=sempro')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Seminar Proposal
@@ -907,24 +946,36 @@ const handleAccordionClick = (
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
                                     currentUrl.includes('section=sidang')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Sidang TA
+                            </Link>
+                            <Link
+                                href="/kaprodi/persetujuan?section=reschedule"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.includes('section=reschedule') ||
+                                    currentUrl.startsWith('/kaprodi/reschedule')
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
+                                ]"
+                            >
+                                Reschedule
                             </Link>
                         </div>
 
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
-                                    class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
+                                    class="text-[11px] font-bold tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Data Pengajuan
                                 </span>
@@ -934,27 +985,40 @@ const handleAccordionClick = (
                                     href="/kaprodi/persetujuan"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/kaprodi/persetujuan') &&
-                                        !currentUrl.includes('section=sempro') &&
-                                        !currentUrl.includes('section=sidang')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                        currentUrl.startsWith(
+                                            '/kaprodi/persetujuan',
+                                        ) &&
+                                        !currentUrl.includes(
+                                            'section=sempro',
+                                        ) &&
+                                        !currentUrl.includes('section=sidang') &&
+                                        !currentUrl.includes('section=reschedule')
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Daftar Judul</span>
                                 </Link>
                                 <Link
                                     href="/dosen/bimbingan"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/dosen/bimbingan') ||
-                                        currentUrl.startsWith('/kaprodi/bimbingan')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                        currentUrl.startsWith(
+                                            '/dosen/bimbingan',
+                                        ) ||
+                                        currentUrl.startsWith(
+                                            '/kaprodi/bimbingan',
+                                        )
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Bimbingan TA</span>
                                 </Link>
                                 <Link
@@ -962,11 +1026,13 @@ const handleAccordionClick = (
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
                                         currentUrl.includes('section=sempro')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Seminar Proposal</span>
                                 </Link>
                                 <Link
@@ -974,31 +1040,52 @@ const handleAccordionClick = (
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
                                         currentUrl.includes('section=sidang')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Sidang TA</span>
+                                </Link>
+                                <Link
+                                    href="/kaprodi/persetujuan?section=reschedule"
+                                    class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
+                                    :class="
+                                        currentUrl.includes('section=reschedule') ||
+                                        currentUrl.startsWith('/kaprodi/reschedule')
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
+                                    "
+                                >
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
+                                    <span>Reschedule</span>
                                 </Link>
                             </div>
                         </div>
                     </div>
 
                     <!-- SECTION 3: PERIODE GELOMBANG (ACCORDION & FLYOUT) -->
-                    <div class="relative group pt-2">
+                    <div class="group relative pt-2">
                         <button
                             type="button"
                             class="flex w-full cursor-pointer items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-1.5 justify-between',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'justify-between px-3 py-1.5',
                                 isKaprodiPeriodeActive
-                                    ? 'text-blue-600 dark:text-white font-bold bg-blue-50/70 dark:bg-slate-800/50'
+                                    ? 'bg-blue-50/70 font-bold text-blue-600 dark:bg-slate-800/50 dark:text-white'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
                             ]"
-                            :title="collapsed ? 'Periode Gelombang (Klik untuk buka)' : ''"
+                            :title="
+                                collapsed
+                                    ? 'Periode Gelombang (Klik untuk buka)'
+                                    : ''
+                            "
                             @click="handleAccordionClick('kaprodiPeriode')"
                         >
                             <div
@@ -1024,10 +1111,14 @@ const handleAccordionClick = (
                                 href="/kaprodi/penjadwalan/sempro"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
-                                    currentUrl.startsWith('/kaprodi/penjadwalan/sempro') ||
-                                    currentUrl.startsWith('/koordinator/penjadwalan/sempro')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                    currentUrl.startsWith(
+                                        '/kaprodi/penjadwalan/sempro',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/penjadwalan/sempro',
+                                    )
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Periode Sempro
@@ -1036,10 +1127,14 @@ const handleAccordionClick = (
                                 href="/kaprodi/penjadwalan/ta"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
-                                    currentUrl.startsWith('/kaprodi/penjadwalan/ta') ||
-                                    currentUrl.startsWith('/koordinator/penjadwalan/ta')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                    currentUrl.startsWith(
+                                        '/kaprodi/penjadwalan/ta',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/penjadwalan/ta',
+                                    )
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Periode TA
@@ -1049,13 +1144,13 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
-                                    class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
+                                    class="text-[11px] font-bold tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Periode Gelombang
                                 </span>
@@ -1065,26 +1160,38 @@ const handleAccordionClick = (
                                     href="/kaprodi/penjadwalan/sempro"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/kaprodi/penjadwalan/sempro') ||
-                                        currentUrl.startsWith('/koordinator/penjadwalan/sempro')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                        currentUrl.startsWith(
+                                            '/kaprodi/penjadwalan/sempro',
+                                        ) ||
+                                        currentUrl.startsWith(
+                                            '/koordinator/penjadwalan/sempro',
+                                        )
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Periode Sempro</span>
                                 </Link>
                                 <Link
                                     href="/kaprodi/penjadwalan/ta"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/kaprodi/penjadwalan/ta') ||
-                                        currentUrl.startsWith('/koordinator/penjadwalan/ta')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                        currentUrl.startsWith(
+                                            '/kaprodi/penjadwalan/ta',
+                                        ) ||
+                                        currentUrl.startsWith(
+                                            '/koordinator/penjadwalan/ta',
+                                        )
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Periode TA</span>
                                 </Link>
                             </div>
@@ -1092,19 +1199,23 @@ const handleAccordionClick = (
                     </div>
 
                     <!-- SECTION 4: PENJADWALAN & PLOTTING PENGUJI (ACCORDION & FLYOUT) -->
-                    <div class="relative group pt-2">
+                    <div class="group relative pt-2">
                         <button
                             type="button"
                             class="flex w-full cursor-pointer items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-1.5 justify-between',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'justify-between px-3 py-1.5',
                                 isKaprodiJadwalActive
-                                    ? 'text-blue-600 dark:text-white font-bold bg-blue-50/70 dark:bg-slate-800/50'
+                                    ? 'bg-blue-50/70 font-bold text-blue-600 dark:bg-slate-800/50 dark:text-white'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
                             ]"
-                            :title="collapsed ? 'Penjadwalan & Plotting (Klik untuk buka)' : ''"
+                            :title="
+                                collapsed
+                                    ? 'Penjadwalan & Plotting (Klik untuk buka)'
+                                    : ''
+                            "
                             @click="handleAccordionClick('kaprodiJadwal')"
                         >
                             <div
@@ -1132,11 +1243,15 @@ const handleAccordionClick = (
                                 href="/kaprodi/penjadwalan/plotting-sempro"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
-                                    currentUrl.startsWith('/kaprodi/penjadwalan/plotting-sempro') ||
-                                    currentUrl.startsWith('/koordinator/penjadwalan/plotting-sempro') ||
+                                    currentUrl.startsWith(
+                                        '/kaprodi/penjadwalan/plotting-sempro',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/penjadwalan/plotting-sempro',
+                                    ) ||
                                     currentUrl === '/kaprodi/penjadwalan'
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Plotting Jadwal Sempro
@@ -1145,10 +1260,14 @@ const handleAccordionClick = (
                                 href="/kaprodi/penjadwalan/plotting-ta"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
-                                    currentUrl.startsWith('/kaprodi/penjadwalan/plotting-ta') ||
-                                    currentUrl.startsWith('/koordinator/penjadwalan/plotting-ta')
-                                        ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-white'
-                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50',
+                                    currentUrl.startsWith(
+                                        '/kaprodi/penjadwalan/plotting-ta',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/penjadwalan/plotting-ta',
+                                    )
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
                             >
                                 Plotting Jadwal Sidang TA
@@ -1158,13 +1277,13 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-all duration-150 absolute left-full top-0 ml-2.5 z-50 w-60 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-60 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
                             >
                                 <span
-                                    class="text-[11px] font-bold uppercase tracking-wider text-slate-900 dark:text-white"
+                                    class="text-[11px] font-bold tracking-wider text-slate-900 dark:text-white"
                                 >
                                     Penjadwalan &amp; Plotting
                                 </span>
@@ -1174,27 +1293,39 @@ const handleAccordionClick = (
                                     href="/kaprodi/penjadwalan/plotting-sempro"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/kaprodi/penjadwalan/plotting-sempro') ||
-                                        currentUrl.startsWith('/koordinator/penjadwalan/plotting-sempro') ||
+                                        currentUrl.startsWith(
+                                            '/kaprodi/penjadwalan/plotting-sempro',
+                                        ) ||
+                                        currentUrl.startsWith(
+                                            '/koordinator/penjadwalan/plotting-sempro',
+                                        ) ||
                                         currentUrl === '/kaprodi/penjadwalan'
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Plotting Jadwal Sempro</span>
                                 </Link>
                                 <Link
                                     href="/kaprodi/penjadwalan/plotting-ta"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
                                     :class="
-                                        currentUrl.startsWith('/kaprodi/penjadwalan/plotting-ta') ||
-                                        currentUrl.startsWith('/koordinator/penjadwalan/plotting-ta')
-                                            ? 'font-bold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                        currentUrl.startsWith(
+                                            '/kaprodi/penjadwalan/plotting-ta',
+                                        ) ||
+                                        currentUrl.startsWith(
+                                            '/koordinator/penjadwalan/plotting-ta',
+                                        )
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
                                 >
-                                    <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
                                     <span>Plotting Jadwal Sidang TA</span>
                                 </Link>
                             </div>
@@ -1205,7 +1336,7 @@ const handleAccordionClick = (
                     <div class="space-y-1 pt-2">
                         <p
                             v-if="!collapsed"
-                            class="px-3 text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+                            class="px-3 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Data Master
                         </p>
@@ -1215,14 +1346,14 @@ const handleAccordionClick = (
                         ></div>
 
                         <!-- Data Dosen -->
-                        <div class="relative group">
+                        <div class="group relative">
                             <Link
                                 href="/kaprodi/dosen"
                                 class="flex items-center rounded-xl text-xs font-semibold transition-all"
                                 :class="[
                                     collapsed
-                                        ? 'h-10 w-10 mx-auto justify-center p-0'
-                                        : 'px-3 py-2 gap-3',
+                                        ? 'mx-auto h-10 w-10 justify-center p-0'
+                                        : 'gap-3 px-3 py-2',
                                     currentUrl.startsWith('/kaprodi/dosen')
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -1233,23 +1364,27 @@ const handleAccordionClick = (
                             </Link>
                             <div
                                 v-if="collapsed"
-                                class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                                class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                             >
                                 Data Dosen
                             </div>
                         </div>
 
                         <!-- Data Mahasiswa -->
-                        <div class="relative group pt-1">
+                        <div class="group relative pt-1">
                             <Link
                                 href="/kaprodi/mahasiswa"
                                 class="flex items-center rounded-xl text-xs font-semibold transition-all"
                                 :class="[
                                     collapsed
-                                        ? 'h-10 w-10 mx-auto justify-center p-0'
-                                        : 'px-3 py-2 gap-3',
-                                    currentUrl.startsWith('/kaprodi/mahasiswa') ||
-                                    currentUrl.startsWith('/koordinator/mahasiswa')
+                                        ? 'mx-auto h-10 w-10 justify-center p-0'
+                                        : 'gap-3 px-3 py-2',
+                                    currentUrl.startsWith(
+                                        '/kaprodi/mahasiswa',
+                                    ) ||
+                                    currentUrl.startsWith(
+                                        '/koordinator/mahasiswa',
+                                    )
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
                                 ]"
@@ -1259,7 +1394,7 @@ const handleAccordionClick = (
                             </Link>
                             <div
                                 v-if="collapsed"
-                                class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                                class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                             >
                                 Data Mahasiswa
                             </div>
@@ -1270,7 +1405,7 @@ const handleAccordionClick = (
                     <div class="space-y-1 pt-2">
                         <p
                             v-if="!collapsed"
-                            class="px-3 text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+                            class="px-3 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Prosedur &amp; Katalog
                         </p>
@@ -1280,14 +1415,14 @@ const handleAccordionClick = (
                         ></div>
 
                         <!-- Katalog TA -->
-                        <div class="relative group">
+                        <div class="group relative">
                             <Link
                                 href="/katalog"
                                 class="flex items-center rounded-xl text-xs font-semibold transition-all"
                                 :class="[
                                     collapsed
-                                        ? 'h-10 w-10 mx-auto justify-center p-0'
-                                        : 'px-3 py-2 gap-3',
+                                        ? 'mx-auto h-10 w-10 justify-center p-0'
+                                        : 'gap-3 px-3 py-2',
                                     currentUrl.startsWith('/katalog')
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -1298,21 +1433,21 @@ const handleAccordionClick = (
                             </Link>
                             <div
                                 v-if="collapsed"
-                                class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                                class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                             >
                                 Katalog TA
                             </div>
                         </div>
 
                         <!-- Prosedur TA -->
-                        <div class="relative group pt-1">
+                        <div class="group relative pt-1">
                             <Link
                                 href="/prosedur"
                                 class="flex items-center rounded-xl text-xs font-semibold transition-all"
                                 :class="[
                                     collapsed
-                                        ? 'h-10 w-10 mx-auto justify-center p-0'
-                                        : 'px-3 py-2 gap-3',
+                                        ? 'mx-auto h-10 w-10 justify-center p-0'
+                                        : 'gap-3 px-3 py-2',
                                     currentUrl.startsWith('/prosedur')
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -1323,21 +1458,21 @@ const handleAccordionClick = (
                             </Link>
                             <div
                                 v-if="collapsed"
-                                class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                                class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                             >
                                 Prosedur TA
                             </div>
                         </div>
 
                         <!-- Panduan Website -->
-                        <div class="relative group pt-1">
+                        <div class="group relative pt-1">
                             <Link
                                 href="/panduan"
                                 class="flex items-center rounded-xl text-xs font-semibold transition-all"
                                 :class="[
                                     collapsed
-                                        ? 'h-10 w-10 mx-auto justify-center p-0'
-                                        : 'px-3 py-2 gap-3',
+                                        ? 'mx-auto h-10 w-10 justify-center p-0'
+                                        : 'gap-3 px-3 py-2',
                                     currentUrl.startsWith('/panduan')
                                         ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -1348,7 +1483,7 @@ const handleAccordionClick = (
                             </Link>
                             <div
                                 v-if="collapsed"
-                                class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                                class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                             >
                                 Panduan Website
                             </div>
@@ -1361,14 +1496,14 @@ const handleAccordionClick = (
                 <!-- ============================================== -->
                 <template v-else-if="userRole === 'tendik'">
                     <!-- Dashboard Tendik -->
-                    <div class="relative group">
+                    <div class="group relative">
                         <Link
                             href="/tendik/dashboard"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
                                 currentUrl === '/tendik/dashboard'
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -1379,21 +1514,21 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Dashboard Tendik
                         </div>
                     </div>
 
                     <!-- Verifikasi Berkas -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <Link
                             href="/tendik/verifikasi"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
                                 currentUrl.startsWith('/tendik/verifikasi')
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -1404,46 +1539,21 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Verifikasi Berkas
                         </div>
                     </div>
 
-                    <!-- Jadwal Ruangan -->
-                    <div class="relative group pt-1">
-                        <Link
-                            href="/tendik/ruangan"
-                            class="flex items-center rounded-xl text-xs font-semibold transition-all"
-                            :class="[
-                                collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
-                                currentUrl.startsWith('/tendik/ruangan')
-                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
-                            ]"
-                        >
-                            <Building2 class="h-4 w-4 shrink-0" />
-                            <span v-if="!collapsed">Jadwal Ruangan</span>
-                        </Link>
-                        <div
-                            v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
-                        >
-                            Jadwal Ruangan
-                        </div>
-                    </div>
-
                     <!-- Berita Acara & SK -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <Link
                             href="/tendik/arsip"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
                                 currentUrl.startsWith('/tendik/arsip')
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -1454,21 +1564,21 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Berita Acara & SK
                         </div>
                     </div>
 
                     <!-- Kelola Mahasiswa -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <Link
                             href="/tendik/mahasiswa"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
                                 currentUrl.startsWith('/tendik/mahasiswa')
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -1479,21 +1589,21 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Kelola Mahasiswa
                         </div>
                     </div>
 
                     <!-- Panduan Website -->
-                    <div class="relative group pt-1">
+                    <div class="group relative pt-1">
                         <Link
                             href="/panduan"
                             class="flex items-center rounded-xl text-xs font-semibold transition-all"
                             :class="[
                                 collapsed
-                                    ? 'h-10 w-10 mx-auto justify-center p-0'
-                                    : 'px-3 py-2 gap-3',
+                                    ? 'mx-auto h-10 w-10 justify-center p-0'
+                                    : 'gap-3 px-3 py-2',
                                 currentUrl.startsWith('/panduan')
                                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-200',
@@ -1504,7 +1614,7 @@ const handleAccordionClick = (
                         </Link>
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-50 hidden group-hover:flex items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white shadow-lg whitespace-nowrap dark:bg-slate-800 dark:border dark:border-slate-700"
+                            class="pointer-events-none absolute top-1/2 left-full z-50 ml-2.5 hidden -translate-y-1/2 items-center rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg group-hover:flex dark:border dark:border-slate-700 dark:bg-slate-800"
                         >
                             Panduan Website
                         </div>
