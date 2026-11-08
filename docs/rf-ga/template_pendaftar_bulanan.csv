@@ -1,0 +1,6 @@
+﻿NIM,Nama,Judul,Jenis_Seminar,Gelombang,topik_model_v4,Pembimbing 1_kanonis,Pembimbing 2_kanonis,Pembimbing 3_kanonis,Tanggal_Pendaftaran
+DUMMY-0001,Mahasiswa Dummy 1,Perancangan Sistem Informasi Monitoring Bimbingan Tugas Akhir Berbasis Web,Sempro,Gelombang 1,Pengembangan Web/Mobile,Aninditya Anggari Nuryono,Ariyadi,,2026-11-02
+DUMMY-0002,Mahasiswa Dummy 2,Analisis Sentimen Ulasan Mahasiswa terhadap Layanan Akademik Menggunakan IndoBERT,Sempro,Gelombang 1,Analisis Sentimen dan NLP,Bima Prihasto,Boby Mugi Pratama,,2026-11-03
+DUMMY-0003,Mahasiswa Dummy 3,Prediksi Kelulusan Mahasiswa Menggunakan Algoritma Random Forest,Sempro,Gelombang 1,Machine Learning dan AI,Bowo Nugroho,Darmansyah,,2026-11-05
+DUMMY-0004,Mahasiswa Dummy 4,Deteksi Objek Sampah pada Citra Menggunakan YOLO,Sempro,Gelombang 1,Computer Vision dan Pengolahan Citra,Gusti Ahmad Fanshuri Alfarisy,Muchammad Chandra Cahyo Utomo,,2026-11-06
+DUMMY-0005,Mahasiswa Dummy 5,Optimasi Penjadwalan Seminar Proposal Menggunakan Algoritma Genetika,Sempro,Gelombang 1,Optimasi dan Penjadwalan,Nisa Rizqiya Fadhliana,Nur Fajri Azhar,,2026-11-09

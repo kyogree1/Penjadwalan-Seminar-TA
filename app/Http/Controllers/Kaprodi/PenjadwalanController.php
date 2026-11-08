@@ -313,9 +313,13 @@ class PenjadwalanController extends Controller
         $capacity = max(0, $period->capacity - $used);
         $overflow = array_slice($candidates, $capacity);
         $candidates = array_slice($candidates, 0, $capacity);
-        $lecturers = User::where('role', 'dosen')->get(['id', 'name', 'prodi', 'jabatan'])->map(function ($lecturer) use ($bookings) {
+        $periodBookings = array_filter($bookings, fn ($b) => (int) $b['period_id'] === $period->id);
+        $lecturers = User::where('role', 'dosen')->get(['id', 'name', 'prodi', 'jabatan']);
+        $quota = (int) ceil(2 * (count($candidates) + $used) / max(1, $lecturers->count())) + 1;
+        $lecturers = $lecturers->map(function ($lecturer) use ($periodBookings, $quota) {
             $row = $lecturer->toArray();
-            $row['workload'] = count(array_filter($bookings, fn ($b) => in_array($lecturer->id, [$b['penguji_1_id'], $b['penguji_2_id']])));
+            $row['workload'] = count(array_filter($periodBookings, fn ($b) => in_array($lecturer->id, [$b['penguji_1_id'], $b['penguji_2_id']])));
+            $row['capacity'] = $quota;
 
             return $row;
         })->all();
@@ -326,7 +330,11 @@ class PenjadwalanController extends Controller
             $result['success'] = false;
         }
         $result['period_id'] = $period->id;
-        $result['limitations'] = ['KBK dosen, kuota dosen, dan kalender ketersediaan belum tersimpan; tidak diasumsikan sebagai data nyata. Konflik booking dan kapasitas periode tetap diperiksa.'];
+        $result['limitations'] = [
+            'Skor kecocokan penguji 1 (RF Compatibility Score) belum tersedia; semua pasangan memakai skor netral '.ScheduleOptimizer::NEUTRAL_SCORE.'.',
+            'Ketersediaan waktu dosen belum tersimpan; semua dosen dianggap tersedia di setiap slot.',
+            "Kuota menguji dihitung otomatis: maksimal {$quota} kali per dosen pada periode ini.",
+        ];
 
         return response()->json($result);
     }
