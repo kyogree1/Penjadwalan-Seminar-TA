@@ -61,7 +61,7 @@ class ArsipController extends Controller
             ]);
 
         // ── Gabungkan & urutkan berdasarkan tanggal terbaru ──────────
-        $arsipList = $arsipSempro->merge($arsipSidang)
+        $arsipList = $arsipSempro->concat($arsipSidang)
             ->sortByDesc('tanggal_selesai')
             ->values();
 
@@ -82,6 +82,54 @@ class ArsipController extends Controller
                 'periodeTerakhir' => $periodeTerakhir,
             ],
             'arsipList' => $arsipList,
+        ]);
+    }
+
+    /**
+     * Ekspor data arsip kelulusan sempro & sidang ke CSV.
+     */
+    public function exportCsv()
+    {
+        $arsipSempro = PendaftaranSempro::with('mahasiswa:id,name,username,nim_nip,prodi')
+            ->where('status', 'selesai')
+            ->latest()
+            ->get();
+
+        $arsipSidang = PendaftaranSidang::with('mahasiswa:id,name,username,nim_nip,prodi')
+            ->where('status', 'selesai')
+            ->latest()
+            ->get();
+
+        return response()->streamDownload(function () use ($arsipSempro, $arsipSidang) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['No', 'Tipe Ujian', 'NIM', 'Nama Mahasiswa', 'Program Studi', 'Judul Tugas Akhir', 'Tanggal Selesai']);
+
+            $no = 1;
+            foreach ($arsipSempro as $row) {
+                fputcsv($handle, [
+                    $no++,
+                    'Seminar Proposal',
+                    $row->mahasiswa?->nim_nip ?? $row->mahasiswa?->username ?? '-',
+                    $row->mahasiswa?->name ?? '-',
+                    $row->mahasiswa?->prodi ?? 'Informatika',
+                    $row->judul_ta,
+                    $row->updated_at?->format('Y-m-d') ?? '-',
+                ]);
+            }
+            foreach ($arsipSidang as $row) {
+                fputcsv($handle, [
+                    $no++,
+                    'Sidang Tugas Akhir',
+                    $row->mahasiswa?->nim_nip ?? $row->mahasiswa?->username ?? '-',
+                    $row->mahasiswa?->name ?? '-',
+                    $row->mahasiswa?->prodi ?? 'Informatika',
+                    $row->judul_ta,
+                    $row->updated_at?->format('Y-m-d') ?? '-',
+                ]);
+            }
+            fclose($handle);
+        }, 'arsip-kelulusan-ta-' . date('Ymd-His') . '.csv', [
+            'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
     }
 }

@@ -221,7 +221,7 @@ watch(
                         statusBerkas: item.status_berkas || 'Selesai Validasi',
                         persetujuan:
                             item.status_persetujuan || 'Disetujui Pembimbing',
-                        nilai: item.nilai || (idx % 2 === 0 ? 'A' : 'AB'),
+                        nilai: item.nilai || '—',
                         revisi: item.revisi || 'Perbaiki format lampiran',
                         penguji1:
                             item.penguji1 ||

@@ -20,6 +20,9 @@ import {
 
 const props = defineProps<{
     stats: { pendingBimbingan: number; jadwalUjiCount: number };
+    mySupervisedStudents?: any[];
+    upcomingExams?: any[];
+    adviseeStages?: any[];
 }>();
 
 const stats = computed(() => props.stats);
@@ -38,109 +41,13 @@ const lecturer = computed(
 );
 
 // Mahasiswa bimbingan tugas akhir milik dosen ini
-const mySupervisedStudents = [
-    {
-        id: 1,
-        nama: 'Anisa Rahmadani',
-        nim: '11231010',
-        judul: 'Analisis Perbandingan Kinerja Arsitektur Microservices pada Sistem Akademik',
-        tahap: 'Bimbingan Bab 4',
-        progress: 80,
-        hasPendingLogbook: true,
-        logbookPendingText: '1 Logbook Menunggu Validasi',
-        terakhirBimbingan: 'Kemarin, 14:30',
-    },
-    {
-        id: 2,
-        nama: 'Bayu Aditya Saputra',
-        nim: '11231089',
-        judul: 'Rancang Bangun Sistem Lokalisasi Indoor Menggunakan WiFi Fingerprinting',
-        tahap: 'Persiapan Sempro',
-        progress: 65,
-        hasPendingLogbook: false,
-        logbookPendingText: 'Terverifikasi (8 Sesi)',
-        terakhirBimbingan: '3 hari lalu',
-    },
-    {
-        id: 3,
-        nama: 'Muhammad Raihan',
-        nim: '11211030',
-        judul: 'Analisis Kerentanan Aplikasi Web Portal Kampus dengan Metode OWASP Top 10',
-        tahap: 'Revisi Pasca Sidang',
-        progress: 95,
-        hasPendingLogbook: false,
-        logbookPendingText: '14 Sesi Terverifikasi',
-        terakhirBimbingan: '5 hari lalu',
-    },
-];
+const mySupervisedStudents = computed(() => props.mySupervisedStudents ?? []);
 
 // Jadwal menguji seminar proposal & sidang mendatang
-const upcomingExams = [
-    {
-        id: 1,
-        tipe: 'Seminar Proposal',
-        tipeBadge:
-            'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300',
-        mahasiswa: 'Dimas Wahyu Ramadhan',
-        nim: '11231024',
-        judul: 'Rancang Bangun Sistem Timegraph dan Monitoring Berkas Terdistribusi',
-        peran: 'Penguji 1',
-        tanggal: 'Rabu, 22 Okt 2026',
-        jam: '09:00 - 10:30 WITA',
-        ruang: 'Lab Rekayasa Perangkat Lunak',
-        href: '/dosen/sempro',
-    },
-    {
-        id: 2,
-        tipe: 'Sidang Tugas Akhir',
-        tipeBadge:
-            'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
-        mahasiswa: 'Siti Rahmawati',
-        nim: '11221038',
-        judul: 'Peramalan Kuantitas Penjualan Harian Produk Retail Menggunakan Hybrid ARIMA-LSTM',
-        peran: 'Penguji 2',
-        tanggal: 'Jumat, 24 Okt 2026',
-        jam: '13:30 - 15:00 WITA',
-        ruang: 'Ruang Sidang IF 204',
-        href: '/dosen/sidang',
-    },
-];
+const upcomingExams = computed(() => props.upcomingExams ?? []);
 
 // Pipeline tahapan mahasiswa bimbingan dosen
-const adviseeStages = [
-    {
-        name: 'Usulan Judul',
-        count: 1,
-        pct: 20,
-        barColor: 'bg-amber-500',
-        dotColor: 'bg-amber-500',
-        href: '/dosen/persetujuan',
-    },
-    {
-        name: 'Bimbingan Berjalan',
-        count: 2,
-        pct: 40,
-        barColor: 'bg-indigo-600',
-        dotColor: 'bg-indigo-600',
-        href: '/dosen/bimbingan',
-    },
-    {
-        name: 'Seminar Proposal',
-        count: 1,
-        pct: 20,
-        barColor: 'bg-blue-600',
-        dotColor: 'bg-blue-600',
-        href: '/dosen/sempro',
-    },
-    {
-        name: 'Sidang Tugas Akhir',
-        count: 1,
-        pct: 20,
-        barColor: 'bg-emerald-600',
-        dotColor: 'bg-emerald-600',
-        href: '/dosen/sidang',
-    },
-];
+const adviseeStages = computed(() => props.adviseeStages ?? []);
 </script>
 
 <template>
@@ -305,6 +212,12 @@ const adviseeStages = [
                         </div>
 
                         <div class="mt-4 space-y-3.5">
+                            <div
+                                v-if="mySupervisedStudents.length === 0"
+                                class="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-400 dark:border-slate-800"
+                            >
+                                Belum ada mahasiswa bimbingan tugas akhir yang aktif.
+                            </div>
                             <div
                                 v-for="student in mySupervisedStudents"
                                 :key="student.id"
@@ -473,6 +386,12 @@ const adviseeStages = [
                         </div>
 
                         <div class="mt-4 space-y-3">
+                            <div
+                                v-if="upcomingExams.length === 0"
+                                class="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-400 dark:border-slate-800"
+                            >
+                                Tidak ada penugasan menguji seminar atau sidang mendatang.
+                            </div>
                             <div
                                 v-for="exam in upcomingExams"
                                 :key="exam.id"
