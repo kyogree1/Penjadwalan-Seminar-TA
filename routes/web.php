@@ -14,6 +14,7 @@ use App\Http\Controllers\Kaprodi\PersetujuanController as KaprodiPersetujuanCont
 use App\Http\Controllers\Kaprodi\ScheduleExportController;
 use App\Http\Controllers\Mahasiswa\BimbinganController;
 use App\Http\Controllers\KatalogController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJadwalController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJudulController;
@@ -51,6 +52,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 
     // ==========================================
     // PORTAL MAHASISWA
@@ -150,6 +156,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/persetujuan', [KaprodiPersetujuanController::class, 'index'])->name('persetujuan');
         Route::get('/sempro', [KaprodiPersetujuanController::class, 'index'])->name('sempro');
         Route::get('/sidang', [KaprodiPersetujuanController::class, 'index'])->name('sidang');
+        Route::get('/reschedule', [KaprodiPersetujuanController::class, 'index'])->name('reschedule');
         Route::patch('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'updateJudul'])->name('persetujuan.judul');
         Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul'])->name('persetujuan.judul.destroy');
         Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro'])->name('persetujuan.sempro');
@@ -165,6 +172,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/penjadwalan/plotting-ta', fn () => redirect()->route('kaprodi.penjadwalan.plotting-ta'))->name('penjadwalan.plotting-ta');
         Route::get('/monitoring', fn () => redirect()->route('kaprodi.monitoring'))->name('monitoring');
         Route::get('/mahasiswa', fn () => redirect()->route('kaprodi.mahasiswa'))->name('mahasiswa');
+        Route::get('/reschedule', fn () => redirect()->route('kaprodi.reschedule'))->name('reschedule');
     });
 
     // ==========================================
@@ -178,6 +186,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/verifikasi/sidang/{id}', [TendikVerifikasiController::class, 'verifySidang'])->name('verifikasi.sidang');
 
         Route::get('/arsip', [TendikArsipController::class, 'index'])->name('arsip');
+        Route::get('/arsip/export', [TendikArsipController::class, 'exportCsv'])->name('arsip.export');
 
         Route::get('/mahasiswa', [TendikMahasiswaController::class, 'index'])->name('mahasiswa');
         Route::get('/mahasiswa/template', [TendikMahasiswaController::class, 'template'])->name('mahasiswa.template');

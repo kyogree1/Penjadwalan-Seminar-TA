@@ -53,9 +53,13 @@ class KaprodiPersetujuanTest extends TestCase
 
     public function test_academic_notes_reject_invalid_revision_and_preserve_overlapping_type(): void
     {
+        $targetId = max(
+            (int) (PendaftaranSempro::max('id') ?? 0),
+            (int) (PendaftaranSidang::max('id') ?? 0)
+        ) + 10;
         $student = User::factory()->create(['role' => 'mahasiswa']);
-        $sempro = PendaftaranSempro::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Proposal', 'bentuk_ta' => 'Skripsi']);
-        $sidang = PendaftaranSidang::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'Sidang']);
+        $sempro = PendaftaranSempro::forceCreate(['id' => $targetId, 'mahasiswa_id' => $student->id, 'judul_ta' => 'Proposal', 'bentuk_ta' => 'Skripsi']);
+        $sidang = PendaftaranSidang::forceCreate(['id' => $targetId, 'mahasiswa_id' => $student->id, 'judul_ta' => 'Sidang']);
         $this->assertSame($sempro->id, $sidang->id);
         $this->actingAs(User::factory()->create(['role' => 'koordinator']));
         foreach (['sempro' => $sempro, 'sidang' => $sidang] as $type => $row) {

@@ -72,12 +72,17 @@ const userRole = computed(() => authUser.value?.role || 'kaprodi');
 
 // Koorprodi permission check
 const isKoorprodi = computed(() => {
-    const role = userRole.value;
+    const r = authUser.value?.role;
     const jabatan = (authUser.value?.jabatan || '').toLowerCase();
-    if (role === 'dosen') {
-        return jabatan.includes('koordinator') || jabatan.includes('kaprodi');
+    if (r === 'kaprodi' || r === 'koordinator') return true;
+    if (r === 'dosen') {
+        return (
+            jabatan.includes('koordinator') ||
+            jabatan.includes('kaprodi') ||
+            jabatan.includes('koorprodi')
+        );
     }
-    return true; // kaprodi / koordinator / default
+    return false;
 });
 
 // Dosen permission check (Koorprodi is ALSO an active Dosen)
@@ -221,7 +226,7 @@ watch(
                         statusBerkas: item.status_berkas || 'Selesai Validasi',
                         persetujuan:
                             item.status_persetujuan || 'Disetujui Pembimbing',
-                        nilai: item.nilai || (idx % 2 === 0 ? 'A' : 'AB'),
+                        nilai: item.nilai || '—',
                         revisi: item.revisi || 'Perbaiki format lampiran',
                         penguji1:
                             item.penguji1 ||
@@ -1323,39 +1328,58 @@ const getPersetujuanBadge = (persetujuan: string) => {
                                 <Clock
                                     class="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400"
                                 />
-                                <span
+                                <span v-if="!isKoorprodi"
                                     >Pengajuan reschedule telah dikirimkan ke
                                     Koorprodi (Menunggu persetujuan).</span
                                 >
+                                <span v-else
+                                    >Dosen mengajukan permohonan reschedule
+                                    untuk sidang ini. Silakan tinjau pada menu
+                                    <Link
+                                        href="/kaprodi/persetujuan?section=reschedule"
+                                        class="font-bold text-amber-800 underline hover:text-amber-950 dark:text-amber-200 dark:hover:text-amber-100"
+                                        >Reschedule</Link
+                                    >.
+                                </span>
                             </div>
 
                             <!-- Actions Jadwal Dosen (Bisa diajukan baik pada Bimbingan maupun Uji) -->
                             <div
+                                v-if="
+                                    !isKoorprodi ||
+                                    selectedStudent.subtab === 'uji'
+                                "
                                 class="space-y-2 border-t border-slate-200/50 pt-2 dark:border-slate-700/50"
                             >
-                                <!-- Toggle Reschedule / Batalkan Reschedule -->
-                                <button
-                                    v-if="
-                                        rescheduledStudents[selectedStudent.id]
-                                    "
-                                    type="button"
-                                    @click="cancelReschedule(selectedStudent)"
-                                    class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 py-2 text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100 dark:border-rose-800/60 dark:bg-rose-950/40 dark:text-rose-300"
-                                >
-                                    <X class="h-3.5 w-3.5" />
-                                    <span>Batalkan Reschedule</span>
-                                </button>
-                                <button
-                                    v-else
-                                    type="button"
-                                    @click="
-                                        openModalReschedule(selectedStudent)
-                                    "
-                                    class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 py-2 text-xs font-bold text-amber-900 transition-colors hover:bg-amber-100 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300"
-                                >
-                                    <CalendarClock class="h-3.5 w-3.5" />
-                                    <span>Ajukan Reschedule Jadwal</span>
-                                </button>
+                                <!-- Toggle Reschedule / Batalkan Reschedule (Hanya Dosen yang minta reschedule, Koorprodi menyetujui di menu Reschedule) -->
+                                <template v-if="!isKoorprodi">
+                                    <button
+                                        v-if="
+                                            rescheduledStudents[
+                                                selectedStudent.id
+                                            ]
+                                        "
+                                        type="button"
+                                        @click="
+                                            cancelReschedule(selectedStudent)
+                                        "
+                                        class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 py-2 text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100 dark:border-rose-800/60 dark:bg-rose-950/40 dark:text-rose-300"
+                                    >
+                                        <X class="h-3.5 w-3.5" />
+                                        <span>Batalkan Reschedule</span>
+                                    </button>
+                                    <button
+                                        v-else
+                                        type="button"
+                                        @click="
+                                            openModalReschedule(selectedStudent)
+                                        "
+                                        class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 py-2 text-xs font-bold text-amber-900 transition-colors hover:bg-amber-100 dark:border-amber-800/60 dark:bg-amber-950/40 dark:text-amber-300"
+                                    >
+                                        <CalendarClock class="h-3.5 w-3.5" />
+                                        <span>Ajukan Reschedule Jadwal</span>
+                                    </button>
+                                </template>
 
                                 <!-- Konfirmasi Hadir hanya jika dosen penguji di subtab uji -->
                                 <button

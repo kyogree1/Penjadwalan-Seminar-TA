@@ -313,9 +313,13 @@ class PenjadwalanController extends Controller
         $capacity = max(0, $period->capacity - $used);
         $overflow = array_slice($candidates, $capacity);
         $candidates = array_slice($candidates, 0, $capacity);
-        $lecturers = User::where('role', 'dosen')->get(['id', 'name', 'prodi', 'jabatan'])->map(function ($lecturer) use ($bookings) {
+        $periodBookings = array_filter($bookings, fn ($b) => (int) $b['period_id'] === $period->id);
+        $lecturers = User::where('role', 'dosen')->get(['id', 'name', 'prodi', 'jabatan']);
+        $quota = (int) ceil(2 * (count($candidates) + $used) / max(1, $lecturers->count())) + 1;
+        $lecturers = $lecturers->map(function ($lecturer) use ($periodBookings, $quota) {
             $row = $lecturer->toArray();
-            $row['workload'] = count(array_filter($bookings, fn ($b) => in_array($lecturer->id, [$b['penguji_1_id'], $b['penguji_2_id']])));
+            $row['workload'] = count(array_filter($periodBookings, fn ($b) => in_array($lecturer->id, [$b['penguji_1_id'], $b['penguji_2_id']])));
+            $row['capacity'] = $quota;
 
             return $row;
         })->all();
@@ -326,7 +330,11 @@ class PenjadwalanController extends Controller
             $result['success'] = false;
         }
         $result['period_id'] = $period->id;
-        $result['limitations'] = ['KBK dosen, kuota dosen, dan kalender ketersediaan belum tersimpan; tidak diasumsikan sebagai data nyata. Konflik booking dan kapasitas periode tetap diperiksa.'];
+        $result['limitations'] = [
+            'Skor kecocokan penguji 1 (RF Compatibility Score) belum tersedia; semua pasangan memakai skor netral '.ScheduleOptimizer::NEUTRAL_SCORE.'.',
+            'Ketersediaan waktu dosen belum tersimpan; semua dosen dianggap tersedia di setiap slot.',
+            "Kuota menguji dihitung otomatis: maksimal {$quota} kali per dosen pada periode ini.",
+        ];
 
         return response()->json($result);
     }
@@ -645,7 +653,7 @@ class PenjadwalanController extends Controller
 
     private function getSchedulesForPeriod(int $periodId, string $tipe): array
     {
-        return Penjadwalan::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji1', 'penguji2'])
+        return Penjadwalan::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji1', 'penguji2', 'penilaian'])
             ->where('period_id', $periodId)
             ->where('tipe', $tipe)
             ->orderBy('tanggal')
@@ -654,6 +662,14 @@ class PenjadwalanController extends Controller
             ->map(function ($s) {
                 $judul = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('judul_ta') ?? $s->catatan;
                 $kbk = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('bidang_penelitian') ?? ($s->mode === 'offline' ? 'AI & Data Science' : $s->mode);
+
+                $nilaiHuruf = null;
+                if ($s->penilaian && $s->penilaian->isNotEmpty()) {
+                    $avgScore = $s->penilaian->avg('nilai');
+                    if ($avgScore !== null) {
+                        $nilaiHuruf = $avgScore >= 85 ? 'A' : ($avgScore >= 80 ? 'AB' : ($avgScore >= 75 ? 'B' : ($avgScore >= 70 ? 'BC' : ($avgScore >= 65 ? 'C' : ($avgScore >= 50 ? 'D' : 'E')))));
+                    }
+                }
 
                 return [
                     'id' => $s->id,
@@ -667,7 +683,7 @@ class PenjadwalanController extends Controller
                     'pembimbing2' => $s->pembimbing2?->name ?? '',
                     'penguji1' => $s->penguji1?->name ?? '-',
                     'penguji1_id' => $s->penguji_1_id,
-                    'penguji1MatchScore' => 95,
+                    'penguji1MatchScore' => $s->penguji_1_id ? 95 : 0,
                     'penguji2' => $s->penguji2?->name ?? '-',
                     'penguji2_id' => $s->penguji_2_id,
                     'hari' => $s->tanggal ? $this->getHariIndonesia((int) $s->tanggal->format('N')) : 'Senin',
@@ -676,7 +692,7 @@ class PenjadwalanController extends Controller
                     'mulai' => $s->jam_mulai ? substr($s->jam_mulai, 0, 5) : '09:00',
                     'selesai' => $s->jam_selesai ? substr($s->jam_selesai, 0, 5) : '10:30',
                     'ruangan' => $s->link_online ?? '-',
-                    'nilai' => null,
+                    'nilai' => $nilaiHuruf,
                 ];
             })
             ->all();

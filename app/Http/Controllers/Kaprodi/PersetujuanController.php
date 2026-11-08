@@ -35,13 +35,73 @@ class PersetujuanController extends Controller
 
         $judulList = $judulQuery->latest()->get();
 
-        $semproList = PendaftaranSempro::with('mahasiswa:id,name,username,nim_nip,angkatan')
+        $semproList = PendaftaranSempro::with([
+            'mahasiswa:id,name,username,nim_nip,angkatan',
+            'penjadwalan.penilaian',
+            'penjadwalan.pembimbing1:id,name',
+            'penjadwalan.pembimbing2:id,name',
+            'penjadwalan.penguji1:id,name',
+            'penjadwalan.penguji2:id,name',
+        ])
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($sempro) {
+                $jadwal = $sempro->penjadwalan;
+                $penilaian = $jadwal?->penilaian ?? collect();
+                $semproArr = $sempro->toArray();
+                $semproArr['penguji1'] = $jadwal?->penguji1?->name;
+                $semproArr['penguji2'] = $jadwal?->penguji2?->name;
+                $semproArr['pembimbing1'] = $jadwal?->pembimbing1?->name;
+                $semproArr['pembimbing2'] = $jadwal?->pembimbing2?->name;
+                $semproArr['tanggal'] = $jadwal?->tanggal ? $jadwal->tanggal->translatedFormat('l, d M Y') : null;
+                $semproArr['waktu'] = $jadwal ? (substr($jadwal->jam_mulai, 0, 5) . ' - ' . substr($jadwal->jam_selesai, 0, 5)) : null;
+                $semproArr['nilai'] = $penilaian->count() > 0 ? (string) round($penilaian->avg('nilai'), 2) : null;
 
-        $sidangList = PendaftaranSidang::with('mahasiswa:id,name,username,nim_nip,angkatan')
+                return $semproArr;
+            });
+
+        $sidangList = PendaftaranSidang::with([
+            'mahasiswa:id,name,username,nim_nip,angkatan',
+            'penjadwalan.penilaian',
+            'penjadwalan.pembimbing1:id,name',
+            'penjadwalan.pembimbing2:id,name',
+            'penjadwalan.penguji1:id,name',
+            'penjadwalan.penguji2:id,name',
+        ])
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($sidang) {
+                $jadwal = $sidang->penjadwalan;
+                $penilaian = $jadwal?->penilaian ?? collect();
+                $nilaiAvg = null;
+                $nilaiHuruf = null;
+
+                if ($penilaian->isNotEmpty()) {
+                    $nilaiAvg = round($penilaian->avg('nilai'), 2);
+                    $nilaiHuruf = match (true) {
+                        $nilaiAvg >= 85 => 'A',
+                        $nilaiAvg >= 80 => 'AB',
+                        $nilaiAvg >= 75 => 'B',
+                        $nilaiAvg >= 70 => 'BC',
+                        $nilaiAvg >= 65 => 'C',
+                        $nilaiAvg >= 50 => 'D',
+                        default => 'E',
+                    };
+                }
+
+                $sidangArr = $sidang->toArray();
+                $sidangArr['nilai'] = $nilaiHuruf ?? ($nilaiAvg ? (string) $nilaiAvg : null);
+                $sidangArr['nilai_angka'] = $nilaiAvg;
+                $sidangArr['jumlah_penilai'] = $penilaian->count();
+                $sidangArr['penguji1'] = $jadwal?->penguji1?->name;
+                $sidangArr['penguji2'] = $jadwal?->penguji2?->name;
+                $sidangArr['pembimbing1'] = $jadwal?->pembimbing1?->name;
+                $sidangArr['pembimbing2'] = $jadwal?->pembimbing2?->name;
+                $sidangArr['tanggal'] = $jadwal?->tanggal ? $jadwal->tanggal->translatedFormat('l, d M Y') : null;
+                $sidangArr['waktu'] = $jadwal ? (substr($jadwal->jam_mulai, 0, 5) . ' - ' . substr($jadwal->jam_selesai, 0, 5)) : null;
+
+                return $sidangArr;
+            });
 
         return Inertia::render('Kaprodi/Persetujuan', [
             'dbJudul' => $judulList,
