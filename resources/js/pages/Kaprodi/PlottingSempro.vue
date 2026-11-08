@@ -248,6 +248,8 @@ const openGaModal = () => {
     gaResult.value = null;
 };
 
+let gaTimer: any = null;
+
 const startGaOptimization = async () => {
     if (!activePeriodId.value) {
         showToast('Pilih periode terlebih dahulu.', 'error');
@@ -262,6 +264,23 @@ const startGaOptimization = async () => {
         '[00:01] Memulai inisialisasi Algoritma Genetika...',
         `[00:01] Mengirim parameter (Populasi: ${gaParams.value.popSize}, Maks. Gen: ${gaParams.value.maxGenerations}) ke server...`,
     ];
+
+    if (gaTimer) clearInterval(gaTimer);
+    gaTimer = setInterval(() => {
+        if (gaProgress.value < 90) {
+            gaProgress.value += Math.min(5, 90 - gaProgress.value);
+            gaCurrentGen.value = Math.min(
+                gaParams.value.maxGenerations,
+                Math.max(
+                    1,
+                    Math.floor(
+                        (gaProgress.value / 100) *
+                            gaParams.value.maxGenerations,
+                    ),
+                ),
+            );
+        }
+    }, 120);
 
     try {
         const cookie = document.cookie
@@ -307,6 +326,12 @@ const startGaOptimization = async () => {
             `[Jadwal] Berhasil memplot ${data.schedule?.length ?? 0} peserta seminar.`,
         );
 
+        if (!data.schedule || data.schedule.length === 0) {
+            gaLogs.value.push(
+                '[Informasi] 0 pendaftar dijadwalkan. Pastikan ada mahasiswa dengan status verifikasi_tendik & disetujui akademik pada periode ini.',
+            );
+        }
+
         if (data.unscheduled && data.unscheduled.length > 0) {
             gaLogs.value.push(
                 `[Perhatian] ${data.unscheduled.length} pendaftar belum terjadwal (keterbatasan slot/kapasitas).`,
@@ -324,6 +349,10 @@ const startGaOptimization = async () => {
         );
         showToast(err.message || 'Optimasi GA gagal dijalankan.', 'error');
     } finally {
+        if (gaTimer) {
+            clearInterval(gaTimer);
+            gaTimer = null;
+        }
         gaRunning.value = false;
     }
 };
@@ -1061,7 +1090,7 @@ const downloadJadwal = () => {
 
                     <!-- GA Progress Logs -->
                     <div
-                        v-if="gaRunning || gaCompleted"
+                        v-if="gaRunning || gaCompleted || gaLogs.length > 0"
                         class="space-y-3 rounded-2xl bg-slate-900 p-4 font-mono text-xs text-white dark:bg-black/50"
                     >
                         <div class="flex items-center justify-between">
@@ -1075,8 +1104,27 @@ const downloadJadwal = () => {
                                 Menghitung Generasi ke-{{ gaCurrentGen }} /
                                 {{ gaParams.maxGenerations }}...
                             </span>
-                            <span v-else class="font-bold text-emerald-400">
-                                ✓ Konvergen (Solusi Terbaik Ditemukan!)
+                            <span
+                                v-else-if="
+                                    gaCompleted &&
+                                    (gaResult?.schedule?.length ?? 0) > 0
+                                "
+                                class="font-bold text-emerald-400"
+                            >
+                                ✓ Konvergen ({{ gaResult?.schedule?.length }}
+                                Jadwal Berhasil Dibuat!)
+                            </span>
+                            <span
+                                v-else-if="
+                                    gaCompleted &&
+                                    (gaResult?.schedule?.length ?? 0) === 0
+                                "
+                                class="font-bold text-amber-400"
+                            >
+                                ⚠ Selesai: 0 Jadwal Terbentuk
+                            </span>
+                            <span v-else class="font-bold text-rose-400">
+                                ✕ Optimasi Gagal
                             </span>
                         </div>
 
@@ -1115,22 +1163,37 @@ const downloadJadwal = () => {
                     </button>
                     <div class="flex items-center gap-3">
                         <button
-                            v-if="!gaRunning && !gaCompleted"
+                            v-if="
+                                !gaRunning &&
+                                (!gaCompleted ||
+                                    (gaResult?.schedule?.length ?? 0) === 0)
+                            "
                             type="button"
                             @click="startGaOptimization"
                             class="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-blue-500"
                         >
                             <Cpu class="h-4 w-4 text-blue-200" />
-                            <span>Mulai Optimasi GA</span>
+                            <span>{{
+                                gaLogs.length > 0 && !gaCompleted
+                                    ? 'Coba Lagi'
+                                    : 'Mulai Optimasi GA'
+                            }}</span>
                         </button>
                         <button
-                            v-if="gaCompleted"
+                            v-if="
+                                gaCompleted &&
+                                (gaResult?.schedule?.length ?? 0) > 0
+                            "
                             type="button"
                             @click="applyGaResults"
                             class="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-emerald-500"
                         >
                             <CheckCircle2 class="h-4 w-4" />
-                            <span>Terapkan Hasil Rekomendasi</span>
+                            <span
+                                >Terapkan Hasil Rekomendasi ({{
+                                    gaResult?.schedule?.length
+                                }})</span
+                            >
                         </button>
                     </div>
                 </div>
