@@ -290,8 +290,11 @@ class PenjadwalanController extends Controller
             }
         }, 'exists:schedule_periods,id'], 'popSize' => ['nullable', 'integer', 'min:10', 'max:200'], 'maxGenerations' => ['nullable', 'integer', 'min:10', 'max:500'], 'crossoverRate' => ['nullable', 'numeric', 'between:0,1'], 'mutationRate' => ['nullable', 'numeric', 'between:0,1']]);
         $period = SchedulePeriod::findOrFail($data['period_id']);
-        if (! $period->is_open) {
-            throw ValidationException::withMessages(['period_id' => 'Periode ditutup.']);
+        if ($period->is_open) {
+            throw ValidationException::withMessages(['period_id' => 'Tutup pendaftaran terlebih dahulu.']);
+        }
+        if ($period->is_published) {
+            throw ValidationException::withMessages(['period_id' => 'Jadwal sudah dipublikasikan. Buka publish untuk regenerasi.']);
         }
         $class = $this->registrationClass($period->tipe);
         $candidates = [];
@@ -386,6 +389,9 @@ class PenjadwalanController extends Controller
             if ($id && Penjadwalan::where('period_id', $id)->exists() && $period->isDirty(['name', 'tipe', 'gelombang', 'capacity', 'start_date', 'end_date', 'slots'])) {
                 throw ValidationException::withMessages(['slots' => 'Definisi periode dengan jadwal tersimpan tidak dapat diubah.']);
             }
+            if ($period->is_open && Penjadwalan::where('period_id', $period->id)->whereIn('status', ['terpublikasi', 'selesai'])->exists()) {
+                throw ValidationException::withMessages(['is_open' => 'Periode sudah memiliki jadwal terpublikasi.']);
+            }
             if ($period->is_open && (! $period->exists || $period->isDirty('is_open')) && SchedulePeriod::where('tipe', $period->tipe)->where('is_open', true)->when($id, fn ($query) => $query->where('id', '!=', $id))->lockForUpdate()->exists()) {
                 throw ValidationException::withMessages(['is_open' => 'Hanya satu periode per jenis dapat dibuka. Tutup periode lain terlebih dahulu.']);
             }
@@ -401,6 +407,9 @@ class PenjadwalanController extends Controller
 
         DB::transaction(function () use ($period) {
             if (! $period->is_open) {
+                if (Penjadwalan::where('period_id', $period->id)->whereIn('status', ['terpublikasi', 'selesai'])->exists()) {
+                    throw ValidationException::withMessages(['is_open' => 'Periode sudah memiliki jadwal terpublikasi.']);
+                }
                 SchedulePeriod::where('tipe', $period->tipe)
                     ->where('id', '!=', $period->id)
                     ->update(['is_open' => false]);
@@ -546,8 +555,8 @@ class PenjadwalanController extends Controller
             // Serialize publication globally through lecturer locks, then period/registration locks.
             User::where('role', 'dosen')->orderBy('id')->lockForUpdate()->get(['id']);
             $period = SchedulePeriod::lockForUpdate()->findOrFail($periodId);
-            if (! $period->is_open) {
-                throw ValidationException::withMessages(['schedules' => 'Periode ditutup.']);
+            if ($period->is_open) {
+                throw ValidationException::withMessages(['schedules' => 'Tutup pendaftaran sebelum menyimpan jadwal.']);
             }
             $bookings = $this->bookings();
             $seen = [];

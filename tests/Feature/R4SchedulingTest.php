@@ -27,7 +27,7 @@ class R4SchedulingTest extends TestCase
         $class = $type === 'sempro' ? PendaftaranSempro::class : PendaftaranSidang::class;
         $reg = $class::create(['mahasiswa_id' => $student->id, 'judul_ta' => 'AI', 'bentuk_ta' => 'Skripsi', 'gelombang' => 1, 'status' => 'verifikasi_tendik', 'status_akademik' => 'disetujui']);
         $slot = ['tanggal' => '2026-11-01', 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00'];
-        $period = SchedulePeriod::create(['name' => 'Wave one', 'tipe' => $type, 'gelombang' => 1, 'capacity' => 10, 'start_date' => '2026-11-01', 'end_date' => '2026-11-02', 'slots' => [$slot], 'is_open' => true]);
+        $period = SchedulePeriod::create(['name' => 'Wave one', 'tipe' => $type, 'gelombang' => 1, 'capacity' => 10, 'start_date' => '2026-11-01', 'end_date' => '2026-11-02', 'slots' => [$slot], 'is_open' => false]);
         $row = array_merge($slot, ['tipe' => $type, 'pendaftaran_id' => $reg->id, 'mahasiswa_id' => $student->id, 'penguji_1_id' => $a->id, 'penguji_2_id' => $b->id]);
         $this->actingAs(User::factory()->create(['role' => 'kaprodi']));
 
@@ -199,15 +199,21 @@ class R4SchedulingTest extends TestCase
         $this->postJson('/kaprodi/penjadwalan/generate-ga', $payload)->assertUnprocessable()->assertJsonValidationErrors([$field])->assertJsonMissingPath('schedule');
         $this->assertDatabaseCount('penjadwalan', 0);
         $this->assertSame('verifikasi_tendik', $reg->fresh()->status);
-        $this->assertTrue($period->fresh()->is_open);
+        $this->assertFalse($period->fresh()->is_open);
     }
 
-    public function test_ga_requires_an_existing_open_period(): void
+    public function test_ga_requires_an_existing_closed_period_and_rejects_open_period(): void
     {
         [$period, $reg] = $this->fixture();
         $this->postJson('/kaprodi/penjadwalan/generate-ga', [])->assertUnprocessable()->assertJsonValidationErrors('period_id');
-        $period->update(['is_open' => false]);
-        $this->postJson('/kaprodi/penjadwalan/generate-ga', ['period_id' => $period->id])->assertUnprocessable()->assertJsonValidationErrors('period_id');
+        $period->update(['is_open' => true]);
+        $this->postJson('/kaprodi/penjadwalan/generate-ga', ['period_id' => $period->id])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['period_id' => 'Tutup pendaftaran terlebih dahulu.']);
+        $period->update(['is_open' => false, 'is_published' => true]);
+        $this->postJson('/kaprodi/penjadwalan/generate-ga', ['period_id' => $period->id])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['period_id' => 'Jadwal sudah dipublikasikan. Buka publish untuk regenerasi.']);
         $this->assertDatabaseCount('penjadwalan', 0);
         $this->assertSame('verifikasi_tendik', $reg->fresh()->status);
     }
@@ -238,24 +244,22 @@ class R4SchedulingTest extends TestCase
         }
         $this->assertSame($period->slots, $period->fresh()->slots);
         $this->assertSame('terjadwal', $reg->fresh()->status);
+        $period->update(['is_published' => true]);
         $this->postJson('/kaprodi/penjadwalan/generate-ga', ['period_id' => $period->id])->assertUnprocessable()->assertJsonValidationErrors('period_id');
-        $this->postJson('/kaprodi/penjadwalan/simpan', ['period_id' => $period->id, 'schedules' => [$row]])->assertUnprocessable()->assertJsonValidationErrors('schedules');
+        $period->update(['is_published' => false, 'is_open' => true]);
+        $this->postJson('/kaprodi/penjadwalan/simpan', ['period_id' => $period->id, 'schedules' => [$row]])->assertUnprocessable()->assertJsonValidationErrors(['schedules' => 'Tutup pendaftaran sebelum menyimpan jadwal.']);
     }
 
     public function test_reopening_published_period_rejects_another_open_wave_of_same_type(): void
     {
         [$period, , $row] = $this->fixture();
         $this->post('/kaprodi/penjadwalan/simpan', ['period_id' => $period->id, 'schedules' => [$row]])->assertSessionHas('success');
-        $period->update(['is_open' => false]);
         $other = $period->replicate();
         $other->fill(['name' => 'Wave two', 'gelombang' => 2, 'is_open' => true])->save();
         $data = array_merge($period->only(['name', 'tipe', 'gelombang', 'capacity', 'slots']), ['start_date' => '2026-11-01', 'end_date' => '2026-11-02', 'is_open' => true]);
-        $this->patch('/kaprodi/penjadwalan/periods/'.$period->id, $data)->assertSessionHasErrors('is_open');
+        $this->patch('/kaprodi/penjadwalan/periods/'.$period->id, $data)->assertSessionHasErrors(['is_open' => 'Periode sudah memiliki jadwal terpublikasi.']);
         $this->assertFalse($period->fresh()->is_open);
         $this->assertTrue($other->fresh()->is_open);
-        $other->update(['is_open' => false]);
-        $this->patch('/kaprodi/penjadwalan/periods/'.$period->id, $data)->assertSessionHasNoErrors()->assertSessionHas('success');
-        $this->assertTrue($period->fresh()->is_open);
     }
 
     public function test_published_period_rejects_structural_edits_even_when_closing(): void
