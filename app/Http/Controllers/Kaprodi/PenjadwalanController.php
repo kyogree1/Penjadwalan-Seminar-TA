@@ -10,6 +10,7 @@ use App\Models\Penjadwalan;
 use App\Models\SchedulePeriod;
 use App\Models\User;
 use App\Services\GeneticAlgorithm\ScheduleOptimizer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -399,7 +400,7 @@ class PenjadwalanController extends Controller
         $period = SchedulePeriod::findOrFail($id);
 
         DB::transaction(function () use ($period) {
-            if (!$period->is_open) {
+            if (! $period->is_open) {
                 SchedulePeriod::where('tipe', $period->tipe)
                     ->where('id', '!=', $period->id)
                     ->update(['is_open' => false]);
@@ -450,8 +451,8 @@ class PenjadwalanController extends Controller
 
             $startStr = $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_mulai;
             $endStr = $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_selesai;
-            $start = \Carbon\Carbon::parse($startStr, 'Asia/Makassar')->setTimezone('UTC')->format('Ymd\THis\Z');
-            $end = \Carbon\Carbon::parse($endStr, 'Asia/Makassar')->setTimezone('UTC')->format('Ymd\THis\Z');
+            $start = Carbon::parse($startStr, 'Asia/Makassar')->setTimezone('UTC')->format('Ymd\THis\Z');
+            $end = Carbon::parse($endStr, 'Asia/Makassar')->setTimezone('UTC')->format('Ymd\THis\Z');
 
             $summary = "{$tipeName}: {$studentName} ({$nim})";
             $description = "Jadwal {$tipeName}\\n".
@@ -479,8 +480,8 @@ class PenjadwalanController extends Controller
         }
 
         if (empty($events)) {
-            $start = \Carbon\Carbon::parse($period->start_date)->setTimezone('UTC')->format('Ymd\THis\Z');
-            $end = \Carbon\Carbon::parse($period->end_date)->setTimezone('UTC')->format('Ymd\THis\Z');
+            $start = Carbon::parse($period->start_date)->setTimezone('UTC')->format('Ymd\THis\Z');
+            $end = Carbon::parse($period->end_date)->setTimezone('UTC')->format('Ymd\THis\Z');
             $summary = "Periode {$tipeName} Gelombang {$period->gelombang} Informatika ITK";
             $events[] = implode("\r\n", [
                 'BEGIN:VEVENT',
@@ -630,14 +631,14 @@ class PenjadwalanController extends Controller
                 }
             }
             if (! empty($data['mulai'])) {
-                $schedule->jam_mulai = strlen($data['mulai']) === 5 ? $data['mulai'] . ':00' : $data['mulai'];
+                $schedule->jam_mulai = strlen($data['mulai']) === 5 ? $data['mulai'].':00' : $data['mulai'];
             }
             if (! empty($data['selesai'])) {
-                $schedule->jam_selesai = strlen($data['selesai']) === 5 ? $data['selesai'] . ':00' : $data['selesai'];
+                $schedule->jam_selesai = strlen($data['selesai']) === 5 ? $data['selesai'].':00' : $data['selesai'];
             }
             if (! empty($data['tanggal'])) {
                 try {
-                    $schedule->tanggal = \Carbon\Carbon::parse($data['tanggal'])->format('Y-m-d');
+                    $schedule->tanggal = Carbon::parse($data['tanggal'])->format('Y-m-d');
                 } catch (\Exception $e) {
                     // keep existing date
                 }
@@ -704,7 +705,7 @@ class PenjadwalanController extends Controller
             return '2023';
         }
         if (preg_match('/^11(20|21|22|23|24)/', $nim, $matches)) {
-            return '20' . $matches[1];
+            return '20'.$matches[1];
         }
 
         return '2023';

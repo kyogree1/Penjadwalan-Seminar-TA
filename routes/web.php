@@ -12,14 +12,14 @@ use App\Http\Controllers\Kaprodi\MonitoringController as KaprodiMonitoringContro
 use App\Http\Controllers\Kaprodi\PenjadwalanController as KaprodiPenjadwalanController;
 use App\Http\Controllers\Kaprodi\PersetujuanController as KaprodiPersetujuanController;
 use App\Http\Controllers\Kaprodi\ScheduleExportController;
-use App\Http\Controllers\Mahasiswa\BimbinganController;
 use App\Http\Controllers\KatalogController;
-use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Mahasiswa\BimbinganController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJadwalController;
 use App\Http\Controllers\Mahasiswa\PendaftaranJudulController;
 use App\Http\Controllers\Mahasiswa\PendaftaranSemproController;
 use App\Http\Controllers\Mahasiswa\PendaftaranSidangController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Tendik\ArsipController as TendikArsipController;

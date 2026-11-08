@@ -8,8 +8,10 @@ use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use App\Models\PengajuanJudul;
 use App\Models\Penjadwalan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -28,13 +30,13 @@ class DashboardController extends Controller
         $sidang = PendaftaranSidang::where('mahasiswa_id', $user->id)->latest()->first();
 
         // 1b. Periode Aktif Pendaftaran
-        $activePeriods = \Illuminate\Support\Facades\DB::table('schedule_periods')
+        $activePeriods = DB::table('schedule_periods')
             ->where('is_open', true)
             ->get()
             ->map(function ($period) {
                 $isSempro = $period->tipe === 'sempro';
-                $start = \Carbon\Carbon::parse($period->start_date)->translatedFormat('d M');
-                $end = \Carbon\Carbon::parse($period->end_date)->translatedFormat('d M Y');
+                $start = Carbon::parse($period->start_date)->translatedFormat('d M');
+                $end = Carbon::parse($period->end_date)->translatedFormat('d M Y');
 
                 return [
                     'id' => (string) $period->id,

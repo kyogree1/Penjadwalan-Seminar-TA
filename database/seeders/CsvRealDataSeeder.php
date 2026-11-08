@@ -2,19 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Models\PengajuanJudul;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
+use App\Models\PengajuanJudul;
 use App\Models\Penjadwalan;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class CsvRealDataSeeder extends Seeder
 {
     private array $lecturerCache = [];
+
     private array $studentCache = [];
+
     private array $roomCache = [];
 
     public function run(): void
@@ -71,7 +73,9 @@ class CsvRealDataSeeder extends Seeder
     private function seedAkmalData(): void
     {
         $akmal = $this->studentCache['11231006'] ?? User::where('username', '11231006')->first();
-        if (!$akmal) return;
+        if (! $akmal) {
+            return;
+        }
 
         // Dosen pembimbing Tejo & Penguji
         $p1 = User::where('username', '198504122010121003')->first();
@@ -218,7 +222,7 @@ class CsvRealDataSeeder extends Seeder
         $startPendaftaran = now()->startOfMonth()->addDays(2)->toDateString(); // Tanggal 3
         $endPendaftaran = now()->startOfMonth()->addDays(9)->toDateString();   // Tanggal 10
 
-        \Illuminate\Support\Facades\DB::table('schedule_periods')->updateOrInsert(
+        DB::table('schedule_periods')->updateOrInsert(
             ['name' => 'Seminar Proposal TA Gelombang 1'],
             [
                 'tipe' => 'sempro',
@@ -233,7 +237,7 @@ class CsvRealDataSeeder extends Seeder
             ]
         );
 
-        \Illuminate\Support\Facades\DB::table('schedule_periods')->updateOrInsert(
+        DB::table('schedule_periods')->updateOrInsert(
             ['name' => 'Sidang Tugas Akhir Gelombang 1'],
             [
                 'tipe' => 'sidang',
@@ -252,20 +256,25 @@ class CsvRealDataSeeder extends Seeder
     private function seedFromCsv(string $path, string $type): void
     {
         $handle = fopen($path, 'r');
-        if ($handle === false) return;
+        if ($handle === false) {
+            return;
+        }
 
         $headers = fgetcsv($handle);
         if ($headers === false) {
             fclose($handle);
+
             return;
         }
 
         // Clean headers
-        $cleanHeaders = array_map(fn($h) => trim($h), $headers);
+        $cleanHeaders = array_map(fn ($h) => trim($h), $headers);
         $headerMap = array_flip($cleanHeaders);
 
         while (($row = fgetcsv($handle)) !== false) {
-            if (empty(array_filter($row))) continue;
+            if (empty(array_filter($row))) {
+                continue;
+            }
 
             $nim = trim($row[$headerMap['NIM'] ?? 3] ?? '');
             $namaMhs = trim($row[$headerMap['Nama Mahasiswa'] ?? 4] ?? '');
@@ -279,7 +288,9 @@ class CsvRealDataSeeder extends Seeder
             $waktuStr = trim($row[$headerMap['Waktu'] ?? 13] ?? '');
             $tempatStr = trim($row[$headerMap['Tempat'] ?? 14] ?? '');
 
-            if (!$nim || !$namaMhs) continue;
+            if (! $nim || ! $namaMhs) {
+                continue;
+            }
 
             // 1. Get or create Mahasiswa User
             $mhs = $this->getOrCreateMahasiswa($nim, $namaMhs);
@@ -358,7 +369,7 @@ class CsvRealDataSeeder extends Seeder
                     'jam_mulai' => $jamMulai,
                     'jam_selesai' => $jamSelesai,
                     'mode' => 'online',
-                    'link_online' => 'https://meet.google.com/ta-' . strtolower(substr(md5($mhs->username . $type), 0, 8)),
+                    'link_online' => 'https://meet.google.com/ta-'.strtolower(substr(md5($mhs->username.$type), 0, 8)),
                     'gelombang' => 1,
                     'status' => 'terpublikasi',
                     'catatan' => "Jadwal resmi {$type} hasil sinkronisasi data akademik.",
@@ -375,7 +386,7 @@ class CsvRealDataSeeder extends Seeder
             return $this->studentCache[$nim];
         }
 
-        $email = strtolower(preg_replace('/[^a-zA-Z0-9]/', '.', $name)) . '.' . substr($nim, -4) . '@student.itk.ac.id';
+        $email = strtolower(preg_replace('/[^a-zA-Z0-9]/', '.', $name)).'.'.substr($nim, -4).'@student.itk.ac.id';
 
         $user = User::updateOrCreate(
             ['username' => $nim],
@@ -391,6 +402,7 @@ class CsvRealDataSeeder extends Seeder
         );
 
         $this->studentCache[$nim] = $user;
+
         return $user;
     }
 
@@ -405,13 +417,14 @@ class CsvRealDataSeeder extends Seeder
         $existing = User::where('role', 'dosen')->where('name', $cleanName)->first();
         if ($existing) {
             $this->lecturerCache[$cleanName] = $existing;
+
             return $existing;
         }
 
         // Generate synthetic NIP based on crc32
-        $nipCode = '198' . sprintf('%015d', abs(crc32($cleanName)));
+        $nipCode = '198'.sprintf('%015d', abs(crc32($cleanName)));
         $nip = substr($nipCode, 0, 18);
-        $email = strtolower(explode(' ', trim(preg_replace('/[^a-zA-Z\s]/', '', $cleanName)))[0] ?? 'dosen') . '.' . substr($nip, -4) . '@lecturer.itk.ac.id';
+        $email = strtolower(explode(' ', trim(preg_replace('/[^a-zA-Z\s]/', '', $cleanName)))[0] ?? 'dosen').'.'.substr($nip, -4).'@lecturer.itk.ac.id';
 
         $user = User::create([
             'name' => $cleanName,
@@ -425,6 +438,7 @@ class CsvRealDataSeeder extends Seeder
         ]);
 
         $this->lecturerCache[$cleanName] = $user;
+
         return $user;
     }
 
@@ -457,7 +471,7 @@ class CsvRealDataSeeder extends Seeder
 
             // Fix typo tahun jika ada seperti 206 -> 2026
             if (strlen($year) === 3) {
-                $year = '20' . substr($year, 1);
+                $year = '20'.substr($year, 1);
             }
 
             // Normalisasi agar jadwal tampil di bulan aktif saat ini (Oktober 2026) dan bulan depan (November 2026)
@@ -471,7 +485,8 @@ class CsvRealDataSeeder extends Seeder
             if ($mInt < $currentMonth) {
                 // Sebagian kita petakan ke bulan Oktober (minggu ke-2 sampai ke-4) dan November
                 $targetMonth = ($mInt % 2 === 0) ? $currentMonth : ($currentMonth + 1);
-                $targetDay = min(max((int)$day, 12), 28); // Tanggal 12-28 agar setelah periode pendaftaran tanggal 3-10
+                $targetDay = min(max((int) $day, 12), 28); // Tanggal 12-28 agar setelah periode pendaftaran tanggal 3-10
+
                 return sprintf('%04d-%02d-%02d', $currentYear, $targetMonth, $targetDay);
             }
 

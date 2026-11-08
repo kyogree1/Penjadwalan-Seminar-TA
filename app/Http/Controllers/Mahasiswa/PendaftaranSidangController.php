@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Mahasiswa;
 use App\Http\Controllers\Controller;
 use App\Models\PendaftaranSidang;
 use App\Models\PengajuanJudul;
+use App\Models\Penilaian;
+use App\Models\Penjadwalan;
 use App\Models\SchedulePeriod;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -43,7 +46,7 @@ class PendaftaranSidangController extends Controller
             ];
         }
 
-        $jadwal = \App\Models\Penjadwalan::with(['penguji1:id,name', 'penguji2:id,name'])
+        $jadwal = Penjadwalan::with(['penguji1:id,name', 'penguji2:id,name'])
             ->where('tipe', 'sidang')
             ->where('mahasiswa_id', $user->id)
             ->where('status', 'terpublikasi')
@@ -67,12 +70,12 @@ class PendaftaranSidangController extends Controller
 
         $pelaksanaan = null;
         if ($jadwal) {
-            $penilaianList = \App\Models\Penilaian::where('penjadwalan_id', $jadwal->id)->get();
+            $penilaianList = Penilaian::where('penjadwalan_id', $jadwal->id)->get();
             $rataRata = $penilaianList->isNotEmpty() ? round($penilaianList->avg('nilai'), 2) : null;
 
             $pelaksanaan = [
-                'tanggal' => $jadwal->tanggal ? \Carbon\Carbon::parse($jadwal->tanggal)->translatedFormat('d M Y') : null,
-                'jam' => $jadwal->jam_mulai && $jadwal->jam_selesai ? substr($jadwal->jam_mulai, 0, 5) . ' - ' . substr($jadwal->jam_selesai, 0, 5) : null,
+                'tanggal' => $jadwal->tanggal ? Carbon::parse($jadwal->tanggal)->translatedFormat('d M Y') : null,
+                'jam' => $jadwal->jam_mulai && $jadwal->jam_selesai ? substr($jadwal->jam_mulai, 0, 5).' - '.substr($jadwal->jam_selesai, 0, 5) : null,
                 'mode' => ucfirst($jadwal->mode ?? 'offline'),
                 'status' => $jadwal->status,
                 'nilai_akhir' => $rataRata,

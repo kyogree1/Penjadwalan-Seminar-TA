@@ -30,7 +30,7 @@ class MahasiswaController extends Controller
                 // Fallback angkatan calculation if empty
                 $angkatan = $user->angkatan;
                 if (! $angkatan && strlen($cleanNim) >= 4) {
-                    $angkatan = '20' . substr($cleanNim, 2, 2);
+                    $angkatan = '20'.substr($cleanNim, 2, 2);
                 }
 
                 return [
@@ -135,7 +135,7 @@ class MahasiswaController extends Controller
             'password' => bcrypt('password'),
         ]);
 
-        return redirect()->back()->with('success', 'Mahasiswa baru "' . $validated['nama'] . '" berhasil ditambahkan!');
+        return redirect()->back()->with('success', 'Mahasiswa baru "'.$validated['nama'].'" berhasil ditambahkan!');
     }
 
     public function update(Request $request, $id)
@@ -165,7 +165,7 @@ class MahasiswaController extends Controller
             'status_ta' => $validated['statusTa'] ?? 'Aktif TA',
         ]);
 
-        return redirect()->back()->with('success', 'Data mahasiswa "' . $validated['nama'] . '" berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Data mahasiswa "'.$validated['nama'].'" berhasil diperbarui!');
     }
 
     public function destroy($id)
@@ -174,6 +174,6 @@ class MahasiswaController extends Controller
         $studentName = $student->name;
         $student->delete();
 
-        return redirect()->back()->with('success', 'Data mahasiswa "' . $studentName . '" berhasil dihapus.');
+        return redirect()->back()->with('success', 'Data mahasiswa "'.$studentName.'" berhasil dihapus.');
     }
 }

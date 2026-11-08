@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\Penilaian;
-use App\Models\Penjadwalan;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use App\Models\PengajuanJudul;
+use App\Models\Penilaian;
+use App\Models\Penjadwalan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;

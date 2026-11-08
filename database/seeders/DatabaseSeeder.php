@@ -172,7 +172,7 @@ class DatabaseSeeder extends Seeder
                     'jurusan' => $mhs['jurusan'],
                     'prodi' => $mhs['prodi'],
                     'status_ta' => $mhs['status_ta'],
-                    'jabatan' => 'Mahasiswa ' . $mhs['prodi'],
+                    'jabatan' => 'Mahasiswa '.$mhs['prodi'],
                     'password' => bcrypt('password'),
                 ]
             );
@@ -687,12 +687,12 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            \App\Models\Penilaian::updateOrCreate(
+            Penilaian::updateOrCreate(
                 ['penjadwalan_id' => $jadwalIqbal->id, 'dosen_id' => $dosenFaisal->id],
                 ['nilai' => 88.5, 'catatan' => 'Pemaparan dan penguasaan materi sangat baik.']
             );
 
-            \App\Models\Penilaian::updateOrCreate(
+            Penilaian::updateOrCreate(
                 ['penjadwalan_id' => $jadwalIqbal->id, 'dosen_id' => $dosenDian->id],
                 ['nilai' => 86.0, 'catatan' => 'Dokumentasi rapi dan metodologi tepat.']
             );
@@ -707,7 +707,7 @@ class DatabaseSeeder extends Seeder
         ])->get()->keyBy('email');
 
         if (isset($demoUsers['akmal.falah@student.itk.ac.id'])) {
-            \App\Models\Notification::updateOrCreate(
+            Notification::updateOrCreate(
                 ['user_id' => $demoUsers['akmal.falah@student.itk.ac.id']->id, 'title' => 'Verifikasi Berkas Sempro Diterima'],
                 [
                     'message' => 'Tendik telah memverifikasi kelengkapan berkas pendaftaran Seminar Proposal TA Anda.',
@@ -716,7 +716,7 @@ class DatabaseSeeder extends Seeder
                     'read_at' => null,
                 ]
             );
-            \App\Models\Notification::updateOrCreate(
+            Notification::updateOrCreate(
                 ['user_id' => $demoUsers['akmal.falah@student.itk.ac.id']->id, 'title' => 'Validasi Logbook Bimbingan'],
                 [
                     'message' => 'Dosen Pembimbing menyetujui catatan bimbingan Bab 4 Anda.',
@@ -728,7 +728,7 @@ class DatabaseSeeder extends Seeder
         }
 
         if (isset($demoUsers['tejo.wahyu@lecturer.itk.ac.id'])) {
-            \App\Models\Notification::updateOrCreate(
+            Notification::updateOrCreate(
                 ['user_id' => $demoUsers['tejo.wahyu@lecturer.itk.ac.id']->id, 'title' => 'Jadwal Ujian Menguji Ditetapkan'],
                 [
                     'message' => 'Anda ditugaskan sebagai Penguji pada Seminar Proposal mahasiswa Akmal Falah Maulana.',
@@ -740,7 +740,7 @@ class DatabaseSeeder extends Seeder
         }
 
         if (isset($demoUsers['kaprodi.if@itk.ac.id'])) {
-            \App\Models\Notification::updateOrCreate(
+            Notification::updateOrCreate(
                 ['user_id' => $demoUsers['kaprodi.if@itk.ac.id']->id, 'title' => 'Pengajuan Judul TA Baru'],
                 [
                     'message' => 'Terdapat pengajuan judul baru yang menunggu persetujuan Kaprodi.',
@@ -752,7 +752,7 @@ class DatabaseSeeder extends Seeder
         }
 
         if (isset($demoUsers['tendik.fsti@itk.ac.id'])) {
-            \App\Models\Notification::updateOrCreate(
+            Notification::updateOrCreate(
                 ['user_id' => $demoUsers['tendik.fsti@itk.ac.id']->id, 'title' => 'Berkas Pendaftaran Sempro Baru'],
                 [
                     'message' => 'Mahasiswa baru saja mengunggah berkas pendaftaran Seminar Proposal untuk diverifikasi.',

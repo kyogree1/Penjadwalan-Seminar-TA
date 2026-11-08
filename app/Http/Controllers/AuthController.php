@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -36,7 +37,7 @@ class AuthController extends Controller
                 ->get(['id', 'mahasiswa_id', 'judul_ta'])->keyBy('id');
         }
 
-        $activePeriods = \Illuminate\Support\Facades\DB::table('schedule_periods')
+        $activePeriods = DB::table('schedule_periods')
             ->where('is_open', true)
             ->get()
             ->map(function ($p) {

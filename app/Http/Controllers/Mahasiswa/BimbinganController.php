@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mahasiswa;
 use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
 use App\Models\PengajuanJudul;
+use App\Models\Penjadwalan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,7 +52,7 @@ class BimbinganController extends Controller
             ];
         }
 
-        $jadwal = \App\Models\Penjadwalan::with(['penguji1:id,name', 'penguji2:id,name'])
+        $jadwal = Penjadwalan::with(['penguji1:id,name', 'penguji2:id,name'])
             ->where('mahasiswa_id', $user->id)
             ->latest('id')
             ->first();

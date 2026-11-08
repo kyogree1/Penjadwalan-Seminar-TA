@@ -48,9 +48,9 @@ class KatalogController extends Controller
                 'nip_pembimbing_2' => $p2Nip,
                 'abstrak_id' => "Tugas akhir ini meneliti tentang {$sidang->judul_ta}. Hasil evaluasi dan implementasi menunjukkan kontribusi positif dalam bidang {$bidang}.",
                 'abstrak_en' => "This final project investigates {$sidang->judul_ta}. The evaluation and implementation show positive contributions in the field of {$bidang}.",
-                'tags' => ['#' . str_replace([' ', '/', '&', '-'], '', $bidang), '#Informatika', '#ITK'],
+                'tags' => ['#'.str_replace([' ', '/', '&', '-'], '', $bidang), '#Informatika', '#ITK'],
                 'tanggal_sidang' => $sidang->updated_at ? $sidang->updated_at->translatedFormat('d F Y') : '-',
-                'doi' => "https://doi.org/10.14710/sipta.{$year}." . (100 + $sidang->id),
+                'doi' => "https://doi.org/10.14710/sipta.{$year}.".(100 + $sidang->id),
             ];
         })->values()->all();
 

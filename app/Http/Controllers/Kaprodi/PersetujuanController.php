@@ -54,7 +54,7 @@ class PersetujuanController extends Controller
                 $semproArr['pembimbing1'] = $jadwal?->pembimbing1?->name;
                 $semproArr['pembimbing2'] = $jadwal?->pembimbing2?->name;
                 $semproArr['tanggal'] = $jadwal?->tanggal ? $jadwal->tanggal->translatedFormat('l, d M Y') : null;
-                $semproArr['waktu'] = $jadwal ? (substr($jadwal->jam_mulai, 0, 5) . ' - ' . substr($jadwal->jam_selesai, 0, 5)) : null;
+                $semproArr['waktu'] = $jadwal ? (substr($jadwal->jam_mulai, 0, 5).' - '.substr($jadwal->jam_selesai, 0, 5)) : null;
                 $semproArr['nilai'] = $penilaian->count() > 0 ? (string) round($penilaian->avg('nilai'), 2) : null;
 
                 return $semproArr;
@@ -98,7 +98,7 @@ class PersetujuanController extends Controller
                 $sidangArr['pembimbing1'] = $jadwal?->pembimbing1?->name;
                 $sidangArr['pembimbing2'] = $jadwal?->pembimbing2?->name;
                 $sidangArr['tanggal'] = $jadwal?->tanggal ? $jadwal->tanggal->translatedFormat('l, d M Y') : null;
-                $sidangArr['waktu'] = $jadwal ? (substr($jadwal->jam_mulai, 0, 5) . ' - ' . substr($jadwal->jam_selesai, 0, 5)) : null;
+                $sidangArr['waktu'] = $jadwal ? (substr($jadwal->jam_mulai, 0, 5).' - '.substr($jadwal->jam_selesai, 0, 5)) : null;
 
                 return $sidangArr;
             });

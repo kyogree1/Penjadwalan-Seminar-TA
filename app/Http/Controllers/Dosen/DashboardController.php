@@ -52,7 +52,7 @@ class DashboardController extends Controller
                 'judul' => $j->catatan ?? 'Judul Tugas Akhir',
                 'peran' => $peran,
                 'tanggal' => $j->tanggal ? $j->tanggal->translatedFormat('l, d M Y') : '-',
-                'jam' => substr($j->jam_mulai, 0, 5) . ' - ' . substr($j->jam_selesai, 0, 5) . ' WITA',
+                'jam' => substr($j->jam_mulai, 0, 5).' - '.substr($j->jam_selesai, 0, 5).' WITA',
                 'ruang' => $j->mode === 'online' ? ($j->link_online ?? 'Online Zoom/Meet') : 'Ruang Ujian IF',
                 'href' => '/dosen/penilaian',
             ];

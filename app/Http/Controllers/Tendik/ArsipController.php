@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Tendik;
 use App\Http\Controllers\Controller;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
-use App\Models\Penjadwalan;
 use App\Models\SchedulePeriod;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -128,7 +127,7 @@ class ArsipController extends Controller
                 ]);
             }
             fclose($handle);
-        }, 'arsip-kelulusan-ta-' . date('Ymd-His') . '.csv', [
+        }, 'arsip-kelulusan-ta-'.date('Ymd-His').'.csv', [
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
     }

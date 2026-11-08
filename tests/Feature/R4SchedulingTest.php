@@ -158,7 +158,7 @@ class R4SchedulingTest extends TestCase
                 $replacement = User::factory()->create(['role' => 'dosen']);
             }
             $this->assertSame(1, Penjadwalan::where('period_id', $period->id)->count());
-            $this->get('/kaprodi/penjadwalan/plotting-' . ($type === 'sempro' ? 'sempro' : 'ta') . '?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('schedules', 1)->where('schedules.0.penguji1_id', $expected['penguji_1_id'])->where('schedules.0.penguji2_id', $expected['penguji_2_id']));
+            $this->get('/kaprodi/penjadwalan/plotting-'.($type === 'sempro' ? 'sempro' : 'ta').'?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('schedules', 1)->where('schedules.0.penguji1_id', $expected['penguji_1_id'])->where('schedules.0.penguji2_id', $expected['penguji_2_id']));
         }
     }
 
@@ -174,7 +174,7 @@ class R4SchedulingTest extends TestCase
             $this->assertDatabaseHas('penjadwalan', array_merge($schedule->only(['id', 'period_id', 'pendaftaran_id', 'mahasiswa_id', 'tipe', 'penguji_1_id', 'penguji_2_id', 'pembimbing_1_id', 'pembimbing_2_id', 'status']), $slot, ['tanggal' => $slot['tanggal'].' 00:00:00']));
             $this->assertSame('terjadwal', $reg->fresh()->status);
             $this->assertSame(1, Penjadwalan::where('period_id', $period->id)->count());
-            $this->get('/kaprodi/penjadwalan/plotting-' . ($type === 'sempro' ? 'sempro' : 'ta') . '?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('schedules', 1)->where('schedules.0.mulai', substr($slot['jam_mulai'], 0, 5))->where('schedules.0.selesai', substr($slot['jam_selesai'], 0, 5)));
+            $this->get('/kaprodi/penjadwalan/plotting-'.($type === 'sempro' ? 'sempro' : 'ta').'?period_id='.$period->id)->assertInertia(fn ($page) => $page->has('schedules', 1)->where('schedules.0.mulai', substr($slot['jam_mulai'], 0, 5))->where('schedules.0.selesai', substr($slot['jam_selesai'], 0, 5)));
         }
     }
 

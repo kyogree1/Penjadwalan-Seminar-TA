@@ -9,7 +9,6 @@ use App\Models\PendaftaranSidang;
 use App\Models\PengajuanJudul;
 use App\Models\Penjadwalan;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -57,12 +56,12 @@ class MonitoringController extends Controller
             ->orderBy('name')
             ->get()
             ->map(fn (User $d) => [
-                'id'              => $d->id,
-                'name'            => $d->name,
-                'nip'             => $d->nim_nip,
+                'id' => $d->id,
+                'name' => $d->name,
+                'nip' => $d->nim_nip,
                 'total_bimbingan' => (int) $d->total_bimbingan,
-                'total_sesi'      => (int) $d->total_sesi,
-                'sesi_disetujui'  => (int) $d->sesi_disetujui,
+                'total_sesi' => (int) $d->total_sesi,
+                'sesi_disetujui' => (int) $d->sesi_disetujui,
             ]);
 
         // ─── 3. Daftar Mahasiswa & Status Tahap TA ────────────────────────
@@ -77,14 +76,15 @@ class MonitoringController extends Controller
             ->get()
             ->map(function (User $mhs) {
                 $judul = $mhs->pengajuanJudul->first();
+
                 return [
-                    'id'           => $mhs->id,
-                    'nama'         => $mhs->name,
-                    'nim'          => $mhs->nim_nip ?? $mhs->username,
-                    'judul'        => $judul?->judul_ta,
+                    'id' => $mhs->id,
+                    'nama' => $mhs->name,
+                    'nim' => $mhs->nim_nip ?? $mhs->username,
+                    'judul' => $judul?->judul_ta,
                     'status_judul' => $judul?->status ?? 'belum_mengajukan',
-                    'pembimbing1'  => $judul?->pembimbing1?->name,
-                    'pembimbing2'  => $judul?->pembimbing2?->name,
+                    'pembimbing1' => $judul?->pembimbing1?->name,
+                    'pembimbing2' => $judul?->pembimbing2?->name,
                 ];
             });
 
@@ -99,24 +99,24 @@ class MonitoringController extends Controller
             ->orderBy('jam_mulai')
             ->get()
             ->map(fn (Penjadwalan $j) => [
-                'id'          => $j->id,
-                'tipe'        => $j->tipe,
-                'tanggal'     => $j->tanggal?->toDateString(),
-                'jam_mulai'   => $j->jam_mulai,
+                'id' => $j->id,
+                'tipe' => $j->tipe,
+                'tanggal' => $j->tanggal?->toDateString(),
+                'jam_mulai' => $j->jam_mulai,
                 'jam_selesai' => $j->jam_selesai,
-                'mahasiswa'   => $j->mahasiswa?->name,
-                'nim'         => $j->mahasiswa?->nim_nip ?? $j->mahasiswa?->username,
-                'pembimbing'  => $j->pembimbing1?->name,
-                'penguji'     => $j->penguji1?->name,
-                'gelombang'   => $j->gelombang,
+                'mahasiswa' => $j->mahasiswa?->name,
+                'nim' => $j->mahasiswa?->nim_nip ?? $j->mahasiswa?->username,
+                'pembimbing' => $j->pembimbing1?->name,
+                'penguji' => $j->penguji1?->name,
+                'gelombang' => $j->gelombang,
             ]);
 
         return Inertia::render('Kaprodi/Monitoring', [
             'totalMahasiswa' => $totalMahasiswa,
             'progressCounts' => $progressCounts,
             'bimbinganRekap' => $bimbinganRekap,
-            'mahasiswaList'  => $mahasiswaList,
-            'jadwalAktif'    => $jadwalAktif,
+            'mahasiswaList' => $mahasiswaList,
+            'jadwalAktif' => $jadwalAktif,
         ]);
     }
 }

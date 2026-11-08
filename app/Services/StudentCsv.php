@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 class StudentCsv
 {
     public const HEADER = ['name', 'nim', 'angkatan', 'jurusan', 'prodi', 'email', 'no_telpon', 'status_ta'];
+
     public const HEADER_ID = ['nama', 'nim', 'angkatan', 'jurusan', 'prodi', 'email', 'no_telpon', 'status_ta'];
 
     public function preview(UploadedFile $file): array
@@ -51,6 +52,7 @@ class StudentCsv
         $rawHeader = fgetcsv($stream, 0, ',', '"', '');
         if (! is_array($rawHeader)) {
             fclose($stream);
+
             return $this->invalid('Format CSV tidak dapat dibaca.');
         }
 
@@ -86,6 +88,7 @@ class StudentCsv
         $missing = array_diff($requiredKeys, $mappedKeys);
         if (! empty($missing)) {
             fclose($stream);
+
             return $this->invalid('Header kolom wajib: nama/name, nim, angkatan, jurusan, prodi, email, no_telpon, status_ta.');
         }
 
@@ -100,6 +103,7 @@ class StudentCsv
             $rowNum = count($rows) + 2;
             if (count($values) !== count($mappedKeys)) {
                 $rows[] = ['row' => $rowNum, 'data' => null, 'errors' => ['row' => ['Jumlah kolom tidak sesuai header.']]];
+
                 continue;
             }
 
@@ -144,6 +148,7 @@ class StudentCsv
 
             if (count($rows) > 500) {
                 fclose($stream);
+
                 return $this->invalid('Maksimal 500 baris per file.');
             }
         }
