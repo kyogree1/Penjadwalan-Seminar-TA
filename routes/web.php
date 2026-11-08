@@ -134,6 +134,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/penjadwalan/periods/{id}', [KaprodiPenjadwalanController::class, 'destroyPeriod'])->name('penjadwalan.periods.destroy');
         Route::post('/penjadwalan/generate-ga', [KaprodiPenjadwalanController::class, 'generateGa'])->name('penjadwalan.generate-ga');
         Route::post('/penjadwalan/simpan', [KaprodiPenjadwalanController::class, 'simpan'])->name('penjadwalan.simpan');
+        Route::post('/penjadwalan/periods/{id}/reset', [KaprodiPenjadwalanController::class, 'resetPeriodSchedules'])->name('penjadwalan.periods.reset');
+        Route::post('/penjadwalan/periods/{id}/reschedule', [KaprodiPenjadwalanController::class, 'resetPeriodSchedules'])->name('penjadwalan.periods.reschedule');
+        Route::post('/penjadwalan/reset', [KaprodiPenjadwalanController::class, 'resetPeriodSchedules'])->name('penjadwalan.reset');
+        Route::post('/penjadwalan/reschedule', [KaprodiPenjadwalanController::class, 'resetPeriodSchedules'])->name('penjadwalan.reschedule');
         Route::post('/penjadwalan/periods', [KaprodiPenjadwalanController::class, 'storePeriod'])->name('penjadwalan.periods.store');
         Route::patch('/penjadwalan/periods/{id}', [KaprodiPenjadwalanController::class, 'storePeriod'])->name('penjadwalan.periods.update');
         Route::patch('/penjadwalan/plotting/{id}', [KaprodiPenjadwalanController::class, 'updatePlotting'])->name('penjadwalan.plotting.update');

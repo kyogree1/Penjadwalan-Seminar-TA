@@ -285,24 +285,43 @@ class PenjadwalanController extends Controller
 
     public function generateGa(Request $request)
     {
-        $data = $request->validate(['period_id' => ['required', 'integer', function ($attribute, $value, $fail) {
-            if (is_bool($value)) {
-                $fail('The period id must be an integer.');
-            }
-        }, 'exists:schedule_periods,id'], 'popSize' => ['nullable', 'integer', 'min:10', 'max:200'], 'maxGenerations' => ['nullable', 'integer', 'min:10', 'max:500'], 'crossoverRate' => ['nullable', 'numeric', 'between:0,1'], 'mutationRate' => ['nullable', 'numeric', 'between:0,1']]);
+        $data = $request->validate([
+            'period_id' => [
+                'required', 'integer', function ($attribute, $value, $fail) {
+                    if (is_bool($value)) {
+                        $fail('The period id must be an integer.');
+                    }
+                }, 'exists:schedule_periods,id',
+            ],
+            'popSize' => ['nullable', 'integer', 'min:10', 'max:200'],
+            'maxGenerations' => ['nullable', 'integer', 'min:10', 'max:500'],
+            'crossoverRate' => ['nullable', 'numeric', 'between:0,1'],
+            'mutationRate' => ['nullable', 'numeric', 'between:0,1'],
+            'reset' => ['nullable', 'boolean'],
+            'reschedule' => ['nullable', 'boolean'],
+        ]);
         $period = SchedulePeriod::findOrFail($data['period_id']);
         if ($period->is_open) {
             throw ValidationException::withMessages(['period_id' => 'Tutup pendaftaran terlebih dahulu.']);
         }
-        if ($period->is_published) {
+
+        $isReschedule = ! empty($data['reset']) || ! empty($data['reschedule']);
+
+        if ($period->is_published && ! $isReschedule) {
             throw ValidationException::withMessages(['period_id' => 'Jadwal sudah dipublikasikan. Buka publish untuk regenerasi.']);
         }
+
+        if ($isReschedule) {
+            $this->performResetSchedules($period);
+            $period->refresh();
+        }
+
         $class = $this->registrationClass($period->tipe);
         $candidates = [];
         $excluded = [];
         $scheduledIds = Penjadwalan::where('tipe', $period->tipe)
             ->where('status', '!=', 'dibatalkan')->pluck('pendaftaran_id')->flip();
-        foreach ($class::where('status', 'verifikasi_tendik')->where('status_akademik', 'disetujui')->where('gelombang', $period->gelombang)->orderBy('id')->get() as $registration) {
+        foreach ($class::whereIn('status', ['verifikasi_tendik', 'terjadwal'])->where('status_akademik', 'disetujui')->where('gelombang', $period->gelombang)->orderBy('id')->get() as $registration) {
             if ($scheduledIds->has($registration->id)) {
                 continue;
             }
@@ -569,6 +588,58 @@ class PenjadwalanController extends Controller
         return back()->with('success', 'Periode gelombang berhasil dihapus.');
     }
 
+    public function resetPeriodSchedules(Request $request, ?int $id = null)
+    {
+        $periodId = $id ?? $request->integer('period_id');
+        if (! $periodId) {
+            throw ValidationException::withMessages(['period_id' => 'ID Periode wajib disertakan.']);
+        }
+
+        $period = SchedulePeriod::findOrFail($periodId);
+        $this->performResetSchedules($period);
+
+        $message = "Jadwal Gelombang {$period->gelombang} berhasil direset. Mahasiswa pendaftar siap untuk dijadwalkan ulang.";
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'period_id' => $period->id,
+            ]);
+        }
+
+        return back()->with('success', $message);
+    }
+
+    private function performResetSchedules(SchedulePeriod $period): void
+    {
+        DB::transaction(function () use ($period) {
+            $schedules = Penjadwalan::where('period_id', $period->id)->lockForUpdate()->get();
+
+            foreach ($schedules as $schedule) {
+                if ($schedule->status === 'selesai' || $schedule->penilaian()->exists()) {
+                    throw ValidationException::withMessages([
+                        'period' => 'Tidak dapat menjadwalkan ulang karena sebagian mahasiswa sudah selesai ujian atau memiliki nilai.',
+                    ]);
+                }
+            }
+
+            $class = $this->registrationClass($period->tipe);
+            foreach ($schedules as $schedule) {
+                if ($schedule->pendaftaran_id) {
+                    $class::where('id', $schedule->pendaftaran_id)->update(['status' => 'verifikasi_tendik']);
+                }
+            }
+
+            Penjadwalan::where('period_id', $period->id)->delete();
+
+            $period->is_published = false;
+            $period->google_calendar_synced = false;
+            $period->google_calendar_synced_at = null;
+            $period->save();
+        });
+    }
+
     public function simpan(Request $request)
     {
         $data = $request->validate(['period_id' => ['required', 'integer', function ($attribute, $value, $fail) {
@@ -695,49 +766,108 @@ class PenjadwalanController extends Controller
 
     private function getSchedulesForPeriod(int $periodId, string $tipe): array
     {
-        return Penjadwalan::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji1', 'penguji2', 'penilaian'])
+        $period = SchedulePeriod::find($periodId);
+        $schedules = Penjadwalan::with(['mahasiswa', 'pembimbing1', 'pembimbing2', 'penguji1', 'penguji2', 'penilaian'])
             ->where('period_id', $periodId)
             ->where('tipe', $tipe)
             ->orderBy('tanggal')
             ->orderBy('jam_mulai')
-            ->get()
-            ->map(function ($s) {
-                $judul = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('judul_ta') ?? $s->catatan;
-                $kbk = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('bidang_penelitian') ?? ($s->mode === 'offline' ? 'AI & Data Science' : $s->mode);
+            ->get();
 
-                $nilaiHuruf = null;
-                if ($s->penilaian && $s->penilaian->isNotEmpty()) {
-                    $avgScore = $s->penilaian->avg('nilai');
-                    if ($avgScore !== null) {
-                        $nilaiHuruf = $avgScore >= 85 ? 'A' : ($avgScore >= 80 ? 'AB' : ($avgScore >= 75 ? 'B' : ($avgScore >= 70 ? 'BC' : ($avgScore >= 65 ? 'C' : ($avgScore >= 50 ? 'D' : 'E')))));
-                    }
+        $scheduledStudentIds = $schedules->pluck('mahasiswa_id')->filter()->all();
+
+        $rows = $schedules->map(function ($s) {
+            $judul = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('judul_ta') ?? $s->catatan;
+            $kbk = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('bidang_penelitian') ?? ($s->mode === 'offline' ? 'AI & Data Science' : $s->mode);
+
+            $nilaiHuruf = null;
+            if ($s->penilaian && $s->penilaian->isNotEmpty()) {
+                $avgScore = $s->penilaian->avg('nilai');
+                if ($avgScore !== null) {
+                    $nilaiHuruf = $avgScore >= 85 ? 'A' : ($avgScore >= 80 ? 'AB' : ($avgScore >= 75 ? 'B' : ($avgScore >= 70 ? 'BC' : ($avgScore >= 65 ? 'C' : ($avgScore >= 50 ? 'D' : 'E')))));
                 }
+            }
 
-                return [
-                    'id' => $s->id,
-                    'mahasiswa_id' => $s->mahasiswa_id,
-                    'nama' => $s->mahasiswa?->name ?? 'Mahasiswa',
-                    'nim' => $s->mahasiswa?->nim_nip ?? '-',
-                    'angkatan' => $this->extractAngkatan($s->mahasiswa?->nim_nip),
-                    'judul' => $judul ?? 'Seminar Proposal',
-                    'kbk' => $kbk ?: 'AI & Data Science',
-                    'pembimbing1' => $s->pembimbing1?->name ?? '-',
-                    'pembimbing2' => $s->pembimbing2?->name ?? '',
-                    'penguji1' => $s->penguji1?->name ?? '-',
-                    'penguji1_id' => $s->penguji_1_id,
-                    'penguji1MatchScore' => $s->penguji_1_id ? ScheduleOptimizer::NEUTRAL_SCORE : 0,
-                    'penguji2' => $s->penguji2?->name ?? '-',
-                    'penguji2_id' => $s->penguji_2_id,
-                    'hari' => $s->tanggal ? $this->getHariIndonesia((int) $s->tanggal->format('N')) : 'Senin',
-                    'tanggal' => $s->tanggal ? $s->tanggal->format('d M Y') : '28 Sep 2026',
-                    'tanggal_raw' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '2026-09-28',
-                    'mulai' => $s->jam_mulai ? substr($s->jam_mulai, 0, 5) : '09:00',
-                    'selesai' => $s->jam_selesai ? substr($s->jam_selesai, 0, 5) : '10:30',
-                    'ruangan' => $s->link_online ?? '-',
-                    'nilai' => $nilaiHuruf,
+            return [
+                'id' => $s->id,
+                'pendaftaran_id' => $s->pendaftaran_id,
+                'mahasiswa_id' => $s->mahasiswa_id,
+                'nama' => $s->mahasiswa?->name ?? 'Mahasiswa',
+                'nim' => $s->mahasiswa?->nim_nip ?? '-',
+                'angkatan' => $this->extractAngkatan($s->mahasiswa?->nim_nip),
+                'judul' => $judul ?? 'Seminar Proposal',
+                'kbk' => $kbk ?: 'AI & Data Science',
+                'pembimbing1' => $s->pembimbing1?->name ?? '-',
+                'pembimbing2' => $s->pembimbing2?->name ?? '',
+                'penguji1' => $s->penguji1?->name ?? '-',
+                'penguji1_id' => $s->penguji_1_id,
+                'penguji1MatchScore' => $s->penguji_1_id ? ScheduleOptimizer::NEUTRAL_SCORE : 0,
+                'penguji2' => $s->penguji2?->name ?? '-',
+                'penguji2_id' => $s->penguji_2_id,
+                'hari' => $s->tanggal ? $this->getHariIndonesia((int) $s->tanggal->format('N')) : 'Senin',
+                'tanggal' => $s->tanggal ? $s->tanggal->format('d M Y') : '28 Sep 2026',
+                'tanggal_raw' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '2026-09-28',
+                'mulai' => $s->jam_mulai ? substr($s->jam_mulai, 0, 5) : '09:00',
+                'selesai' => $s->jam_selesai ? substr($s->jam_selesai, 0, 5) : '10:30',
+                'ruangan' => $s->link_online ?? '-',
+                'nilai' => $nilaiHuruf,
+                'is_scheduled' => true,
+            ];
+        })->all();
+
+        // Include registered students in this wave who are validated but not yet scheduled
+        if ($period) {
+            $class = $this->registrationClass($tipe);
+            $anyScheduledPendaftaranIds = Penjadwalan::where('tipe', $tipe)
+                ->where('status', '!=', 'dibatalkan')
+                ->pluck('pendaftaran_id')
+                ->filter()
+                ->all();
+
+            $unregistered = $class::with('mahasiswa')
+                ->where('gelombang', $period->gelombang)
+                ->where('status', 'verifikasi_tendik')
+                ->where('status_akademik', 'disetujui')
+                ->whereNotIn('id', $anyScheduledPendaftaranIds)
+                ->orderBy('id')
+                ->get();
+
+            foreach ($unregistered as $reg) {
+                $title = PengajuanJudul::with(['pembimbing1', 'pembimbing2'])
+                    ->where('mahasiswa_id', $reg->mahasiswa_id)
+                    ->where('status', 'disetujui')
+                    ->latest('id')
+                    ->first();
+
+                $rows[] = [
+                    'id' => -$reg->id,
+                    'pendaftaran_id' => $reg->id,
+                    'mahasiswa_id' => $reg->mahasiswa_id,
+                    'nama' => $reg->mahasiswa?->name ?? 'Mahasiswa',
+                    'nim' => $reg->mahasiswa?->nim_nip ?? '-',
+                    'angkatan' => $this->extractAngkatan($reg->mahasiswa?->nim_nip),
+                    'judul' => $reg->judul_ta ?? $title?->judul_ta ?? 'Seminar Proposal',
+                    'kbk' => $title?->bidang_penelitian ?: 'AI & Data Science',
+                    'pembimbing1' => $title?->pembimbing1?->name ?? '-',
+                    'pembimbing2' => $title?->pembimbing2?->name ?? '',
+                    'penguji1' => '-',
+                    'penguji1_id' => null,
+                    'penguji1MatchScore' => 0,
+                    'penguji2' => '-',
+                    'penguji2_id' => null,
+                    'hari' => '-',
+                    'tanggal' => '-',
+                    'tanggal_raw' => '',
+                    'mulai' => '-',
+                    'selesai' => '-',
+                    'ruangan' => '-',
+                    'nilai' => null,
+                    'is_scheduled' => false,
                 ];
-            })
-            ->all();
+            }
+        }
+
+        return $rows;
     }
 
     private function extractAngkatan(?string $nim): string

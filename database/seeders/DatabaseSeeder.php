@@ -556,12 +556,24 @@ class DatabaseSeeder extends Seeder
             ['tanggal' => '2026-08-15', 'jam_mulai' => '10:30:00', 'jam_selesai' => '12:00:00'],
         ];
 
-        $semproSlotsWave2 = [
-            ['tanggal' => '2026-10-20', 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00'],
-            ['tanggal' => '2026-10-20', 'jam_mulai' => '10:30:00', 'jam_selesai' => '12:00:00'],
-            ['tanggal' => '2026-10-21', 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00'],
-            ['tanggal' => '2026-10-21', 'jam_mulai' => '13:30:00', 'jam_selesai' => '15:00:00'],
+        // 24 slots across 6 days for 20 candidates in Wave 2
+        $semproSlotsWave2 = [];
+        $wave2Days = ['2026-10-20', '2026-10-21', '2026-10-22', '2026-10-23', '2026-10-24', '2026-10-25'];
+        $dailyTimes = [
+            ['jam_mulai' => '08:30:00', 'jam_selesai' => '10:00:00'],
+            ['jam_mulai' => '10:15:00', 'jam_selesai' => '11:45:00'],
+            ['jam_mulai' => '13:15:00', 'jam_selesai' => '14:45:00'],
+            ['jam_mulai' => '15:00:00', 'jam_selesai' => '16:30:00'],
         ];
+        foreach ($wave2Days as $day) {
+            foreach ($dailyTimes as $time) {
+                $semproSlotsWave2[] = [
+                    'tanggal' => $day,
+                    'jam_mulai' => $time['jam_mulai'],
+                    'jam_selesai' => $time['jam_selesai'],
+                ];
+            }
+        }
 
         $semproSlotsWave3 = [
             ['tanggal' => '2026-11-15', 'jam_mulai' => '09:00:00', 'jam_selesai' => '10:30:00'],
@@ -639,6 +651,214 @@ class DatabaseSeeder extends Seeder
                     'status_akademik' => 'disetujui',
                     'catatan' => 'Berkas proposal lengkap.',
                     'catatan_kaprodi' => 'Disetujui maju seminar proposal.',
+                ]
+            );
+        }
+
+        // 18 pendaftar sempro tambahan (total 20 mahasiswa pendaftar untuk uji coba GA & reschedule)
+        $extraPendaftarList = [
+            [
+                'name' => 'Akmal Falah Maulana',
+                'nim_nip' => '11231006',
+                'email' => 'akmal.falah@student.itk.ac.id',
+                'judul' => 'Sistem Rekomendasi Pemilihan Topik Skripsi Menggunakan Content-Based Filtering dan Algoritma Genetika',
+                'kbk' => 'AI & Data Science',
+                'p1' => $dosenFaisal->id,
+                'p2' => $dosenDian->id,
+            ],
+            [
+                'name' => 'Hari Prasetyo',
+                'nim_nip' => '11231030',
+                'email' => '11231030@student.itk.ac.id',
+                'judul' => 'Deteksi Serangan DDoS Menggunakan Algoritma Machine Learning pada Software Defined Network',
+                'kbk' => 'Cybersecurity',
+                'p1' => $dosenTejo->id,
+                'p2' => $dosenBudi->id,
+            ],
+            [
+                'name' => 'Junnior Ravelino',
+                'nim_nip' => '11231034',
+                'email' => '11231034@student.itk.ac.id',
+                'judul' => 'Implementasi IoT untuk Monitoring Kualitas Air Tambak Berbasis LoRaWAN dan Protokol MQTT',
+                'kbk' => 'IoT & Wireless',
+                'p1' => $dosenRian->id,
+                'p2' => $dosenTejo->id,
+            ],
+            [
+                'name' => 'Bagus Prasetyo',
+                'nim_nip' => '11211018',
+                'email' => '11211018@student.itk.ac.id',
+                'judul' => 'Pengembangan Microservices Arsitektur pada Sistem Informasi Akademik Perguruan Tinggi',
+                'kbk' => 'Software Engineering',
+                'p1' => $dosenFaisal->id,
+                'p2' => $koorprodi->id,
+            ],
+            [
+                'name' => 'Kevin Sanjaya',
+                'nim_nip' => '11221045',
+                'email' => '11221045@student.itk.ac.id',
+                'judul' => 'Analisis Sentimen Ulasan Pengguna Aplikasi Mobile Menggunakan IndoBERT dan BiLSTM',
+                'kbk' => 'AI & Data Science',
+                'p1' => $dosenDian->id,
+                'p2' => $dosenFaisal->id,
+            ],
+            [
+                'name' => 'Putri Ayu Lestari',
+                'nim_nip' => '11211052',
+                'email' => '11211052@student.itk.ac.id',
+                'judul' => 'Sistem Pendukung Keputusan Penilaian Kinerja Dosen Menggunakan Metode TOPSIS Terbobot',
+                'kbk' => 'Software Engineering',
+                'p1' => $koorprodi->id,
+                'p2' => $dosenBudi->id,
+            ],
+            [
+                'name' => 'Daffa Ramadhan',
+                'nim_nip' => '11221012',
+                'email' => '11221012@student.itk.ac.id',
+                'judul' => 'Analisis Kerentanan Web Menggunakan Metode OWASP Top 10 dan Static Application Security Testing',
+                'kbk' => 'Cybersecurity',
+                'p1' => $dosenTejo->id,
+                'p2' => $dosenRian->id,
+            ],
+            [
+                'name' => 'Rahmat Hidayat',
+                'nim_nip' => '11221067',
+                'email' => '11221067@student.itk.ac.id',
+                'judul' => 'Klasifikasi Citra Rontgen Paru-Paru Menggunakan Convolutional Neural Network (CNN) ResNet-50',
+                'kbk' => 'AI & Data Science',
+                'p1' => $dosenFaisal->id,
+                'p2' => $dosenTejo->id,
+            ],
+            [
+                'name' => 'Siti Nur Aisyah',
+                'nim_nip' => '11231055',
+                'email' => '11231055@student.itk.ac.id',
+                'judul' => 'Prediksi Kelulusan Mahasiswa Tepat Waktu Menggunakan Algoritma Random Forest dan XGBoost',
+                'kbk' => 'AI & Data Science',
+                'p1' => $dosenDian->id,
+                'p2' => $dosenBudi->id,
+            ],
+            [
+                'name' => 'Fajar Nugroho',
+                'nim_nip' => '11231021',
+                'email' => '11231021@student.itk.ac.id',
+                'judul' => 'Rancang Bangun CI/CD Pipeline Otomatis Menggunakan GitOps dan Kubernetes pada Cloud Server',
+                'kbk' => 'Software Engineering',
+                'p1' => $dosenBudi->id,
+                'p2' => $koorprodi->id,
+            ],
+            [
+                'name' => 'Annisa Zahra',
+                'nim_nip' => '11221008',
+                'email' => '11221008@student.itk.ac.id',
+                'judul' => 'Analisis Pola Keranjang Belanja Pelanggan Menggunakan Algoritma FP-Growth pada E-Commerce',
+                'kbk' => 'AI & Data Science',
+                'p1' => $dosenDian->id,
+                'p2' => $dosenFaisal->id,
+            ],
+            [
+                'name' => 'Dimas Pratama',
+                'nim_nip' => '11211033',
+                'email' => '11211033@student.itk.ac.id',
+                'judul' => 'Smart Home Energy Management System Berbasis NodeMCU ESP32 dan Dashboard Web Realtime',
+                'kbk' => 'IoT & Wireless',
+                'p1' => $dosenRian->id,
+                'p2' => $dosenTejo->id,
+            ],
+            [
+                'name' => 'Tiara Kusuma',
+                'nim_nip' => '11221089',
+                'email' => '11221089@student.itk.ac.id',
+                'judul' => 'Peringkasan Teks Otomatis Dokumen Berita Bahasa Indonesia Menggunakan Metode TextRank',
+                'kbk' => 'AI & Data Science',
+                'p1' => $dosenFaisal->id,
+                'p2' => $dosenDian->id,
+            ],
+            [
+                'name' => 'Yoga Pratama',
+                'nim_nip' => '11231077',
+                'email' => '11231077@student.itk.ac.id',
+                'judul' => 'Implementasi Infrastruktur Server Berbasis Docker Swarm untuk Peningkatan High Availability Sistem',
+                'kbk' => 'Software Engineering',
+                'p1' => $dosenBudi->id,
+                'p2' => $dosenRian->id,
+            ],
+            [
+                'name' => 'Naufal Farhan',
+                'nim_nip' => '11221056',
+                'email' => '11221056@student.itk.ac.id',
+                'judul' => 'Verifikasi Ijazah Digital Menggunakan Smart Contract Ethereum dan Algoritma Hashing SHA-256',
+                'kbk' => 'Cybersecurity',
+                'p1' => $dosenTejo->id,
+                'p2' => $dosenFaisal->id,
+            ],
+            [
+                'name' => 'Gita Safitri',
+                'nim_nip' => '11211071',
+                'email' => '11211071@student.itk.ac.id',
+                'judul' => 'Rancang Bangun Aplikasi Mobile Pelaporan Fasilitas Kampus Menggunakan Flutter dan Clean Architecture',
+                'kbk' => 'Software Engineering',
+                'p1' => $koorprodi->id,
+                'p2' => $dosenDian->id,
+            ],
+            [
+                'name' => 'Ilham Maulana',
+                'nim_nip' => '11231088',
+                'email' => '11231088@student.itk.ac.id',
+                'judul' => 'Evaluasi Usabilitas dan Redesain Antarmuka Portal Tugas Akhir Menggunakan Metode User-Centered Design',
+                'kbk' => 'Software Engineering',
+                'p1' => $koorprodi->id,
+                'p2' => $dosenTejo->id,
+            ],
+            [
+                'name' => 'Mega Utami',
+                'nim_nip' => '11221094',
+                'email' => '11221094@student.itk.ac.id',
+                'judul' => 'Sistem Autentikasi Multifaktor Menggunakan Time-Based One-Time Password dan Biometrik Wajah',
+                'kbk' => 'Cybersecurity',
+                'p1' => $dosenTejo->id,
+                'p2' => $dosenBudi->id,
+            ],
+        ];
+
+        foreach ($extraPendaftarList as $pData) {
+            $userMhs = User::updateOrCreate(
+                ['email' => $pData['email']],
+                [
+                    'name' => $pData['name'],
+                    'username' => $pData['nim_nip'],
+                    'nim_nip' => $pData['nim_nip'],
+                    'role' => 'mahasiswa',
+                    'prodi' => 'Informatika',
+                    'password' => bcrypt('password'),
+                ]
+            );
+
+            PengajuanJudul::updateOrCreate(
+                ['mahasiswa_id' => $userMhs->id],
+                [
+                    'judul_ta' => $pData['judul'],
+                    'bidang_penelitian' => $pData['kbk'],
+                    'pembimbing_1_id' => $pData['p1'],
+                    'pembimbing_2_id' => $pData['p2'],
+                    'telah_konsultasi' => true,
+                    'status' => 'disetujui',
+                    'disetujui_oleh' => $kaprodi->id,
+                    'disetujui_at' => now()->subDays(10),
+                ]
+            );
+
+            PendaftaranSempro::updateOrCreate(
+                ['mahasiswa_id' => $userMhs->id],
+                [
+                    'judul_ta' => $pData['judul'],
+                    'bentuk_ta' => 'Skripsi Reguler',
+                    'lokasi_mitra' => 'Program Studi Informatika ITK',
+                    'gelombang' => 2,
+                    'status' => 'verifikasi_tendik',
+                    'status_akademik' => 'disetujui',
+                    'catatan' => 'Berkas pendaftaran sempro lengkap dan tervalidasi.',
+                    'catatan_kaprodi' => 'Disetujui untuk penjadwalan sempro gelombang 2.',
                 ]
             );
         }
