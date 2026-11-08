@@ -20,6 +20,7 @@ import Modal from '@/Components/Modal.vue';
 import StatCard from '@/Components/StatCard.vue';
 import SemproSection from './Partials/SemproSection.vue';
 import SidangSection from './Partials/SidangSection.vue';
+import RescheduleSection from './Partials/RescheduleSection.vue';
 import type {
     AcademicReview,
     JudulReview,
@@ -29,7 +30,7 @@ import type {
 
 const props = defineProps<KaprodiReviewProps>();
 
-type Section = 'judul' | 'sempro' | 'sidang';
+type Section = 'judul' | 'sempro' | 'sidang' | 'reschedule';
 const activeSection = ref<Section>('judul');
 
 // Authenticated user context
@@ -769,12 +770,20 @@ const backToJudul = () => {
     router.visit('/kaprodi/persetujuan');
 };
 
-// Check query param reactively on URL change (e.g. ?section=sempro or ?section=sidang)
+// Check query param reactively on URL change (e.g. ?section=sempro, ?section=sidang, or ?section=reschedule)
 watch(
     () => page.url,
     (newUrl) => {
         if (!newUrl) return;
-        if (newUrl.includes('section=sempro') || newUrl.includes('/sempro')) {
+        if (
+            newUrl.includes('section=reschedule') ||
+            newUrl.includes('/reschedule')
+        ) {
+            activeSection.value = 'reschedule';
+        } else if (
+            newUrl.includes('section=sempro') ||
+            newUrl.includes('/sempro')
+        ) {
             activeSection.value = 'sempro';
         } else if (
             newUrl.includes('section=sidang') ||
@@ -1708,6 +1717,12 @@ const submitAcademicReview = (
     <SidangSection
         v-else-if="activeSection === 'sidang'"
         :db-sidang="dbSidang"
+        @back-to-judul="backToJudul"
+    />
+
+    <!-- 4. MODE: RESCHEDULE JADWAL (KOORPRODI APPROVAL) -->
+    <RescheduleSection
+        v-else-if="activeSection === 'reschedule'"
         @back-to-judul="backToJudul"
     />
 

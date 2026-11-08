@@ -8,6 +8,7 @@ import {
     BookOpen,
     Building2,
     Calendar,
+    CalendarClock,
     Clock,
     Cpu,
     FileCheck,
@@ -285,6 +286,13 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                             @click="emit('close')"
                         >
                             <Award class="h-4 w-4" /> Sidang TA
+                        </Link>
+                        <Link
+                            href="/kaprodi/persetujuan?section=reschedule"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <CalendarClock class="h-4 w-4" /> Reschedule
                         </Link>
 
                         <p

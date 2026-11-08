@@ -216,7 +216,8 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                                 v-if="mySupervisedStudents.length === 0"
                                 class="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-400 dark:border-slate-800"
                             >
-                                Belum ada mahasiswa bimbingan tugas akhir yang aktif.
+                                Belum ada mahasiswa bimbingan tugas akhir yang
+                                aktif.
                             </div>
                             <div
                                 v-for="student in mySupervisedStudents"
@@ -390,7 +391,8 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                                 v-if="upcomingExams.length === 0"
                                 class="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-400 dark:border-slate-800"
                             >
-                                Tidak ada penugasan menguji seminar atau sidang mendatang.
+                                Tidak ada penugasan menguji seminar atau sidang
+                                mendatang.
                             </div>
                             <div
                                 v-for="exam in upcomingExams"

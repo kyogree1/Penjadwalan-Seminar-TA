@@ -64,7 +64,8 @@ const isKaprodiPengajuanActive = computed(
     () =>
         currentUrl.value.startsWith('/kaprodi/persetujuan') ||
         currentUrl.value.startsWith('/dosen/bimbingan') ||
-        currentUrl.value.startsWith('/kaprodi/bimbingan'),
+        currentUrl.value.startsWith('/kaprodi/bimbingan') ||
+        currentUrl.value.startsWith('/kaprodi/reschedule'),
 );
 
 const isKaprodiJadwalActive = computed(
@@ -909,7 +910,8 @@ const handleAccordionClick = (
                                         '/kaprodi/persetujuan',
                                     ) &&
                                     !currentUrl.includes('section=sempro') &&
-                                    !currentUrl.includes('section=sidang')
+                                    !currentUrl.includes('section=sidang') &&
+                                    !currentUrl.includes('section=reschedule')
                                         ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
                                         : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
                                 ]"
@@ -950,6 +952,18 @@ const handleAccordionClick = (
                             >
                                 Sidang TA
                             </Link>
+                            <Link
+                                href="/kaprodi/persetujuan?section=reschedule"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.includes('section=reschedule') ||
+                                    currentUrl.startsWith('/kaprodi/reschedule')
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
+                                ]"
+                            >
+                                Reschedule
+                            </Link>
                         </div>
 
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
@@ -977,7 +991,12 @@ const handleAccordionClick = (
                                         !currentUrl.includes(
                                             'section=sempro',
                                         ) &&
-                                        !currentUrl.includes('section=sidang')
+                                        !currentUrl.includes(
+                                            'section=sidang',
+                                        ) &&
+                                        !currentUrl.includes(
+                                            'section=reschedule',
+                                        )
                                             ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
                                             : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
                                     "
@@ -1033,6 +1052,25 @@ const handleAccordionClick = (
                                         class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
                                     ></span>
                                     <span>Sidang TA</span>
+                                </Link>
+                                <Link
+                                    href="/kaprodi/persetujuan?section=reschedule"
+                                    class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
+                                    :class="
+                                        currentUrl.includes(
+                                            'section=reschedule',
+                                        ) ||
+                                        currentUrl.startsWith(
+                                            '/kaprodi/reschedule',
+                                        )
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
+                                    "
+                                >
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
+                                    <span>Reschedule</span>
                                 </Link>
                             </div>
                         </div>

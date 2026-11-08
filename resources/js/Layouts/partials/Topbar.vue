@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { Bell, CheckCheck, ExternalLink, LogOut, Menu, Moon, Sun } from 'lucide-vue-next';
+import {
+    Bell,
+    CheckCheck,
+    ExternalLink,
+    LogOut,
+    Menu,
+    Moon,
+    Sun,
+} from 'lucide-vue-next';
 
 import { useAuth } from '@/composables/useAuth';
 import { useTheme } from '@/composables/useTheme';
@@ -20,7 +28,9 @@ const { isDarkMode, toggleDarkMode } = useTheme();
 const page = usePage();
 const showNotificationDropdown = ref(false);
 const notifications = computed(() => (page.props.notifications as any[]) || []);
-const unreadCount = computed(() => (page.props.unreadNotificationsCount as number) || 0);
+const unreadCount = computed(
+    () => (page.props.unreadNotificationsCount as number) || 0,
+);
 
 const markAsRead = (id: number) => {
     router.patch(`/notifications/${id}/read`, {}, { preserveScroll: true });
@@ -146,7 +156,9 @@ const handleLogout = () => {
                     class="relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl border border-slate-200 bg-slate-100/80 text-slate-600 transition-colors hover:bg-slate-200 dark:border-slate-800 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700"
                     aria-label="Notifikasi"
                     title="Notifikasi"
-                    @click="showNotificationDropdown = !showNotificationDropdown"
+                    @click="
+                        showNotificationDropdown = !showNotificationDropdown
+                    "
                 >
                     <Bell class="h-4 w-4" />
                     <span
@@ -162,12 +174,17 @@ const handleLogout = () => {
                     v-if="showNotificationDropdown"
                     class="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
                 >
-                    <div class="mb-2 flex items-center justify-between border-b border-slate-100 pb-2 dark:border-slate-800">
+                    <div
+                        class="mb-2 flex items-center justify-between border-b border-slate-100 pb-2 dark:border-slate-800"
+                    >
                         <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Notifikasi</span>
+                            <span
+                                class="text-xs font-bold text-slate-800 dark:text-slate-100"
+                                >Notifikasi</span
+                            >
                             <span
                                 v-if="unreadCount > 0"
-                                class="rounded-full bg-blue-100 px-1.5 py-0.2 text-[10px] font-semibold text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
+                                class="py-0.2 rounded-full bg-blue-100 px-1.5 text-[10px] font-semibold text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
                             >
                                 {{ unreadCount }} baru
                             </span>
@@ -182,11 +199,17 @@ const handleLogout = () => {
                         </button>
                     </div>
 
-                    <div v-if="notifications.length === 0" class="py-6 text-center text-xs text-slate-400">
+                    <div
+                        v-if="notifications.length === 0"
+                        class="py-6 text-center text-xs text-slate-400"
+                    >
                         Tidak ada notifikasi baru
                     </div>
 
-                    <div v-else class="max-h-72 space-y-2 overflow-y-auto pr-1 text-left">
+                    <div
+                        v-else
+                        class="max-h-72 space-y-2 overflow-y-auto pr-1 text-left"
+                    >
                         <div
                             v-for="notif in notifications"
                             :key="notif.id"
@@ -198,12 +221,18 @@ const handleLogout = () => {
                             "
                         >
                             <div class="flex items-start justify-between gap-2">
-                                <p class="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                                <p
+                                    class="text-xs font-semibold text-slate-800 dark:text-slate-200"
+                                >
                                     {{ notif.title }}
                                 </p>
-                                <span class="text-[10px] text-slate-400">{{ notif.time }}</span>
+                                <span class="text-[10px] text-slate-400">{{
+                                    notif.time
+                                }}</span>
                             </div>
-                            <p class="mt-1 text-[11px] text-slate-600 dark:text-slate-400">
+                            <p
+                                class="mt-1 text-[11px] text-slate-600 dark:text-slate-400"
+                            >
                                 {{ notif.message }}
                             </p>
                             <div class="mt-2 flex items-center justify-between">
