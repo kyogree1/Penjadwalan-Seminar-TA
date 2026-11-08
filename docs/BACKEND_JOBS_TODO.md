@@ -43,6 +43,7 @@ if ($period->is_published) {
 ```
 
 Kriteria terima:
+
 - `is_open = true` → 422 "Tutup pendaftaran terlebih dahulu."
 - `is_open = false`, `is_published = false` → 200 JSON hasil GA
 - `is_published = true` → 422
@@ -102,11 +103,11 @@ Request:
 
 ```json
 {
-  "period_id": 3,
-  "popSize": 50,
-  "maxGenerations": 100,
-  "crossoverRate": 0.8,
-  "mutationRate": 0.03
+    "period_id": 3,
+    "popSize": 50,
+    "maxGenerations": 100,
+    "crossoverRate": 0.8,
+    "mutationRate": 0.03
 }
 ```
 
@@ -114,26 +115,26 @@ Response 200 (bentuk aktual dari `ScheduleOptimizer::optimize` + tambahan `:328-
 
 ```json
 {
-  "schedule": [
-    {
-      "pendaftaran_id": 12,
-      "tipe": "sempro",
-      "mahasiswa_id": 9,
-      "penguji_1_id": 5,
-      "penguji_2_id": 7,
-      "tanggal": "2026-11-20",
-      "jam_mulai": "09:00:00",
-      "jam_selesai": "10:00:00"
-    }
-  ],
-  "unscheduled": [{ "pendaftaran_id": 13, "reason": "..." }],
-  "fitness": 0.91,
-  "kbk_match": 0.75,
-  "generations": 100,
-  "outcome": "partial",
-  "success": false,
-  "period_id": 3,
-  "limitations": ["..."]
+    "schedule": [
+        {
+            "pendaftaran_id": 12,
+            "tipe": "sempro",
+            "mahasiswa_id": 9,
+            "penguji_1_id": 5,
+            "penguji_2_id": 7,
+            "tanggal": "2026-11-20",
+            "jam_mulai": "09:00:00",
+            "jam_selesai": "10:00:00"
+        }
+    ],
+    "unscheduled": [{ "pendaftaran_id": 13, "reason": "..." }],
+    "fitness": 0.91,
+    "kbk_match": 0.75,
+    "generations": 100,
+    "outcome": "partial",
+    "success": false,
+    "period_id": 3,
+    "limitations": ["..."]
 }
 ```
 
@@ -160,6 +161,7 @@ File: `PlottingSempro.vue:287`, `PlottingTA.vue:286`
 
 `PlottingSempro.vue:299` (`exportExcel`) dan `:303` (`downloadJadwal`) hanya toast.
 Arahkan ke endpoint yang ada:
+
 - CSV jadwal: **belum ada** endpoint per-periode. Tambah `GET /kaprodi/penjadwalan/periods/{id}/export-csv` — BE, atau hapus tombol — BE/FE sepakati.
 - ICS sudah ada: `GET /kaprodi/penjadwalan/periods/{id}/export-ics` (`routes/web.php:128`). Tinggal dipakai.
 
@@ -171,14 +173,14 @@ File: `app/Http/Controllers/Kaprodi/PersetujuanController.php:173` (`updateSempr
 
 Saat ini hanya menerima `status_akademik` + `catatan_kaprodi`/`catatan`. Aksi di UI tidak punya endpoint:
 
-| Aksi UI | File | Endpoint dibutuhkan |
-| --- | --- | --- |
-| Setujui berkas | `SemproSection.vue:517` | `PATCH /kaprodi/persetujuan/sempro/{id}` field `status_berkas` |
-| Simpan revisi berkas | `SemproSection.vue:525` | field `catatan_revisi` |
-| Unduh berkas | `SemproSection.vue:534` | `GET /kaprodi/persetujuan/sempro/{id}/berkas` (stream/download) |
-| Input nilai sempro | `SemproSection.vue:569` | `POST /dosen/penilaian/{pendaftaran}` sudah ada — arahkan ke situ, jangan bikin endpoint baru |
-| Reschedule | `SemproSection.vue:600` | lihat P3 |
-| Konfirmasi hadir | `SemproSection.vue:617` | `PATCH /kaprodi/persetujuan/sempro/{id}` field `konfirmasi_hadir` |
+| Aksi UI              | File                    | Endpoint dibutuhkan                                                                           |
+| -------------------- | ----------------------- | --------------------------------------------------------------------------------------------- |
+| Setujui berkas       | `SemproSection.vue:517` | `PATCH /kaprodi/persetujuan/sempro/{id}` field `status_berkas`                                |
+| Simpan revisi berkas | `SemproSection.vue:525` | field `catatan_revisi`                                                                        |
+| Unduh berkas         | `SemproSection.vue:534` | `GET /kaprodi/persetujuan/sempro/{id}/berkas` (stream/download)                               |
+| Input nilai sempro   | `SemproSection.vue:569` | `POST /dosen/penilaian/{pendaftaran}` sudah ada — arahkan ke situ, jangan bikin endpoint baru |
+| Reschedule           | `SemproSection.vue:600` | lihat P3                                                                                      |
+| Konfirmasi hadir     | `SemproSection.vue:617` | `PATCH /kaprodi/persetujuan/sempro/{id}` field `konfirmasi_hadir`                             |
 
 **Keputusan yang harus diambil sebelum coding:** apakah `status_berkas` dan `konfirmasi_hadir` perlu kolom DB? Cek dulu `database/migrations/*pendaftaran_sempro*`. Bila tidak ada, tambah migrasi; jangan simpan di state Vue.
 
@@ -195,7 +197,7 @@ File: `resources/js/pages/Kaprodi/Partials/RescheduleSection.vue:374-405`. Semua
 Backend belum punya endpoint reschedule. Perlu:
 
 - Tabel `reschedule_requests` — atau pakai ulang `Penjadwalan` + flag. **Rekomendasi:** tabel terpisah, karena reschedule punya alur persetujuan.
-  - `id, penjadwalan_id, diminta_oleh, alasan, tanggal_usulan, jam_usulan, status (menunggu|disetujui|ditolak), catatan, timestamps`
+    - `id, penjadwalan_id, diminta_oleh, alasan, tanggal_usulan, jam_usulan, status (menunggu|disetujui|ditolak), catatan, timestamps`
 - `POST /pengajuan/reschedule` — mahasiswa/dosen
 - `PATCH /kaprodi/persetujuan/reschedule/{id}` — setujui/tolak; bila disetujui panggil `PenjadwalanController::update` agar validasi konflik tetap satu sumber
 - `GET` data reschedule disertakan di props `Kaprodi/Persetujuan`
@@ -210,14 +212,14 @@ Model: `app/Models/Notification.php` (`user_id, title, message, type, link, read
 
 Titik pembuatan yang dibutuhkan:
 
-| Event | Lokasi | Penerima |
-| --- | --- | --- |
-| Tendik verifikasi sempro/sidang | `Tendik/VerifikasiController.php:52,68` | Mahasiswa |
-| Kaprodi setujui/tolak judul | `Kaprodi/PersetujuanController.php:114` | Mahasiswa + dosen pembimbing |
-| Jadwal dipublikasikan | `PenjadwalanController::publish` (`:543`) | Mahasiswa + 2 penguji + pembimbing |
-| Nilai diinput | `Dosen/PenilaianController.php:57` | Mahasiswa |
-| Bimbingan diparaf | `Dosen/BimbinganController.php:57` | Mahasiswa |
-| Reschedule diputuskan (setelah P3) | endpoint P3 | Pemohon |
+| Event                              | Lokasi                                    | Penerima                           |
+| ---------------------------------- | ----------------------------------------- | ---------------------------------- |
+| Tendik verifikasi sempro/sidang    | `Tendik/VerifikasiController.php:52,68`   | Mahasiswa                          |
+| Kaprodi setujui/tolak judul        | `Kaprodi/PersetujuanController.php:114`   | Mahasiswa + dosen pembimbing       |
+| Jadwal dipublikasikan              | `PenjadwalanController::publish` (`:543`) | Mahasiswa + 2 penguji + pembimbing |
+| Nilai diinput                      | `Dosen/PenilaianController.php:57`        | Mahasiswa                          |
+| Bimbingan diparaf                  | `Dosen/BimbinganController.php:57`        | Mahasiswa                          |
+| Reschedule diputuskan (setelah P3) | endpoint P3                               | Pemohon                            |
 
 Implementasi minimal: satu helper `Notification::create([...])` di dalam transaksi yang sudah ada. Tidak perlu event/listener/queue.
 
@@ -225,13 +227,13 @@ Implementasi minimal: satu helper `Notification::create([...])` di dalam transak
 
 ## P5 — Kecil tapi menyesatkan
 
-| Item | Lokasi | Aksi |
-| --- | --- | --- |
-| `syncCalendar` hanya set flag, tidak memanggil Google Calendar | `PenjadwalanController.php:428` | Ganti label UI jadi "Tandai tersinkron" **atau** implementasi OAuth Calendar. Rekomendasi: ganti label (YAGNI). |
-| `exportCsv` arsip tidak ditautkan | `Tendik/ArsipController.php:90`, route `arsip.export` | Tambah tombol unduh di `Tendik/Arsip.vue`. FE, 1 link. |
-| `penguji1MatchScore` hardcoded `95` | `PenjadwalanController.php:687` | Hapus field dari response, atau hitung nyata. Lihat P6. |
-| Chatbot hanya link ke `/panduan` | `Components/AcademicChatbot.vue` | Tidak ada backend. Hapus komponen atau beri label "Panduan". |
-| `useNotifications.ts` masih impor mock | `resources/js/composables/useNotifications.ts` | Tidak dipakai di mana pun. Hapus file + `resources/js/data/notifications.ts` bila tidak ada pemakai lain. |
+| Item                                                           | Lokasi                                                | Aksi                                                                                                            |
+| -------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `syncCalendar` hanya set flag, tidak memanggil Google Calendar | `PenjadwalanController.php:428`                       | Ganti label UI jadi "Tandai tersinkron" **atau** implementasi OAuth Calendar. Rekomendasi: ganti label (YAGNI). |
+| `exportCsv` arsip tidak ditautkan                              | `Tendik/ArsipController.php:90`, route `arsip.export` | Tambah tombol unduh di `Tendik/Arsip.vue`. FE, 1 link.                                                          |
+| `penguji1MatchScore` hardcoded `95`                            | `PenjadwalanController.php:687`                       | Hapus field dari response, atau hitung nyata. Lihat P6.                                                         |
+| Chatbot hanya link ke `/panduan`                               | `Components/AcademicChatbot.vue`                      | Tidak ada backend. Hapus komponen atau beri label "Panduan".                                                    |
+| `useNotifications.ts` masih impor mock                         | `resources/js/composables/useNotifications.ts`        | Tidak dipakai di mana pun. Hapus file + `resources/js/data/notifications.ts` bila tidak ada pemakai lain.       |
 
 ---
 
@@ -240,6 +242,7 @@ Implementasi minimal: satu helper `Notification::create([...])` di dalam transak
 `ScheduleOptimizer::optimize` sudah menerima parameter `$compatibility` (`ScheduleOptimizer.php:13`), tetapi `generateGa` tidak mengirimnya sehingga semua pasangan memakai `NEUTRAL_SCORE` (`:189`, diumumkan di `limitations` `PenjadwalanController.php:335`).
 
 Untuk mengaktifkan:
+
 - Muat model RF yang ada (`models/rf/paket_model_rf_runtime_private.zip`).
 - Bentuk `compatibility[pendaftaran_id][dosen_id]` dari skor KBK.
 - Kirim sebagai argumen ke `optimize` / `evaluateRows`.

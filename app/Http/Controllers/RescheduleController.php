@@ -130,7 +130,7 @@ class RescheduleController extends Controller
                 Notification::create([
                     'user_id' => $reschedule->diminta_oleh,
                     'title' => 'Reschedule Jadwal Ditolak',
-                    'message' => "Permohonan reschedule untuk mahasiswa {$exam->mahasiswa?->name} ditolak: " . ($validated['catatan_kaprodi'] ?? 'Tidak ada catatan.'),
+                    'message' => "Permohonan reschedule untuk mahasiswa {$exam->mahasiswa?->name} ditolak: ".($validated['catatan_kaprodi'] ?? 'Tidak ada catatan.'),
                     'type' => 'warning',
                     'link' => '/kaprodi/persetujuan',
                 ]);

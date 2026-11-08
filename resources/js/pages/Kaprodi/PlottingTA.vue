@@ -249,7 +249,7 @@ const openGaModal = () => {
 
 const startGaOptimization = async () => {
     if (!activePeriodId.value) {
-        showToast('Pilih periode terlebih dahulu.', true);
+        showToast('Pilih periode terlebih dahulu.', 'error');
         return;
     }
     gaRunning.value = true;
@@ -287,7 +287,7 @@ const startGaOptimization = async () => {
         if (!response.ok) {
             const errorMsg = data.errors
                 ? Object.values(data.errors).flat().join(' ')
-                : (data.message || 'Optimasi GA Sidang TA gagal.');
+                : data.message || 'Optimasi GA Sidang TA gagal.';
             throw new Error(errorMsg);
         }
 
@@ -318,8 +318,13 @@ const startGaOptimization = async () => {
             });
         }
     } catch (err: any) {
-        gaLogs.value.push(`[Gagal] ${err.message || 'Terjadi kesalahan sistem.'}`);
-        showToast(err.message || 'Optimasi GA Sidang TA gagal dijalankan.', true);
+        gaLogs.value.push(
+            `[Gagal] ${err.message || 'Terjadi kesalahan sistem.'}`,
+        );
+        showToast(
+            err.message || 'Optimasi GA Sidang TA gagal dijalankan.',
+            'error',
+        );
     } finally {
         gaRunning.value = false;
     }
@@ -327,7 +332,7 @@ const startGaOptimization = async () => {
 
 const applyGaResults = () => {
     if (!gaResult.value?.schedule || gaResult.value.schedule.length === 0) {
-        showToast('Tidak ada jadwal hasil optimasi untuk disimpan.', true);
+        showToast('Tidak ada jadwal hasil optimasi untuk disimpan.', 'error');
         return;
     }
 
@@ -337,7 +342,10 @@ const applyGaResults = () => {
         tipe: row.tipe || 'sidang',
         penguji_1_id: row.penguji_1_id,
         penguji_2_id: row.penguji_2_id,
-        tanggal: typeof row.tanggal === 'string' ? row.tanggal.slice(0, 10) : row.tanggal,
+        tanggal:
+            typeof row.tanggal === 'string'
+                ? row.tanggal.slice(0, 10)
+                : row.tanggal,
         jam_mulai: row.jam_mulai,
         jam_selesai: row.jam_selesai,
     }));
@@ -358,8 +366,10 @@ const applyGaResults = () => {
                 router.reload();
             },
             onError: (errors) => {
-                const msg = Object.values(errors).join(' ') || 'Gagal menyimpan jadwal.';
-                showToast(msg, true);
+                const msg =
+                    Object.values(errors).join(' ') ||
+                    'Gagal menyimpan jadwal.';
+                showToast(msg, 'error');
             },
         },
     );
@@ -371,7 +381,7 @@ const isRiwayatModalOpen = ref(false);
 // Export Actions
 const exportExcel = () => {
     if (!activePeriodId.value) {
-        showToast('Pilih periode terlebih dahulu.', true);
+        showToast('Pilih periode terlebih dahulu.', 'error');
         return;
     }
     window.location.href = `/kaprodi/penjadwalan/export?period_id=${activePeriodId.value}`;
@@ -379,7 +389,7 @@ const exportExcel = () => {
 
 const downloadJadwal = () => {
     if (!activePeriodId.value) {
-        showToast('Pilih periode terlebih dahulu.', true);
+        showToast('Pilih periode terlebih dahulu.', 'error');
         return;
     }
     window.location.href = `/kaprodi/penjadwalan/periods/${activePeriodId.value}/export-ics`;

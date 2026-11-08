@@ -237,20 +237,37 @@ watch(
                                 ? 'Disetujui Pembimbing'
                                 : 'Draf Pengajuan',
                         nilai: item.nilai || '—',
-                        revisi: item.catatan_kaprodi || item.catatan || 'Tidak Ada',
-                        penguji1:
-                            item.penguji1 ||
-                            '-',
-                        penguji2:
-                            item.penguji2 ||
-                            '-',
+                        revisi:
+                            item.catatan_kaprodi || item.catatan || 'Tidak Ada',
+                        penguji1: item.penguji1 || '-',
+                        penguji2: item.penguji2 || '-',
                         tanggal: item.tanggal || '—',
                         waktu: item.waktu || '—',
                         ruang: item.ruang || 'Ruang Sidang FSTI 1',
                         files: [
-                            item.draft_laporan_file ? { name: item.draft_laporan_file.split('/').pop() || 'Naskah_Skripsi.pdf' } : null,
-                            item.turnitin_file ? { name: item.turnitin_file.split('/').pop() || 'Turnitin.pdf' } : null,
-                            item.skor_iaet_file ? { name: item.skor_iaet_file.split('/').pop() || 'IAET.pdf' } : null,
+                            item.draft_laporan_file
+                                ? {
+                                      name:
+                                          item.draft_laporan_file
+                                              .split('/')
+                                              .pop() || 'Naskah_Skripsi.pdf',
+                                  }
+                                : null,
+                            item.turnitin_file
+                                ? {
+                                      name:
+                                          item.turnitin_file.split('/').pop() ||
+                                          'Turnitin.pdf',
+                                  }
+                                : null,
+                            item.skor_iaet_file
+                                ? {
+                                      name:
+                                          item.skor_iaet_file
+                                              .split('/')
+                                              .pop() || 'IAET.pdf',
+                                  }
+                                : null,
                         ].filter(Boolean) as SidangFile[],
                     };
                 },
@@ -452,7 +469,9 @@ const validateDocument = (isApproved: boolean) => {
                     );
                 },
                 onError: (errs) => {
-                    const msg = Object.values(errs).join(' ') || 'Gagal memvalidasi berkas sidang.';
+                    const msg =
+                        Object.values(errs).join(' ') ||
+                        'Gagal memvalidasi berkas sidang.';
                     showToast(msg, true);
                 },
             },
@@ -474,7 +493,9 @@ const validateDocument = (isApproved: boolean) => {
                     );
                 },
                 onError: (errs) => {
-                    const msg = Object.values(errs).join(' ') || 'Gagal menyimpan catatan revisi.';
+                    const msg =
+                        Object.values(errs).join(' ') ||
+                        'Gagal menyimpan catatan revisi.';
                     showToast(msg, true);
                 },
             },
@@ -546,7 +567,9 @@ const submitNilaiSidang = () => {
                 isModalNilaiOpen.value = false;
             },
             onError: (errs) => {
-                const msg = Object.values(errs).join(' ') || 'Gagal menyimpan nilai ujian.';
+                const msg =
+                    Object.values(errs).join(' ') ||
+                    'Gagal menyimpan nilai ujian.';
                 showToast(msg, true);
             },
         },
@@ -603,7 +626,9 @@ const submitReschedule = () => {
                 isModalRescheduleOpen.value = false;
             },
             onError: (errs) => {
-                const msg = Object.values(errs).join(' ') || 'Gagal mengajukan reschedule sidang.';
+                const msg =
+                    Object.values(errs).join(' ') ||
+                    'Gagal mengajukan reschedule sidang.';
                 showToast(msg, true);
             },
         },

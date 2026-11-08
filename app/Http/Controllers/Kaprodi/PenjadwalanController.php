@@ -437,9 +437,9 @@ class PenjadwalanController extends Controller
                 Notification::create([
                     'user_id' => $exam->mahasiswa_id,
                     'title' => "Jadwal {$tipeLabel} Dipublikasikan",
-                    'message' => "Jadwal {$tipeLabel} Anda telah resmi dipublikasikan untuk tanggal " . ($exam->tanggal ? $exam->tanggal->format('d M Y') : 'sesuai jadwal') . ".",
+                    'message' => "Jadwal {$tipeLabel} Anda telah resmi dipublikasikan untuk tanggal ".($exam->tanggal ? $exam->tanggal->format('d M Y') : 'sesuai jadwal').'.',
                     'type' => 'success',
-                    'link' => '/mahasiswa/' . ($period->tipe === 'sempro' ? 'sempro' : 'sidang'),
+                    'link' => '/mahasiswa/'.($period->tipe === 'sempro' ? 'sempro' : 'sidang'),
                 ]);
 
                 // Notify examiners and supervisors

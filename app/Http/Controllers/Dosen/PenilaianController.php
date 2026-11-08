@@ -87,7 +87,7 @@ class PenilaianController extends Controller
                     'title' => 'Nilai Ujian Masuk',
                     'message' => "Dosen penguji {$request->user()->name} telah menginputkan nilai ujian {$exam->tipe} Anda.",
                     'type' => 'info',
-                    'link' => '/mahasiswa/' . ($exam->tipe === 'sempro' ? 'sempro' : 'sidang'),
+                    'link' => '/mahasiswa/'.($exam->tipe === 'sempro' ? 'sempro' : 'sidang'),
                 ]);
             } catch (UniqueConstraintViolationException $e) {
                 throw ValidationException::withMessages(['nilai' => 'Nilai sudah disimpan dan tidak dapat ditimpa.']);
@@ -103,7 +103,7 @@ class PenilaianController extends Controller
                     'title' => 'Ujian Telah Selesai',
                     'message' => "Seluruh nilai ujian {$exam->tipe} Anda telah lengkap dan status dinyatakan selesai.",
                     'type' => 'success',
-                    'link' => '/mahasiswa/' . ($exam->tipe === 'sempro' ? 'sempro' : 'sidang'),
+                    'link' => '/mahasiswa/'.($exam->tipe === 'sempro' ? 'sempro' : 'sidang'),
                 ]);
             }
         });

@@ -253,7 +253,7 @@ class PersetujuanController extends Controller
         Notification::create([
             'user_id' => $judul->mahasiswa_id,
             'title' => 'Status Pengajuan Judul TA',
-            'message' => "Pengajuan judul TA Anda '{$judul->judul_ta}' telah {$statusIndo} oleh Koordinator TA." . (! empty($validated['catatan_kaprodi']) ? " Catatan: {$validated['catatan_kaprodi']}" : ''),
+            'message' => "Pengajuan judul TA Anda '{$judul->judul_ta}' telah {$statusIndo} oleh Koordinator TA.".(! empty($validated['catatan_kaprodi']) ? " Catatan: {$validated['catatan_kaprodi']}" : ''),
             'type' => $validated['status'] === 'disetujui' ? 'success' : 'warning',
             'link' => '/mahasiswa/pengajuan-judul',
         ]);

@@ -54,7 +54,7 @@ const filteredArsipList = computed(() => {
             <template #action>
                 <a
                     href="/tendik/arsip/export"
-                    class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-2xs hover:bg-emerald-500 transition-colors"
+                    class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-2xs transition-colors hover:bg-emerald-500"
                 >
                     <Download class="h-4 w-4" />
                     <span>Ekspor CSV Arsip</span>

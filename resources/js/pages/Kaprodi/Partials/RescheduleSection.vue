@@ -398,7 +398,9 @@ const confirmApprove = () => {
                 );
             },
             onError: (errs) => {
-                const msg = Object.values(errs).join(' ') || 'Gagal menyetujui reschedule.';
+                const msg =
+                    Object.values(errs).join(' ') ||
+                    'Gagal menyetujui reschedule.';
                 showToast(msg, true);
             },
         },
@@ -437,7 +439,9 @@ const confirmReject = () => {
                 );
             },
             onError: (errs) => {
-                const msg = Object.values(errs).join(' ') || 'Gagal menolak reschedule.';
+                const msg =
+                    Object.values(errs).join(' ') ||
+                    'Gagal menolak reschedule.';
                 showToast(msg, true);
             },
         },
@@ -462,7 +466,9 @@ const resetDecision = (item: RescheduleRequestItem) => {
                 );
             },
             onError: (errs) => {
-                const msg = Object.values(errs).join(' ') || 'Gagal memperbarui status permohonan.';
+                const msg =
+                    Object.values(errs).join(' ') ||
+                    'Gagal memperbarui status permohonan.';
                 showToast(msg, true);
             },
         },

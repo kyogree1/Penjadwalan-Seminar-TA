@@ -309,15 +309,46 @@ watch(
                         penguji1: item.penguji1 || '-',
                         penguji1MatchScore: 50,
                         penguji2: item.penguji2 || '-',
-                        hari: item.tanggal ? item.tanggal.split(',')[0] : 'Senin',
+                        hari: item.tanggal
+                            ? item.tanggal.split(',')[0]
+                            : 'Senin',
                         tanggal: item.tanggal || '—',
-                        mulai: item.waktu ? item.waktu.split(' - ')[0] : '09:00',
-                        selesai: item.waktu ? item.waktu.split(' - ')[1] : '10:30',
+                        mulai: item.waktu
+                            ? item.waktu.split(' - ')[0]
+                            : '09:00',
+                        selesai: item.waktu
+                            ? item.waktu.split(' - ')[1]
+                            : '10:30',
                         files: [
-                            item.proposal_file ? { name: item.proposal_file.split('/').pop() || 'Proposal.pdf' } : null,
-                            item.lembar_kehadiran_file ? { name: item.lembar_kehadiran_file.split('/').pop() || 'Lembar_Kehadiran.pdf' } : null,
-                            item.turnitin_file ? { name: item.turnitin_file.split('/').pop() || 'Turnitin.pdf' } : null,
-                            item.iaet_file ? { name: item.iaet_file.split('/').pop() || 'IAET.pdf' } : null,
+                            item.proposal_file
+                                ? {
+                                      name:
+                                          item.proposal_file.split('/').pop() ||
+                                          'Proposal.pdf',
+                                  }
+                                : null,
+                            item.lembar_kehadiran_file
+                                ? {
+                                      name:
+                                          item.lembar_kehadiran_file
+                                              .split('/')
+                                              .pop() || 'Lembar_Kehadiran.pdf',
+                                  }
+                                : null,
+                            item.turnitin_file
+                                ? {
+                                      name:
+                                          item.turnitin_file.split('/').pop() ||
+                                          'Turnitin.pdf',
+                                  }
+                                : null,
+                            item.iaet_file
+                                ? {
+                                      name:
+                                          item.iaet_file.split('/').pop() ||
+                                          'IAET.pdf',
+                                  }
+                                : null,
                         ].filter(Boolean) as SemproFile[],
                     };
                 },
@@ -528,10 +559,13 @@ const approveBerkas = () => {
             preserveScroll: true,
             onSuccess: () => {
                 target.statusBerkas = 'Berkas Valid';
-                showToast(`Berkas pendaftaran Sempro "${target.nama}" berhasil disetujui!`);
+                showToast(
+                    `Berkas pendaftaran Sempro "${target.nama}" berhasil disetujui!`,
+                );
             },
             onError: (errs) => {
-                const msg = Object.values(errs).join(' ') || 'Gagal menyetujui berkas.';
+                const msg =
+                    Object.values(errs).join(' ') || 'Gagal menyetujui berkas.';
                 showToast(msg, true);
             },
         },
@@ -554,10 +588,14 @@ const saveRevisi = () => {
                 target.statusBerkas = 'Perlu Revisi';
                 target.revisi = note;
                 showRevisiModal.value = false;
-                showToast(`Catatan revisi berkas telah dikirimkan ke "${target.nama}".`);
+                showToast(
+                    `Catatan revisi berkas telah dikirimkan ke "${target.nama}".`,
+                );
             },
             onError: (errs) => {
-                const msg = Object.values(errs).join(' ') || 'Gagal menyimpan catatan revisi.';
+                const msg =
+                    Object.values(errs).join(' ') ||
+                    'Gagal menyimpan catatan revisi.';
                 showToast(msg, true);
             },
         },
@@ -629,7 +667,9 @@ const submitNilaiSempro = () => {
                 isModalNilaiOpen.value = false;
             },
             onError: (errs) => {
-                const msg = Object.values(errs).join(' ') || 'Gagal menyimpan nilai ujian.';
+                const msg =
+                    Object.values(errs).join(' ') ||
+                    'Gagal menyimpan nilai ujian.';
                 showToast(msg, true);
             },
         },
@@ -684,7 +724,9 @@ const submitReschedule = () => {
                 isModalRescheduleOpen.value = false;
             },
             onError: (errs) => {
-                const msg = Object.values(errs).join(' ') || 'Gagal mengajukan reschedule.';
+                const msg =
+                    Object.values(errs).join(' ') ||
+                    'Gagal mengajukan reschedule.';
                 showToast(msg, true);
             },
         },

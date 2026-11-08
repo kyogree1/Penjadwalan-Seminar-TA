@@ -3,12 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Bimbingan;
-use App\Models\Notification;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use App\Models\PengajuanJudul;
-use App\Models\Penjadwalan;
-use App\Models\SchedulePeriod;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
