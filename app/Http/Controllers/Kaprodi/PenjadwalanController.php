@@ -267,7 +267,7 @@ class PenjadwalanController extends Controller
             return null;
         }
         $supervisors = array_values(array_unique(array_filter([$title->pembimbing_1_id, $title->pembimbing_2_id])));
-        if (User::whereIn('id', $supervisors)->where('role', 'dosen')->count() !== count($supervisors)) {
+        if (User::whereIn('id', $supervisors)->whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->count() !== count($supervisors)) {
             return null;
         }
         $student = User::where('id', $registration->mahasiswa_id)->where('role', 'mahasiswa')->first();

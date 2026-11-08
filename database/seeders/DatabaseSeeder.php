@@ -407,8 +407,8 @@ class DatabaseSeeder extends Seeder
                 'bidang' => 'Computational Intelligence & Optimasi',
                 'p1' => $dosenFaisal->id,
                 'p2' => $koorprodi->id,
-                'status' => 'revisi',
-                'catatan_kaprodi' => 'Perjelas batas waktu optimasi penjadwalan dan parameter mutasi pada bab metodologi.',
+                'status' => 'disetujui',
+                'catatan_kaprodi' => 'Metodologi dan formulasi constraint sudah jelas. Disetujui maju seminar proposal.',
                 'sessions' => [
                     ['tanggal' => '2026-08-16', 'dosen_id' => $koorprodi->id, 'bab' => 'Bab 1 - Batasan Sistem', 'rangkuman' => 'Penetapan ruang lingkup seminar prodi IF.', 'catatan' => 'Disetujui.', 'status' => 'delivered'],
                     ['tanggal' => '2026-09-01', 'dosen_id' => $koorprodi->id, 'bab' => 'Bab 3 - Alur Komputasi AI', 'rangkuman' => 'Diagram alir optimasi penjadwalan GA.', 'catatan' => 'Bagus, lanjutkan.', 'status' => 'delivered'],
