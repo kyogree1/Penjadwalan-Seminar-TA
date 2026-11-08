@@ -155,7 +155,7 @@ const submitForm = () => {
         <PageHeaderBox title="Pengajuan Judul Tugas Akhir">
             <template #action>
                 <div
-                    class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-4 py-2 shadow-2xs dark:border-slate-800 dark:bg-[#0E1626]"
+                    class="dark:bg-navy-surface flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-4 py-2 shadow-2xs dark:border-slate-800"
                 >
                     <span
                         class="text-xs font-bold text-slate-700 dark:text-slate-300"
@@ -195,7 +195,7 @@ const submitForm = () => {
 
         <!-- 2. Card Perhatian! (Sesuai Mockup) -->
         <div
-            class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800"
         >
             <h3 class="text-base font-bold text-slate-900 dark:text-white">
                 Perhatian!
@@ -255,7 +255,7 @@ const submitForm = () => {
 
         <!-- 3. Card Data Pengajuan TA Form (Sesuai Mockup) -->
         <form
-            class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800"
             @submit.prevent="submitForm"
         >
             <h3
@@ -421,7 +421,7 @@ const submitForm = () => {
                         :disabled="
                             !canEditForm || !isFormValid || form.processing
                         "
-                        class="rounded-xl bg-[#8CE79B] px-6 py-2.5 text-xs font-bold text-slate-900 transition-all hover:bg-[#7BD68A] active:scale-95 disabled:pointer-events-none disabled:opacity-40"
+                        class="rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white transition-all hover:bg-blue-500 active:scale-95 disabled:pointer-events-none disabled:opacity-40"
                     >
                         Ajukan Judul
                     </button>

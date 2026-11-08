@@ -380,7 +380,7 @@ const getStatusBadgeClass = (status: string) => {
         return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30';
     }
     if (s.includes('revisi')) {
-        return 'bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/30';
+        return 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/30';
     }
     if (s.includes('tolak')) {
         return 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30';
@@ -391,7 +391,7 @@ const getStatusBadgeClass = (status: string) => {
 const getStatusDotClass = (status: string) => {
     const s = String(status).toLowerCase();
     if (s.includes('setuju')) return 'bg-emerald-500';
-    if (s.includes('revisi')) return 'bg-purple-600 dark:bg-purple-400';
+    if (s.includes('revisi')) return 'bg-blue-600 dark:bg-blue-400';
     if (s.includes('tolak')) return 'bg-rose-500';
     return 'bg-amber-500';
 };
@@ -906,25 +906,21 @@ const submitAcademicReview = (
                 title="Total Pengajuan"
                 :value="totalCount"
                 :icon="BookOpen"
-                icon-color="blue"
             />
             <StatCard
                 title="Menunggu Review"
                 :value="pendingCount"
                 :icon="Clock"
-                icon-color="amber"
             />
             <StatCard
                 title="Judul Disetujui"
                 :value="approvedCount"
                 :icon="CheckCircle2"
-                icon-color="emerald"
             />
             <StatCard
                 title="Perlu Revisi"
                 :value="revisionCount"
                 :icon="FileEdit"
-                icon-color="rose"
             />
         </div>
 
@@ -933,7 +929,7 @@ const submitAcademicReview = (
             <!-- LEFT SECTION: TABLE & FILTERS -->
             <div class="w-full min-w-0 flex-1 space-y-4">
                 <div
-                    class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80"
                 >
                     <!-- Card Header with Filters -->
                     <div
@@ -999,7 +995,7 @@ const submitAcademicReview = (
                                     class="cursor-pointer rounded-xl px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-all"
                                     :class="[
                                         filterStatus === 'Perlu Revisi'
-                                            ? 'bg-purple-600 text-white shadow-sm'
+                                            ? 'bg-blue-600 text-white shadow-sm'
                                             : 'bg-slate-100 text-black hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
                                     ]"
                                 >
@@ -1018,7 +1014,7 @@ const submitAcademicReview = (
                                     v-model="searchQuery"
                                     type="text"
                                     placeholder="Cari judul, nama, atau NIM..."
-                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-8 text-xs font-medium text-black outline-hidden placeholder:text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:placeholder:text-slate-400"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-8 text-xs font-medium text-black outline-hidden placeholder:text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:placeholder:text-slate-500"
                                 />
                                 <Search
                                     class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-black dark:text-slate-400"
@@ -1138,7 +1134,7 @@ const submitAcademicReview = (
                                             {{ item.judul_ta }}
                                         </p>
                                         <span
-                                            class="mt-1 inline-block text-[10px] font-bold text-blue-700 dark:text-blue-400"
+                                            class="mt-1 inline-block text-[11px] font-bold text-blue-700 dark:text-blue-400"
                                         >
                                             #
                                             {{
@@ -1156,7 +1152,7 @@ const submitAcademicReview = (
                                             {{ getSupervisorName(1, item) }}
                                         </p>
                                         <span
-                                            class="text-[10px] font-normal text-black dark:text-slate-400"
+                                            class="text-[11px] font-normal text-black dark:text-slate-400"
                                             >Utama</span
                                         >
                                     </td>
@@ -1170,7 +1166,7 @@ const submitAcademicReview = (
                                             {{ getSupervisorName(2, item) }}
                                         </p>
                                         <span
-                                            class="text-[10px] font-normal text-black dark:text-slate-400"
+                                            class="text-[11px] font-normal text-black dark:text-slate-400"
                                             >Pendamping</span
                                         >
                                     </td>
@@ -1183,7 +1179,7 @@ const submitAcademicReview = (
                                             :class="
                                                 getStatusBadgeClass(item.status)
                                             "
-                                            class="inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[10px] font-extrabold shadow-2xs"
+                                            class="inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-extrabold shadow-2xs"
                                         >
                                             <span>{{
                                                 getDisplayStatus(item)
@@ -1308,7 +1304,7 @@ const submitAcademicReview = (
             <!-- RIGHT SECTION: DETAIL & REVIEW INSPECTOR PANEL -->
             <div
                 v-if="selectedJudul"
-                class="sticky top-20 w-full space-y-5 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all lg:w-96 dark:border-slate-800/80 dark:bg-[#111827]"
+                class="dark:bg-navy-surface sticky top-20 w-full space-y-5 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all lg:w-96 dark:border-slate-800/80"
             >
                 <!-- Inspector Header -->
                 <div
@@ -1361,7 +1357,7 @@ const submitAcademicReview = (
                 <!-- Title & Topic Details -->
                 <div class="space-y-2">
                     <span
-                        class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                        class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                         >Judul Penelitian</span
                     >
                     <p
@@ -1396,7 +1392,7 @@ const submitAcademicReview = (
                 <!-- Abstract / Summary -->
                 <div class="space-y-1.5">
                     <span
-                        class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                        class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                         >Ringkasan Ide / Abstrak</span
                     >
                     <p
@@ -1414,7 +1410,7 @@ const submitAcademicReview = (
                     class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                 >
                     <span
-                        class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                        class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                         >Calon Pembimbing</span
                     >
                     <div class="space-y-1.5 text-xs">
@@ -1459,7 +1455,7 @@ const submitAcademicReview = (
                         class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                            class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                             >Catatan Review / Feedback</span
                         >
                         <textarea
@@ -1475,7 +1471,7 @@ const submitAcademicReview = (
                     >
                         <div class="flex items-center justify-between">
                             <span
-                                class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                                class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                                 >Keputusan Review</span
                             >
                             <span
@@ -1483,7 +1479,7 @@ const submitAcademicReview = (
                                 :class="[
                                     reviewDecision === 'disetujui'
                                         ? 'border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                                        : 'border border-purple-500/30 bg-purple-500/10 text-purple-700 dark:text-purple-300',
+                                        : 'border border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300',
                                 ]"
                             >
                                 {{
@@ -1521,7 +1517,7 @@ const submitAcademicReview = (
                                 class="flex cursor-pointer items-center justify-center rounded-xl p-2.5 text-xs font-bold transition-all"
                                 :class="[
                                     reviewDecision === 'revisi'
-                                        ? 'scale-[1.02] bg-purple-600 text-white shadow-md ring-2 shadow-purple-600/30 ring-purple-500 ring-offset-2 dark:ring-offset-[#111827]'
+                                        ? 'scale-[1.02] bg-blue-600 text-white shadow-md ring-2 shadow-blue-600/30 ring-blue-500 ring-offset-2 dark:ring-offset-[#111827]'
                                         : 'border border-slate-200 bg-slate-50 font-bold text-black hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700',
                                 ]"
                             >
@@ -1564,7 +1560,7 @@ const submitAcademicReview = (
                         class="space-y-1.5 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                            class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                             >Catatan Review / Feedback</span
                         >
                         <p
@@ -1579,7 +1575,7 @@ const submitAcademicReview = (
                         class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                            class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                             >Keputusan Review</span
                         >
                         <div
@@ -1591,7 +1587,7 @@ const submitAcademicReview = (
                                 Disetujui
                             </span>
                             <span
-                                class="text-[10px] font-bold text-emerald-600/80 dark:text-emerald-400/80"
+                                class="text-[11px] font-bold text-emerald-600/80 dark:text-emerald-400/80"
                             >
                                 Tersimpan
                             </span>
@@ -1611,11 +1607,11 @@ const submitAcademicReview = (
                         class="space-y-1.5 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                            class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                             >Catatan Arahan Revisi</span
                         >
                         <p
-                            class="rounded-xl border border-purple-200/80 bg-purple-50/50 p-2.5 text-xs leading-relaxed font-normal text-black dark:border-purple-800/40 dark:bg-purple-950/20 dark:text-purple-200"
+                            class="rounded-xl border border-blue-200/80 bg-blue-50/50 p-2.5 text-xs leading-relaxed font-normal text-black dark:border-blue-800/40 dark:bg-blue-950/20 dark:text-blue-200"
                         >
                             {{ selectedJudul.catatan_kaprodi }}
                         </p>
@@ -1626,19 +1622,19 @@ const submitAcademicReview = (
                         class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                            class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                             >Keputusan Review</span
                         >
                         <div
-                            class="flex items-center justify-between rounded-xl border border-purple-500/30 bg-purple-50/70 p-3 dark:border-purple-500/20 dark:bg-purple-950/20"
+                            class="flex items-center justify-between rounded-xl border border-blue-500/30 bg-blue-50/70 p-3 dark:border-blue-500/20 dark:bg-blue-950/20"
                         >
                             <span
-                                class="text-xs font-black tracking-wide text-purple-700 dark:text-purple-300"
+                                class="text-xs font-black tracking-wide text-blue-700 dark:text-blue-300"
                             >
                                 Perlu Revisi
                             </span>
                             <span
-                                class="text-[10px] font-bold text-purple-600/80 dark:text-purple-400/80"
+                                class="text-[11px] font-bold text-blue-600/80 dark:text-blue-400/80"
                             >
                                 Menunggu Mahasiswa
                             </span>
@@ -1653,7 +1649,7 @@ const submitAcademicReview = (
                         class="space-y-1.5 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                            class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                             >Catatan</span
                         >
                         <p
@@ -1667,7 +1663,7 @@ const submitAcademicReview = (
                         class="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <span
-                            class="text-[10px] font-black tracking-wider text-black dark:text-slate-400"
+                            class="text-[11px] font-black tracking-wider text-black dark:text-slate-400"
                             >Keputusan Review</span
                         >
                         <div
@@ -1686,7 +1682,7 @@ const submitAcademicReview = (
             <!-- Placeholder if no judul selected or list empty (matching Lembar Kendali Bimbingan) -->
             <div
                 v-else
-                class="sticky top-20 flex w-full shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center lg:w-96 dark:border-slate-700 dark:bg-[#111827]"
+                class="dark:bg-navy-surface sticky top-20 flex w-full shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center lg:w-96 dark:border-slate-700"
             >
                 <div
                     class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400"

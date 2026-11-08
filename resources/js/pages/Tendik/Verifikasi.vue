@@ -134,7 +134,6 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
             <span>{{ success }}</span>
         </div>
         <PageHeaderBox
-            badge="Layanan Administrasi Akademik"
             title="Verifikasi Persyaratan Seminar Proposal & Sidang TA"
             description="Periksa keaslian dokumen kelayakan administratif mahasiswa sebelum didistribusikan ke modul Penjadwalan Algoritma Genetika."
         />
@@ -162,13 +161,13 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                     <!-- Search Box -->
                     <div class="relative w-full sm:w-64">
                         <Search
-                            class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400"
+                            class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-500"
                         />
                         <input
                             v-model="searchQuery"
                             type="text"
                             placeholder="Cari nama, NIM, atau judul..."
-                            class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/80 pr-4 pl-9 text-xs text-slate-800 transition-colors placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-100 dark:focus:bg-slate-900"
+                            class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/80 pr-4 pl-9 text-xs text-slate-800 transition-colors placeholder:text-slate-500 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-100 dark:focus:bg-slate-900"
                         />
                     </div>
 
@@ -239,18 +238,18 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                                     {{ app.nama }}
                                 </p>
                                 <p
-                                    class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500"
+                                    class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-500"
                                 >
                                     NIM: {{ app.nim }}
                                 </p>
                             </td>
                             <td class="px-4 py-3.5">
                                 <span
-                                    class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold"
+                                    class="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold"
                                     :class="
                                         app.tipe === 'sempro'
-                                            ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300'
-                                            : 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300'
+                                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
+                                            : 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
                                     "
                                 >
                                     {{
@@ -299,7 +298,7 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                         <div
                             class="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
                         >
-                            <Search class="h-8 w-8 text-slate-400" />
+                            <Search class="h-8 w-8 text-slate-500" />
                         </div>
                         <div>
                             <h4
@@ -336,11 +335,11 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                     </h3>
                     <span
                         v-if="activeApplicant"
-                        class="rounded-md px-2 py-0.5 text-[10px] font-semibold"
+                        class="rounded-md px-2 py-0.5 text-[11px] font-semibold"
                         :class="
                             activeApplicant.tipe === 'sempro'
-                                ? 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300'
-                                : 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300'
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
+                                : 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
                         "
                     >
                         {{
@@ -365,7 +364,7 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                 class="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-900/40"
             >
                 <p
-                    class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase dark:text-slate-500"
+                    class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-500"
                 >
                     Judul Tugas Akhir
                 </p>
@@ -408,7 +407,7 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                             :class="
                                 item.path
                                     ? 'border-blue-200 bg-blue-50 text-blue-600 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-400'
-                                    : 'border-slate-200 bg-slate-100 text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500'
+                                    : 'border-slate-200 bg-slate-100 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500'
                             "
                         >
                             <FileText class="h-3.5 w-3.5" />
@@ -427,7 +426,7 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                         </div>
                     </div>
                     <span
-                        class="shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold"
+                        class="shrink-0 rounded-md px-2 py-0.5 text-[11px] font-semibold"
                         :class="
                             item.path
                                 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
@@ -451,7 +450,7 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
                     :disabled="saving"
                     rows="3"
                     placeholder="Tuliskan catatan verifikasi atau alasan penolakan jika berkas belum sesuai..."
-                    class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
+                    class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-xs text-slate-900 placeholder:text-slate-500 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
                 />
             </div>
         </div>
@@ -472,7 +471,7 @@ const submitVerification = (status: 'verifikasi_tendik' | 'ditolak') => {
         <div
             class="mt-4 flex items-start gap-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-[11px] text-slate-500 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-400"
         >
-            <Info class="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
+            <Info class="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
             <p>
                 Path berkas adalah data tersimpan, bukan bukti dokumen telah
                 diperiksa secara fisik. Pratinjau dokumen belum tersedia.

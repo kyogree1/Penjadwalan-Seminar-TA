@@ -164,8 +164,8 @@ const pipelineStages = computed(() => {
             name: 'Bimbingan Berjalan',
             count: Math.max(0, total - (judul + sempro + sidang)),
             percentage: calcPct(Math.max(0, total - (judul + sempro + sidang))),
-            barColor: 'bg-indigo-600',
-            dotColor: 'bg-indigo-600',
+            barColor: 'bg-blue-600',
+            dotColor: 'bg-blue-600',
             icon: UserCheck,
             href: '/dosen/bimbingan',
         },
@@ -225,34 +225,30 @@ const pipelineStages = computed(() => {
                 :value="props.stats.totalMahasiswa"
                 subtitle="Akun mahasiswa terdaftar, bukan peserta TA aktif"
                 :icon="Users"
-                icon-color="blue"
             />
             <StatCard
                 title="Total Dosen"
                 :value="props.stats.totalDosen"
                 subtitle="Akun dengan peran dosen"
                 :icon="GraduationCap"
-                icon-color="indigo"
             />
             <StatCard
                 title="Sempro Minggu Ini"
                 :value="props.pendingCounts.sempro"
                 subtitle="Seminar proposal terjadwal minggu ini"
                 :icon="Calendar"
-                icon-color="indigo"
             />
             <StatCard
                 title="Sidang TA Minggu Ini"
                 :value="props.pendingCounts.sidang"
                 subtitle="Sidang tugas akhir terjadwal minggu ini"
                 :icon="Award"
-                icon-color="emerald"
             />
         </div>
 
         <!-- 3. PIPELINE KEMAJUAN TUGAS AKHIR (PORTED FROM FRONT-END) -->
         <div
-            class="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs sm:p-6 dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs sm:p-6 dark:border-slate-800"
         >
             <div
                 class="flex flex-col justify-between gap-2 sm:flex-row sm:items-center"
@@ -324,7 +320,7 @@ const pipelineStages = computed(() => {
                             class="text-base font-bold text-slate-900 dark:text-white"
                             >{{ stage.count }}</span
                         >
-                        <span class="text-[10px] font-medium text-slate-400"
+                        <span class="text-[11px] font-medium text-slate-500"
                             >{{ stage.percentage }}%</span
                         >
                     </div>
@@ -420,12 +416,12 @@ const pipelineStages = computed(() => {
                                             class="flex flex-wrap items-center gap-2"
                                         >
                                             <span
-                                                class="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-400"
+                                                class="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-400"
                                             >
                                                 USULAN JUDUL
                                             </span>
                                             <span
-                                                class="text-[11px] text-slate-400"
+                                                class="text-[11px] text-slate-500"
                                                 >{{ item.tanggal }}</span
                                             >
                                         </div>
@@ -556,18 +552,18 @@ const pipelineStages = computed(() => {
                                                 {{ student.nama }}
                                             </span>
                                             <span
-                                                class="font-mono text-xs text-slate-400"
+                                                class="font-mono text-xs text-slate-500"
                                             >
                                                 ({{ student.nim }})
                                             </span>
                                             <span
-                                                class="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300"
+                                                class="rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300"
                                             >
                                                 {{ student.tahap }}
                                             </span>
                                             <span
                                                 v-if="student.hasPendingLogbook"
-                                                class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                                                class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-800 dark:bg-amber-950 dark:text-amber-300"
                                             >
                                                 <span
                                                     class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500"
@@ -672,12 +668,12 @@ const pipelineStages = computed(() => {
                         >
                             <div class="flex items-center justify-between">
                                 <span
-                                    class="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300"
+                                    class="rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300"
                                 >
                                     Gelombang 2 • Seminar Proposal
                                 </span>
                                 <span
-                                    class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
+                                    class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400"
                                 >
                                     <span
                                         class="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500"
@@ -707,12 +703,12 @@ const pipelineStages = computed(() => {
                         >
                             <div class="flex items-center justify-between">
                                 <span
-                                    class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                                    class="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
                                 >
                                     Gelombang 2 • Sidang Tugas Akhir
                                 </span>
                                 <span
-                                    class="inline-flex items-center gap-1 text-[10px] font-bold text-blue-600 dark:text-blue-400"
+                                    class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 dark:text-blue-400"
                                 >
                                     <span
                                         class="h-1.5 w-1.5 rounded-full bg-blue-500"
@@ -740,7 +736,7 @@ const pipelineStages = computed(() => {
                     <!-- Sinkronisasi server notice (asserted by test suite when deadlines is null) -->
                     <p
                         v-if="props.deadlines === null"
-                        class="hidden text-[10px] text-slate-400 dark:text-slate-500"
+                        class="hidden text-[11px] text-slate-500 dark:text-slate-500"
                     >
                         Data batas waktu periode belum tersedia dari
                         sinkronisasi server; mengacu pada ketetapan kalender
@@ -782,7 +778,7 @@ const pipelineStages = computed(() => {
                                     >
                                         {{ dos.name }}
                                     </p>
-                                    <p class="text-[10px] text-slate-400">
+                                    <p class="text-[11px] text-slate-500">
                                         P1: {{ dos.bimbingan1 }} • P2:
                                         {{ dos.bimbingan2 }}
                                     </p>
@@ -853,7 +849,7 @@ const pipelineStages = computed(() => {
     >
         <div v-if="selectedApproval" class="space-y-4">
             <div>
-                <span class="text-[11px] font-semibold text-slate-400"
+                <span class="text-[11px] font-semibold text-slate-500"
                     >Mahasiswa Pemohon</span
                 >
                 <p class="text-sm font-bold text-slate-900 dark:text-white">
@@ -862,13 +858,13 @@ const pipelineStages = computed(() => {
                         ({{ selectedApproval.nim ?? 'NIM belum tersedia' }})
                     </span>
                 </p>
-                <p class="text-[11px] text-slate-400">
+                <p class="text-[11px] text-slate-500">
                     Diajukan pada: {{ selectedApproval.tanggal }}
                 </p>
             </div>
 
             <div>
-                <span class="text-[11px] font-semibold text-slate-400"
+                <span class="text-[11px] font-semibold text-slate-500"
                     >Judul Skripsi / TA</span
                 >
                 <p
@@ -882,7 +878,7 @@ const pipelineStages = computed(() => {
                 <div
                     class="rounded-xl border border-slate-200/70 bg-slate-50/70 p-2.5 dark:border-slate-800 dark:bg-slate-900/60"
                 >
-                    <span class="text-[10px] text-slate-400"
+                    <span class="text-[11px] text-slate-500"
                         >Usulan Pembimbing 1</span
                     >
                     <p
@@ -894,7 +890,7 @@ const pipelineStages = computed(() => {
                 <div
                     class="rounded-xl border border-slate-200/70 bg-slate-50/70 p-2.5 dark:border-slate-800 dark:bg-slate-900/60"
                 >
-                    <span class="text-[10px] text-slate-400"
+                    <span class="text-[11px] text-slate-500"
                         >Usulan Pembimbing 2</span
                     >
                     <p

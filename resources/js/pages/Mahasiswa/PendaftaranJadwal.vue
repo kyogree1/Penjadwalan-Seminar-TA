@@ -148,7 +148,7 @@ const openDetail = (item: ScheduleDetail) => {
         <div class="flex flex-col gap-3 sm:flex-row">
             <div class="relative flex-1">
                 <Search
-                    class="absolute top-2.5 left-3 h-4 w-4 text-slate-400"
+                    class="absolute top-2.5 left-3 h-4 w-4 text-slate-500"
                 /><input
                     v-model="search"
                     placeholder="Cari nama, NIM, atau judul tugas akhir..."
@@ -157,7 +157,7 @@ const openDetail = (item: ScheduleDetail) => {
             </div>
         </div>
         <div
-            class="overflow-x-auto rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface overflow-x-auto rounded-2xl border border-slate-200 bg-white dark:border-slate-800"
         >
             <table class="w-full text-left text-xs">
                 <thead
@@ -216,7 +216,7 @@ const openDetail = (item: ScheduleDetail) => {
                             <td class="p-4">Gelombang {{ item.wave }}</td>
                             <td class="p-4">
                                 <span
-                                    class="rounded-md bg-emerald-100 px-2 py-1 text-[10px] font-bold text-emerald-700"
+                                    class="rounded-md bg-emerald-100 px-2 py-1 text-[11px] font-bold text-emerald-700"
                                     >{{ item.status }}</span
                                 >
                             </td>
@@ -229,7 +229,7 @@ const openDetail = (item: ScheduleDetail) => {
                                     {{ item.studentName }}
                                     <span
                                         v-if="item.own"
-                                        class="text-[10px] text-blue-600"
+                                        class="text-[11px] text-blue-600"
                                         >(Anda)</span
                                     >
                                 </p>
@@ -238,7 +238,7 @@ const openDetail = (item: ScheduleDetail) => {
                             <td class="max-w-sm p-4">
                                 <p class="line-clamp-2">{{ item.title }}</p>
                                 <p class="mt-1 text-slate-500">
-                                    {{ item.date }} · {{ item.time }} ·
+                                    {{ item.date }}, {{ item.time }} ·
                                     {{ item.room }}
                                 </p>
                             </td>
@@ -256,7 +256,7 @@ const openDetail = (item: ScheduleDetail) => {
                             </td>
                             <td class="p-4">
                                 <span
-                                    class="rounded-md bg-blue-100 px-2 py-1 text-[10px] font-bold text-blue-700"
+                                    class="rounded-md bg-blue-100 px-2 py-1 text-[11px] font-bold text-blue-700"
                                     >{{ item.status }}</span
                                 >
                             </td>

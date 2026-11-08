@@ -681,7 +681,6 @@ const getPersetujuanBadge = (persetujuan: string) => {
                 "
                 :value="`${totalSidangCount} mhs`"
                 :icon="GraduationCap"
-                icon-color="blue"
             />
             <StatCard
                 :title="
@@ -693,7 +692,6 @@ const getPersetujuanBadge = (persetujuan: string) => {
                         : `${konfirmasiHadirCount} mhs`
                 "
                 :icon="isKoorprodi ? Calendar : CheckCircle2"
-                icon-color="emerald"
             />
             <StatCard
                 :title="
@@ -707,13 +705,11 @@ const getPersetujuanBadge = (persetujuan: string) => {
                         : `${ajuanRescheduleCount} pengajuan`
                 "
                 :icon="isKoorprodi ? Clock : CalendarClock"
-                icon-color="amber"
             />
             <StatCard
                 title="Selesai Dinilai"
                 :value="`${selesaiDinilaiCount} mhs`"
                 :icon="FileCheck"
-                icon-color="slate"
             />
         </div>
 
@@ -723,7 +719,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
             <div class="w-full min-w-0 flex-1 space-y-5">
                 <!-- DOSEN PROFILE CARD -->
                 <div
-                    class="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800/80"
                 >
                     <div
                         class="flex flex-col gap-4 sm:flex-row sm:items-center"
@@ -793,7 +789,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                         >
                             <span>Mahasiswa Bimbingan</span>
                             <span
-                                class="py-0.2 rounded-full px-1.5 text-[10px] font-black"
+                                class="py-0.2 rounded-full px-1.5 text-[11px] font-black"
                                 :class="
                                     activeSubtab === 'bimbingan'
                                         ? 'bg-white/20 text-white'
@@ -826,7 +822,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                         >
                             <span>Mahasiswa Uji</span>
                             <span
-                                class="py-0.2 rounded-full px-1.5 text-[10px] font-black"
+                                class="py-0.2 rounded-full px-1.5 text-[11px] font-black"
                                 :class="
                                     activeSubtab === 'uji'
                                         ? 'bg-white/20 text-white'
@@ -852,7 +848,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
 
                 <!-- TABLE DAFTAR MAHASISWA SIDANG TUGAS AKHIR -->
                 <div
-                    class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80"
                 >
                     <!-- Card Header -->
                     <div
@@ -887,7 +883,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                             <!-- Search Input -->
                             <div class="relative w-full sm:w-60">
                                 <Search
-                                    class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-slate-400"
+                                    class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-slate-500"
                                 />
                                 <input
                                     v-model="searchQuery"
@@ -993,7 +989,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                                             :class="
                                                 getStatusBadge(mhs.statusBerkas)
                                             "
-                                            class="inline-block rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-2xs"
+                                            class="inline-block rounded-full border px-2.5 py-1 text-[11px] font-bold shadow-2xs"
                                         >
                                             {{ mhs.statusBerkas }}
                                         </span>
@@ -1009,7 +1005,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                                                     mhs.persetujuan,
                                                 )
                                             "
-                                            class="inline-block rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-2xs"
+                                            class="inline-block rounded-full border px-2.5 py-1 text-[11px] font-bold shadow-2xs"
                                         >
                                             {{ mhs.persetujuan }}
                                         </span>
@@ -1140,7 +1136,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                 >
                     <div class="truncate">
                         <span
-                            class="block text-[10px] font-black tracking-wider text-blue-700 dark:text-blue-400"
+                            class="block text-[11px] font-black tracking-wider text-blue-700 dark:text-blue-400"
                         >
                             Mahasiswa Terpilih
                         </span>
@@ -1162,7 +1158,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
 
                 <!-- CARD 1: DOSEN PENGUJI -->
                 <div
-                    class="space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80"
                 >
                     <div class="flex items-center justify-between">
                         <h3
@@ -1175,7 +1171,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                         </h3>
                         <span
                             v-if="selectedStudent"
-                            class="rounded-md border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+                            class="rounded-md border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
                         >
                             Terjadwal (GA)
                         </span>
@@ -1190,7 +1186,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                             class="space-y-1 rounded-xl border border-slate-200/60 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60"
                         >
                             <span
-                                class="block text-[10px] font-black text-black dark:text-slate-400"
+                                class="block text-[11px] font-black text-black dark:text-slate-400"
                             >
                                 Penguji 1 (Ketua)
                             </span>
@@ -1200,7 +1196,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                                 {{ selectedStudent.penguji1 }}
                             </p>
                             <p
-                                class="text-[10px] font-bold"
+                                class="text-[11px] font-bold"
                                 :class="
                                     isPengujiConfirmed(
                                         selectedStudent,
@@ -1224,7 +1220,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                             class="space-y-1 rounded-xl border border-slate-200/60 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60"
                         >
                             <span
-                                class="block text-[10px] font-black text-black dark:text-slate-400"
+                                class="block text-[11px] font-black text-black dark:text-slate-400"
                             >
                                 Penguji 2
                             </span>
@@ -1234,7 +1230,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                                 {{ selectedStudent.penguji2 }}
                             </p>
                             <p
-                                class="text-[10px] font-bold"
+                                class="text-[11px] font-bold"
                                 :class="
                                     isPengujiConfirmed(
                                         selectedStudent,
@@ -1274,14 +1270,14 @@ const getPersetujuanBadge = (persetujuan: string) => {
 
                 <!-- CARD 2: JADWAL -->
                 <div
-                    class="space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80"
                 >
                     <div class="flex items-center justify-between">
                         <h3
                             class="flex items-center gap-2 text-xs font-black tracking-wider text-black dark:text-white"
                         >
                             <Calendar
-                                class="h-4 w-4 text-purple-600 dark:text-purple-400"
+                                class="h-4 w-4 text-blue-600 dark:text-blue-400"
                             />
                             <span>Jadwal</span>
                         </h3>
@@ -1426,7 +1422,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
 
                 <!-- CARD 3: FILE PENDUKUNG -->
                 <div
-                    class="space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80"
                 >
                     <div class="flex items-center justify-between">
                         <h3
@@ -1497,7 +1493,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                                 v-if="selectedStudent.subtab === 'uji'"
                                 type="button"
                                 @click="openModalNilai(selectedStudent)"
-                                class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-indigo-700 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-indigo-800 active:scale-95"
+                                class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-blue-700 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-blue-800 active:scale-95"
                             >
                                 <Edit3 class="h-3.5 w-3.5" />
                                 <span>Input / Edit Nilai Sidang</span>
@@ -1572,13 +1568,13 @@ const getPersetujuanBadge = (persetujuan: string) => {
                             min="0"
                             max="100"
                             placeholder="Contoh: 85.5"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-mono text-black focus:border-purple-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-mono text-black focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         />
                         <p
                             class="text-[11px] font-semibold text-black dark:text-slate-400"
                         >
                             Konversi Nilai Huruf:
-                            <b class="text-purple-600 dark:text-purple-400">{{
+                            <b class="text-blue-600 dark:text-blue-400">{{
                                 hitungGrade(formNilai.skor)
                             }}</b>
                         </p>
@@ -1593,7 +1589,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                             v-model="formNilai.revisi"
                             rows="3"
                             placeholder="Tuliskan poin-poin revisi yang wajib diselesaikan mahasiswa dalam 14 hari..."
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-black focus:border-purple-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-black focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         ></textarea>
                     </div>
                 </div>
@@ -1611,7 +1607,7 @@ const getPersetujuanBadge = (persetujuan: string) => {
                     <button
                         type="button"
                         @click="submitNilaiSidang"
-                        class="cursor-pointer rounded-xl bg-purple-600 px-5 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-purple-700 active:scale-95"
+                        class="cursor-pointer rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95"
                     >
                         Simpan Nilai
                     </button>
@@ -1700,9 +1696,9 @@ const getPersetujuanBadge = (persetujuan: string) => {
                     </div>
 
                     <div
-                        class="space-y-1.5 rounded-xl border border-purple-200 bg-purple-50 p-3 dark:border-purple-900/60 dark:bg-purple-950/40"
+                        class="space-y-1.5 rounded-xl border border-blue-200 bg-blue-50 p-3 dark:border-blue-900/60 dark:bg-blue-950/40"
                     >
-                        <p class="font-bold text-black dark:text-purple-300">
+                        <p class="font-bold text-black dark:text-blue-300">
                             Kelengkapan Berkas Wajib:
                         </p>
                         <p

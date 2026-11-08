@@ -34,7 +34,7 @@ const exams = computed(() =>
                     v-if="
                         !supervisors?.pembimbing1 && !supervisors?.pembimbing2
                     "
-                    class="flex items-center rounded-xl border border-dashed border-slate-200 p-4 text-xs text-slate-400 dark:border-slate-800"
+                    class="flex items-center rounded-xl border border-dashed border-slate-200 p-4 text-xs text-slate-500 dark:border-slate-800"
                 >
                     Pembimbing belum ditetapkan.
                 </div>
@@ -73,7 +73,7 @@ const exams = computed(() =>
                 </h4>
                 <div
                     v-if="!exams.length"
-                    class="flex items-center rounded-xl border border-dashed border-slate-200 p-4 text-xs text-slate-400 dark:border-slate-800"
+                    class="flex items-center rounded-xl border border-dashed border-slate-200 p-4 text-xs text-slate-500 dark:border-slate-800"
                 >
                     Penguji belum ditetapkan pada jadwal terpublikasi.
                 </div>

@@ -62,10 +62,10 @@ const config = computed(() => {
                 };
             case 'purple':
                 return {
-                    bg: 'bg-purple-50 dark:bg-purple-950/50',
-                    text: 'text-purple-700 dark:text-purple-300',
-                    border: 'border-purple-200 dark:border-purple-900',
-                    dot: 'bg-purple-500',
+                    bg: 'bg-blue-50 dark:bg-blue-950/50',
+                    text: 'text-blue-700 dark:text-blue-300',
+                    border: 'border-blue-200 dark:border-blue-900',
+                    dot: 'bg-blue-500',
                     defaultLabel: 'Sidang',
                 };
             case 'rose':
@@ -78,10 +78,10 @@ const config = computed(() => {
                 };
             case 'orange':
                 return {
-                    bg: 'bg-orange-50 dark:bg-orange-950/50',
-                    text: 'text-orange-700 dark:text-orange-300',
-                    border: 'border-orange-200 dark:border-orange-900',
-                    dot: 'bg-orange-500',
+                    bg: 'bg-amber-50 dark:bg-amber-950/50',
+                    text: 'text-amber-700 dark:text-amber-300',
+                    border: 'border-amber-200 dark:border-amber-900',
+                    dot: 'bg-amber-500',
                     defaultLabel: 'Perlu Revisi',
                 };
             case 'slate':
@@ -140,10 +140,10 @@ const config = computed(() => {
             };
         case 'revisi':
             return {
-                bg: 'bg-orange-50 dark:bg-orange-950/50',
-                text: 'text-orange-700 dark:text-orange-300',
-                border: 'border-orange-200 dark:border-orange-900',
-                dot: 'bg-orange-500',
+                bg: 'bg-amber-50 dark:bg-amber-950/50',
+                text: 'text-amber-700 dark:text-amber-300',
+                border: 'border-amber-200 dark:border-amber-900',
+                dot: 'bg-amber-500',
                 defaultLabel: 'Perlu Revisi',
             };
         default:

@@ -30,7 +30,7 @@ const variantClasses = computed(() => {
         case 'blue':
             return 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400';
         case 'indigo':
-            return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400';
+            return 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400';
         case 'emerald':
             return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400';
         case 'rose':

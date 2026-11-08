@@ -577,25 +577,21 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                 title="Total Sesi Bimbingan"
                 :value="`${totalSesiGlobal}/${maxTargetSesi} sesi`"
                 :icon="BookOpen"
-                icon-color="blue"
             />
             <StatCard
                 title="Memenuhi Syarat (≥ 5x)"
                 :value="`${mhsEligibleCount} mhs`"
                 :icon="CheckCircle2"
-                icon-color="emerald"
             />
             <StatCard
                 title="Menunggu Paraf"
                 :value="`${pendingParafCount} sesi`"
                 :icon="Clock"
-                icon-color="amber"
             />
             <StatCard
                 title="Rata-rata Konsultasi"
                 :value="`${avgSesiCount} / mhs`"
                 :icon="TrendingUp"
-                icon-color="slate"
             />
         </div>
 
@@ -604,7 +600,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
             <!-- LEFT SECTION: TABEL DAFTAR MAHASISWA BIMBINGAN -->
             <div class="w-full min-w-0 flex-1 space-y-4">
                 <div
-                    class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80"
                 >
                     <!-- Card Header with Filters (Matching Daftar Judul) -->
                     <div
@@ -675,7 +671,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     v-model="searchQuery"
                                     type="text"
                                     placeholder="Cari nama, NIM, atau judul..."
-                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-8 text-xs font-medium text-black outline-hidden placeholder:text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:placeholder:text-slate-400"
+                                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pr-3 pl-8 text-xs font-medium text-black outline-hidden placeholder:text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:placeholder:text-slate-500"
                                 />
                                 <Search
                                     class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-black dark:text-slate-400"
@@ -776,7 +772,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                             {{ mhs.judul }}
                                         </p>
                                         <span
-                                            class="text-[10px] font-normal text-black dark:text-slate-400"
+                                            class="text-[11px] font-normal text-black dark:text-slate-400"
                                         >
                                             Peran:
                                             <b
@@ -790,7 +786,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     <td class="px-3 py-3">
                                         <div class="space-y-1">
                                             <div
-                                                class="flex items-center justify-between text-[10px]"
+                                                class="flex items-center justify-between text-[11px]"
                                             >
                                                 <span
                                                     class="font-bold text-black dark:text-slate-300"
@@ -865,7 +861,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                                     ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
                                                     : 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
                                             "
-                                            class="inline-block rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-2xs"
+                                            class="inline-block rounded-full border px-2.5 py-1 text-[11px] font-bold shadow-2xs"
                                         >
                                             {{
                                                 getApprovedSessionCount(mhs) >=
@@ -884,7 +880,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                             class="flex flex-col items-center justify-center space-y-3"
                                         >
                                             <div
-                                                class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 shadow-inner dark:bg-slate-800/80"
+                                                class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 shadow-inner dark:bg-slate-800/80"
                                             >
                                                 <BookOpen class="h-6 w-6" />
                                             </div>
@@ -980,7 +976,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
             <!-- RIGHT SECTION: DETAIL RIWAYAT SESI MAHASISWA (LEMBAR KENDALI BIMBINGAN) -->
             <div
                 v-if="selectedAdvisee"
-                class="sticky top-20 flex w-full shrink-0 flex-col space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs lg:w-96 dark:border-slate-800/80 dark:bg-[#111827]"
+                class="dark:bg-navy-surface sticky top-20 flex w-full shrink-0 flex-col space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs lg:w-96 dark:border-slate-800/80"
             >
                 <!-- Drawer Header -->
                 <div
@@ -1017,7 +1013,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                             {{ selectedAdvisee.nama }}
                         </h4>
                         <span
-                            class="rounded-md bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300"
+                            class="rounded-md bg-blue-100 px-2 py-0.5 text-[11px] font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300"
                         >
                             {{ selectedAdvisee.nim ?? '—' }}
                         </span>
@@ -1078,7 +1074,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-2">
                                     <span
-                                        class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white"
+                                        class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[11px] font-bold text-white"
                                     >
                                         {{ sesi.no }}
                                     </span>
@@ -1092,7 +1088,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     </span>
                                 </div>
                                 <span
-                                    class="text-[10px] font-normal text-black dark:text-slate-400"
+                                    class="text-[11px] font-normal text-black dark:text-slate-400"
                                 >
                                     {{ sesi.tanggal }}
                                 </span>
@@ -1101,10 +1097,10 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                             <!-- Rangkuman Pembahasan -->
                             <div class="space-y-1 text-xs">
                                 <div
-                                    class="rounded-lg border border-slate-100 bg-white p-2.5 text-black dark:border-slate-800 dark:bg-[#111827] dark:text-slate-300"
+                                    class="dark:bg-navy-surface rounded-lg border border-slate-100 bg-white p-2.5 text-black dark:border-slate-800 dark:text-slate-300"
                                 >
                                     <span
-                                        class="mb-0.5 block text-[10px] font-black text-black dark:text-slate-400"
+                                        class="mb-0.5 block text-[11px] font-black text-black dark:text-slate-400"
                                     >
                                         Rangkuman Pembahasan:
                                     </span>
@@ -1122,7 +1118,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                 class="space-y-0.5 rounded-lg border border-amber-200/60 bg-amber-50/60 p-2.5 text-xs dark:border-amber-900/40 dark:bg-amber-950/30"
                             >
                                 <span
-                                    class="text-[10px] font-black text-amber-800 dark:text-amber-300"
+                                    class="text-[11px] font-black text-amber-800 dark:text-amber-300"
                                 >
                                     Arahan / Catatan Pembimbing:
                                 </span>
@@ -1170,7 +1166,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                         type="button"
                                         @click="quickParafSesi(sesi)"
                                         :disabled="processing"
-                                        class="flex cursor-pointer items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1 text-[10px] font-bold text-white shadow-2xs transition-colors hover:bg-emerald-700 disabled:opacity-50"
+                                        class="flex cursor-pointer items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-2xs transition-colors hover:bg-emerald-700 disabled:opacity-50"
                                     >
                                         <PenTool class="h-3 w-3" />
                                         <span>Beri Paraf</span>
@@ -1178,7 +1174,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
                                     <button
                                         type="button"
                                         @click="openReviewModal(sesi)"
-                                        class="cursor-pointer rounded-lg border border-slate-200 bg-white px-2 py-1 text-[10px] font-bold text-black shadow-2xs hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                                        class="cursor-pointer rounded-lg border border-slate-200 bg-white px-2 py-1 text-[11px] font-bold text-black shadow-2xs hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                                     >
                                         Edit Arahan
                                     </button>
@@ -1201,7 +1197,7 @@ const quickParafSesi = (sesi: LiveBimbinganSession) => {
             <!-- Placeholder if drawer closed -->
             <div
                 v-else
-                class="sticky top-20 flex w-full shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center lg:w-96 dark:border-slate-700 dark:bg-[#111827]"
+                class="dark:bg-navy-surface sticky top-20 flex w-full shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center lg:w-96 dark:border-slate-700"
             >
                 <div
                     class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400"

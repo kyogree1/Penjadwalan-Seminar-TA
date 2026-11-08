@@ -46,7 +46,6 @@ const filteredArsipList = computed(() => {
 
     <div class="space-y-6">
         <PageHeaderBox
-            badge="Layanan Dokumen"
             title="Arsip & Pencetakan Berkas"
             description="Informasi kapabilitas penyimpanan dokumen permanen dan penerbitan berkas cetak akademik Tugas Akhir."
         />
@@ -54,7 +53,7 @@ const filteredArsipList = computed(() => {
         <!-- Ringkasan Statistik Arsip -->
         <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <div
-                class="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800"
             >
                 <p
                     class="text-xs font-medium text-slate-500 dark:text-slate-400"
@@ -64,23 +63,23 @@ const filteredArsipList = computed(() => {
                 <p class="mt-1 text-2xl font-bold text-emerald-600">
                     {{ props.summary.totalLulus }}
                 </p>
-                <p class="text-[11px] text-slate-400">Sidang TA selesai</p>
+                <p class="text-[11px] text-slate-500">Sidang TA selesai</p>
             </div>
             <div
-                class="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800"
             >
                 <p
                     class="text-xs font-medium text-slate-500 dark:text-slate-400"
                 >
                     Sidang Selesai
                 </p>
-                <p class="mt-1 text-2xl font-bold text-purple-600">
+                <p class="mt-1 text-2xl font-bold text-blue-600">
                     {{ props.summary.totalSelesaiSidang }}
                 </p>
-                <p class="text-[11px] text-slate-400">Berkas sidang akhir</p>
+                <p class="text-[11px] text-slate-500">Berkas sidang akhir</p>
             </div>
             <div
-                class="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800"
             >
                 <p
                     class="text-xs font-medium text-slate-500 dark:text-slate-400"
@@ -90,10 +89,10 @@ const filteredArsipList = computed(() => {
                 <p class="mt-1 text-2xl font-bold text-blue-600">
                     {{ props.summary.totalSelesaiSempro }}
                 </p>
-                <p class="text-[11px] text-slate-400">Proposal tervalidasi</p>
+                <p class="text-[11px] text-slate-500">Proposal tervalidasi</p>
             </div>
             <div
-                class="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800"
             >
                 <p
                     class="text-xs font-medium text-slate-500 dark:text-slate-400"
@@ -105,7 +104,7 @@ const filteredArsipList = computed(() => {
                 >
                     {{ props.summary.periodeTerakhir ?? '2026/2027' }}
                 </p>
-                <p class="text-[11px] text-slate-400">Gelombang aktif</p>
+                <p class="text-[11px] text-slate-500">Gelombang aktif</p>
             </div>
         </div>
 
@@ -143,7 +142,7 @@ const filteredArsipList = computed(() => {
 
                     <div class="relative">
                         <Search
-                            class="absolute top-2 left-2.5 h-3.5 w-3.5 text-slate-400"
+                            class="absolute top-2 left-2.5 h-3.5 w-3.5 text-slate-500"
                         />
                         <input
                             v-model="searchQuery"
@@ -182,7 +181,7 @@ const filteredArsipList = computed(() => {
                         <tr v-if="filteredArsipList.length === 0">
                             <td
                                 colspan="5"
-                                class="py-8 text-center text-slate-400"
+                                class="py-8 text-center text-slate-500"
                             >
                                 Tidak ada data arsip yang cocok dengan
                                 pencarian.
@@ -199,18 +198,18 @@ const filteredArsipList = computed(() => {
                                 >
                                     {{ item.mahasiswa }}
                                 </p>
-                                <p class="font-mono text-[11px] text-slate-400">
+                                <p class="font-mono text-[11px] text-slate-500">
                                     {{ item.nim }} •
                                     {{ item.prodi ?? 'Informatika' }}
                                 </p>
                             </td>
                             <td class="px-4 py-3">
                                 <span
-                                    class="rounded-md px-2 py-0.5 text-[10px] font-bold"
+                                    class="rounded-md px-2 py-0.5 text-[11px] font-bold"
                                     :class="
                                         item.tipe === 'Seminar Proposal'
                                             ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
-                                            : 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300'
+                                            : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
                                     "
                                 >
                                     {{ item.tipe }}
@@ -230,7 +229,7 @@ const filteredArsipList = computed(() => {
                             </td>
                             <td class="py-3 pl-4 text-center">
                                 <span
-                                    class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300"
+                                    class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300"
                                 >
                                     <CheckCircle2 class="h-3 w-3" /> Tersimpan
                                 </span>
@@ -281,7 +280,7 @@ const filteredArsipList = computed(() => {
                         class="mt-4 flex items-start gap-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-[11px] text-slate-500 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400"
                     >
                         <Info
-                            class="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400"
+                            class="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500"
                         />
                         <p>
                             Dokumen mahasiswa saat ini tersimpan sementara untuk
@@ -295,7 +294,7 @@ const filteredArsipList = computed(() => {
                     class="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800"
                 >
                     <span
-                        class="text-[11px] font-medium text-slate-400 dark:text-slate-500"
+                        class="text-[11px] font-medium text-slate-500 dark:text-slate-500"
                     >
                         Fasilitas cold storage & metadata arsip belum
                         terintegrasi
@@ -340,7 +339,7 @@ const filteredArsipList = computed(() => {
                         class="mt-4 flex items-start gap-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-[11px] text-slate-500 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400"
                     >
                         <FileText
-                            class="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400"
+                            class="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500"
                         />
                         <p>
                             Format penomoran surat keputusan dan cetak berita
@@ -354,7 +353,7 @@ const filteredArsipList = computed(() => {
                     class="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800"
                 >
                     <span
-                        class="text-[11px] font-medium text-slate-400 dark:text-slate-500"
+                        class="text-[11px] font-medium text-slate-500 dark:text-slate-500"
                     >
                         Integrasi PDF engine & signature digital belum terpasang
                     </span>
@@ -398,7 +397,7 @@ const filteredArsipList = computed(() => {
                         </div>
                     </div>
                     <ArrowRight
-                        class="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600 dark:text-slate-500 dark:group-hover:text-blue-400"
+                        class="h-4 w-4 text-slate-500 transition-transform group-hover:translate-x-1 group-hover:text-blue-600 dark:text-slate-500 dark:group-hover:text-blue-400"
                     />
                 </Link>
 
@@ -408,13 +407,13 @@ const filteredArsipList = computed(() => {
                 >
                     <div class="flex items-center gap-3">
                         <div
-                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400"
+                            class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400"
                         >
                             <Users class="h-4 w-4" />
                         </div>
                         <div>
                             <p
-                                class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400"
+                                class="text-xs font-bold text-slate-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400"
                             >
                                 Direktori Mahasiswa
                             </p>
@@ -427,7 +426,7 @@ const filteredArsipList = computed(() => {
                         </div>
                     </div>
                     <ArrowRight
-                        class="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-indigo-600 dark:text-slate-500 dark:group-hover:text-indigo-400"
+                        class="h-4 w-4 text-slate-500 transition-transform group-hover:translate-x-1 group-hover:text-blue-600 dark:text-slate-500 dark:group-hover:text-blue-400"
                     />
                 </Link>
             </div>

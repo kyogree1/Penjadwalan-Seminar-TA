@@ -27,7 +27,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
     <div
-        class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+        class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800"
     >
         <div class="flex items-start gap-3">
             <Download

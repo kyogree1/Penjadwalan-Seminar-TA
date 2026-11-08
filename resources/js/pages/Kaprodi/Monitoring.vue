@@ -62,11 +62,11 @@ const statusColor: Record<string, string> = {
         'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
     draft: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
     menunggu:
-        'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300',
+        'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
     disetujui:
-        'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
-    ditolak: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
-    revisi: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300',
+        'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+    ditolak: 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
+    revisi: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
 };
 
 const sempro_aktif = computed(
@@ -110,7 +110,7 @@ const sidang_aktif = computed(
                 >
                     Judul Disetujui
                 </p>
-                <p class="mt-1 text-2xl font-bold text-green-600">
+                <p class="mt-1 text-2xl font-bold text-emerald-600">
                     {{ progressCounts.judul_disetujui }}
                 </p>
             </div>
@@ -137,7 +137,7 @@ const sidang_aktif = computed(
                 >
                     Sidang Aktif
                 </p>
-                <p class="mt-1 text-2xl font-bold text-purple-600">
+                <p class="mt-1 text-2xl font-bold text-blue-600">
                     {{ sidang_aktif }}
                 </p>
                 <p class="text-xs text-slate-500">
@@ -159,7 +159,7 @@ const sidang_aktif = computed(
             </div>
             <div
                 v-if="jadwalAktif.length === 0"
-                class="px-4 py-6 text-center text-sm text-slate-400"
+                class="px-4 py-6 text-center text-sm text-slate-500"
             >
                 Belum ada jadwal yang dipublikasikan.
             </div>
@@ -186,7 +186,7 @@ const sidang_aktif = computed(
                         >
                             <td class="px-4 py-2 tabular-nums">
                                 {{ j.tanggal }}<br />
-                                <span class="text-xs text-slate-400"
+                                <span class="text-xs text-slate-500"
                                     >{{ j.jam_mulai }}–{{ j.jam_selesai }}</span
                                 >
                             </td>
@@ -196,7 +196,7 @@ const sidang_aktif = computed(
                                     :class="
                                         j.tipe === 'sempro'
                                             ? 'bg-blue-100 text-blue-700'
-                                            : 'bg-purple-100 text-purple-700'
+                                            : 'bg-blue-100 text-blue-700'
                                     "
                                 >
                                     {{
@@ -212,7 +212,7 @@ const sidang_aktif = computed(
                                 >
                                     {{ j.mahasiswa }}
                                 </p>
-                                <p class="text-xs text-slate-400">
+                                <p class="text-xs text-slate-500">
                                     {{ j.nim }}
                                 </p>
                             </td>
@@ -245,7 +245,7 @@ const sidang_aktif = computed(
             </div>
             <div
                 v-if="bimbinganRekap.length === 0"
-                class="px-4 py-6 text-center text-sm text-slate-400"
+                class="px-4 py-6 text-center text-sm text-slate-500"
             >
                 Belum ada data bimbingan.
             </div>
@@ -281,7 +281,7 @@ const sidang_aktif = computed(
                                 >
                                     {{ d.name }}
                                 </p>
-                                <p class="text-xs text-slate-400">
+                                <p class="text-xs text-slate-500">
                                     {{ d.nip }}
                                 </p>
                             </td>
@@ -296,7 +296,7 @@ const sidang_aktif = computed(
                                     class="rounded px-2 py-0.5 text-xs font-medium"
                                     :class="
                                         d.sesi_disetujui > 0
-                                            ? 'bg-green-100 text-green-700'
+                                            ? 'bg-emerald-100 text-emerald-700'
                                             : 'bg-slate-100 text-slate-500'
                                     "
                                 >
@@ -324,7 +324,7 @@ const sidang_aktif = computed(
             </div>
             <div
                 v-if="mahasiswaList.length === 0"
-                class="px-4 py-6 text-center text-sm text-slate-400"
+                class="px-4 py-6 text-center text-sm text-slate-500"
             >
                 Belum ada data mahasiswa.
             </div>
@@ -354,7 +354,7 @@ const sidang_aktif = computed(
                                 >
                                     {{ m.nama }}
                                 </p>
-                                <p class="text-xs text-slate-400">
+                                <p class="text-xs text-slate-500">
                                     {{ m.nim }}
                                 </p>
                             </td>

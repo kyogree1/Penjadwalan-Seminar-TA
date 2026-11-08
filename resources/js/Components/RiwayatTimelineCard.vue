@@ -53,7 +53,7 @@ withDefaults(defineProps<Props>(), {
                     </p>
                     <p
                         v-if="item.date"
-                        class="mt-0.5 text-[10px] text-slate-400"
+                        class="mt-0.5 text-[11px] text-slate-500"
                     >
                         {{ item.date }}
                     </p>
@@ -68,7 +68,7 @@ withDefaults(defineProps<Props>(), {
                 <p class="text-xs font-bold text-slate-800 dark:text-slate-200">
                     {{ emptyText }}
                 </p>
-                <p class="text-[11px] text-slate-400">
+                <p class="text-[11px] text-slate-500">
                     {{ emptySubtext }}
                 </p>
             </div>

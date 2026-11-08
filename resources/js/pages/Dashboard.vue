@@ -252,7 +252,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
         <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <!-- Left: Greeting Card (2/3 lebar di layar desktop) -->
             <div
-                class="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs lg:col-span-2 dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs lg:col-span-2 dark:border-slate-800"
             >
                 <div>
                     <h2
@@ -317,7 +317,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                             {{ period.title }}
                         </p>
                         <p
-                            class="mt-0.5 truncate text-[10px]"
+                            class="mt-0.5 truncate text-[11px]"
                             :class="period.colorTheme.text"
                         >
                             {{ period.semester }}
@@ -331,7 +331,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
 
         <!-- 2. ROADMAP WIDGET DENGAN INDIKATOR WARNA KUNING UNTUK PROGRES AKTIF (DI BAWAH HERO) -->
         <div
-            class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800"
         >
             <div class="flex items-center justify-between">
                 <div>
@@ -426,14 +426,14 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                                             ? 'font-bold text-amber-600 dark:text-amber-400'
                                             : step.status === 'completed'
                                               ? 'text-slate-800 dark:text-slate-200'
-                                              : 'text-slate-400 dark:text-slate-500',
+                                              : 'text-slate-500 dark:text-slate-500',
                                     ]"
                                 >
                                     {{ step.name }}
                                 </span>
                                 <span
                                     v-if="step.date"
-                                    class="text-[9px] text-slate-400"
+                                    class="text-[9px] text-slate-500"
                                 >
                                     {{ step.date }}
                                 </span>
@@ -494,14 +494,14 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                                             ? 'font-bold text-amber-600 dark:text-amber-400'
                                             : step.status === 'completed'
                                               ? 'text-slate-800 dark:text-slate-200'
-                                              : 'text-slate-400 dark:text-slate-500',
+                                              : 'text-slate-500 dark:text-slate-500',
                                     ]"
                                 >
                                     {{ step.name }}
                                 </span>
                                 <span
                                     v-if="step.date"
-                                    class="text-[9px] text-slate-400"
+                                    class="text-[9px] text-slate-500"
                                 >
                                     {{ step.date }}
                                 </span>
@@ -560,7 +560,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
         <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <!-- Kotak 1 & 2: Dosen Pembimbing & Penguji (2 Kolom di Desktop) -->
             <div
-                class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs lg:col-span-2 dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs lg:col-span-2 dark:border-slate-800"
             >
                 <StudentLecturers
                     :approved-title="props.dbApprovedTitle ?? null"
@@ -570,7 +570,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
 
             <!-- Kotak 3: Bimbingan Tugas Akhir (1 Kolom Sejajar dengan Dosen di Desktop) -->
             <div
-                class="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800"
             >
                 <div>
                     <div class="flex items-center justify-between">
@@ -580,7 +580,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                             Bimbingan Tugas Akhir
                         </h3>
                         <span
-                            class="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
+                            class="rounded-md bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
                         >
                             Logbook
                         </span>
@@ -607,7 +607,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                             >
                                 {{ props.dbTotalBimbinganAcc ?? 0 }}
                             </span>
-                            <span class="text-xs font-medium text-slate-400">
+                            <span class="text-xs font-medium text-slate-500">
                                 sesi konsultasi
                             </span>
                         </div>
@@ -630,7 +630,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
 
         <!-- 5. HASIL PENILAIAN CARD DENGAN KLIK DETAIL POPUP MODAL -->
         <div
-            class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800"
         >
             <div class="mb-4 flex items-center justify-between">
                 <div>
@@ -660,7 +660,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
                             >
                                 {{ item.title }}
                             </h4>
-                            <span class="text-[10px] text-slate-400">
+                            <span class="text-[11px] text-slate-500">
                                 ({{ item.period }})
                             </span>
                         </div>
@@ -718,7 +718,7 @@ const openAssessmentModal = (item: AssessmentDetail) => {
             >
                 <div>
                     <p
-                        class="text-[10px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+                        class="text-[11px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
                     >
                         {{ selectedAssessment.period }}
                     </p>

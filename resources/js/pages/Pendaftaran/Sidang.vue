@@ -460,7 +460,7 @@ const submitSidang = () => {
                             <button
                                 type="submit"
                                 :disabled="!isFormValid || form.processing"
-                                class="w-full rounded-xl bg-[#8CE79B] px-6 py-3 text-sm font-bold text-slate-900 transition-all hover:bg-[#7BD68A] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                                class="w-full rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white transition-all hover:bg-blue-500 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                             >
                                 Ajukan Pendaftaran Sidang
                             </button>

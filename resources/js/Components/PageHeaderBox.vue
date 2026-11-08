@@ -3,7 +3,6 @@ interface Props {
     title: string;
     subtitle?: string;
     description?: string;
-    badge?: string;
 }
 
 defineProps<Props>();

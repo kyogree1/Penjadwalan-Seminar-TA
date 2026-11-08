@@ -404,7 +404,7 @@ const getRoleBadgeClass = (role?: string) => {
         case 'Koorprodi':
             return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-900';
         case 'Tim KBK':
-            return 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-300 dark:border-indigo-900';
+            return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-900';
         case 'Dosen Penguji':
             return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-900';
         case 'Penguji Eksternal':
@@ -715,7 +715,7 @@ const executeDeleteDosen = () => {
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <!-- 1. Total Dosen -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                class="dark:bg-navy-surface flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80"
             >
                 <div>
                     <p
@@ -738,7 +738,7 @@ const executeDeleteDosen = () => {
 
             <!-- 2. Dosen Informatika ITK -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-blue-200/80 bg-white p-4 shadow-xs dark:border-blue-900/40 dark:bg-[#111827]"
+                class="dark:bg-navy-surface flex items-center justify-between rounded-2xl border border-blue-200/80 bg-white p-4 shadow-xs dark:border-blue-900/40"
             >
                 <div>
                     <p
@@ -761,7 +761,7 @@ const executeDeleteDosen = () => {
 
             <!-- 3. Dosen Lintas Prodi / Mitra -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-amber-200/80 bg-white p-4 shadow-xs dark:border-amber-900/40 dark:bg-[#111827]"
+                class="dark:bg-navy-surface flex items-center justify-between rounded-2xl border border-amber-200/80 bg-white p-4 shadow-xs dark:border-amber-900/40"
             >
                 <div>
                     <p
@@ -784,7 +784,7 @@ const executeDeleteDosen = () => {
 
             <!-- 4. Rata-rata Beban Menguji (GA) -->
             <div
-                class="flex items-center justify-between rounded-2xl border border-emerald-200/80 bg-white p-4 shadow-xs dark:border-emerald-900/40 dark:bg-[#111827]"
+                class="dark:bg-navy-surface flex items-center justify-between rounded-2xl border border-emerald-200/80 bg-white p-4 shadow-xs dark:border-emerald-900/40"
             >
                 <div>
                     <p
@@ -808,7 +808,7 @@ const executeDeleteDosen = () => {
 
         <!-- MAIN TABLE CONTAINER (Matching Daftar Judul) -->
         <div
-            class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+            class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80"
         >
             <!-- Card Header with Filters -->
             <div
@@ -878,7 +878,7 @@ const executeDeleteDosen = () => {
                     <!-- Search Input -->
                     <div class="relative sm:col-span-2 md:col-span-2">
                         <Search
-                            class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400"
+                            class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-500"
                         />
                         <input
                             v-model="searchQuery"
@@ -1004,7 +1004,7 @@ const executeDeleteDosen = () => {
                                 </p>
                                 <p
                                     v-if="dosen.bidangKeahlian"
-                                    class="mt-0.5 max-w-[220px] truncate text-[10px] font-medium text-blue-600 dark:text-blue-400"
+                                    class="mt-0.5 max-w-[220px] truncate text-[11px] font-medium text-blue-600 dark:text-blue-400"
                                     :title="dosen.bidangKeahlian"
                                 >
                                     {{ dosen.bidangKeahlian }}
@@ -1032,11 +1032,11 @@ const executeDeleteDosen = () => {
                                 <span
                                     v-if="dosen.role"
                                     :class="getRoleBadgeClass(dosen.role)"
-                                    class="inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-bold"
+                                    class="inline-block rounded-full border px-2.5 py-0.5 text-[11px] font-bold"
                                 >
                                     {{ dosen.role }}
                                 </span>
-                                <span v-else class="text-[11px] text-slate-400"
+                                <span v-else class="text-[11px] text-slate-500"
                                     >—</span
                                 >
                             </td>
@@ -1045,7 +1045,7 @@ const executeDeleteDosen = () => {
                             <td class="px-3 py-3.5">
                                 <div class="min-w-[120px] space-y-1">
                                     <div
-                                        class="flex items-center justify-between text-[10px]"
+                                        class="flex items-center justify-between text-[11px]"
                                     >
                                         <span
                                             class="font-bold text-slate-700 dark:text-slate-300"
@@ -1134,7 +1134,7 @@ const executeDeleteDosen = () => {
                                     class="flex flex-col items-center justify-center space-y-3"
                                 >
                                     <div
-                                        class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-2xl text-slate-400 dark:bg-slate-800/80"
+                                        class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-2xl text-slate-500 dark:bg-slate-800/80"
                                     >
                                         <Search class="h-6 w-6" />
                                     </div>
@@ -1148,7 +1148,7 @@ const executeDeleteDosen = () => {
                                                     : 'Belum ada dosen terdaftar'
                                             }}
                                         </p>
-                                        <p class="text-xs text-slate-400">
+                                        <p class="text-xs text-slate-500">
                                             Tidak ada data dosen yang cocok
                                             dengan kriteria filter atau
                                             pencarian Anda.
@@ -1421,7 +1421,7 @@ const executeDeleteDosen = () => {
                             class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                         >
                             Program Studi
-                            <span class="font-normal text-slate-400"
+                            <span class="font-normal text-slate-500"
                                 >(Internal ITK)</span
                             >
                         </label>
@@ -1473,7 +1473,7 @@ const executeDeleteDosen = () => {
                             class="block text-xs font-bold text-slate-700 dark:text-slate-300"
                         >
                             Asal Instansi
-                            <span class="font-normal text-slate-400"
+                            <span class="font-normal text-slate-500"
                                 >(Eksternal)</span
                             >
                         </label>

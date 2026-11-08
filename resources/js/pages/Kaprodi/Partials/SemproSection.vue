@@ -644,7 +644,7 @@ const getStatusBerkasClass = (status: string) => {
         return 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300';
     }
     if (s.includes('revisi')) {
-        return 'border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-950/60 dark:text-purple-300';
+        return 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-300';
     }
     return 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/60 dark:text-amber-400';
 };
@@ -710,7 +710,6 @@ const getPersetujuanClass = (persetujuan: string) => {
                 "
                 :value="`${totalSemproCount} mhs`"
                 :icon="GraduationCap"
-                icon-color="blue"
             />
             <StatCard
                 :title="
@@ -722,7 +721,6 @@ const getPersetujuanClass = (persetujuan: string) => {
                         : `${konfirmasiHadirCount} mhs`
                 "
                 :icon="isKoorprodi ? Calendar : CheckCircle2"
-                icon-color="emerald"
             />
             <StatCard
                 :title="
@@ -736,13 +734,11 @@ const getPersetujuanClass = (persetujuan: string) => {
                         : `${ajuanRescheduleCount} pengajuan`
                 "
                 :icon="isKoorprodi ? Clock : CalendarClock"
-                icon-color="amber"
             />
             <StatCard
                 title="Selesai Dinilai"
                 :value="`${selesaiDinilaiCount} mhs`"
                 :icon="FileCheck"
-                icon-color="slate"
             />
         </div>
 
@@ -752,7 +748,7 @@ const getPersetujuanClass = (persetujuan: string) => {
             <div class="w-full min-w-0 flex-1 space-y-5">
                 <!-- DOSEN PROFILE CARD -->
                 <div
-                    class="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800/80"
                 >
                     <div
                         class="flex flex-col gap-4 sm:flex-row sm:items-center"
@@ -822,7 +818,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                         >
                             <span>Mahasiswa Bimbingan</span>
                             <span
-                                class="py-0.2 rounded-full px-1.5 text-[10px] font-black"
+                                class="py-0.2 rounded-full px-1.5 text-[11px] font-black"
                                 :class="
                                     activeTab === 'bimbingan'
                                         ? 'bg-white/20 text-white'
@@ -855,7 +851,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                         >
                             <span>Mahasiswa Uji</span>
                             <span
-                                class="py-0.2 rounded-full px-1.5 text-[10px] font-black"
+                                class="py-0.2 rounded-full px-1.5 text-[11px] font-black"
                                 :class="
                                     activeTab === 'uji'
                                         ? 'bg-white/20 text-white'
@@ -881,7 +877,7 @@ const getPersetujuanClass = (persetujuan: string) => {
 
                 <!-- TABLE DAFTAR MAHASISWA SEMINAR PROPOSAL -->
                 <div
-                    class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80"
                 >
                     <!-- Card Header -->
                     <div
@@ -916,7 +912,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                             <!-- Search Input -->
                             <div class="relative w-full sm:w-60">
                                 <Search
-                                    class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-slate-400"
+                                    class="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-slate-500"
                                 />
                                 <input
                                     v-model="searchQuery"
@@ -1031,7 +1027,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                                                     mhs.statusBerkas,
                                                 )
                                             "
-                                            class="inline-block rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-2xs"
+                                            class="inline-block rounded-full border px-2.5 py-1 text-[11px] font-bold shadow-2xs"
                                         >
                                             {{ mhs.statusBerkas }}
                                         </span>
@@ -1047,7 +1043,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                                                     mhs.persetujuan,
                                                 )
                                             "
-                                            class="inline-block rounded-full border px-2.5 py-1 text-[10px] font-bold shadow-2xs"
+                                            class="inline-block rounded-full border px-2.5 py-1 text-[11px] font-bold shadow-2xs"
                                         >
                                             {{ mhs.persetujuan }}
                                         </span>
@@ -1178,7 +1174,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                 >
                     <div class="truncate">
                         <span
-                            class="block text-[10px] font-black tracking-wider text-blue-700 dark:text-blue-400"
+                            class="block text-[11px] font-black tracking-wider text-blue-700 dark:text-blue-400"
                         >
                             Mahasiswa Terpilih
                         </span>
@@ -1200,7 +1196,7 @@ const getPersetujuanClass = (persetujuan: string) => {
 
                 <!-- CARD 1: DOSEN PENGUJI -->
                 <div
-                    class="space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80"
                 >
                     <div class="flex items-center justify-between">
                         <h3
@@ -1213,7 +1209,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                         </h3>
                         <span
                             v-if="selectedStudent"
-                            class="rounded-md border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+                            class="rounded-md border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
                         >
                             Terjadwal (GA)
                         </span>
@@ -1229,12 +1225,12 @@ const getPersetujuanClass = (persetujuan: string) => {
                         >
                             <div class="flex items-center justify-between">
                                 <span
-                                    class="text-[10px] font-black text-black dark:text-slate-400"
+                                    class="text-[11px] font-black text-black dark:text-slate-400"
                                 >
                                     Penguji 1 (Ketua)
                                 </span>
                                 <span
-                                    class="rounded bg-purple-50 px-1.5 py-0.5 text-[10px] font-bold text-purple-700 dark:bg-purple-950 dark:text-purple-300"
+                                    class="rounded bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
                                 >
                                     {{ selectedStudent.penguji1MatchScore }}%
                                     Match KBK
@@ -1246,7 +1242,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 {{ selectedStudent.penguji1 }}
                             </p>
                             <p
-                                class="text-[10px] font-bold"
+                                class="text-[11px] font-bold"
                                 :class="
                                     isPengujiConfirmed(
                                         selectedStudent,
@@ -1271,7 +1267,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                             class="space-y-1 rounded-xl border border-slate-200/60 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60"
                         >
                             <span
-                                class="block text-[10px] font-black text-black dark:text-slate-400"
+                                class="block text-[11px] font-black text-black dark:text-slate-400"
                             >
                                 Penguji 2
                             </span>
@@ -1281,7 +1277,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 {{ selectedStudent.penguji2 }}
                             </p>
                             <p
-                                class="text-[10px] font-bold"
+                                class="text-[11px] font-bold"
                                 :class="
                                     isPengujiConfirmed(
                                         selectedStudent,
@@ -1321,14 +1317,14 @@ const getPersetujuanClass = (persetujuan: string) => {
 
                 <!-- CARD 2: JADWAL -->
                 <div
-                    class="space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80"
                 >
                     <div class="flex items-center justify-between">
                         <h3
                             class="flex items-center gap-2 text-xs font-black tracking-wider text-black dark:text-white"
                         >
                             <Calendar
-                                class="h-4 w-4 text-purple-600 dark:text-purple-400"
+                                class="h-4 w-4 text-blue-600 dark:text-blue-400"
                             />
                             <span>Jadwal</span>
                         </h3>
@@ -1475,7 +1471,7 @@ const getPersetujuanClass = (persetujuan: string) => {
 
                 <!-- CARD 3: FILE PENDUKUNG -->
                 <div
-                    class="space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+                    class="dark:bg-navy-surface space-y-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800/80"
                 >
                     <div class="flex items-center justify-between">
                         <h3
@@ -1547,7 +1543,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                                 v-if="selectedStudent.roleTab === 'uji'"
                                 type="button"
                                 @click="openModalNilai(selectedStudent)"
-                                class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-indigo-700 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-indigo-800 active:scale-95"
+                                class="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-blue-700 py-2 text-xs font-bold text-white shadow-xs transition-all hover:bg-blue-800 active:scale-95"
                             >
                                 <Edit3 class="h-3.5 w-3.5" />
                                 <span>Input / Edit Nilai Sempro</span>
@@ -1579,7 +1575,7 @@ const getPersetujuanClass = (persetujuan: string) => {
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
         >
             <div
-                class="w-full max-w-md space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-800 dark:bg-[#111827]"
+                class="dark:bg-navy-surface w-full max-w-md space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-800"
             >
                 <div
                     class="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800"
@@ -1624,7 +1620,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                     <button
                         type="button"
                         @click="saveRevisi"
-                        class="cursor-pointer rounded-xl bg-purple-600 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-purple-700"
+                        class="cursor-pointer rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-blue-700"
                     >
                         Kirim Catatan Revisi
                     </button>
@@ -1680,13 +1676,13 @@ const getPersetujuanClass = (persetujuan: string) => {
                             min="0"
                             max="100"
                             placeholder="Contoh: 85.5"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-mono text-black focus:border-purple-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 font-mono text-black focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         />
                         <p
                             class="text-[11px] font-semibold text-black dark:text-slate-400"
                         >
                             Konversi Nilai Huruf:
-                            <b class="text-purple-600 dark:text-purple-400">{{
+                            <b class="text-blue-600 dark:text-blue-400">{{
                                 hitungGrade(formNilai.skor)
                             }}</b>
                         </p>
@@ -1701,7 +1697,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                             v-model="formNilai.revisi"
                             rows="3"
                             placeholder="Tuliskan poin-poin revisi yang wajib diselesaikan mahasiswa..."
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-black focus:border-purple-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                            class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-black focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         ></textarea>
                     </div>
                 </div>
@@ -1719,7 +1715,7 @@ const getPersetujuanClass = (persetujuan: string) => {
                     <button
                         type="button"
                         @click="submitNilaiSempro"
-                        class="cursor-pointer rounded-xl bg-purple-600 px-5 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-purple-700 active:scale-95"
+                        class="cursor-pointer rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95"
                     >
                         Simpan Nilai
                     </button>

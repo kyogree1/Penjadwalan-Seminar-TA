@@ -16,7 +16,7 @@ const visibleItems = computed(() => props.items.filter((item) => item.title));
 const priorityClasses = {
     urgent: 'border-rose-200 bg-rose-50 dark:border-rose-900/60 dark:bg-rose-950/20',
     soon: 'border-amber-200 bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/20',
-    info: 'border-slate-200 bg-white dark:border-slate-800 dark:bg-[#0E1626]',
+    info: 'border-slate-200 bg-white dark:border-slate-800 dark:bg-navy-surface',
 };
 </script>
 
@@ -63,7 +63,7 @@ const priorityClasses = {
             </div>
             <span
                 v-if="item.due"
-                class="shrink-0 text-[10px] font-bold text-slate-500"
+                class="shrink-0 text-[11px] font-bold text-slate-500"
                 >{{ item.due }}</span
             >
             <span

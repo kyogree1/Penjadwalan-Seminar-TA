@@ -32,7 +32,7 @@ const emit = defineEmits<{
         >
             <div class="flex flex-col items-start gap-0.5">
                 <span>{{ week.label }}</span>
-                <span class="text-[10px] font-normal opacity-80">
+                <span class="text-[11px] font-normal opacity-80">
                     {{ week.range }}
                 </span>
             </div>

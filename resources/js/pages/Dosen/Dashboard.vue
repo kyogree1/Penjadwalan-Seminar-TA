@@ -55,7 +55,7 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
 
     <div class="space-y-6">
         <div
-            class="rounded-xl border border-[#0b3084] bg-[#0b3084] px-5 py-4 dark:border-[#1b45a8] dark:bg-[#0b3084]"
+            class="rounded-xl border border-blue-600 bg-blue-600 px-5 py-4 dark:border-blue-500 dark:bg-blue-600"
         >
             <h1
                 class="text-lg font-semibold tracking-tight text-white sm:text-xl"
@@ -74,34 +74,30 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                 :value="stats.pendingBimbingan"
                 subtitle="Sesi milik Anda berstatus process"
                 :icon="FileCheck"
-                icon-color="amber"
             />
             <StatCard
                 title="Jadwal Menguji Mendatang"
                 :value="stats.jadwalUjiCount"
                 subtitle="Jadwal terpublikasi mulai hari ini; posisi penguji"
                 :icon="Calendar"
-                icon-color="blue"
             />
             <StatCard
                 title="Mahasiswa Bimbingan Aktif"
                 :value="mySupervisedStudents.length"
                 subtitle="Mahasiswa TA dalam proses bimbingan Anda"
                 :icon="Users"
-                icon-color="emerald"
             />
             <StatCard
                 title="Kapasitas Kuota Dosen"
                 value="5 / 10"
                 subtitle="Tersedia 5 slot bimbingan semester ini"
                 :icon="GraduationCap"
-                icon-color="indigo"
             />
         </div>
 
         <!-- 3. PIPELINE KEMAJUAN BIMBINGAN MAHASISWA DOSEN -->
         <div
-            class="space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs sm:p-6 dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface space-y-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs sm:p-6 dark:border-slate-800"
         >
             <div
                 class="flex flex-col justify-between gap-2 sm:flex-row sm:items-center"
@@ -172,7 +168,7 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                         >
                             {{ stage.count }} Mhs
                         </span>
-                        <span class="text-[10px] font-medium text-slate-400">
+                        <span class="text-[11px] font-medium text-slate-500">
                             {{ stage.pct }}%
                         </span>
                     </div>
@@ -214,7 +210,7 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                         <div class="mt-4 space-y-3.5">
                             <div
                                 v-if="mySupervisedStudents.length === 0"
-                                class="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-400 dark:border-slate-800"
+                                class="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-500 dark:border-slate-800"
                             >
                                 Belum ada mahasiswa bimbingan tugas akhir yang
                                 aktif.
@@ -234,18 +230,18 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                                             {{ student.nama }}
                                         </span>
                                         <span
-                                            class="font-mono text-xs text-slate-400"
+                                            class="font-mono text-xs text-slate-500"
                                         >
                                             ({{ student.nim }})
                                         </span>
                                         <span
-                                            class="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300"
+                                            class="rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-bold text-blue-800 dark:bg-blue-950 dark:text-blue-300"
                                         >
                                             {{ student.tahap }}
                                         </span>
                                         <span
                                             v-if="student.hasPendingLogbook"
-                                            class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+                                            class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-800 dark:bg-amber-950 dark:text-amber-300"
                                         >
                                             <span
                                                 class="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500"
@@ -279,7 +275,7 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                                             {{ student.progress }}%
                                         </span>
                                     </div>
-                                    <p class="text-[10px] text-slate-400">
+                                    <p class="text-[11px] text-slate-500">
                                         Konsultasi terakhir:
                                         {{ student.terakhirBimbingan }}
                                     </p>
@@ -321,11 +317,11 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                         >
                             <div class="flex items-center justify-between">
                                 <span
-                                    class="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-400"
+                                    class="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-400"
                                 >
                                     Menunggu review
                                 </span>
-                                <span class="text-[11px] text-slate-400"
+                                <span class="text-[11px] text-slate-500"
                                     >18 Okt 2026</span
                                 >
                             </div>
@@ -389,7 +385,7 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                         <div class="mt-4 space-y-3">
                             <div
                                 v-if="upcomingExams.length === 0"
-                                class="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-400 dark:border-slate-800"
+                                class="rounded-xl border border-dashed border-slate-200 p-6 text-center text-xs text-slate-500 dark:border-slate-800"
                             >
                                 Tidak ada penugasan menguji seminar atau sidang
                                 mendatang.
@@ -403,13 +399,13 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                                     class="flex items-center justify-between gap-2"
                                 >
                                     <span
-                                        class="rounded-full px-2.5 py-0.5 text-[10px] font-bold"
+                                        class="rounded-full px-2.5 py-0.5 text-[11px] font-bold"
                                         :class="exam.tipeBadge"
                                     >
                                         {{ exam.tipe }}
                                     </span>
                                     <span
-                                        class="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-extrabold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                                        class="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[11px] font-extrabold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                     >
                                         {{ exam.peran }}
                                     </span>
@@ -420,7 +416,7 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                                 >
                                     {{ exam.mahasiswa }}
                                     <span
-                                        class="font-mono text-[11px] font-normal text-slate-400"
+                                        class="font-mono text-[11px] font-normal text-slate-500"
                                     >
                                         ({{ exam.nim }})
                                     </span>
@@ -436,7 +432,7 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                                 >
                                     <div class="flex items-center gap-1.5">
                                         <Clock
-                                            class="h-3.5 w-3.5 text-slate-400"
+                                            class="h-3.5 w-3.5 text-slate-500"
                                         />
                                         <span
                                             >{{ exam.tanggal }} •
@@ -445,7 +441,7 @@ const adviseeStages = computed(() => props.adviseeStages ?? []);
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <Layers
-                                            class="h-3.5 w-3.5 text-slate-400"
+                                            class="h-3.5 w-3.5 text-slate-500"
                                         />
                                         <span>{{ exam.ruang }}</span>
                                     </div>

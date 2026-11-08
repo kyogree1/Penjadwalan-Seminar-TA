@@ -43,7 +43,7 @@ const gradeLabel = computed(() => {
     if (val >= 70)
         return {
             text: 'B (Cukup Baik)',
-            bg: 'bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-950/40 dark:text-cyan-400 dark:border-cyan-800',
+            bg: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800',
         };
     if (val >= 65)
         return {
@@ -53,7 +53,7 @@ const gradeLabel = computed(() => {
     if (val >= 60)
         return {
             text: 'C (Kurang)',
-            bg: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/40 dark:text-orange-400 dark:border-orange-800',
+            bg: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800',
         };
     return {
         text: 'D/E (Tidak Memenuhi)',
@@ -73,7 +73,7 @@ const onInput = (event: Event) => {
 
 <template>
     <div
-        class="rounded-2xl border border-slate-200/80 bg-white p-5 transition-all hover:border-slate-300 dark:border-slate-800/90 dark:bg-[#0E1626]"
+        class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-5 transition-all hover:border-slate-300 dark:border-slate-800/90"
     >
         <div
             class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
@@ -104,14 +104,14 @@ const onInput = (event: Event) => {
                 class="flex items-center gap-3 sm:flex-col sm:items-end sm:gap-1"
             >
                 <div class="text-right">
-                    <span class="text-[11px] font-medium text-slate-400"
+                    <span class="text-[11px] font-medium text-slate-500"
                         >Kontribusi Nilai:</span
                     >
                     <p
                         class="text-lg font-black text-blue-600 dark:text-blue-400"
                     >
                         {{ weightedScore }}
-                        <span class="text-xs font-normal text-slate-400"
+                        <span class="text-xs font-normal text-slate-500"
                             >/ {{ weight }}</span
                         >
                     </p>
@@ -140,7 +140,7 @@ const onInput = (event: Event) => {
                     @input="onInput"
                 />
                 <div
-                    class="mt-1 flex justify-between text-[10px] font-medium text-slate-400"
+                    class="mt-1 flex justify-between text-[11px] font-medium text-slate-500"
                 >
                     <span>0</span>
                     <span>50</span>
@@ -167,7 +167,7 @@ const onInput = (event: Event) => {
                         @input="onInput"
                     />
                 </div>
-                <span class="text-xs font-medium text-slate-400">/ 100</span>
+                <span class="text-xs font-medium text-slate-500">/ 100</span>
             </div>
         </div>
     </div>

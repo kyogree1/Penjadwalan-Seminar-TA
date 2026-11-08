@@ -50,14 +50,14 @@ const emit = defineEmits<{
 
 const typeBadgeClass = computed(() => {
     return props.type === 'Sidang'
-        ? 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800'
+        ? 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800'
         : 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800';
 });
 </script>
 
 <template>
     <div
-        class="relative rounded-2xl border bg-white p-5 transition-all duration-200 dark:bg-[#0E1626]"
+        class="dark:bg-navy-surface relative rounded-2xl border bg-white p-5 transition-all duration-200"
         :class="[
             hasConflict
                 ? 'border-rose-300 bg-rose-50/20 dark:border-rose-900/60 dark:bg-rose-950/10'
@@ -130,7 +130,7 @@ const typeBadgeClass = computed(() => {
                 <h4 class="text-sm font-bold text-slate-900 dark:text-white">
                     {{ studentName }}
                 </h4>
-                <span class="text-xs font-semibold text-slate-400"
+                <span class="text-xs font-semibold text-slate-500"
                     >({{ studentNim }})</span
                 >
             </div>
@@ -148,7 +148,7 @@ const typeBadgeClass = computed(() => {
             <!-- Dosen Pembimbing -->
             <div>
                 <span
-                    class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                    class="text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                 >
                     Pembimbing:
                 </span>
@@ -171,7 +171,7 @@ const typeBadgeClass = computed(() => {
             <!-- Dosen Penguji -->
             <div>
                 <span
-                    class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                    class="text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                 >
                     Penguji:
                 </span>
@@ -184,7 +184,7 @@ const typeBadgeClass = computed(() => {
                         class="flex items-center gap-1.5 truncate"
                     >
                         <span
-                            class="h-1.5 w-1.5 rounded-full bg-purple-500"
+                            class="h-1.5 w-1.5 rounded-full bg-blue-500"
                         ></span>
                         <span class="truncate">{{ dos }}</span>
                     </li>
@@ -196,7 +196,7 @@ const typeBadgeClass = computed(() => {
         <div
             class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800"
         >
-            <span class="text-[11px] font-medium text-slate-400">
+            <span class="text-[11px] font-medium text-slate-500">
                 Zona Waktu:
                 <strong class="text-slate-600 dark:text-slate-300"
                     >WITA (UTC+8)</strong

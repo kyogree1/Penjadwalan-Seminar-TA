@@ -314,7 +314,6 @@ const executeResetPassword = () => {
 
     <div class="space-y-6">
         <PageHeaderBox
-            badge="Layanan Akun & Akses"
             title="Kelola Data Mahasiswa & Reset Password Default"
             description="Bantu mahasiswa yang mengalami kendala akses login, dan lihat data akun terdaftar."
         />
@@ -383,7 +382,7 @@ const executeResetPassword = () => {
                 <div
                     class="flex items-start gap-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400"
                 >
-                    <Info class="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                    <Info class="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
                     <p class="leading-relaxed">
                         CSV UTF-8 maksimal 1 MiB / 500 baris, kolom
                         <code
@@ -517,13 +516,13 @@ const executeResetPassword = () => {
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <div class="relative w-full sm:w-64">
                         <Search
-                            class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400"
+                            class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-500"
                         />
                         <input
                             v-model="searchQuery"
                             type="text"
                             placeholder="Cari nama, NIM, atau email..."
-                            class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/80 pr-4 pl-9 text-xs text-slate-800 transition-colors placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-100 dark:focus:bg-slate-900"
+                            class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/80 pr-4 pl-9 text-xs text-slate-800 transition-colors placeholder:text-slate-500 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-100 dark:focus:bg-slate-900"
                         />
                     </div>
 
@@ -570,7 +569,7 @@ const executeResetPassword = () => {
                                     {{ s.name }}
                                 </p>
                                 <p
-                                    class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500"
+                                    class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-500"
                                 >
                                     {{ s.prodi }}
                                 </p>
@@ -594,7 +593,7 @@ const executeResetPassword = () => {
                                     <div
                                         class="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
                                     >
-                                        <Users class="h-7 w-7 text-slate-400" />
+                                        <Users class="h-7 w-7 text-slate-500" />
                                     </div>
                                     <div>
                                         <h4
@@ -692,7 +691,7 @@ const executeResetPassword = () => {
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <p
-                                class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                                class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase"
                             >
                                 NIM (Username)
                             </p>
@@ -708,7 +707,7 @@ const executeResetPassword = () => {
                         </div>
                         <div>
                             <p
-                                class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                                class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase"
                             >
                                 Program Studi
                             </p>
@@ -733,7 +732,7 @@ const executeResetPassword = () => {
                                 :disabled="managing"
                                 maxlength="255"
                                 placeholder="Masukkan nama lengkap mahasiswa..."
-                                class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/70 p-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900 dark:text-white"
+                                class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/70 p-2.5 text-xs text-slate-900 placeholder:text-slate-500 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900 dark:text-white"
                             />
                         </label>
                     </div>
@@ -750,7 +749,7 @@ const executeResetPassword = () => {
                                 type="email"
                                 maxlength="255"
                                 placeholder="nama.mahasiswa@student.itk.ac.id"
-                                class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/70 p-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900 dark:text-white"
+                                class="mt-1.5 block w-full rounded-xl border border-slate-200 bg-slate-50/70 p-2.5 text-xs text-slate-900 placeholder:text-slate-500 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900 dark:text-white"
                             />
                         </label>
                     </div>
@@ -761,7 +760,7 @@ const executeResetPassword = () => {
                         class="space-y-2.5 border-t border-slate-100 pt-3 dark:border-slate-800"
                     >
                         <p
-                            class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                            class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase"
                         >
                             Keamanan & Tindakan Akun
                         </p>

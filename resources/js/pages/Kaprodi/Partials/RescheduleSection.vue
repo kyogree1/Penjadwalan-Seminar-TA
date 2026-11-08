@@ -456,7 +456,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
             <!-- Role Badge / Action Info -->
             <div class="flex items-center gap-2">
                 <span
-                    class="inline-flex items-center gap-1.5 rounded-xl border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-bold text-purple-700 dark:border-purple-800/60 dark:bg-purple-950/40 dark:text-purple-300"
+                    class="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 dark:border-blue-800/60 dark:bg-blue-950/40 dark:text-blue-300"
                 >
                     <GraduationCap class="h-3.5 w-3.5" />
                     Portal Koorprodi / Kaprodi
@@ -470,31 +470,27 @@ const resetDecision = (item: RescheduleRequestItem) => {
                 title="Total Pengajuan"
                 :value="`${totalCount} Pengajuan`"
                 :icon="CalendarClock"
-                icon-color="blue"
             />
             <StatCard
                 title="Menunggu Persetujuan"
                 :value="`${pendingCount} Pengajuan`"
                 :icon="Clock"
-                icon-color="amber"
             />
             <StatCard
                 title="Reschedule Disetujui"
                 :value="`${approvedCount} Disetujui`"
                 :icon="CheckCircle2"
-                icon-color="emerald"
             />
             <StatCard
                 title="Pengajuan Ditolak"
                 :value="`${rejectedCount} Ditolak`"
                 :icon="XCircle"
-                icon-color="rose"
             />
         </div>
 
         <!-- FILTER & SEARCH BAR -->
         <div
-            class="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs lg:flex-row lg:items-center lg:justify-between dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-xs lg:flex-row lg:items-center lg:justify-between dark:border-slate-800"
         >
             <!-- Status Tabs -->
             <div class="flex flex-wrap items-center gap-1.5">
@@ -510,7 +506,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
                 >
                     <span>Semua</span>
                     <span
-                        class="py-0.2 rounded-full px-1.5 text-[10px]"
+                        class="py-0.2 rounded-full px-1.5 text-[11px]"
                         :class="
                             activeStatusFilter === 'all'
                                 ? 'bg-white/20 text-white'
@@ -533,7 +529,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
                 >
                     <span>Menunggu</span>
                     <span
-                        class="py-0.2 rounded-full px-1.5 text-[10px]"
+                        class="py-0.2 rounded-full px-1.5 text-[11px]"
                         :class="
                             activeStatusFilter === 'menunggu'
                                 ? 'bg-white/20 text-white'
@@ -556,7 +552,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
                 >
                     <span>Disetujui</span>
                     <span
-                        class="py-0.2 rounded-full px-1.5 text-[10px]"
+                        class="py-0.2 rounded-full px-1.5 text-[11px]"
                         :class="
                             activeStatusFilter === 'disetujui'
                                 ? 'bg-white/20 text-white'
@@ -579,7 +575,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
                 >
                     <span>Ditolak</span>
                     <span
-                        class="py-0.2 rounded-full px-1.5 text-[10px]"
+                        class="py-0.2 rounded-full px-1.5 text-[11px]"
                         :class="
                             activeStatusFilter === 'ditolak'
                                 ? 'bg-white/20 text-white'
@@ -606,13 +602,13 @@ const resetDecision = (item: RescheduleRequestItem) => {
                 <!-- Search Input -->
                 <div class="relative w-full sm:w-64">
                     <Search
-                        class="pointer-events-none absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+                        class="pointer-events-none absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-500"
                     />
                     <input
                         v-model="searchQuery"
                         type="text"
                         placeholder="Cari dosen, mhs, NIM..."
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pr-3 pl-8 text-xs font-normal text-slate-800 outline-hidden transition-colors placeholder:text-slate-400 focus:border-blue-500 focus:bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-blue-500"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 py-1.5 pr-3 pl-8 text-xs font-normal text-slate-800 outline-hidden transition-colors placeholder:text-slate-500 focus:border-blue-500 focus:bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-blue-500"
                     />
                 </div>
             </div>
@@ -623,7 +619,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
             <div
                 v-for="item in filteredRequests"
                 :key="item.id"
-                class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-all hover:shadow-md dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white transition-all hover:shadow-md dark:border-slate-800"
             >
                 <!-- Card Header -->
                 <div
@@ -636,7 +632,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
                             :class="[
                                 item.tipeUjian === 'sempro'
                                     ? 'border border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800/60 dark:bg-blue-950/40 dark:text-blue-300'
-                                    : 'border border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800/60 dark:bg-purple-950/40 dark:text-purple-300',
+                                    : 'border border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800/60 dark:bg-blue-950/40 dark:text-blue-300',
                             ]"
                         >
                             <Calendar class="h-3 w-3" />
@@ -677,7 +673,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
                         </span>
                     </div>
 
-                    <div class="text-[11px] text-slate-400">
+                    <div class="text-[11px] text-slate-500">
                         Diajukan pada:
                         <span
                             class="font-medium text-slate-600 dark:text-slate-300"
@@ -696,13 +692,13 @@ const resetDecision = (item: RescheduleRequestItem) => {
                                 class="rounded-xl border border-slate-100 bg-slate-50/50 p-3.5 dark:border-slate-800/80 dark:bg-slate-900/30"
                             >
                                 <p
-                                    class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                                    class="text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                                 >
                                     Dosen Pemohon Reschedule
                                 </p>
                                 <div class="mt-2 flex items-start gap-3">
                                     <div
-                                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 font-bold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300"
+                                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
                                     >
                                         {{
                                             item.dosenNama
@@ -726,7 +722,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
                                         </p>
                                         <div class="mt-1">
                                             <span
-                                                class="inline-flex rounded-md bg-indigo-50 px-2 py-0.5 text-[10px] font-bold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300"
+                                                class="inline-flex rounded-md bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
                                             >
                                                 Peran: {{ item.dosenRole }}
                                             </span>
@@ -740,7 +736,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
                                 class="rounded-xl border border-slate-100 bg-slate-50/50 p-3.5 dark:border-slate-800/80 dark:bg-slate-900/30"
                             >
                                 <p
-                                    class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                                    class="text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                                 >
                                     Mahasiswa Teruji
                                 </p>
@@ -772,7 +768,7 @@ const resetDecision = (item: RescheduleRequestItem) => {
                                 class="rounded-xl border border-slate-200/70 p-4 dark:border-slate-800"
                             >
                                 <p
-                                    class="text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                                    class="text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                                 >
                                     Perbandingan Jadwal
                                 </p>
@@ -853,11 +849,11 @@ const resetDecision = (item: RescheduleRequestItem) => {
                                 >
                                     <div class="flex items-center gap-2">
                                         <span
-                                            class="text-[10px] font-bold text-slate-400 uppercase"
+                                            class="text-[11px] font-bold text-slate-500 uppercase"
                                             >Alasan:</span
                                         >
                                         <span
-                                            class="rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-900 dark:bg-amber-950/60 dark:text-amber-300"
+                                            class="rounded-md bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-900 dark:bg-amber-950/60 dark:text-amber-300"
                                         >
                                             {{ item.alasan }}
                                         </span>
@@ -941,10 +937,10 @@ const resetDecision = (item: RescheduleRequestItem) => {
         <!-- EMPTY STATE -->
         <div
             v-else
-            class="flex flex-col items-center justify-center rounded-2xl border border-slate-200/80 bg-white p-12 text-center shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface flex flex-col items-center justify-center rounded-2xl border border-slate-200/80 bg-white p-12 text-center shadow-xs dark:border-slate-800"
         >
             <div
-                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
+                class="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-500"
             >
                 <CalendarClock class="h-6 w-6" />
             </div>

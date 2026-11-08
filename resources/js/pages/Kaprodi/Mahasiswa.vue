@@ -147,9 +147,9 @@ const getStatusBadgeClass = (status: string) => {
         case 'Sempro':
             return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800';
         case 'Sidang Akhir':
-            return 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800';
+            return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800';
         case 'Bimbingan':
-            return 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800';
+            return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800';
         case 'Aktif TA':
             return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800';
         default:
@@ -385,7 +385,7 @@ const executeDeleteMahasiswa = () => {
 
         <!-- MAIN TABLE CONTAINER (Matching Daftar Judul & Data Dosen) -->
         <div
-            class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+            class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80"
         >
             <!-- Card Header with Filters -->
             <div
@@ -410,7 +410,7 @@ const executeDeleteMahasiswa = () => {
                     <!-- Search Input -->
                     <div class="relative flex-1">
                         <Search
-                            class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400"
+                            class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-500"
                         />
                         <input
                             v-model="searchQuery"
@@ -529,7 +529,7 @@ const executeDeleteMahasiswa = () => {
                             </td>
                             <td class="px-3 py-3.5">
                                 <span
-                                    class="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300"
+                                    class="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/60 dark:text-blue-300"
                                 >
                                     {{ mhs.prodi }}
                                 </span>
@@ -555,7 +555,7 @@ const executeDeleteMahasiswa = () => {
                             >
                                 <span
                                     :class="getStatusBadgeClass(mhs.statusTa)"
-                                    class="inline-block rounded-full border px-2.5 py-0.5 text-[10px] font-medium"
+                                    class="inline-block rounded-full border px-2.5 py-0.5 text-[11px] font-medium"
                                 >
                                     {{ mhs.statusTa }}
                                 </span>
@@ -595,7 +595,7 @@ const executeDeleteMahasiswa = () => {
                                     class="flex flex-col items-center justify-center space-y-3"
                                 >
                                     <div
-                                        class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-2xl text-slate-400 dark:bg-slate-800/80"
+                                        class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-2xl text-slate-500 dark:bg-slate-800/80"
                                     >
                                         <Search class="h-6 w-6" />
                                     </div>
@@ -605,7 +605,7 @@ const executeDeleteMahasiswa = () => {
                                         >
                                             Data Mahasiswa Tidak Ditemukan
                                         </p>
-                                        <p class="text-xs text-slate-400">
+                                        <p class="text-xs text-slate-500">
                                             Tidak ada mahasiswa yang cocok
                                             dengan kriteria filter atau
                                             pencarian Anda.

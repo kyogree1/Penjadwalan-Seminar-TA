@@ -50,12 +50,12 @@ const submit = () => {
 
         <!-- Warning PENTING SOP SIPTA IF -->
         <div
-            class="rounded-2xl border border-yellow-200 bg-[#FCFDE1] p-5 shadow-xs dark:border-yellow-900/50 dark:bg-yellow-950/30"
+            class="rounded-2xl border border-amber-200 bg-amber-50 p-5 shadow-xs dark:border-amber-900/50 dark:bg-amber-950/30"
         >
             <div class="flex items-start gap-3">
                 <Info class="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
                 <div
-                    class="space-y-1 text-xs leading-relaxed text-slate-800 dark:text-yellow-200"
+                    class="space-y-1 text-xs leading-relaxed text-slate-800 dark:text-amber-200"
                 >
                     <p class="font-bold">
                         Ketentuan e-TTD & Data Akademik (SIPTA IF):
@@ -87,7 +87,7 @@ const submit = () => {
         <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
             <!-- Left: Avatar Card & Signature Status -->
             <div
-                class="flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 text-center shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-6 text-center shadow-xs dark:border-slate-800"
             >
                 <div>
                     <div
@@ -100,7 +100,7 @@ const submit = () => {
                     >
                         {{ form.name }}
                     </h3>
-                    <p class="text-xs font-semibold text-slate-400">
+                    <p class="text-xs font-semibold text-slate-500">
                         {{ profile.nim_nip ?? 'Belum tersedia' }}
                     </p>
                     <span
@@ -118,7 +118,7 @@ const submit = () => {
 
             <!-- Right: Biodata Detail Form (Span 2) -->
             <div
-                class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs md:col-span-2 dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs md:col-span-2 dark:border-slate-800"
             >
                 <h3
                     class="border-b border-slate-100 pb-4 text-base font-bold text-slate-900 dark:border-slate-800 dark:text-white"

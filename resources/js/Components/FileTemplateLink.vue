@@ -24,7 +24,7 @@ withDefaults(defineProps<Props>(), {
         <span>{{ label }}</span>
         <span
             v-if="code"
-            class="rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+            class="rounded-md bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
         >
             {{ code }}
         </span>

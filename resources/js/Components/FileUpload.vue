@@ -228,7 +228,7 @@ const clearFile = (event?: MouseEvent) => {
                     </button>
                     <button
                         type="button"
-                        class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-950/50 dark:hover:text-rose-400"
+                        class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-950/50 dark:hover:text-rose-400"
                         title="Hapus Berkas"
                         @click="clearFile"
                     >

@@ -45,8 +45,8 @@ const quickActions = [
         icon: Users,
         badge: computed(() => `${props.stats.totalMahasiswa} Akun`),
         badgeVariant: computed(() => 'indigo'),
-        color: 'text-indigo-600 dark:text-indigo-400',
-        bg: 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200/80 dark:border-indigo-900/50',
+        color: 'text-blue-600 dark:text-blue-400',
+        bg: 'bg-blue-50 dark:bg-blue-950/40 border-blue-200/80 dark:border-blue-900/50',
     },
     {
         title: 'Status Arsip',
@@ -65,7 +65,6 @@ const quickActions = [
     <Head title="Dashboard Tendik - SIPTA IF" />
     <div class="space-y-6">
         <PageHeaderBox
-            badge="Portal Tendik"
             title="Administrasi Tugas Akhir"
             description="Pusat kendali verifikasi berkas, fasilitas ujian, dan manajemen akun mahasiswa Informatika."
         />
@@ -77,14 +76,12 @@ const quickActions = [
                 :value="props.stats.antreanVerifikasi"
                 subtitle="Pendaftaran berstatus menunggu"
                 :icon="FileText"
-                icon-color="amber"
             />
             <StatCard
                 title="Akun Mahasiswa"
                 :value="props.stats.totalMahasiswa"
                 subtitle="Akun dengan peran mahasiswa"
                 :icon="Users"
-                icon-color="indigo"
             />
         </div>
 
@@ -197,7 +194,7 @@ const quickActions = [
                     v-for="action in quickActions"
                     :key="action.title"
                     :href="action.href"
-                    class="group flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:border-blue-400 hover:shadow-sm dark:border-slate-800 dark:bg-[#0E1626] dark:hover:border-blue-500"
+                    class="group dark:bg-navy-surface flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all hover:border-blue-400 hover:shadow-sm dark:border-slate-800 dark:hover:border-blue-500"
                 >
                     <div>
                         <div class="flex items-center justify-between">
@@ -212,7 +209,7 @@ const quickActions = [
                                 />
                             </div>
                             <span
-                                class="rounded-md px-2 py-0.5 text-[10px] font-bold"
+                                class="rounded-md px-2 py-0.5 text-[11px] font-bold"
                                 :class="[
                                     action.badgeVariant.value === 'amber'
                                         ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
@@ -223,7 +220,7 @@ const quickActions = [
                                             ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
                                             : action.badgeVariant.value ===
                                                 'indigo'
-                                              ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300'
+                                              ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
                                               : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
                                 ]"
                             >

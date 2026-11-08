@@ -115,7 +115,7 @@ const save = () => {
                     Format CSV UTF-8 maksimal 1 MiB / 500 baris. Kolom: nama,
                     nim, angkatan, jurusan, prodi, email, no_telpon, status_ta.
                 </p>
-                <p class="mt-1 text-xs text-slate-400">
+                <p class="mt-1 text-xs text-slate-500">
                     Duplikat NIM dan email ditolak secara otomatis. Password
                     default acak di-generate secara aman.
                 </p>

@@ -309,7 +309,7 @@ const submitSempro = () => {
         </div>
         <div
             v-if="revisionNote"
-            class="flex items-start gap-3 rounded-2xl border border-orange-200 bg-orange-50 p-4 text-sm text-orange-800 dark:border-orange-900 dark:bg-orange-950/30 dark:text-orange-200"
+            class="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
         >
             <AlertCircle class="mt-0.5 h-5 w-5 shrink-0" />
             <div>
@@ -479,7 +479,7 @@ const submitSempro = () => {
                                                 )
                                             "
                                         />
-                                        <span class="text-[11px] text-slate-400"
+                                        <span class="text-[11px] text-slate-500"
                                             >PDF, maks.
                                             {{
                                                 document.field ===
@@ -588,7 +588,7 @@ const submitSempro = () => {
                                 :disabled="
                                     !canEdit || !isFormValid || form.processing
                                 "
-                                class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#8CE79B] px-6 py-2.5 text-xs font-bold text-slate-900 transition-all hover:bg-[#7BD68A] active:scale-95 disabled:pointer-events-none disabled:opacity-40"
+                                class="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white transition-all hover:bg-blue-500 active:scale-95 disabled:pointer-events-none disabled:opacity-40"
                             >
                                 <Send class="h-3.5 w-3.5" />
                                 {{

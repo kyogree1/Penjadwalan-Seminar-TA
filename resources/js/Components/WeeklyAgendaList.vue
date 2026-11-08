@@ -38,7 +38,7 @@ const emit = defineEmits<{
         <div
             v-for="day in days"
             :key="day.dateString"
-            class="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs dark:border-slate-800"
         >
             <button
                 type="button"
@@ -63,7 +63,7 @@ const emit = defineEmits<{
                             {{ day.dateString }}
                         </p>
                         <p
-                            class="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400"
+                            class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400"
                         >
                             {{
                                 getAgendaCount

@@ -62,7 +62,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
     >
         <div
             v-dialog="'Navigasi portal'"
-            class="flex h-full w-72 max-w-[calc(100vw-2rem)] flex-col justify-between overflow-y-auto bg-white p-5 text-slate-700 shadow-2xl dark:bg-[#0E1626] dark:text-slate-300"
+            class="dark:bg-navy-surface flex h-full w-72 max-w-[calc(100vw-2rem)] flex-col justify-between overflow-y-auto bg-white p-5 text-slate-700 shadow-2xl dark:text-slate-300"
             @click.stop
         >
             <div>
@@ -70,15 +70,11 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                     class="flex items-center justify-between border-b border-slate-200 pb-4 dark:border-slate-800"
                 >
                     <div class="flex items-center gap-2.5">
-                        <div
-                            class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white p-1 shadow-xs dark:border-slate-700/80 dark:bg-slate-800"
-                        >
-                            <img
-                                src="/images/logo_if.png"
-                                alt="Logo Informatika ITK"
-                                class="h-5 w-5 object-contain"
-                            />
-                        </div>
+                        <img
+                            src="/images/logo_if.png"
+                            alt="Logo Informatika ITK"
+                            class="h-8 w-8 object-contain"
+                        />
                         <span
                             class="text-sm font-bold text-slate-900 dark:text-white"
                             >SIPTA IF</span
@@ -87,7 +83,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                     <button
                         type="button"
                         aria-label="Tutup navigasi"
-                        class="cursor-pointer p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                        class="cursor-pointer p-1 text-slate-500 hover:text-slate-700 dark:hover:text-white"
                         @click="emit('close')"
                     >
                         <X class="h-5 w-5" />
@@ -166,7 +162,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                     <!-- Dosen -->
                     <template v-else-if="userRole === 'dosen'">
                         <p
-                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-1 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Manajemen Utama
                         </p>
@@ -179,7 +175,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
 
                         <p
-                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Data Pengajuan
                         </p>
@@ -199,7 +195,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
 
                         <p
-                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Penjadwalan
                         </p>
@@ -219,7 +215,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
 
                         <p
-                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Panduan &amp; Lainnya
                         </p>
@@ -242,7 +238,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                     <!-- Kaprodi / Koorprodi -->
                     <template v-else-if="userRole === 'kaprodi'">
                         <p
-                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-1 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Manajemen Utama
                         </p>
@@ -255,7 +251,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
 
                         <p
-                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Data Pengajuan
                         </p>
@@ -296,7 +292,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
 
                         <p
-                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Periode Gelombang
                         </p>
@@ -316,7 +312,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
 
                         <p
-                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Penjadwalan &amp; Plotting
                         </p>
@@ -337,7 +333,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
 
                         <p
-                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Data Master
                         </p>
@@ -357,7 +353,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         </Link>
 
                         <p
-                            class="px-3 pt-2 text-[10px] font-bold tracking-wider text-slate-400 uppercase"
+                            class="px-3 pt-2 text-[11px] font-bold tracking-wider text-slate-500 uppercase"
                         >
                             Prosedur &amp; Katalog
                         </p>
@@ -435,7 +431,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                         <Moon v-else class="h-4 w-4 text-blue-400" />
                         Mode Tampilan
                     </span>
-                    <span class="text-[10px] text-slate-500">
+                    <span class="text-[11px] text-slate-500">
                         {{ isDarkMode ? 'Gelap' : 'Terang' }}
                     </span>
                 </button>

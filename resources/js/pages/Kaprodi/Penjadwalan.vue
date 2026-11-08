@@ -309,7 +309,7 @@ const intervalConflicts = computed(() => {
             <p v-if="period">
                 {{ period.start_date.slice(0, 10) }} –
                 {{ period.end_date.slice(0, 10) }} ·
-                {{ period.slots.length }} slot · kapasitas {{ period.capacity }}
+                {{ period.slots.length }} slot, kapasitas {{ period.capacity }}
             </p>
             <p>
                 {{ schedules.length }} jadwal tersimpan ·
@@ -377,8 +377,8 @@ const intervalConflicts = computed(() => {
             <h2 class="font-bold">Preview: {{ preview.outcome }}</h2>
             <p>
                 {{ preview.schedule.length }} dijadwalkan ·
-                {{ preview.unscheduled.length }} belum dijadwalkan · fitness
-                {{ preview.fitness }} · KBK {{ preview.kbk_match }} ·
+                {{ preview.unscheduled.length }} belum dijadwalkan, fitness
+                {{ preview.fitness }}, KBK {{ preview.kbk_match }} ·
                 keseimbangan {{ preview.workload_balance }} ·
                 {{ preview.generations }} generasi
             </p>
@@ -395,9 +395,9 @@ const intervalConflicts = computed(() => {
                     v-for="row in preview.schedule"
                     :key="`${row.tipe}:${row.pendaftaran_id}`"
                 >
-                    {{ row.nama }} · {{ row.tipe }} #{{ row.pendaftaran_id }} ·
+                    {{ row.nama }}, {{ row.tipe }} #{{ row.pendaftaran_id }} ·
                     {{ row.tanggal }} {{ row.jam_mulai }} –
-                    {{ row.jam_selesai }} · penguji #{{ row.penguji_1_id }}, #{{
+                    {{ row.jam_selesai }}, penguji #{{ row.penguji_1_id }}, #{{
                         row.penguji_2_id
                     }}
                 </li>
@@ -628,7 +628,7 @@ const intervalConflicts = computed(() => {
                 class="underline"
                 >Unduh jadwal CSV</a
             >
-            · XLSX dan PDF belum tersedia (tidak ada library pembuat file).
+            , XLSX dan PDF belum tersedia (tidak ada library pembuat file).
             Riwayat kelulusan dan penerbitan arsip belum tersedia.
         </p>
     </div>

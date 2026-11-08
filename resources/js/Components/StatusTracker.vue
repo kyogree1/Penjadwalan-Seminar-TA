@@ -151,7 +151,7 @@ const getStepState = (index: number) => {
                 </span>
                 <span
                     v-else-if="currentStatus === 'revisi'"
-                    class="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-700 dark:bg-orange-950/60 dark:text-orange-300"
+                    class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"
                 >
                     <AlertTriangle class="h-3.5 w-3.5" />
                     Status: Perlu Revisi Berkas
@@ -214,7 +214,7 @@ const getStepState = (index: number) => {
                         <!-- State: Revision -->
                         <div
                             v-else-if="getStepState(index) === 'revision'"
-                            class="flex h-10 w-10 items-center justify-center rounded-full bg-orange-600 text-white shadow-md ring-4 shadow-orange-500/30 ring-orange-100 dark:ring-orange-950"
+                            class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600 text-white shadow-md ring-4 shadow-amber-500/30 ring-amber-100 dark:ring-amber-950"
                         >
                             <AlertTriangle class="h-5 w-5 stroke-[2.5]" />
                         </div>
@@ -222,7 +222,7 @@ const getStepState = (index: number) => {
                         <!-- State: Upcoming / Pending -->
                         <div
                             v-else
-                            class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 bg-white text-slate-400 ring-4 ring-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-500 dark:ring-slate-900"
+                            class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 bg-white text-slate-500 ring-4 ring-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-500 dark:ring-slate-900"
                         >
                             <span class="text-sm font-semibold">{{
                                 index + 1
@@ -242,7 +242,7 @@ const getStepState = (index: number) => {
                                       : getStepState(index) === 'rejected'
                                         ? 'text-rose-600 dark:text-rose-400'
                                         : getStepState(index) === 'revision'
-                                          ? 'text-orange-600 dark:text-orange-400'
+                                          ? 'text-amber-600 dark:text-amber-400'
                                           : 'text-slate-500 dark:text-slate-400',
                             ]"
                         >
@@ -255,7 +255,7 @@ const getStepState = (index: number) => {
                         </p>
                         <p
                             v-if="step.timestamp"
-                            class="mt-1 text-[11px] font-medium text-slate-400 dark:text-slate-500"
+                            class="mt-1 text-[11px] font-medium text-slate-500 dark:text-slate-500"
                         >
                             {{ step.timestamp }}
                         </p>
@@ -272,7 +272,7 @@ const getStepState = (index: number) => {
                 currentStatus === 'ditolak'
                     ? 'border-rose-200 bg-rose-50/70 text-rose-900 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-200'
                     : currentStatus === 'revisi'
-                      ? 'border-orange-200 bg-orange-50/70 text-orange-900 dark:border-orange-900/50 dark:bg-orange-950/30 dark:text-orange-200'
+                      ? 'border-amber-200 bg-amber-50/70 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200'
                       : 'border-blue-200 bg-blue-50/70 text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-200',
             ]"
         >

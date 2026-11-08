@@ -107,7 +107,7 @@ const handleLogout = () => {
 
 <template>
     <header
-        class="z-40 flex h-16 w-full shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md lg:px-8 dark:border-slate-800 dark:bg-[#0E1626]/95"
+        class="dark:bg-navy-surface/95 z-40 flex h-16 w-full shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md lg:px-8 dark:border-slate-800"
     >
         <!-- Left: Mobile navigation and page title -->
         <div class="flex min-w-0 items-center gap-2 sm:gap-4">
@@ -163,7 +163,7 @@ const handleLogout = () => {
                     <Bell class="h-4 w-4" />
                     <span
                         v-if="unreadCount > 0"
-                        class="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white shadow-xs"
+                        class="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[11px] font-bold text-white shadow-xs"
                     >
                         {{ unreadCount > 9 ? '9+' : unreadCount }}
                     </span>
@@ -172,7 +172,7 @@ const handleLogout = () => {
                 <!-- Dropdown Panel -->
                 <div
                     v-if="showNotificationDropdown"
-                    class="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl dark:border-slate-800 dark:bg-[#0E1626]"
+                    class="dark:bg-navy-surface absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl dark:border-slate-800"
                 >
                     <div
                         class="mb-2 flex items-center justify-between border-b border-slate-100 pb-2 dark:border-slate-800"
@@ -184,7 +184,7 @@ const handleLogout = () => {
                             >
                             <span
                                 v-if="unreadCount > 0"
-                                class="py-0.2 rounded-full bg-blue-100 px-1.5 text-[10px] font-semibold text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
+                                class="py-0.2 rounded-full bg-blue-100 px-1.5 text-[11px] font-semibold text-blue-600 dark:bg-blue-900/40 dark:text-blue-300"
                             >
                                 {{ unreadCount }} baru
                             </span>
@@ -201,7 +201,7 @@ const handleLogout = () => {
 
                     <div
                         v-if="notifications.length === 0"
-                        class="py-6 text-center text-xs text-slate-400"
+                        class="py-6 text-center text-xs text-slate-500"
                     >
                         Tidak ada notifikasi baru
                     </div>
@@ -226,7 +226,7 @@ const handleLogout = () => {
                                 >
                                     {{ notif.title }}
                                 </p>
-                                <span class="text-[10px] text-slate-400">{{
+                                <span class="text-[11px] text-slate-500">{{
                                     notif.time
                                 }}</span>
                             </div>
@@ -247,7 +247,7 @@ const handleLogout = () => {
                                 <button
                                     v-if="!notif.read"
                                     type="button"
-                                    class="ml-auto inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                                    class="ml-auto inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-600 dark:hover:text-slate-200"
                                     @click="markAsRead(notif.id)"
                                 >
                                     <CheckCheck class="h-3 w-3" /> Tandai dibaca
@@ -275,7 +275,7 @@ const handleLogout = () => {
                     >
                         {{ profileData.name }}
                     </span>
-                    <span class="block text-[10px] text-slate-400">
+                    <span class="block text-[11px] text-slate-500">
                         {{ profileData.idNumber }}
                     </span>
                 </div>

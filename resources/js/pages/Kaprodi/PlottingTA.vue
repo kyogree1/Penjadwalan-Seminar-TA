@@ -212,13 +212,16 @@ const saveEditPlotting = () => {
     );
 };
 
-// AI Genetic Algorithm Optimizer Modal
+// Optimasi GA
 const isGaModalOpen = ref(false);
 const gaRunning = ref(false);
-const gaCompleted = ref(false);
-const gaProgress = ref(0);
-const gaCurrentGen = ref(1);
-const gaLogs = ref<string[]>([]);
+const gaResult = ref<{
+    schedule: Array<Record<string, string | number>>;
+    unscheduled: Array<{ reason?: string }>;
+    fitness: number;
+    kbk_match: number;
+    limitations: string[];
+} | null>(null);
 const gaParams = ref({
     popSize: 50,
     maxGenerations: 100,
@@ -228,66 +231,71 @@ const gaParams = ref({
 
 const openGaModal = () => {
     isGaModalOpen.value = true;
-    gaRunning.value = false;
-    gaCompleted.value = false;
-    gaProgress.value = 0;
-    gaCurrentGen.value = 1;
-    gaLogs.value = [];
+    gaResult.value = null;
 };
 
-const startGaOptimization = () => {
+const startGaOptimization = async () => {
+    if (!activePeriodId.value) {
+        showToast('Pilih periode terlebih dahulu.', 'error');
+        return;
+    }
     gaRunning.value = true;
-    gaCompleted.value = false;
-    gaProgress.value = 0;
-    gaCurrentGen.value = 1;
-    gaLogs.value = [
-        '[00:01] Mengambil dataset berkas pendaftar sidang TA tervalidasi...',
-        '[00:01] Mengekstrak kesesuaian topik KBK dan ketersediaan waktu dosen penguji...',
-        '[00:02] Model Random Forest KBK Match Scoring diinisialisasi...',
-        `[00:02] Inisialisasi populasi awal (${gaParams.value.popSize} kromosom)...`,
-    ];
-
-    let progress = 0;
-    let gen = 1;
-    const interval = setInterval(() => {
-        progress += 10;
-        gen += 10;
-        gaProgress.value = Math.min(progress, 100);
-        gaCurrentGen.value = Math.min(gen, gaParams.value.maxGenerations);
-
-        if (progress === 30) {
-            gaLogs.value.push(
-                `[Generasi 25] Evaluasi fitness: 0.760 | Zero conflict constraint dioptimalkan.`,
-            );
-        } else if (progress === 60) {
-            gaLogs.value.push(
-                `[Generasi 55] Two-Point Crossover & Mutasi (3%)... Fitness meningkat ke 0.910.`,
-            );
-        } else if (progress === 90) {
-            gaLogs.value.push(
-                `[Generasi 85] Fitness: 0.990 | Seluruh hard constraints (Zero Conflict) terpenuhi 100%!`,
+    gaResult.value = null;
+    const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('XSRF-TOKEN='))
+        ?.split('=')[1];
+    try {
+        const response = await fetch('/kaprodi/penjadwalan/generate-ga', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-XSRF-TOKEN': decodeURIComponent(token ?? ''),
+            },
+            body: JSON.stringify({
+                period_id: activePeriodId.value,
+                ...gaParams.value,
+            }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            const validation = Object.values(
+                data.errors ?? {},
+            ).flat() as string[];
+            throw new Error(
+                validation.join(' ') || data.message || 'Optimasi gagal.',
             );
         }
-
-        if (progress >= 100) {
-            clearInterval(interval);
-            gaRunning.value = false;
-            gaCompleted.value = true;
-            gaLogs.value.push(
-                `[Konvergensi] Solusi optimal ditemukan pada Generasi ke-85 (Fitness: 0.990).`,
-            );
-            gaLogs.value.push(
-                `[Selesai] Seluruh mahasiswa sidang TA berhasil di-plot bebas bentrok jadwal.`,
-            );
-        }
-    }, 250);
+        gaResult.value = data;
+    } catch (error) {
+        showToast(
+            error instanceof Error ? error.message : 'Optimasi gagal.',
+            'error',
+        );
+    } finally {
+        gaRunning.value = false;
+    }
 };
 
 const applyGaResults = () => {
-    isGaModalOpen.value = false;
-    showToast(
-        'Jadwal dan rekomendasi plotting sidang TA AI Genetika berhasil diterapkan!',
-        'success',
+    if (!gaResult.value || !activePeriodId.value) return;
+    router.post(
+        '/kaprodi/penjadwalan/simpan',
+        {
+            period_id: activePeriodId.value,
+            schedules: gaResult.value.schedule,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                isGaModalOpen.value = false;
+                gaResult.value = null;
+            },
+            onError: (errors) => {
+                showToast(Object.values(errors).join(' '), 'error');
+            },
+        },
     );
 };
 
@@ -386,7 +394,7 @@ const downloadJadwal = () => {
                                 if (found) switchGelombang(found);
                             }
                         "
-                        class="cursor-pointer appearance-none rounded-xl border border-slate-300 bg-white py-2 pr-9 pl-3.5 text-xs font-bold text-slate-800 shadow-xs transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-slate-700 dark:bg-[#0E1626] dark:text-slate-100"
+                        class="dark:bg-navy-surface cursor-pointer appearance-none rounded-xl border border-slate-300 bg-white py-2 pr-9 pl-3.5 text-xs font-bold text-slate-800 shadow-xs transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-slate-700 dark:text-slate-100"
                     >
                         <option v-for="p in periods" :key="p.id" :value="p.id">
                             Gelombang {{ p.gelombang }} ({{ p.semester }}
@@ -394,14 +402,14 @@ const downloadJadwal = () => {
                         </option>
                     </select>
                     <ChevronDown
-                        class="pointer-events-none absolute top-1/2 right-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+                        class="pointer-events-none absolute top-1/2 right-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-500"
                     />
                 </div>
             </div>
         </div>
 
         <div
-            class="flex flex-col gap-6 rounded-2xl border border-slate-200/80 bg-white p-5 lg:flex-row lg:items-center lg:justify-between dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface flex flex-col gap-6 rounded-2xl border border-slate-200/80 bg-white p-5 lg:flex-row lg:items-center lg:justify-between dark:border-slate-800"
         >
             <div class="max-w-xl space-y-2">
                 <div
@@ -464,7 +472,7 @@ const downloadJadwal = () => {
 
         <!-- MAIN TABLE CARD -->
         <div
-            class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800"
         >
             <!-- Card Header with 4 Action Buttons -->
             <div
@@ -494,7 +502,7 @@ const downloadJadwal = () => {
                             @click="isRiwayatModalOpen = true"
                             class="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white"
                         >
-                            <Clock class="h-3.5 w-3.5 text-slate-400" />
+                            <Clock class="h-3.5 w-3.5 text-slate-500" />
                             <span>Riwayat Kelulusan</span>
                         </button>
 
@@ -584,13 +592,13 @@ const downloadJadwal = () => {
 
                         <div class="relative min-w-[200px]">
                             <Search
-                                class="absolute top-2.5 left-3 h-3.5 w-3.5 text-slate-400 dark:text-slate-500"
+                                class="absolute top-2.5 left-3 h-3.5 w-3.5 text-slate-500 dark:text-slate-500"
                             />
                             <input
                                 v-model="searchQuery"
                                 type="text"
                                 placeholder="Cari mahasiswa/judul..."
-                                class="w-full rounded-xl border border-slate-200 bg-white py-1.5 pr-3 pl-8 text-xs text-slate-800 shadow-2xs placeholder:text-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-500"
+                                class="w-full rounded-xl border border-slate-200 bg-white py-1.5 pr-3 pl-8 text-xs text-slate-800 shadow-2xs placeholder:text-slate-500 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:placeholder:text-slate-500"
                             />
                         </div>
                     </div>
@@ -676,12 +684,12 @@ const downloadJadwal = () => {
                                         class="flex flex-col items-start gap-1"
                                     >
                                         <span
-                                            class="rounded bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
+                                            class="rounded bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
                                         >
                                             {{ row.kbk }}
                                         </span>
                                         <span
-                                            class="flex items-center gap-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400"
+                                            class="flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400"
                                         >
                                             ✓ Bebas Bentrok
                                         </span>
@@ -701,7 +709,7 @@ const downloadJadwal = () => {
                                     :class="
                                         row.pembimbing2
                                             ? 'font-bold text-slate-900 dark:text-slate-200'
-                                            : 'text-slate-400 dark:text-slate-500'
+                                            : 'text-slate-500 dark:text-slate-500'
                                     "
                                     >{{ row.pembimbing2 || '-' }}</span
                                 >
@@ -714,7 +722,7 @@ const downloadJadwal = () => {
                                         >{{ row.penguji1 }}</span
                                     >
                                     <span
-                                        class="inline-block rounded border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300"
+                                        class="inline-block rounded border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300"
                                     >
                                         {{
                                             Math.round(
@@ -730,7 +738,7 @@ const downloadJadwal = () => {
                                     :class="
                                         row.penguji2
                                             ? 'font-bold text-slate-900 dark:text-slate-200'
-                                            : 'text-slate-400 dark:text-slate-500'
+                                            : 'text-slate-500 dark:text-slate-500'
                                     "
                                     >{{ row.penguji2 || '-' }}</span
                                 >
@@ -805,7 +813,7 @@ const downloadJadwal = () => {
             class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs dark:bg-slate-950/80"
         >
             <div
-                class="w-full max-w-2xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface w-full max-w-2xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800"
             >
                 <div
                     class="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-6 py-4 text-slate-900 dark:border-slate-800 dark:bg-slate-900/60 dark:text-white"
@@ -832,7 +840,7 @@ const downloadJadwal = () => {
                     <button
                         type="button"
                         @click="isGaModalOpen = false"
-                        class="cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                        class="cursor-pointer text-slate-500 hover:text-slate-700 dark:hover:text-white"
                     >
                         <X class="h-5 w-5" />
                     </button>
@@ -851,7 +859,7 @@ const downloadJadwal = () => {
                                 class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/70"
                             >
                                 <span
-                                    class="block text-[10px] font-bold text-slate-500 dark:text-slate-400"
+                                    class="block text-[11px] font-bold text-slate-500 dark:text-slate-400"
                                     >Ukuran Populasi</span
                                 >
                                 <input
@@ -864,7 +872,7 @@ const downloadJadwal = () => {
                                 class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/70"
                             >
                                 <span
-                                    class="block text-[10px] font-bold text-slate-500 dark:text-slate-400"
+                                    class="block text-[11px] font-bold text-slate-500 dark:text-slate-400"
                                     >Maks. Generasi</span
                                 >
                                 <input
@@ -877,7 +885,7 @@ const downloadJadwal = () => {
                                 class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/70"
                             >
                                 <span
-                                    class="block text-[10px] font-bold text-slate-500 dark:text-slate-400"
+                                    class="block text-[11px] font-bold text-slate-500 dark:text-slate-400"
                                     >Crossover Rate</span
                                 >
                                 <input
@@ -891,7 +899,7 @@ const downloadJadwal = () => {
                                 class="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/70"
                             >
                                 <span
-                                    class="block text-[10px] font-bold text-slate-500 dark:text-slate-400"
+                                    class="block text-[11px] font-bold text-slate-500 dark:text-slate-400"
                                     >Mutasi Gen</span
                                 >
                                 <input
@@ -904,112 +912,79 @@ const downloadJadwal = () => {
                         </div>
                     </div>
 
-                    <!-- Constraints checklist -->
-                    <div class="space-y-2">
-                        <h4
-                            class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400"
-                        >
-                            Variabel Pembatas (Constraints Check)
-                        </h4>
-                        <div
-                            class="grid grid-cols-1 gap-2.5 text-xs sm:grid-cols-3"
-                        >
-                            <div
-                                class="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-50 p-3 text-emerald-900 dark:bg-emerald-950/20 dark:text-emerald-300"
-                            >
-                                <CheckCircle2
-                                    class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
-                                />
-                                <div>
-                                    <span class="block font-bold"
-                                        >Ketersediaan Waktu Dosen</span
-                                    >
-                                    <span
-                                        class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80"
-                                        >Pasti bebas bentrok mengajar &amp;
-                                        sidang</span
-                                    >
-                                </div>
-                            </div>
-
-                            <div
-                                class="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-50 p-3 text-emerald-900 dark:bg-emerald-950/20 dark:text-emerald-300"
-                            >
-                                <CheckCircle2
-                                    class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
-                                />
-                                <div>
-                                    <span class="block font-bold"
-                                        >Kesesuaian Bidang Keahlian (KBK)</span
-                                    >
-                                    <span
-                                        class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80"
-                                        >Random Forest Match Scoring</span
-                                    >
-                                </div>
-                            </div>
-
-                            <div
-                                class="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-50 p-3 text-emerald-900 dark:bg-emerald-950/20 dark:text-emerald-300"
-                            >
-                                <CheckCircle2
-                                    class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
-                                />
-                                <div>
-                                    <span class="block font-bold"
-                                        >Pemerataan Kuota Menguji</span
-                                    >
-                                    <span
-                                        class="text-[10px] text-emerald-700/80 dark:text-emerald-400/80"
-                                        >Beban menguji dibagi adil</span
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- GA Progress Logs -->
                     <div
-                        v-if="gaRunning || gaCompleted"
-                        class="space-y-3 rounded-2xl bg-slate-900 p-4 font-mono text-xs text-white dark:bg-black/50"
+                        v-if="gaResult"
+                        class="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/60"
                     >
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-blue-300"
-                                >Status Optimasi GA:</span
-                            >
-                            <span
-                                v-if="gaRunning"
-                                class="animate-pulse text-amber-400"
-                            >
-                                Menghitung Generasi ke-{{ gaCurrentGen }} /
-                                {{ gaParams.maxGenerations }}...
-                            </span>
-                            <span v-else class="font-bold text-emerald-400">
-                                ✓ Konvergen (Solusi Terbaik Ditemukan!)
-                            </span>
-                        </div>
-
-                        <div
-                            class="h-2 w-full overflow-hidden rounded-full bg-slate-800"
-                        >
-                            <div
-                                class="h-full bg-blue-600 transition-all duration-100"
-                                :style="{ width: gaProgress + '%' }"
-                            ></div>
-                        </div>
-
-                        <div
-                            class="max-h-28 space-y-1 overflow-y-auto rounded-xl bg-slate-950 p-3 text-[11px] text-slate-300"
-                        >
-                            <div
-                                v-for="(log, lIdx) in gaLogs"
-                                :key="lIdx"
-                                class="leading-relaxed"
-                            >
-                                {{ log }}
+                        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            <div>
+                                <span
+                                    class="block text-xs text-slate-500 dark:text-slate-400"
+                                    >Terjadwal</span
+                                >
+                                <span
+                                    class="text-base font-semibold text-slate-900 tabular-nums dark:text-white"
+                                    >{{ gaResult.schedule.length }}</span
+                                >
+                            </div>
+                            <div>
+                                <span
+                                    class="block text-xs text-slate-500 dark:text-slate-400"
+                                    >Belum terjadwal</span
+                                >
+                                <span
+                                    class="text-base font-semibold text-slate-900 tabular-nums dark:text-white"
+                                    >{{ gaResult.unscheduled.length }}</span
+                                >
+                            </div>
+                            <div>
+                                <span
+                                    class="block text-xs text-slate-500 dark:text-slate-400"
+                                    >Fitness</span
+                                >
+                                <span
+                                    class="text-base font-semibold text-slate-900 tabular-nums dark:text-white"
+                                    >{{ gaResult.fitness }}</span
+                                >
+                            </div>
+                            <div>
+                                <span
+                                    class="block text-xs text-slate-500 dark:text-slate-400"
+                                    >Skor KBK</span
+                                >
+                                <span
+                                    class="text-base font-semibold text-slate-900 tabular-nums dark:text-white"
+                                    >{{ gaResult.kbk_match }}</span
+                                >
                             </div>
                         </div>
+                        <p
+                            v-if="gaResult.unscheduled.length"
+                            class="text-xs text-amber-700 dark:text-amber-400"
+                        >
+                            {{ gaResult.unscheduled.length }} pendaftaran belum
+                            dapat dijadwalkan.
+                        </p>
+                        <ul
+                            v-if="gaResult.limitations.length"
+                            class="list-disc space-y-1 pl-4 text-xs text-slate-500 dark:text-slate-400"
+                        >
+                            <li
+                                v-for="(note, index) in gaResult.limitations"
+                                :key="index"
+                            >
+                                {{ note }}
+                            </li>
+                        </ul>
                     </div>
+
+                    <p
+                        v-else
+                        class="text-xs text-slate-500 dark:text-slate-400"
+                    >
+                        Optimasi memakai pendaftar yang sudah diverifikasi dan
+                        disetujui. Hasil belum tersimpan sampai diterapkan.
+                    </p>
                 </div>
 
                 <div
@@ -1024,22 +999,28 @@ const downloadJadwal = () => {
                     </button>
                     <div class="flex items-center gap-3">
                         <button
-                            v-if="!gaRunning && !gaCompleted"
+                            v-if="!gaResult"
                             type="button"
                             @click="startGaOptimization"
+                            :disabled="gaRunning"
                             class="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-blue-500"
                         >
-                            <Cpu class="h-4 w-4 text-blue-200" />
-                            <span>Mulai Optimasi GA</span>
+                            <Cpu
+                                class="h-4 w-4 text-blue-200"
+                                :class="{ 'animate-pulse': gaRunning }"
+                            />
+                            <span>{{
+                                gaRunning ? 'Memproses...' : 'Mulai Optimasi GA'
+                            }}</span>
                         </button>
                         <button
-                            v-if="gaCompleted"
+                            v-if="gaResult && gaResult.schedule.length > 0"
                             type="button"
                             @click="applyGaResults"
                             class="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-emerald-500"
                         >
                             <CheckCircle2 class="h-4 w-4" />
-                            <span>Terapkan Hasil Rekomendasi</span>
+                            <span>Terapkan jadwal</span>
                         </button>
                     </div>
                 </div>
@@ -1054,7 +1035,7 @@ const downloadJadwal = () => {
             class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs dark:bg-slate-950/80"
         >
             <div
-                class="w-full max-w-xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface w-full max-w-xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800"
             >
                 <div
                     class="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-6 py-4 dark:border-slate-800 dark:bg-slate-900/60"
@@ -1072,7 +1053,7 @@ const downloadJadwal = () => {
                     <button
                         type="button"
                         @click="isEditModalOpen = false"
-                        class="cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                        class="cursor-pointer text-slate-500 hover:text-slate-700 dark:hover:text-white"
                     >
                         <X class="h-5 w-5" />
                     </button>
@@ -1177,7 +1158,7 @@ const downloadJadwal = () => {
                                     type="time"
                                     class="w-full rounded-xl border border-slate-300 bg-white p-2 text-center text-xs text-slate-800 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                                 />
-                                <span class="text-xs text-slate-400">-</span>
+                                <span class="text-xs text-slate-500">-</span>
                                 <input
                                     v-model="editForm.selesai"
                                     type="time"
@@ -1221,7 +1202,7 @@ const downloadJadwal = () => {
             class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs dark:bg-slate-950/80"
         >
             <div
-                class="w-full max-w-lg overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface w-full max-w-lg overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl dark:border-slate-800"
             >
                 <div
                     class="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-6 py-4 dark:border-slate-800 dark:bg-slate-900/60"
@@ -1239,7 +1220,7 @@ const downloadJadwal = () => {
                     <button
                         type="button"
                         @click="isRiwayatModalOpen = false"
-                        class="cursor-pointer text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                        class="cursor-pointer text-slate-500 hover:text-slate-700 dark:hover:text-white"
                     >
                         <X class="h-5 w-5" />
                     </button>

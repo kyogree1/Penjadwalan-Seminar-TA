@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { Eye, EyeOff, GraduationCap, Moon, Sun } from 'lucide-vue-next';
+import { Eye, EyeOff, Moon, Sun } from 'lucide-vue-next';
 
 import { useTheme } from '@/composables/useTheme';
 import PublicSchedules from '@/Components/PublicSchedules.vue';
@@ -58,7 +58,7 @@ const submitLogin = () => {
 
 <template>
     <div
-        class="min-h-screen bg-[#F8FAFC] font-sans text-slate-800 antialiased dark:bg-[#080D1A] dark:text-slate-100"
+        class="dark:bg-navy-bg min-h-screen bg-slate-50 font-sans text-slate-800 antialiased dark:text-slate-100"
     >
         <Head title="Masuk - SIPTA IF" />
 
@@ -87,19 +87,17 @@ const submitLogin = () => {
             <div class="grid grid-cols-1 items-center gap-6 lg:grid-cols-2">
                 <!-- Left: Branding SIPTA IF -->
                 <div class="space-y-4 text-center lg:text-left">
-                    <div
-                        class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-white lg:mx-0"
-                    >
-                        <GraduationCap class="h-9 w-9" />
-                    </div>
+                    <img
+                        src="/images/logo_if.png"
+                        alt="Logo Informatika ITK"
+                        class="mx-auto h-16 w-16 object-contain lg:mx-0"
+                    />
                     <h1
                         class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl dark:text-white"
                     >
                         SIPTA IF
                     </h1>
-                    <p
-                        class="text-sm font-semibold tracking-wider text-blue-600 uppercase dark:text-blue-400"
-                    >
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
                         Sistem Informasi Tugas Akhir & Penjadwalan Seminar
                     </p>
                     <p
@@ -192,7 +190,7 @@ const submitLogin = () => {
                                     />
                                     <button
                                         type="button"
-                                        class="absolute top-2.5 right-3 text-slate-400 hover:text-slate-600"
+                                        class="absolute top-2.5 right-3 text-slate-500 hover:text-slate-600"
                                         :aria-label="
                                             showPassword
                                                 ? 'Sembunyikan password'
@@ -236,7 +234,7 @@ const submitLogin = () => {
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="w-full rounded-xl bg-[#0C1A40] py-3 text-xs font-bold text-white shadow-lg transition-all hover:bg-slate-900 active:scale-95 disabled:opacity-50"
+                                class="bg-navy-surface w-full rounded-xl py-3 text-xs font-bold text-white shadow-lg transition-all hover:bg-slate-900 active:scale-95 disabled:opacity-50"
                             >
                                 <span v-if="form.processing">Memproses...</span>
                                 <span v-else>Masuk ke Portal</span>
@@ -254,7 +252,7 @@ const submitLogin = () => {
 
         <!-- Footer -->
         <footer
-            class="mt-12 border-t border-slate-200/80 bg-white px-4 py-6 text-center text-xs text-slate-500 sm:px-8 dark:border-slate-800 dark:bg-[#0E1626] dark:text-slate-400"
+            class="dark:bg-navy-surface mt-12 border-t border-slate-200/80 bg-white px-4 py-6 text-center text-xs text-slate-500 sm:px-8 dark:border-slate-800 dark:text-slate-400"
         >
             <div
                 class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 sm:flex-row"

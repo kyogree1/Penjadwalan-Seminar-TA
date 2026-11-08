@@ -158,7 +158,7 @@ const saveSignature = () => {
                 />
 
                 <div
-                    class="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-[#0E1626]"
+                    class="dark:bg-navy-surface relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800"
                 >
                     <div
                         class="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800"
@@ -175,7 +175,7 @@ const saveSignature = () => {
                         </div>
                         <button
                             type="button"
-                            class="rounded-lg p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                            class="rounded-lg p-1 text-slate-500 hover:text-slate-600 dark:hover:text-slate-200"
                             @click="emit('close')"
                         >
                             <X class="h-5 w-5" />
@@ -192,7 +192,7 @@ const saveSignature = () => {
                             :class="[
                                 activeTab === 'draw'
                                     ? 'border-blue-600 text-blue-600'
-                                    : 'border-transparent text-slate-400 hover:text-slate-600',
+                                    : 'border-transparent text-slate-500 hover:text-slate-600',
                             ]"
                             @click="activeTab = 'draw'"
                         >
@@ -204,7 +204,7 @@ const saveSignature = () => {
                             :class="[
                                 activeTab === 'upload'
                                     ? 'border-blue-600 text-blue-600'
-                                    : 'border-transparent text-slate-400 hover:text-slate-600',
+                                    : 'border-transparent text-slate-500 hover:text-slate-600',
                             ]"
                             @click="activeTab = 'upload'"
                         >
@@ -230,7 +230,7 @@ const saveSignature = () => {
                             />
                             <div
                                 v-if="!hasDrawn"
-                                class="pointer-events-none absolute text-center text-xs text-slate-400 select-none"
+                                class="pointer-events-none absolute text-center text-xs text-slate-500 select-none"
                             >
                                 <span v-if="activeTab === 'draw'"
                                     >Goreskan tanda tangan di sini</span
@@ -255,7 +255,7 @@ const saveSignature = () => {
                             />
                         </div>
 
-                        <p class="text-[11px] text-slate-400">
+                        <p class="text-[11px] text-slate-500">
                             * Tanda tangan digital ini akan digunakan untuk
                             paraf otomatis pada lembar bimbingan (Form TA-04)
                             dan berita acara.

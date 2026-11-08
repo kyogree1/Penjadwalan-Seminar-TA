@@ -13,8 +13,6 @@
     --color-navy-surface: #0e1626;
     --color-navy-bg: #080d1a;
     --color-app-bg: #f4f6fa;
-    --color-accent-green: #8ce79b;
-    --color-accent-rose: #ff7575;
 }
 
 /* Keyboard focus must remain visible even on legacy outline-hidden controls. */

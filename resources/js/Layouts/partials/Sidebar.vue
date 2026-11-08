@@ -124,7 +124,7 @@ const handleAccordionClick = (
 
 <template>
     <aside
-        class="z-30 hidden h-screen shrink-0 flex-col justify-between border-r border-slate-200/80 bg-white text-slate-700 transition-all duration-300 lg:flex dark:border-slate-800 dark:bg-[#0E1626] dark:text-slate-300"
+        class="dark:bg-navy-surface z-30 hidden h-screen shrink-0 flex-col justify-between border-r border-slate-200/80 bg-white text-slate-700 transition-all duration-300 lg:flex dark:border-slate-800 dark:text-slate-300"
         :class="[collapsed ? 'w-20' : 'w-64']"
     >
         <div class="flex min-h-0 flex-1 flex-col">
@@ -140,15 +140,11 @@ const handleAccordionClick = (
                     class="flex items-center gap-3 overflow-hidden"
                     :title="collapsed ? 'SIPTA IF - Informatika ITK' : ''"
                 >
-                    <div
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-white p-1 shadow-xs dark:border-slate-700/80 dark:bg-slate-800"
-                    >
-                        <img
-                            src="/images/logo_if.png"
-                            alt="Logo Informatika ITK"
-                            class="h-6 w-6 object-contain"
-                        />
-                    </div>
+                    <img
+                        src="/images/logo_if.png"
+                        alt="Logo Informatika ITK"
+                        class="h-9 w-9 shrink-0 object-contain"
+                    />
                     <div v-if="!collapsed" class="min-w-0">
                         <h1
                             class="truncate text-sm font-bold tracking-tight text-slate-900 dark:text-white"
@@ -156,7 +152,7 @@ const handleAccordionClick = (
                             SIPTA IF
                         </h1>
                         <p
-                            class="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400"
+                            class="truncate text-[11px] font-medium text-slate-500 dark:text-slate-400"
                         >
                             Informatika ITK
                         </p>
@@ -165,7 +161,7 @@ const handleAccordionClick = (
 
                 <button
                     type="button"
-                    class="flex cursor-pointer items-center justify-center text-slate-400 transition-colors hover:text-slate-700 dark:hover:text-white"
+                    class="flex cursor-pointer items-center justify-center text-slate-500 transition-colors hover:text-slate-700 dark:hover:text-white"
                     :class="
                         collapsed
                             ? 'absolute top-5 -right-3 z-40 h-6 w-6 rounded-full border border-slate-200 bg-white shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700'
@@ -309,7 +305,7 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="dark:bg-navy-surface pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
@@ -490,7 +486,7 @@ const handleAccordionClick = (
                     <div class="space-y-1">
                         <p
                             v-if="!collapsed"
-                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
+                            class="px-3 pt-1 text-[11px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Manajemen Utama
                         </p>
@@ -594,7 +590,7 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="dark:bg-navy-surface pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
@@ -710,7 +706,7 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="dark:bg-navy-surface pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
@@ -758,7 +754,7 @@ const handleAccordionClick = (
                     <div class="space-y-1 pt-2">
                         <p
                             v-if="!collapsed"
-                            class="px-3 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
+                            class="px-3 text-[11px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Panduan &amp; Lainnya
                         </p>
@@ -827,7 +823,7 @@ const handleAccordionClick = (
                     <div class="space-y-1">
                         <p
                             v-if="!collapsed"
-                            class="px-3 pt-1 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
+                            class="px-3 pt-1 text-[11px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Manajemen Utama
                         </p>
@@ -969,7 +965,7 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="dark:bg-navy-surface pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
@@ -1152,7 +1148,7 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="dark:bg-navy-surface pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-56 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
@@ -1285,7 +1281,7 @@ const handleAccordionClick = (
                         <!-- Flyout Floating Menu saat sidebar collapsed -->
                         <div
                             v-if="collapsed"
-                            class="pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-60 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800 dark:bg-[#0E1626]"
+                            class="dark:bg-navy-surface pointer-events-none absolute top-0 left-full z-50 ml-2.5 w-60 rounded-2xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 dark:border-slate-800"
                         >
                             <div
                                 class="border-b border-slate-100 px-2.5 py-1.5 dark:border-slate-800/80"
@@ -1344,7 +1340,7 @@ const handleAccordionClick = (
                     <div class="space-y-1 pt-2">
                         <p
                             v-if="!collapsed"
-                            class="px-3 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
+                            class="px-3 text-[11px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Data Master
                         </p>
@@ -1413,7 +1409,7 @@ const handleAccordionClick = (
                     <div class="space-y-1 pt-2">
                         <p
                             v-if="!collapsed"
-                            class="px-3 text-[10px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
+                            class="px-3 text-[11px] font-bold tracking-wider text-slate-500 dark:text-slate-400"
                         >
                             Prosedur &amp; Katalog
                         </p>

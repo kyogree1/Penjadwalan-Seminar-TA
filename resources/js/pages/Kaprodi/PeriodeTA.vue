@@ -382,7 +382,7 @@ const handleDelete = () => {
                             ? `/kaprodi/penjadwalan/plotting-ta?period_id=${activePeriodItem.id}`
                             : '/kaprodi/penjadwalan/plotting-ta'
                     "
-                    class="flex items-center gap-2 rounded-xl bg-[#0b3084] px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-[#082361] active:scale-95"
+                    class="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95"
                 >
                     <span
                         >Masuk ke Penentuan Jadwal (Gel.
@@ -394,7 +394,7 @@ const handleDelete = () => {
 
         <!-- Table Card: List Gelombang Sidang TA (Matches ContohScreen/jadwal_ta.png & periode_ta.png) -->
         <div
-            class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+            class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80"
         >
             <!-- Card Header -->
             <div
@@ -404,7 +404,7 @@ const handleDelete = () => {
                     class="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white"
                 >
                     <svg
-                        class="h-4 w-4 text-purple-600"
+                        class="h-4 w-4 text-blue-600"
                         fill="none"
                         stroke="currentColor"
                         stroke-width="2"
@@ -418,7 +418,7 @@ const handleDelete = () => {
                     </svg>
                     <span>List Gelombang</span>
                 </h2>
-                <span class="text-xs text-slate-400"
+                <span class="text-xs text-slate-500"
                     >Prodi Informatika ITK</span
                 >
             </div>
@@ -426,7 +426,7 @@ const handleDelete = () => {
             <!-- Empty State when no periods (Matches ContohScreen/jadwal_ta.png) -->
             <div v-if="!periods.length" class="py-24 text-center">
                 <div
-                    class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 dark:bg-slate-800/80"
+                    class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 dark:bg-slate-800/80"
                 >
                     <Calendar class="h-8 w-8" />
                 </div>
@@ -435,7 +435,7 @@ const handleDelete = () => {
                 >
                     Tidak ada data jadwal sidang TA.
                 </h3>
-                <p class="mx-auto mt-1 max-w-sm text-xs text-slate-400">
+                <p class="mx-auto mt-1 max-w-sm text-xs text-slate-500">
                     Periode dan pendaftaran sidang Tugas Akhir belum dibuka.
                     Anda dapat menambahkan periode gelombang sidang dengan
                     tombol di atas.
@@ -452,7 +452,7 @@ const handleDelete = () => {
             <div v-else class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead
-                        class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-400 uppercase dark:border-slate-800 dark:bg-slate-800/60"
+                        class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-500 uppercase dark:border-slate-800 dark:bg-slate-800/60"
                     >
                         <tr>
                             <th class="w-12 px-4 py-3.5 text-center">NO</th>
@@ -494,7 +494,7 @@ const handleDelete = () => {
                                 <Link
                                     v-if="item.is_open"
                                     :href="`/kaprodi/penjadwalan/plotting-ta?period_id=${item.id}`"
-                                    class="mx-auto flex w-fit items-center gap-1.5 rounded-xl bg-[#0b3084] px-3.5 py-1.5 font-bold text-white shadow-xs transition-all hover:bg-[#082361] active:scale-95"
+                                    class="mx-auto flex w-fit items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-1.5 font-bold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-95"
                                 >
                                     <Calendar class="h-3.5 w-3.5" />
                                     <span>Lihat Jadwal &amp; Plotting</span>
@@ -530,7 +530,7 @@ const handleDelete = () => {
                                     <!-- 1. Edit Periode -->
                                     <button
                                         type="button"
-                                        class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400"
+                                        class="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400"
                                         title="Edit Periode"
                                         @click="openEditModal(item)"
                                     >
@@ -571,7 +571,7 @@ const handleDelete = () => {
                                         :class="[
                                             item.is_published
                                                 ? 'text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-950/40'
-                                                : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200',
+                                                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200',
                                         ]"
                                         :title="
                                             item.is_published
@@ -595,7 +595,7 @@ const handleDelete = () => {
                                         :class="[
                                             item.google_calendar_synced
                                                 ? 'text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/40'
-                                                : 'text-slate-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400',
+                                                : 'text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400',
                                         ]"
                                         :title="
                                             item.google_calendar_synced
@@ -614,7 +614,7 @@ const handleDelete = () => {
                                     <!-- 5. Hapus Periode -->
                                     <button
                                         type="button"
-                                        class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
+                                        class="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
                                         title="Hapus Periode"
                                         @click="confirmDelete(item)"
                                     >
@@ -668,7 +668,7 @@ const handleDelete = () => {
                         type="text"
                         required
                         placeholder="Contoh: 2026/2027"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-800 shadow-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-800 shadow-xs placeholder:text-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                     />
                 </div>
 
@@ -684,7 +684,7 @@ const handleDelete = () => {
                         min="1"
                         required
                         placeholder="Masukkan Gelombang"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-800 shadow-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-800 shadow-xs placeholder:text-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                     />
                 </div>
 
@@ -780,12 +780,12 @@ const handleDelete = () => {
             <div class="space-y-4">
                 <!-- Info Header Box -->
                 <div
-                    class="rounded-xl border border-purple-100 bg-purple-50/60 p-4 dark:border-purple-900/40 dark:bg-purple-950/20"
+                    class="rounded-xl border border-blue-100 bg-blue-50/60 p-4 dark:border-blue-900/40 dark:bg-blue-950/20"
                 >
                     <div class="flex items-start justify-between gap-3">
                         <div class="flex items-center gap-3">
                             <div
-                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-600 text-white shadow-xs"
+                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-xs"
                             >
                                 <Calendar class="h-5 w-5" />
                             </div>
@@ -800,7 +800,7 @@ const handleDelete = () => {
                                 >
                                     Kalender Resmi:
                                     <span
-                                        class="font-semibold text-purple-600 dark:text-purple-400"
+                                        class="font-semibold text-blue-600 dark:text-blue-400"
                                         >informatika@itk.ac.id</span
                                     >
                                 </p>
@@ -826,10 +826,10 @@ const handleDelete = () => {
                     </div>
 
                     <div
-                        class="mt-3 grid grid-cols-2 gap-2 border-t border-purple-200/50 pt-3 text-xs text-slate-600 dark:border-purple-900/40 dark:text-slate-300"
+                        class="mt-3 grid grid-cols-2 gap-2 border-t border-blue-200/50 pt-3 text-xs text-slate-600 dark:border-blue-900/40 dark:text-slate-300"
                     >
                         <div>
-                            <span class="text-slate-400">Periode:</span>
+                            <span class="text-slate-500">Periode:</span>
                             <span
                                 class="ml-1 font-bold text-slate-800 dark:text-slate-200"
                             >
@@ -842,7 +842,7 @@ const handleDelete = () => {
                             </span>
                         </div>
                         <div>
-                            <span class="text-slate-400">Terakhir Sync:</span>
+                            <span class="text-slate-500">Terakhir Sync:</span>
                             <span
                                 class="ml-1 font-medium text-slate-700 dark:text-slate-300"
                             >
@@ -859,7 +859,7 @@ const handleDelete = () => {
                 <div>
                     <div class="mb-2 flex items-center justify-between">
                         <h4
-                            class="text-xs font-bold tracking-wider text-slate-400"
+                            class="text-xs font-bold tracking-wider text-slate-500"
                         >
                             Daftar Agenda Jadwal Sidang TA ({{
                                 selectedPeriodForCalendar?.schedules?.length ||
@@ -867,7 +867,7 @@ const handleDelete = () => {
                             }}
                             Sesi)
                         </h4>
-                        <span class="text-[11px] text-slate-400">
+                        <span class="text-[11px] text-slate-500">
                             {{ selectedPeriodForCalendar?.slots?.length || 0 }}
                             slot waktu terdaftar
                         </span>
@@ -878,7 +878,7 @@ const handleDelete = () => {
                     >
                         <table class="w-full text-left text-xs">
                             <thead
-                                class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-400 uppercase dark:border-slate-800 dark:bg-slate-800/60"
+                                class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-500 uppercase dark:border-slate-800 dark:bg-slate-800/60"
                             >
                                 <tr>
                                     <th class="w-8 px-3 py-2 text-center">
@@ -903,7 +903,7 @@ const handleDelete = () => {
                                     class="hover:bg-slate-50 dark:hover:bg-slate-800/30"
                                 >
                                     <td
-                                        class="px-3 py-2.5 text-center font-medium text-slate-400"
+                                        class="px-3 py-2.5 text-center font-medium text-slate-500"
                                     >
                                         {{ sIdx + 1 }}.
                                     </td>
@@ -925,7 +925,7 @@ const handleDelete = () => {
                                         >
                                             {{ sch.mahasiswa }}
                                         </p>
-                                        <p class="text-[11px] text-slate-400">
+                                        <p class="text-[11px] text-slate-500">
                                             {{ sch.nim }}
                                         </p>
                                     </td>
@@ -945,7 +945,7 @@ const handleDelete = () => {
                                 >
                                     <td
                                         colspan="4"
-                                        class="py-8 text-center text-slate-400"
+                                        class="py-8 text-center text-slate-500"
                                     >
                                         <Calendar
                                             class="mx-auto mb-1 h-6 w-6 text-slate-300 dark:text-slate-600"
@@ -1002,7 +1002,7 @@ const handleDelete = () => {
 
                         <button
                             type="button"
-                            class="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-xs font-bold text-white shadow-md transition-all hover:bg-purple-700 active:scale-95 disabled:opacity-50"
+                            class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95 disabled:opacity-50"
                             :disabled="syncCalendarLoading"
                             @click="handleSyncCalendar"
                         >

@@ -89,7 +89,7 @@ const handleSubmit = () => {
                 </div>
                 <button
                     type="button"
-                    class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                    class="rounded-lg p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                     @click="handleClose"
                 >
                     <X class="h-5 w-5" />
@@ -132,7 +132,7 @@ const handleSubmit = () => {
                     <div
                         class="rounded-xl border border-slate-200/80 p-3 dark:border-slate-800"
                     >
-                        <span class="text-[10px] font-semibold text-slate-400"
+                        <span class="text-[11px] font-semibold text-slate-500"
                             >Tanggal Bimbingan:</span
                         >
                         <p
@@ -145,7 +145,7 @@ const handleSubmit = () => {
                     <div
                         class="rounded-xl border border-slate-200/80 p-3 dark:border-slate-800"
                     >
-                        <span class="text-[10px] font-semibold text-slate-400"
+                        <span class="text-[11px] font-semibold text-slate-500"
                             >Metode Pertemuan:</span
                         >
                         <p
@@ -161,7 +161,7 @@ const handleSubmit = () => {
                     class="rounded-xl border border-slate-200/80 p-3.5 dark:border-slate-800"
                 >
                     <span
-                        class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                        class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase"
                     >
                         Topik & Rangkuman Bimbingan:
                     </span>

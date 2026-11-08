@@ -119,7 +119,7 @@ const sidebarCollapsed = ref(false);
 
                 <!-- FOOTER -->
                 <footer
-                    class="shrink-0 border-t border-slate-200/80 bg-white/50 px-4 py-4 text-center text-xs text-slate-500 sm:px-8 dark:border-slate-800 dark:bg-[#0E1626]/50 dark:text-slate-400"
+                    class="dark:bg-navy-surface/50 shrink-0 border-t border-slate-200/80 bg-white/50 px-4 py-4 text-center text-xs text-slate-500 sm:px-8 dark:border-slate-800 dark:text-slate-400"
                 >
                     <div
                         class="flex flex-col items-center justify-between gap-2 sm:flex-row"

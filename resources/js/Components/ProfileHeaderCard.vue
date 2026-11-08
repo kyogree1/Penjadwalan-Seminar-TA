@@ -18,7 +18,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
     <div
-        class="flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:bg-[#0E1626]"
+        class="dark:bg-navy-surface flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between dark:border-slate-800"
     >
         <!-- Info Mahasiswa -->
         <div class="flex items-center gap-4">

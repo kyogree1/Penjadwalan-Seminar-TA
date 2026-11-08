@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import type { Component } from 'vue';
 
 interface Props {
@@ -7,34 +6,14 @@ interface Props {
     value: string | number;
     subtitle?: string;
     icon?: Component;
-    iconColor?: 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose' | 'slate';
     trendText?: string;
     trendType?: 'up' | 'down' | 'neutral';
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     subtitle: '',
-    iconColor: 'blue',
     trendText: '',
     trendType: 'neutral',
-});
-
-const colorClasses = computed(() => {
-    switch (props.iconColor) {
-        case 'indigo':
-            return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-400';
-        case 'emerald':
-            return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400';
-        case 'amber':
-            return 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400';
-        case 'rose':
-            return 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400';
-        case 'slate':
-            return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
-        case 'blue':
-        default:
-            return 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400';
-    }
 });
 </script>
 
@@ -48,13 +27,12 @@ const colorClasses = computed(() => {
             >
                 {{ title }}
             </span>
-            <div
+            <component
                 v-if="icon"
-                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
-                :class="colorClasses"
-            >
-                <component :is="icon" class="h-4 w-4" aria-hidden="true" />
-            </div>
+                :is="icon"
+                class="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400"
+                aria-hidden="true"
+            />
         </div>
 
         <div class="mt-2">

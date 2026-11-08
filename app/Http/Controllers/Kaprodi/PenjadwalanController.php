@@ -290,8 +290,11 @@ class PenjadwalanController extends Controller
             }
         }, 'exists:schedule_periods,id'], 'popSize' => ['nullable', 'integer', 'min:10', 'max:200'], 'maxGenerations' => ['nullable', 'integer', 'min:10', 'max:500'], 'crossoverRate' => ['nullable', 'numeric', 'between:0,1'], 'mutationRate' => ['nullable', 'numeric', 'between:0,1']]);
         $period = SchedulePeriod::findOrFail($data['period_id']);
-        if (! $period->is_open) {
-            throw ValidationException::withMessages(['period_id' => 'Periode ditutup.']);
+        if ($period->is_open) {
+            throw ValidationException::withMessages(['period_id' => 'Pendaftaran masih dibuka. Tutup pendaftaran terlebih dahulu untuk menjalankan optimasi jadwal.']);
+        }
+        if ($period->is_published) {
+            throw ValidationException::withMessages(['period_id' => 'Jadwal sudah dipublikasikan. Buka status publikasi terlebih dahulu untuk optimasi ulang.']);
         }
         $class = $this->registrationClass($period->tipe);
         $candidates = [];
@@ -546,8 +549,11 @@ class PenjadwalanController extends Controller
             // Serialize publication globally through lecturer locks, then period/registration locks.
             User::where('role', 'dosen')->orderBy('id')->lockForUpdate()->get(['id']);
             $period = SchedulePeriod::lockForUpdate()->findOrFail($periodId);
-            if (! $period->is_open) {
-                throw ValidationException::withMessages(['schedules' => 'Periode ditutup.']);
+            if ($period->is_open) {
+                throw ValidationException::withMessages(['schedules' => 'Pendaftaran masih dibuka. Tutup pendaftaran terlebih dahulu sebelum menyimpan jadwal.']);
+            }
+            if ($period->is_published && ! $overrideId) {
+                throw ValidationException::withMessages(['schedules' => 'Jadwal sudah dipublikasikan.']);
             }
             $bookings = $this->bookings();
             $seen = [];

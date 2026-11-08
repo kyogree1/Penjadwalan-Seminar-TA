@@ -295,7 +295,7 @@ const runSimilarityCheck = () => {
                 Status Kelayakan Katalog TA
             </h3>
             <div
-                class="rounded-xl border border-yellow-200 bg-[#FCFDE1] p-4 text-xs font-semibold text-slate-800 dark:border-yellow-900/50 dark:bg-yellow-950/30 dark:text-yellow-200"
+                class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs font-semibold text-slate-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200"
             >
                 Kelayakan publikasi belum dapat ditentukan dari data server.
             </div>
@@ -342,13 +342,13 @@ const runSimilarityCheck = () => {
                 <div class="flex flex-col gap-3 sm:flex-row">
                     <div class="relative flex-1">
                         <Search
-                            class="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-slate-400"
+                            class="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-slate-500"
                         />
                         <input
                             v-model="searchQuery"
                             type="text"
                             placeholder="Cari judul, penulis, NIM, atau kata kunci..."
-                            class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/80 pr-4 pl-10 text-xs text-slate-800 transition-colors placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                            class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/80 pr-4 pl-10 text-xs text-slate-800 transition-colors placeholder:text-slate-500 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                         />
                     </div>
                 </div>
@@ -465,13 +465,13 @@ const runSimilarityCheck = () => {
                     >
                         <div class="flex items-center justify-between">
                             <span
-                                class="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                                class="rounded-md bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300"
                             >
                                 S1 {{ item.prodi }} • {{ item.tahun }}
                             </span>
                             <button
                                 type="button"
-                                class="rounded-lg p-1 text-slate-400 transition-colors hover:text-amber-500"
+                                class="rounded-lg p-1 text-slate-500 transition-colors hover:text-amber-500"
                                 :title="
                                     isBookmarked(item.id)
                                         ? 'Hapus dari Tersimpan'
@@ -496,7 +496,7 @@ const runSimilarityCheck = () => {
                     >
                         <div>
                             <span
-                                class="inline-block text-[10px] font-semibold text-slate-500 dark:text-slate-400"
+                                class="inline-block text-[11px] font-semibold text-slate-500 dark:text-slate-400"
                             >
                                 {{ item.bidang }}
                             </span>
@@ -521,7 +521,7 @@ const runSimilarityCheck = () => {
                             class="space-y-3 border-t border-slate-100 pt-3 dark:border-slate-800"
                         >
                             <div
-                                class="flex flex-wrap gap-1 text-[10px] text-slate-400"
+                                class="flex flex-wrap gap-1 text-[11px] text-slate-500"
                             >
                                 <span
                                     v-for="tag in (item.tags || []).slice(0, 3)"
@@ -552,7 +552,7 @@ const runSimilarityCheck = () => {
                     <div
                         class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
                     >
-                        <Search class="h-7 w-7 text-slate-400" />
+                        <Search class="h-7 w-7 text-slate-500" />
                     </div>
                     <h4
                         class="text-sm font-bold text-slate-900 dark:text-white"
@@ -604,14 +604,14 @@ const runSimilarityCheck = () => {
                             </span>
                             <span
                                 v-if="selectedItem.doi"
-                                class="text-xs text-slate-400"
+                                class="text-xs text-slate-500"
                             >
                                 {{ selectedItem.doi }}
                             </span>
                         </div>
                         <button
                             type="button"
-                            class="rounded-lg p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                            class="rounded-lg p-1 text-slate-500 hover:text-slate-600 dark:hover:text-white"
                             aria-label="Tutup detail naskah"
                             @click="closeDetail"
                         >
@@ -643,7 +643,7 @@ const runSimilarityCheck = () => {
                         >
                             <div>
                                 <p
-                                    class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                                    class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase"
                                 >
                                     Dosen Pembimbing I
                                 </p>
@@ -655,7 +655,7 @@ const runSimilarityCheck = () => {
                             </div>
                             <div>
                                 <p
-                                    class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                                    class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase"
                                 >
                                     Dosen Pembimbing II
                                 </p>
@@ -678,7 +678,7 @@ const runSimilarityCheck = () => {
                                     :class="[
                                         activeTab === 'id'
                                             ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                                            : 'border-transparent text-slate-400 hover:text-slate-600',
+                                            : 'border-transparent text-slate-500 hover:text-slate-600',
                                     ]"
                                     @click="activeTab = 'id'"
                                 >
@@ -690,7 +690,7 @@ const runSimilarityCheck = () => {
                                     :class="[
                                         activeTab === 'en'
                                             ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                                            : 'border-transparent text-slate-400 hover:text-slate-600',
+                                            : 'border-transparent text-slate-500 hover:text-slate-600',
                                     ]"
                                     @click="activeTab = 'en'"
                                 >
@@ -715,7 +715,7 @@ const runSimilarityCheck = () => {
                         >
                             <div class="flex items-center justify-between">
                                 <span
-                                    class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                                    class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase"
                                 >
                                     Format Sitasi (APA 7th)
                                 </span>
@@ -735,7 +735,7 @@ const runSimilarityCheck = () => {
                             </p>
                             <p
                                 v-if="copySuccessMsg"
-                                class="mt-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400"
+                                class="mt-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400"
                             >
                                 {{ copySuccessMsg }}
                             </p>
@@ -746,7 +746,7 @@ const runSimilarityCheck = () => {
                     <div
                         class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 text-xs dark:border-slate-800"
                     >
-                        <span class="text-[11px] text-slate-400">
+                        <span class="text-[11px] text-slate-500">
                             Naskah lengkap fisik dapat diakses di Perpustakaan
                             ITK
                         </span>
@@ -794,7 +794,7 @@ const runSimilarityCheck = () => {
                         v-model="inputTestTitle"
                         rows="3"
                         placeholder="Contoh: Penerapan Algoritma Genetika dan Large Language Model untuk Penjadwalan Tugas Akhir..."
-                        class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                        class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/70 p-3 text-xs text-slate-900 placeholder:text-slate-500 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                     />
                 </div>
 
@@ -834,7 +834,7 @@ const runSimilarityCheck = () => {
 
                 <div v-if="similarTitles.length > 0" class="space-y-2">
                     <p
-                        class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase"
+                        class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase"
                     >
                         Referensi Judul Terdahulu Terkait:
                     </p>

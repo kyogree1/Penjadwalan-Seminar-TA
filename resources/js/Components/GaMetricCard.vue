@@ -40,10 +40,10 @@ const variantStyles = computed(() => {
             };
         case 'purple':
             return {
-                bg: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
-                border: 'border-purple-200 dark:border-purple-900/50',
+                bg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+                border: 'border-blue-200 dark:border-blue-900/50',
                 badgeBg:
-                    'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300',
+                    'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300',
             };
         default:
             return {
@@ -58,7 +58,7 @@ const variantStyles = computed(() => {
 
 <template>
     <div
-        class="relative overflow-hidden rounded-2xl border bg-white p-5 shadow-xs transition-all dark:bg-[#0E1626]"
+        class="dark:bg-navy-surface relative overflow-hidden rounded-2xl border bg-white p-5 shadow-xs transition-all"
         :class="variantStyles.border"
     >
         <div class="flex items-start justify-between gap-2">
@@ -69,7 +69,7 @@ const variantStyles = computed(() => {
             </p>
             <span
                 v-if="badge"
-                class="rounded-full px-2 py-0.5 text-[10px] font-bold"
+                class="rounded-full px-2 py-0.5 text-[11px] font-bold"
                 :class="variantStyles.badgeBg"
             >
                 {{ badge }}

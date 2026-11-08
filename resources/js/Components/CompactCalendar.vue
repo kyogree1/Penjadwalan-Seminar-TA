@@ -25,7 +25,7 @@ const emit = defineEmits<{
 
 <template>
     <div
-        class="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+        class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-xs dark:border-slate-800"
     >
         <!-- Month Header -->
         <div
@@ -33,7 +33,7 @@ const emit = defineEmits<{
         >
             <button
                 type="button"
-                class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-800"
+                class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-200 dark:hover:bg-slate-800"
                 @click="emit('prevMonth')"
             >
                 <ChevronLeft class="h-4 w-4" />
@@ -43,7 +43,7 @@ const emit = defineEmits<{
             </span>
             <button
                 type="button"
-                class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-200 dark:hover:bg-slate-800"
+                class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-200 dark:hover:bg-slate-800"
                 @click="emit('nextMonth')"
             >
                 <ChevronRight class="h-4 w-4" />
@@ -65,7 +65,7 @@ const emit = defineEmits<{
                     'Min',
                 ]"
                 :key="dayName"
-                class="py-2.5 text-center text-[10px] font-bold text-slate-500 dark:text-slate-400"
+                class="py-2.5 text-center text-[11px] font-bold text-slate-500 dark:text-slate-400"
             >
                 {{ dayName }}
             </div>

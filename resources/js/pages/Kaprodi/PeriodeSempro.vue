@@ -390,7 +390,7 @@ const handleDelete = () => {
                             ? `/kaprodi/penjadwalan/plotting-sempro?period_id=${activePeriodItem.id}`
                             : '/kaprodi/penjadwalan/plotting-sempro'
                     "
-                    class="flex items-center gap-2 rounded-xl bg-[#0b3084] px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-[#082361] active:scale-95"
+                    class="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95"
                 >
                     <span
                         >Masuk ke Penentuan Jadwal (Gel.
@@ -402,7 +402,7 @@ const handleDelete = () => {
 
         <!-- Table Card: List Gelombang Seminar Proposal -->
         <div
-            class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80 dark:bg-[#111827]"
+            class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs dark:border-slate-800/80"
         >
             <!-- Card Header -->
             <div
@@ -426,7 +426,7 @@ const handleDelete = () => {
                     </svg>
                     <span>List Gelombang Seminar Proposal</span>
                 </h2>
-                <span class="text-xs text-slate-400"
+                <span class="text-xs text-slate-500"
                     >Prodi Informatika ITK</span
                 >
             </div>
@@ -435,7 +435,7 @@ const handleDelete = () => {
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead
-                        class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-400 uppercase dark:border-slate-800 dark:bg-slate-800/60"
+                        class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-500 uppercase dark:border-slate-800 dark:bg-slate-800/60"
                     >
                         <tr>
                             <th class="w-12 px-4 py-3.5 text-center">NO</th>
@@ -491,7 +491,7 @@ const handleDelete = () => {
                                 <Link
                                     v-if="item.is_open"
                                     :href="`/kaprodi/penjadwalan/plotting-sempro?period_id=${item.id}`"
-                                    class="mx-auto flex w-fit items-center gap-1.5 rounded-xl bg-[#0b3084] px-3.5 py-1.5 font-bold text-white shadow-xs transition-all hover:bg-[#082361] active:scale-95"
+                                    class="mx-auto flex w-fit items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-1.5 font-bold text-white shadow-xs transition-all hover:bg-blue-700 active:scale-95"
                                 >
                                     <Calendar class="h-3.5 w-3.5" />
                                     <span>Lihat Jadwal &amp; Plotting</span>
@@ -530,7 +530,7 @@ const handleDelete = () => {
                                     <!-- 1. Edit Periode -->
                                     <button
                                         type="button"
-                                        class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400"
+                                        class="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400"
                                         title="Edit Periode"
                                         @click="openEditModal(item)"
                                     >
@@ -571,7 +571,7 @@ const handleDelete = () => {
                                         :class="[
                                             item.is_published
                                                 ? 'text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-950/40'
-                                                : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200',
+                                                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-200',
                                         ]"
                                         :title="
                                             item.is_published
@@ -595,7 +595,7 @@ const handleDelete = () => {
                                         :class="[
                                             item.google_calendar_synced
                                                 ? 'text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/40'
-                                                : 'text-slate-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400',
+                                                : 'text-slate-500 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400',
                                         ]"
                                         :title="
                                             item.google_calendar_synced
@@ -614,7 +614,7 @@ const handleDelete = () => {
                                     <!-- 5. Hapus Periode -->
                                     <button
                                         type="button"
-                                        class="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
+                                        class="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
                                         title="Hapus Periode"
                                         @click="confirmDelete(item)"
                                     >
@@ -628,7 +628,7 @@ const handleDelete = () => {
                         <tr v-if="!periods.length">
                             <td
                                 colspan="8"
-                                class="py-12 text-center text-slate-400"
+                                class="py-12 text-center text-slate-500"
                             >
                                 <Calendar
                                     class="mx-auto mb-2 h-8 w-8 text-slate-300 dark:text-slate-600"
@@ -683,7 +683,7 @@ const handleDelete = () => {
                         type="text"
                         required
                         placeholder="Contoh: 2026/2027"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-800 shadow-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-800 shadow-xs placeholder:text-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                     />
                 </div>
 
@@ -699,7 +699,7 @@ const handleDelete = () => {
                         min="1"
                         required
                         placeholder="Masukkan Gelombang"
-                        class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-800 shadow-xs placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                        class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-800 shadow-xs placeholder:text-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                     />
                 </div>
 
@@ -806,7 +806,7 @@ const handleDelete = () => {
                     </p>
                     <span
                         v-if="selectedPeriodForMhs?.is_open"
-                        class="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+                        class="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
                     >
                         Gelombang Aktif
                     </span>
@@ -817,7 +817,7 @@ const handleDelete = () => {
                 >
                     <table class="w-full text-left text-xs">
                         <thead
-                            class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-400 uppercase dark:border-slate-800 dark:bg-slate-800/60"
+                            class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-500 uppercase dark:border-slate-800 dark:bg-slate-800/60"
                         >
                             <tr>
                                 <th class="w-10 px-3 py-2.5 text-center">NO</th>
@@ -837,7 +837,7 @@ const handleDelete = () => {
                                 class="hover:bg-slate-50 dark:hover:bg-slate-800/30"
                             >
                                 <td
-                                    class="px-3 py-3 text-center font-medium text-slate-400"
+                                    class="px-3 py-3 text-center font-medium text-slate-500"
                                 >
                                     {{ idx + 1 }}
                                 </td>
@@ -848,9 +848,9 @@ const handleDelete = () => {
                                         {{ mhs.name }}
                                     </p>
                                     <p
-                                        class="font-mono text-[11px] text-slate-400"
+                                        class="font-mono text-[11px] text-slate-500"
                                     >
-                                        {{ mhs.nim }} · {{ mhs.prodi }}
+                                        {{ mhs.nim }}, {{ mhs.prodi }}
                                     </p>
                                 </td>
                                 <td
@@ -862,7 +862,7 @@ const handleDelete = () => {
                                 </td>
                                 <td class="px-3 py-3 text-center">
                                     <span
-                                        class="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold capitalize"
+                                        class="inline-block rounded-full px-2 py-0.5 text-[11px] font-bold capitalize"
                                         :class="[
                                             mhs.status === 'terjadwal'
                                                 ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'
@@ -886,7 +886,7 @@ const handleDelete = () => {
                             >
                                 <td
                                     colspan="4"
-                                    class="py-8 text-center text-slate-400"
+                                    class="py-8 text-center text-slate-500"
                                 >
                                     <Users
                                         class="mx-auto mb-1 h-6 w-6 text-slate-300 dark:text-slate-600"
@@ -972,7 +972,7 @@ const handleDelete = () => {
                         class="mt-3 grid grid-cols-2 gap-2 border-t border-blue-200/50 pt-3 text-xs text-slate-600 dark:border-blue-900/40 dark:text-slate-300"
                     >
                         <div>
-                            <span class="text-slate-400">Periode:</span>
+                            <span class="text-slate-500">Periode:</span>
                             <span
                                 class="ml-1 font-bold text-slate-800 dark:text-slate-200"
                             >
@@ -985,7 +985,7 @@ const handleDelete = () => {
                             </span>
                         </div>
                         <div>
-                            <span class="text-slate-400">Terakhir Sync:</span>
+                            <span class="text-slate-500">Terakhir Sync:</span>
                             <span
                                 class="ml-1 font-medium text-slate-700 dark:text-slate-300"
                             >
@@ -1002,7 +1002,7 @@ const handleDelete = () => {
                 <div>
                     <div class="mb-2 flex items-center justify-between">
                         <h4
-                            class="text-xs font-bold tracking-wider text-slate-400"
+                            class="text-xs font-bold tracking-wider text-slate-500"
                         >
                             Daftar Agenda Jadwal Sempro ({{
                                 selectedPeriodForCalendar?.schedules?.length ||
@@ -1010,7 +1010,7 @@ const handleDelete = () => {
                             }}
                             Sesi)
                         </h4>
-                        <span class="text-[11px] text-slate-400">
+                        <span class="text-[11px] text-slate-500">
                             {{ selectedPeriodForCalendar?.slots?.length || 0 }}
                             slot waktu terdaftar
                         </span>
@@ -1021,7 +1021,7 @@ const handleDelete = () => {
                     >
                         <table class="w-full text-left text-xs">
                             <thead
-                                class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-400 uppercase dark:border-slate-800 dark:bg-slate-800/60"
+                                class="border-b border-slate-100 bg-slate-50 font-bold tracking-wider text-slate-500 uppercase dark:border-slate-800 dark:bg-slate-800/60"
                             >
                                 <tr>
                                     <th class="w-8 px-3 py-2 text-center">
@@ -1046,7 +1046,7 @@ const handleDelete = () => {
                                     class="hover:bg-slate-50 dark:hover:bg-slate-800/30"
                                 >
                                     <td
-                                        class="px-3 py-2.5 text-center font-medium text-slate-400"
+                                        class="px-3 py-2.5 text-center font-medium text-slate-500"
                                     >
                                         {{ sIdx + 1 }}.
                                     </td>
@@ -1068,7 +1068,7 @@ const handleDelete = () => {
                                         >
                                             {{ sch.mahasiswa }}
                                         </p>
-                                        <p class="text-[11px] text-slate-400">
+                                        <p class="text-[11px] text-slate-500">
                                             {{ sch.nim }}
                                         </p>
                                     </td>
@@ -1088,7 +1088,7 @@ const handleDelete = () => {
                                 >
                                     <td
                                         colspan="4"
-                                        class="py-8 text-center text-slate-400"
+                                        class="py-8 text-center text-slate-500"
                                     >
                                         <Calendar
                                             class="mx-auto mb-1 h-6 w-6 text-slate-300 dark:text-slate-600"

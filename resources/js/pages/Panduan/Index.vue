@@ -208,11 +208,11 @@ const filteredGuideItems = computed(() => {
     <div class="mx-auto max-w-7xl space-y-6">
         <!-- Header Title Box -->
         <div
-            class="rounded-2xl border border-slate-200/80 bg-white px-6 py-5 shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white px-6 py-5 shadow-xs dark:border-slate-800"
         >
             <div class="flex items-center gap-2">
                 <span
-                    class="rounded-md px-2 py-0.5 text-[10px] font-semibold"
+                    class="rounded-md px-2 py-0.5 text-[11px] font-semibold"
                     :class="
                         isTendik
                             ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300'
@@ -242,7 +242,7 @@ const filteredGuideItems = computed(() => {
 
         <!-- Search Box Box -->
         <div
-            class="flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:flex-row sm:items-center sm:justify-between dark:border-slate-800"
         >
             <div>
                 <h2 class="text-base font-bold text-slate-900 dark:text-white">
@@ -261,13 +261,13 @@ const filteredGuideItems = computed(() => {
 
             <div class="relative w-full sm:w-72">
                 <Search
-                    class="pointer-events-none absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"
+                    class="pointer-events-none absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-slate-500"
                 />
                 <input
                     v-model="searchQuery"
                     type="text"
                     placeholder="Cari prosedur atau kata kunci..."
-                    class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/80 pr-3 pl-9 text-xs text-slate-800 transition-colors placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:bg-slate-900"
+                    class="h-9 w-full rounded-xl border border-slate-200 bg-slate-50/80 pr-3 pl-9 text-xs text-slate-800 transition-colors placeholder:text-slate-500 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:bg-slate-900"
                 />
             </div>
         </div>
@@ -277,7 +277,7 @@ const filteredGuideItems = computed(() => {
             <div
                 v-for="(item, idx) in filteredGuideItems"
                 :key="idx"
-                class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs transition-colors dark:border-slate-800 dark:bg-[#0E1626]"
+                class="dark:bg-navy-surface overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs transition-colors dark:border-slate-800"
             >
                 <!-- Accordion Header -->
                 <div
@@ -302,7 +302,7 @@ const filteredGuideItems = computed(() => {
                                 {{ item.title }}
                             </h3>
                             <p
-                                class="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500"
+                                class="mt-0.5 text-[11px] text-slate-500 dark:text-slate-500"
                             >
                                 {{ item.menu }}
                             </p>
@@ -310,7 +310,7 @@ const filteredGuideItems = computed(() => {
                     </div>
 
                     <ChevronDown
-                        class="h-4 w-4 text-slate-400 transition-transform"
+                        class="h-4 w-4 text-slate-500 transition-transform"
                         :class="{ 'rotate-180': openIndex === idx }"
                     />
                 </div>
@@ -379,7 +379,7 @@ const filteredGuideItems = computed(() => {
 
         <div
             v-else
-            class="rounded-2xl border border-slate-200/80 bg-white p-10 text-center shadow-xs dark:border-slate-800 dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface rounded-2xl border border-slate-200/80 bg-white p-10 text-center shadow-xs dark:border-slate-800"
         >
             <p class="text-sm text-slate-500 dark:text-slate-400">
                 Panduan tidak ditemukan. Coba kata kunci lain.

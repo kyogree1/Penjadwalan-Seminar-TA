@@ -31,7 +31,7 @@ defineEmits<{ (e: 'close'): void }>();
         @click.self="$emit('close')"
     >
         <div
-            class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:bg-[#0E1626]"
+            class="dark:bg-navy-surface w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
         >
             <div
                 class="flex items-center justify-between border-b border-slate-200 pb-4 dark:border-slate-800"
@@ -42,7 +42,7 @@ defineEmits<{ (e: 'close'): void }>();
                 <button
                     type="button"
                     aria-label="Tutup detail"
-                    class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    class="rounded-lg p-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                     @click="$emit('close')"
                 >
                     <X class="h-4 w-4" />
