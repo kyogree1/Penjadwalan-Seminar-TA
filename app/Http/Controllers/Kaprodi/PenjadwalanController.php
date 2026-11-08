@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kaprodi;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use App\Models\PengajuanJudul;
@@ -425,9 +426,40 @@ class PenjadwalanController extends Controller
 
     public function togglePublish(Request $request, int $id)
     {
-        $period = SchedulePeriod::findOrFail($id);
+        $period = SchedulePeriod::with('penjadwalan.mahasiswa')->findOrFail($id);
         $period->is_published = ! $period->is_published;
         $period->save();
+
+        if ($period->is_published) {
+            $tipeLabel = $period->tipe === 'sempro' ? 'Seminar Proposal' : 'Sidang Tugas Akhir';
+            foreach ($period->penjadwalan as $exam) {
+                // Notify student
+                Notification::create([
+                    'user_id' => $exam->mahasiswa_id,
+                    'title' => "Jadwal {$tipeLabel} Dipublikasikan",
+                    'message' => "Jadwal {$tipeLabel} Anda telah resmi dipublikasikan untuk tanggal " . ($exam->tanggal ? $exam->tanggal->format('d M Y') : 'sesuai jadwal') . ".",
+                    'type' => 'success',
+                    'link' => '/mahasiswa/' . ($period->tipe === 'sempro' ? 'sempro' : 'sidang'),
+                ]);
+
+                // Notify examiners and supervisors
+                $lecturerIds = array_filter(array_unique([
+                    $exam->penguji_1_id,
+                    $exam->penguji_2_id,
+                    $exam->pembimbing_1_id,
+                    $exam->pembimbing_2_id,
+                ]));
+                foreach ($lecturerIds as $lecturerId) {
+                    Notification::create([
+                        'user_id' => $lecturerId,
+                        'title' => "Jadwal Baru {$tipeLabel}",
+                        'message' => "Jadwal {$tipeLabel} mahasiswa {$exam->mahasiswa?->name} telah dipublikasikan.",
+                        'type' => 'info',
+                        'link' => '/dosen/jadwal',
+                    ]);
+                }
+            }
+        }
 
         $statusText = $period->is_published ? 'dipublikasikan ke Mahasiswa & Dosen' : 'disembunyikan (Draft)';
 
@@ -693,7 +725,7 @@ class PenjadwalanController extends Controller
                     'pembimbing2' => $s->pembimbing2?->name ?? '',
                     'penguji1' => $s->penguji1?->name ?? '-',
                     'penguji1_id' => $s->penguji_1_id,
-                    'penguji1MatchScore' => $s->penguji_1_id ? 95 : 0,
+                    'penguji1MatchScore' => $s->penguji_1_id ? ScheduleOptimizer::NEUTRAL_SCORE : 0,
                     'penguji2' => $s->penguji2?->name ?? '-',
                     'penguji2_id' => $s->penguji_2_id,
                     'hari' => $s->tanggal ? $this->getHariIndonesia((int) $s->tanggal->format('N')) : 'Senin',

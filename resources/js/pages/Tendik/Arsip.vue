@@ -6,6 +6,7 @@ import {
     ArrowRight,
     Award,
     CheckCircle2,
+    Download,
     FileCheck2,
     FileText,
     GraduationCap,
@@ -49,7 +50,17 @@ const filteredArsipList = computed(() => {
             badge="Layanan Dokumen"
             title="Arsip & Pencetakan Berkas"
             description="Informasi kapabilitas penyimpanan dokumen permanen dan penerbitan berkas cetak akademik Tugas Akhir."
-        />
+        >
+            <template #action>
+                <a
+                    href="/tendik/arsip/export"
+                    class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-2xs hover:bg-emerald-500 transition-colors"
+                >
+                    <Download class="h-4 w-4" />
+                    <span>Ekspor CSV Arsip</span>
+                </a>
+            </template>
+        </PageHeaderBox>
 
         <!-- Ringkasan Statistik Arsip -->
         <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">

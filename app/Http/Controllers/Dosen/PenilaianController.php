@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dosen;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use App\Models\Penilaian;
@@ -80,6 +81,14 @@ class PenilaianController extends Controller
                     'nilai' => $validated['nilai'],
                     'catatan' => $validated['catatan'] ?? null,
                 ]);
+
+                Notification::create([
+                    'user_id' => $exam->mahasiswa_id,
+                    'title' => 'Nilai Ujian Masuk',
+                    'message' => "Dosen penguji {$request->user()->name} telah menginputkan nilai ujian {$exam->tipe} Anda.",
+                    'type' => 'info',
+                    'link' => '/mahasiswa/' . ($exam->tipe === 'sempro' ? 'sempro' : 'sidang'),
+                ]);
             } catch (UniqueConstraintViolationException $e) {
                 throw ValidationException::withMessages(['nilai' => 'Nilai sudah disimpan dan tidak dapat ditimpa.']);
             }
@@ -88,6 +97,14 @@ class PenilaianController extends Controller
                 $model = $exam->tipe === 'sempro' ? PendaftaranSempro::class : PendaftaranSidang::class;
                 $model::whereKey($exam->pendaftaran_id)->where('mahasiswa_id', $exam->mahasiswa_id)
                     ->where('status', 'terjadwal')->update(['status' => 'selesai']);
+
+                Notification::create([
+                    'user_id' => $exam->mahasiswa_id,
+                    'title' => 'Ujian Telah Selesai',
+                    'message' => "Seluruh nilai ujian {$exam->tipe} Anda telah lengkap dan status dinyatakan selesai.",
+                    'type' => 'success',
+                    'link' => '/mahasiswa/' . ($exam->tipe === 'sempro' ? 'sempro' : 'sidang'),
+                ]);
             }
         });
 

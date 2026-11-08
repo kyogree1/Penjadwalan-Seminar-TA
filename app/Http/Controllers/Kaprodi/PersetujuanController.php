@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Kaprodi;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use App\Models\PengajuanJudul;
+use App\Models\RescheduleRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +51,7 @@ class PersetujuanController extends Controller
                 $jadwal = $sempro->penjadwalan;
                 $penilaian = $jadwal?->penilaian ?? collect();
                 $semproArr = $sempro->toArray();
+                $semproArr['penjadwalan_id'] = $jadwal?->id;
                 $semproArr['penguji1'] = $jadwal?->penguji1?->name;
                 $semproArr['penguji2'] = $jadwal?->penguji2?->name;
                 $semproArr['pembimbing1'] = $jadwal?->pembimbing1?->name;
@@ -90,6 +93,7 @@ class PersetujuanController extends Controller
                 }
 
                 $sidangArr = $sidang->toArray();
+                $sidangArr['penjadwalan_id'] = $jadwal?->id;
                 $sidangArr['nilai'] = $nilaiHuruf ?? ($nilaiAvg ? (string) $nilaiAvg : null);
                 $sidangArr['nilai_angka'] = $nilaiAvg;
                 $sidangArr['jumlah_penilai'] = $penilaian->count();
@@ -103,10 +107,90 @@ class PersetujuanController extends Controller
                 return $sidangArr;
             });
 
+        $rescheduleList = RescheduleRequest::with([
+            'penjadwalan.mahasiswa',
+            'penjadwalan.pembimbing1',
+            'penjadwalan.pembimbing2',
+            'penjadwalan.penguji1',
+            'penjadwalan.penguji2',
+            'pemohon',
+            'pemutus',
+        ])
+            ->latest()
+            ->get()
+            ->map(function ($req) {
+                $exam = $req->penjadwalan;
+                $mahasiswa = $exam?->mahasiswa;
+                $pemohon = $req->pemohon;
+                $pemutus = $req->pemutus;
+
+                $dosenRole = 'Penguji 1';
+                if ($exam && $pemohon) {
+                    if ($pemohon->id === $exam->pembimbing_1_id) {
+                        $dosenRole = 'Pembimbing 1';
+                    } elseif ($pemohon->id === $exam->pembimbing_2_id) {
+                        $dosenRole = 'Pembimbing 2';
+                    } elseif ($pemohon->id === $exam->penguji_2_id) {
+                        $dosenRole = 'Penguji 2';
+                    }
+                }
+
+                $angkatan = $mahasiswa?->angkatan;
+                if (! $angkatan && $mahasiswa?->nim_nip) {
+                    $angkatan = '20'.substr((string) $mahasiswa->nim_nip, 2, 2);
+                }
+
+                $jadwalLamaHari = $exam?->tanggal ? $exam->tanggal->translatedFormat('l') : 'Senin';
+                $jadwalLamaTgl = $exam?->tanggal ? $exam->tanggal->translatedFormat('d M Y') : '—';
+                $jadwalLamaMulai = $exam?->jam_mulai ? substr($exam->jam_mulai, 0, 5) : '09:00';
+                $jadwalLamaSelesai = $exam?->jam_selesai ? substr($exam->jam_selesai, 0, 5) : '10:30';
+
+                $usulanHari = $req->tanggal_usulan ? $req->tanggal_usulan->translatedFormat('l') : 'Rabu';
+                $usulanTgl = $req->tanggal_usulan ? $req->tanggal_usulan->translatedFormat('d M Y') : '—';
+                $usulanMulai = $req->jam_mulai_usulan ? substr($req->jam_mulai_usulan, 0, 5) : '13:00';
+                $usulanSelesai = $req->jam_selesai_usulan ? substr($req->jam_selesai_usulan, 0, 5) : '14:30';
+
+                return [
+                    'id' => $req->id,
+                    'dosenId' => $pemohon?->id ?? 0,
+                    'dosenNama' => $pemohon?->name ?? 'Dosen Pemohon',
+                    'dosenNip' => $pemohon?->nim_nip ?? '—',
+                    'dosenRole' => $dosenRole,
+                    'mahasiswaId' => $mahasiswa?->id ?? 0,
+                    'mahasiswaNama' => $mahasiswa?->name ?? 'Mahasiswa',
+                    'mahasiswaNim' => $mahasiswa?->nim_nip ?? '—',
+                    'mahasiswaAngkatan' => (string) ($angkatan ?? '2023'),
+                    'tipeUjian' => $exam?->tipe ?? 'sempro',
+                    'judulTa' => $exam?->catatan ?? 'Judul Tugas Akhir',
+                    'jadwalAsli' => [
+                        'hari' => $jadwalLamaHari,
+                        'tanggal' => $jadwalLamaTgl,
+                        'jamMulai' => $jadwalLamaMulai,
+                        'jamSelesai' => $jadwalLamaSelesai,
+                        'ruangan' => $exam?->link_online ?? 'Ruang Sidang FSTI 1',
+                    ],
+                    'jadwalUsulan' => [
+                        'hari' => $usulanHari,
+                        'tanggal' => $usulanTgl,
+                        'jamMulai' => $usulanMulai,
+                        'jamSelesai' => $usulanSelesai,
+                        'ruangan' => $req->ruangan_usulan ?? 'Ruang Sidang FSTI 1',
+                    ],
+                    'alasan' => $req->alasan,
+                    'catatanDosen' => $req->catatan ?? '-',
+                    'tanggalPengajuan' => $req->created_at ? $req->created_at->translatedFormat('d M Y') : 'Hari ini',
+                    'status' => $req->status,
+                    'catatanKoorprodi' => $req->catatan_kaprodi,
+                    'disetujuiAt' => $req->diputuskan_at ? $req->diputuskan_at->translatedFormat('d M Y, H:i') : null,
+                    'disetujuiOleh' => $pemutus?->name,
+                ];
+            });
+
         return Inertia::render('Kaprodi/Persetujuan', [
             'dbJudul' => $judulList,
             'dbSempro' => $semproList,
             'dbSidang' => $sidangList,
+            'dbReschedule' => $rescheduleList,
             'dosenOptions' => User::where('role', 'dosen')->orderBy('name')->get(['id', 'name']),
         ]);
     }
@@ -158,6 +242,40 @@ class PersetujuanController extends Controller
             $updateData['pembimbing_2_id'] = $validated['pembimbing_2_id'];
         }
         $judul->update($updateData);
+
+        // Notify student of title approval / revision / rejection
+        $statusIndo = match ($validated['status']) {
+            'disetujui' => 'disetujui',
+            'revisi' => 'diminta revisi',
+            'ditolak' => 'ditolak',
+            default => $validated['status'],
+        };
+        Notification::create([
+            'user_id' => $judul->mahasiswa_id,
+            'title' => 'Status Pengajuan Judul TA',
+            'message' => "Pengajuan judul TA Anda '{$judul->judul_ta}' telah {$statusIndo} oleh Koordinator TA." . (! empty($validated['catatan_kaprodi']) ? " Catatan: {$validated['catatan_kaprodi']}" : ''),
+            'type' => $validated['status'] === 'disetujui' ? 'success' : 'warning',
+            'link' => '/mahasiswa/pengajuan-judul',
+        ]);
+
+        if (! empty($updateData['pembimbing_1_id'])) {
+            Notification::create([
+                'user_id' => $updateData['pembimbing_1_id'],
+                'title' => 'Penugasan Pembimbing 1',
+                'message' => "Anda telah ditugaskan sebagai Pembimbing 1 untuk mahasiswa {$judul->mahasiswa?->name} pada judul '{$judul->judul_ta}'.",
+                'type' => 'info',
+                'link' => '/dosen/bimbingan',
+            ]);
+        }
+        if (! empty($updateData['pembimbing_2_id'])) {
+            Notification::create([
+                'user_id' => $updateData['pembimbing_2_id'],
+                'title' => 'Penugasan Pembimbing 2',
+                'message' => "Anda telah ditugaskan sebagai Pembimbing 2 untuk mahasiswa {$judul->mahasiswa?->name} pada judul '{$judul->judul_ta}'.",
+                'type' => 'info',
+                'link' => '/dosen/bimbingan',
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Keputusan persetujuan judul berhasil disimpan!');
     }

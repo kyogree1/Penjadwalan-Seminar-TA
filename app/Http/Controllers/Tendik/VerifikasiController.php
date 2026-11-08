@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tendik;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
 use Illuminate\Http\Request;
@@ -62,6 +63,19 @@ class VerifikasiController extends Controller
         }
         $sempro->update($validated);
 
+        $statusLabel = match ($validated['status']) {
+            'verifikasi_tendik' => 'diverifikasi dan dinyatakan lengkap oleh Tendik',
+            'ditolak' => 'ditolak oleh Tendik',
+            default => 'berstatus menunggu verifikasi',
+        };
+        Notification::create([
+            'user_id' => $sempro->mahasiswa_id,
+            'title' => 'Verifikasi Berkas Seminar Proposal',
+            'message' => "Berkas pendaftaran Seminar Proposal Anda {$statusLabel}." . (! empty($validated['catatan']) ? " Catatan: {$validated['catatan']}" : ''),
+            'type' => $validated['status'] === 'ditolak' ? 'warning' : 'info',
+            'link' => '/mahasiswa/sempro',
+        ]);
+
         return redirect()->back()->with('success', 'Verifikasi berkas Seminar Proposal berhasil disimpan!');
     }
 
@@ -77,6 +91,19 @@ class VerifikasiController extends Controller
             throw ValidationException::withMessages(['status' => 'Pendaftaran terjadwal atau selesai tidak dapat diverifikasi ulang.']);
         }
         $sidang->update($validated);
+
+        $statusLabel = match ($validated['status']) {
+            'verifikasi_tendik' => 'diverifikasi dan dinyatakan lengkap oleh Tendik',
+            'ditolak' => 'ditolak oleh Tendik',
+            default => 'berstatus menunggu verifikasi',
+        };
+        Notification::create([
+            'user_id' => $sidang->mahasiswa_id,
+            'title' => 'Verifikasi Berkas Sidang TA',
+            'message' => "Berkas pendaftaran Sidang TA Anda {$statusLabel}." . (! empty($validated['catatan']) ? " Catatan: {$validated['catatan']}" : ''),
+            'type' => $validated['status'] === 'ditolak' ? 'warning' : 'info',
+            'link' => '/mahasiswa/sidang',
+        ]);
 
         return redirect()->back()->with('success', 'Verifikasi berkas Sidang TA berhasil disimpan!');
     }

@@ -45,6 +45,7 @@ export type KaprodiReviewProps = {
     dbJudul: JudulReview[];
     dbSempro: AcademicReview[];
     dbSidang: AcademicReview[];
+    dbReschedule?: any[];
     dosenOptions: SupervisorOption[];
     flash?: { success?: string | null; error?: string | null };
 };

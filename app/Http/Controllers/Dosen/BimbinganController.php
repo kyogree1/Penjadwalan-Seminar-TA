@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dosen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bimbingan;
+use App\Models\Notification;
 use App\Models\PengajuanJudul;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -73,6 +74,14 @@ class BimbinganController extends Controller
         $bimbingan->update([
             'status' => $dbStatus,
             'catatan_dosen' => $validated['catatan_dosen'] ?? $bimbingan->catatan_dosen,
+        ]);
+
+        Notification::create([
+            'user_id' => $bimbingan->mahasiswa_id,
+            'title' => 'Logbook Bimbingan Diparaf',
+            'message' => "Dosen pembimbing telah memparaf logbook bimbingan tanggal {$bimbingan->tanggal->format('d M Y')} (Status: {$dbStatus})." . (! empty($validated['catatan_dosen']) ? " Catatan: {$validated['catatan_dosen']}" : ''),
+            'type' => $dbStatus === 'delivered' ? 'success' : 'info',
+            'link' => '/mahasiswa/bimbingan',
         ]);
 
         return redirect()->back()->with('success', 'Catatan pembimbing dan paraf berhasil disimpan!');

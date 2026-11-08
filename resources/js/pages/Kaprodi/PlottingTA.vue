@@ -225,6 +225,17 @@ const gaParams = ref({
     crossoverRate: 0.8,
     mutationRate: 0.03,
 });
+const gaResult = ref<{
+    schedule: any[];
+    unscheduled: any[];
+    fitness: number;
+    kbk_match: number;
+    generations: number;
+    outcome?: string;
+    success?: boolean;
+    period_id?: number;
+    limitations?: string[];
+} | null>(null);
 
 const openGaModal = () => {
     isGaModalOpen.value = true;
@@ -233,61 +244,124 @@ const openGaModal = () => {
     gaProgress.value = 0;
     gaCurrentGen.value = 1;
     gaLogs.value = [];
+    gaResult.value = null;
 };
 
-const startGaOptimization = () => {
+const startGaOptimization = async () => {
+    if (!activePeriodId.value) {
+        showToast('Pilih periode terlebih dahulu.', true);
+        return;
+    }
     gaRunning.value = true;
     gaCompleted.value = false;
-    gaProgress.value = 0;
+    gaProgress.value = 15;
     gaCurrentGen.value = 1;
+    gaResult.value = null;
     gaLogs.value = [
-        '[00:01] Mengambil dataset berkas pendaftar sidang TA tervalidasi...',
-        '[00:01] Mengekstrak kesesuaian topik KBK dan ketersediaan waktu dosen penguji...',
-        '[00:02] Model Random Forest KBK Match Scoring diinisialisasi...',
-        `[00:02] Inisialisasi populasi awal (${gaParams.value.popSize} kromosom)...`,
+        '[00:01] Memulai inisialisasi Algoritma Genetika Sidang TA...',
+        `[00:01] Mengirim parameter (Populasi: ${gaParams.value.popSize}, Maks. Gen: ${gaParams.value.maxGenerations}) ke server...`,
     ];
 
-    let progress = 0;
-    let gen = 1;
-    const interval = setInterval(() => {
-        progress += 10;
-        gen += 10;
-        gaProgress.value = Math.min(progress, 100);
-        gaCurrentGen.value = Math.min(gen, gaParams.value.maxGenerations);
+    try {
+        const cookie = document.cookie
+            .split('; ')
+            .find((value) => value.startsWith('XSRF-TOKEN='));
+        const response = await fetch('/kaprodi/penjadwalan/generate-ga', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                'X-XSRF-TOKEN': cookie
+                    ? decodeURIComponent(cookie.slice(11))
+                    : '',
+            },
+            body: JSON.stringify({
+                period_id: activePeriodId.value,
+                ...gaParams.value,
+            }),
+        });
 
-        if (progress === 30) {
+        const data = await response.json();
+
+        if (!response.ok) {
+            const errorMsg = data.errors
+                ? Object.values(data.errors).flat().join(' ')
+                : (data.message || 'Optimasi GA Sidang TA gagal.');
+            throw new Error(errorMsg);
+        }
+
+        gaResult.value = data;
+        gaProgress.value = 100;
+        gaCurrentGen.value = data.generations || gaParams.value.maxGenerations;
+        gaCompleted.value = true;
+
+        gaLogs.value.push(
+            `[Konvergensi] Solusi optimal selesai dievaluasi pada Generasi ke-${data.generations ?? gaParams.value.maxGenerations}.`,
+        );
+        gaLogs.value.push(
+            `[Hasil] Nilai Fitness: ${data.fitness ?? '—'} | Kesesuaian KBK: ${data.kbk_match ? (data.kbk_match * 100).toFixed(1) + '%' : '—'}.`,
+        );
+        gaLogs.value.push(
+            `[Jadwal] Berhasil memplot ${data.schedule?.length ?? 0} peserta sidang TA.`,
+        );
+
+        if (data.unscheduled && data.unscheduled.length > 0) {
             gaLogs.value.push(
-                `[Generasi 25] Evaluasi fitness: 0.760 | Zero conflict constraint dioptimalkan.`,
-            );
-        } else if (progress === 60) {
-            gaLogs.value.push(
-                `[Generasi 55] Two-Point Crossover & Mutasi (3%)... Fitness meningkat ke 0.910.`,
-            );
-        } else if (progress === 90) {
-            gaLogs.value.push(
-                `[Generasi 85] Fitness: 0.990 | Seluruh hard constraints (Zero Conflict) terpenuhi 100%!`,
+                `[Perhatian] ${data.unscheduled.length} pendaftar sidang belum terjadwal (keterbatasan slot/kapasitas).`,
             );
         }
 
-        if (progress >= 100) {
-            clearInterval(interval);
-            gaRunning.value = false;
-            gaCompleted.value = true;
-            gaLogs.value.push(
-                `[Konvergensi] Solusi optimal ditemukan pada Generasi ke-85 (Fitness: 0.990).`,
-            );
-            gaLogs.value.push(
-                `[Selesai] Seluruh mahasiswa sidang TA berhasil di-plot bebas bentrok jadwal.`,
-            );
+        if (data.limitations && Array.isArray(data.limitations)) {
+            data.limitations.forEach((lim: string) => {
+                gaLogs.value.push(`[Catatan Model] ${lim}`);
+            });
         }
-    }, 250);
+    } catch (err: any) {
+        gaLogs.value.push(`[Gagal] ${err.message || 'Terjadi kesalahan sistem.'}`);
+        showToast(err.message || 'Optimasi GA Sidang TA gagal dijalankan.', true);
+    } finally {
+        gaRunning.value = false;
+    }
 };
 
 const applyGaResults = () => {
-    isGaModalOpen.value = false;
-    showToast(
-        'Jadwal dan rekomendasi plotting sidang TA AI Genetika berhasil diterapkan!',
-        'success',
+    if (!gaResult.value?.schedule || gaResult.value.schedule.length === 0) {
+        showToast('Tidak ada jadwal hasil optimasi untuk disimpan.', true);
+        return;
+    }
+
+    const schedulesToSave = gaResult.value.schedule.map((row: any) => ({
+        pendaftaran_id: row.pendaftaran_id,
+        mahasiswa_id: row.mahasiswa_id,
+        tipe: row.tipe || 'sidang',
+        penguji_1_id: row.penguji_1_id,
+        penguji_2_id: row.penguji_2_id,
+        tanggal: typeof row.tanggal === 'string' ? row.tanggal.slice(0, 10) : row.tanggal,
+        jam_mulai: row.jam_mulai,
+        jam_selesai: row.jam_selesai,
+    }));
+
+    router.post(
+        '/kaprodi/penjadwalan/simpan',
+        {
+            period_id: activePeriodId.value,
+            schedules: schedulesToSave,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                isGaModalOpen.value = false;
+                showToast(
+                    'Jadwal dan rekomendasi plotting sidang TA AI Genetika berhasil diterapkan dan disimpan!',
+                );
+                router.reload();
+            },
+            onError: (errors) => {
+                const msg = Object.values(errors).join(' ') || 'Gagal menyimpan jadwal.';
+                showToast(msg, true);
+            },
+        },
     );
 };
 
@@ -296,11 +370,19 @@ const isRiwayatModalOpen = ref(false);
 
 // Export Actions
 const exportExcel = () => {
-    showToast('Mengunduh Jadwal_Sidang_TA_Informatika.xlsx...', 'success');
+    if (!activePeriodId.value) {
+        showToast('Pilih periode terlebih dahulu.', true);
+        return;
+    }
+    window.location.href = `/kaprodi/penjadwalan/export?period_id=${activePeriodId.value}`;
 };
 
 const downloadJadwal = () => {
-    showToast('Mengunduh Rekap_Jadwal_Sidang_TA.pdf...', 'success');
+    if (!activePeriodId.value) {
+        showToast('Pilih periode terlebih dahulu.', true);
+        return;
+    }
+    window.location.href = `/kaprodi/penjadwalan/periods/${activePeriodId.value}/export-ics`;
 };
 </script>
 

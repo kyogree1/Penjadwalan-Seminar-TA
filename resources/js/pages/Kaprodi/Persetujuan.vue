@@ -1723,6 +1723,7 @@ const submitAcademicReview = (
     <!-- 4. MODE: RESCHEDULE JADWAL (KOORPRODI APPROVAL) -->
     <RescheduleSection
         v-else-if="activeSection === 'reschedule'"
+        :initial-requests="props.dbReschedule"
         @back-to-judul="backToJudul"
     />
 

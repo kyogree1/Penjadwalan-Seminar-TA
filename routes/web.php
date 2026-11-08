@@ -22,6 +22,7 @@ use App\Http\Controllers\Mahasiswa\PendaftaranSidangController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RescheduleController;
 use App\Http\Controllers\Tendik\ArsipController as TendikArsipController;
 use App\Http\Controllers\Tendik\DashboardController as TendikDashboardController;
 use App\Http\Controllers\Tendik\MahasiswaController as TendikMahasiswaController;
@@ -57,6 +58,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+
+    // Reschedule request route (accessible by involved lecturer / student / kaprodi)
+    Route::post('/pengajuan/reschedule', [RescheduleController::class, 'store'])->name('reschedule.store');
 
     // ==========================================
     // PORTAL MAHASISWA
@@ -107,6 +111,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul'])->name('persetujuan.judul.destroy');
         Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro'])->name('persetujuan.sempro');
         Route::patch('/persetujuan/sidang/{id}', [KaprodiPersetujuanController::class, 'updateSidang'])->name('persetujuan.sidang');
+        Route::patch('/persetujuan/reschedule/{id}', [RescheduleController::class, 'update'])->name('persetujuan.reschedule');
     });
 
     // ==========================================
@@ -161,6 +166,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul'])->name('persetujuan.judul.destroy');
         Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro'])->name('persetujuan.sempro');
         Route::patch('/persetujuan/sidang/{id}', [KaprodiPersetujuanController::class, 'updateSidang'])->name('persetujuan.sidang');
+        Route::patch('/persetujuan/reschedule/{id}', [RescheduleController::class, 'update'])->name('persetujuan.reschedule');
     });
 
     // Backward compatibility aliases for /koordinator routes
@@ -173,6 +179,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/monitoring', fn () => redirect()->route('kaprodi.monitoring'))->name('monitoring');
         Route::get('/mahasiswa', fn () => redirect()->route('kaprodi.mahasiswa'))->name('mahasiswa');
         Route::get('/reschedule', fn () => redirect()->route('kaprodi.reschedule'))->name('reschedule');
+    });
+
+    // Unprefixed aliases for persetujuan actions used by shared Vue components
+    Route::middleware('role:dosen,kaprodi,koordinator')->group(function () {
+        Route::patch('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'updateJudul']);
+        Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul']);
+        Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro']);
+        Route::patch('/persetujuan/sidang/{id}', [KaprodiPersetujuanController::class, 'updateSidang']);
+        Route::patch('/persetujuan/reschedule/{id}', [RescheduleController::class, 'update']);
     });
 
     // ==========================================

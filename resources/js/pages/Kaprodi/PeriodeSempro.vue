@@ -290,7 +290,7 @@ const handleSyncCalendar = () => {
             preserveScroll: true,
             onSuccess: () => {
                 showToast(
-                    `Informasi Sempro Gelombang ${selectedPeriodForCalendar.value?.gelombang} berhasil masuk ke Google Calendar Informatika.`,
+                    `Jadwal Sempro Gelombang ${selectedPeriodForCalendar.value?.gelombang} berhasil ditandai tersinkron.`,
                 );
                 if (selectedPeriodForCalendar.value) {
                     selectedPeriodForCalendar.value.google_calendar_synced = true;
@@ -1158,10 +1158,10 @@ const handleDelete = () => {
                             <Calendar v-else class="h-3.5 w-3.5" />
                             <span>{{
                                 syncCalendarLoading
-                                    ? 'Menyinkronkan...'
+                                    ? 'Memproses...'
                                     : selectedPeriodForCalendar?.google_calendar_synced
-                                      ? 'Sinkron Ulang Sekarang'
-                                      : 'Sinkronkan ke Google Calendar'
+                                      ? 'Tandai Tersinkron (Ulang)'
+                                      : 'Tandai Tersinkron'
                             }}</span>
                         </button>
                     </div>

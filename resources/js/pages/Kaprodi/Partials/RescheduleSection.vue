@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import {
     AlertCircle,
     ArrowRight,
@@ -354,25 +354,54 @@ const openRejectModal = (item: RescheduleRequestItem) => {
     isModalRejectOpen.value = true;
 };
 
+watch(
+    () => props.initialRequests,
+    (val) => {
+        if (val) {
+            requests.value = val;
+        }
+    },
+    { immediate: true },
+);
+
 // Actions
 const confirmApprove = () => {
     if (!selectedItem.value) return;
     const item = selectedItem.value;
-    item.status = 'disetujui';
-    item.catatanKoorprodi =
+    const note =
         formApprove.value.catatan.trim() ||
         'Reschedule disetujui oleh Koorprodi.';
-    item.disetujuiAt = new Date().toLocaleString('id-ID', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-    });
-    item.disetujuiOleh = koorprodiName.value;
-    if (formApprove.value.ruangan) {
-        item.jadwalUsulan.ruangan = formApprove.value.ruangan;
-    }
-    isModalApproveOpen.value = false;
-    showToast(
-        `Permohonan reschedule dari "${item.dosenNama}" untuk mahasiswa "${item.mahasiswaNama}" berhasil disetujui!`,
+
+    router.patch(
+        `/persetujuan/reschedule/${item.id}`,
+        {
+            status: 'disetujui',
+            ruangan: formApprove.value.ruangan || undefined,
+            catatan_kaprodi: note,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                item.status = 'disetujui';
+                item.catatanKoorprodi = note;
+                item.disetujuiAt = new Date().toLocaleString('id-ID', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                });
+                item.disetujuiOleh = koorprodiName.value;
+                if (formApprove.value.ruangan) {
+                    item.jadwalUsulan.ruangan = formApprove.value.ruangan;
+                }
+                isModalApproveOpen.value = false;
+                showToast(
+                    `Permohonan reschedule dari "${item.dosenNama}" untuk mahasiswa "${item.mahasiswaNama}" berhasil disetujui!`,
+                );
+            },
+            onError: (errs) => {
+                const msg = Object.values(errs).join(' ') || 'Gagal menyetujui reschedule.';
+                showToast(msg, true);
+            },
+        },
     );
 };
 
@@ -383,27 +412,60 @@ const confirmReject = () => {
         showToast('Harap masukkan alasan penolakan reschedule.', true);
         return;
     }
-    item.status = 'ditolak';
-    item.catatanKoorprodi = formReject.value.alasan.trim();
-    item.disetujuiAt = new Date().toLocaleString('id-ID', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-    });
-    item.disetujuiOleh = koorprodiName.value;
-    isModalRejectOpen.value = false;
-    showToast(
-        `Permohonan reschedule dari "${item.dosenNama}" telah ditolak.`,
-        true,
+    const note = formReject.value.alasan.trim();
+
+    router.patch(
+        `/persetujuan/reschedule/${item.id}`,
+        {
+            status: 'ditolak',
+            catatan_kaprodi: note,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                item.status = 'ditolak';
+                item.catatanKoorprodi = note;
+                item.disetujuiAt = new Date().toLocaleString('id-ID', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                });
+                item.disetujuiOleh = koorprodiName.value;
+                isModalRejectOpen.value = false;
+                showToast(
+                    `Permohonan reschedule dari "${item.dosenNama}" telah ditolak.`,
+                    true,
+                );
+            },
+            onError: (errs) => {
+                const msg = Object.values(errs).join(' ') || 'Gagal menolak reschedule.';
+                showToast(msg, true);
+            },
+        },
     );
 };
 
 const resetDecision = (item: RescheduleRequestItem) => {
-    item.status = 'menunggu';
-    item.catatanKoorprodi = undefined;
-    item.disetujuiAt = undefined;
-    item.disetujuiOleh = undefined;
-    showToast(
-        `Status permohonan dari "${item.dosenNama}" dikembalikan ke Menunggu Persetujuan.`,
+    router.patch(
+        `/persetujuan/reschedule/${item.id}`,
+        {
+            status: 'menunggu',
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                item.status = 'menunggu';
+                item.catatanKoorprodi = undefined;
+                item.disetujuiAt = undefined;
+                item.disetujuiOleh = undefined;
+                showToast(
+                    `Status permohonan dari "${item.dosenNama}" dikembalikan ke Menunggu Persetujuan.`,
+                );
+            },
+            onError: (errs) => {
+                const msg = Object.values(errs).join(' ') || 'Gagal memperbarui status permohonan.';
+                showToast(msg, true);
+            },
+        },
     );
 };
 </script>

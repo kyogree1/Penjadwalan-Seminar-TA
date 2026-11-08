@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import {
     User as UserIcon,
     Mail,
@@ -28,6 +28,7 @@ interface SidangFile {
 
 export interface SidangStudentItem {
     id: number;
+    penjadwalan_id?: number | null;
     nama: string;
     nim: string;
     angkatan: string;
@@ -201,7 +202,7 @@ const defaultSidangStudents: SidangStudentItem[] = [
     },
 ];
 
-const studentsList = ref<SidangStudentItem[]>(defaultSidangStudents);
+const studentsList = ref<SidangStudentItem[]>([]);
 
 // Hydrate from DB props if present
 watch(
@@ -212,41 +213,51 @@ watch(
                 (item: any, idx: number) => {
                     return {
                         id: item.id || idx + 1,
+                        penjadwalan_id: item.penjadwalan_id ?? null,
                         nama:
                             item.nama_mahasiswa ||
                             item.mahasiswa?.nama ||
+                            item.mahasiswa?.name ||
                             `Mahasiswa Sidang ${idx + 1}`,
-                        nim: item.nim || item.mahasiswa?.nim || `1120108${idx}`,
-                        angkatan: item.angkatan || '2020',
+                        nim: item.nim || item.mahasiswa?.nim_nip || `—`,
+                        angkatan: item.angkatan || '2023',
                         subtab: idx % 2 === 0 ? 'bimbingan' : 'uji',
                         judul:
                             item.judul ||
                             item.judul_ta ||
                             'Judul Sidang Akhir Skripsi Mahasiswa',
-                        statusBerkas: item.status_berkas || 'Selesai Validasi',
+                        statusBerkas:
+                            item.status_akademik === 'disetujui'
+                                ? 'Selesai Validasi'
+                                : item.status_akademik === 'revisi'
+                                  ? 'Perlu Revisi Berkas'
+                                  : 'Menunggu Validasi',
                         persetujuan:
-                            item.status_persetujuan || 'Disetujui Pembimbing',
+                            item.status === 'disetujui'
+                                ? 'Disetujui Pembimbing'
+                                : 'Draf Pengajuan',
                         nilai: item.nilai || '—',
-                        revisi: item.revisi || 'Perbaiki format lampiran',
+                        revisi: item.catatan_kaprodi || item.catatan || 'Tidak Ada',
                         penguji1:
                             item.penguji1 ||
-                            'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
+                            '-',
                         penguji2:
                             item.penguji2 ||
-                            'Dian Permata Sari, S.Kom., M.Kom.',
-                        tanggal: item.tanggal || 'Senin, 05 Okt 2026',
-                        waktu: item.waktu || '09:00 - 10:30',
+                            '-',
+                        tanggal: item.tanggal || '—',
+                        waktu: item.waktu || '—',
                         ruang: item.ruang || 'Ruang Sidang FSTI 1',
                         files: [
-                            { name: 'Naskah_Lengkap_Skripsi.pdf' },
-                            { name: 'Lembar_Persetujuan_Sidang.pdf' },
-                        ],
+                            item.draft_laporan_file ? { name: item.draft_laporan_file.split('/').pop() || 'Naskah_Skripsi.pdf' } : null,
+                            item.turnitin_file ? { name: item.turnitin_file.split('/').pop() || 'Turnitin.pdf' } : null,
+                            item.skor_iaet_file ? { name: item.skor_iaet_file.split('/').pop() || 'IAET.pdf' } : null,
+                        ].filter(Boolean) as SidangFile[],
                     };
                 },
             );
             studentsList.value = mapped;
         } else {
-            studentsList.value = defaultSidangStudents;
+            studentsList.value = [];
         }
     },
     { immediate: true },
@@ -423,20 +434,51 @@ const validateDocument = (isApproved: boolean) => {
     const target = studentsList.value.find(
         (s) => s.id === selectedStudent.value?.id,
     );
-    if (target) {
-        if (isApproved) {
-            target.statusBerkas = 'Selesai Validasi';
-            target.persetujuan = 'Disetujui Pembimbing';
-            showToast(
-                `Berkas sidang untuk "${target.nama}" berhasil disetujui!`,
-            );
-        } else {
-            target.statusBerkas = 'Perlu Revisi Berkas';
-            showToast(
-                `Catatan revisi berkas dikirimkan kepada "${target.nama}".`,
-                true,
-            );
-        }
+    if (!target) return;
+
+    if (isApproved) {
+        router.patch(
+            `/persetujuan/sidang/${target.id}`,
+            {
+                status_akademik: 'disetujui',
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    target.statusBerkas = 'Selesai Validasi';
+                    target.persetujuan = 'Disetujui Pembimbing';
+                    showToast(
+                        `Berkas sidang untuk "${target.nama}" berhasil disetujui!`,
+                    );
+                },
+                onError: (errs) => {
+                    const msg = Object.values(errs).join(' ') || 'Gagal memvalidasi berkas sidang.';
+                    showToast(msg, true);
+                },
+            },
+        );
+    } else {
+        router.patch(
+            `/persetujuan/sidang/${target.id}`,
+            {
+                status_akademik: 'revisi',
+                catatan_kaprodi: 'Perlu revisi berkas sidang.',
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    target.statusBerkas = 'Perlu Revisi Berkas';
+                    showToast(
+                        `Catatan revisi berkas dikirimkan kepada "${target.nama}".`,
+                        true,
+                    );
+                },
+                onError: (errs) => {
+                    const msg = Object.values(errs).join(' ') || 'Gagal menyimpan catatan revisi.';
+                    showToast(msg, true);
+                },
+            },
+        );
     }
 };
 
@@ -474,14 +516,41 @@ const submitNilaiSidang = () => {
     const target = studentsList.value.find(
         (s) => s.id === targetStudentNilai.value?.id,
     );
-    if (target) {
-        target.nilai = hitungGrade(formNilai.value.skor);
+    if (!target) return;
+
+    const grade = hitungGrade(formNilai.value.skor);
+    if (!target.penjadwalan_id) {
+        target.nilai = grade;
         target.revisi = formNilai.value.revisi;
         showToast(
             `Nilai sidang (${target.nilai}) untuk "${target.nama}" berhasil disimpan!`,
         );
+        isModalNilaiOpen.value = false;
+        return;
     }
-    isModalNilaiOpen.value = false;
+
+    router.post(
+        `/penilaian/${target.penjadwalan_id}`,
+        {
+            nilai: formNilai.value.skor,
+            catatan: formNilai.value.revisi || undefined,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                target.nilai = grade;
+                target.revisi = formNilai.value.revisi;
+                showToast(
+                    `Nilai sidang (${target.nilai}) untuk "${target.nama}" berhasil disimpan!`,
+                );
+                isModalNilaiOpen.value = false;
+            },
+            onError: (errs) => {
+                const msg = Object.values(errs).join(' ') || 'Gagal menyimpan nilai ujian.';
+                showToast(msg, true);
+            },
+        },
+    );
 };
 
 // Modal Reschedule Jadwal Sidang (Dosen: "Melihat Jadwal Seminar extend mengajukan reschedule")
@@ -506,11 +575,39 @@ const openModalReschedule = (student: SidangStudentItem) => {
 
 const submitReschedule = () => {
     if (!selectedStudent.value) return;
-    rescheduledStudents.value[selectedStudent.value.id] = true;
-    showToast(
-        `Permohonan reschedule sidang untuk "${selectedStudent.value.nama}" berhasil dikirimkan ke Koorprodi.`,
+    const target = selectedStudent.value;
+
+    if (!target.penjadwalan_id) {
+        rescheduledStudents.value[target.id] = true;
+        showToast(
+            `Permohonan reschedule sidang untuk "${target.nama}" berhasil dikirimkan ke Koorprodi.`,
+        );
+        isModalRescheduleOpen.value = false;
+        return;
+    }
+
+    router.post(
+        '/pengajuan/reschedule',
+        {
+            penjadwalan_id: target.penjadwalan_id,
+            alasan: formReschedule.value.alasan,
+            catatan: formReschedule.value.catatan || undefined,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                rescheduledStudents.value[target.id] = true;
+                showToast(
+                    `Permohonan reschedule sidang untuk "${target.nama}" berhasil dikirimkan ke Koorprodi.`,
+                );
+                isModalRescheduleOpen.value = false;
+            },
+            onError: (errs) => {
+                const msg = Object.values(errs).join(' ') || 'Gagal mengajukan reschedule sidang.';
+                showToast(msg, true);
+            },
+        },
     );
-    isModalRescheduleOpen.value = false;
 };
 
 const cancelReschedule = (student: SidangStudentItem) => {

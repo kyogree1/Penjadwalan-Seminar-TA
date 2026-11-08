@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import {
     User as UserIcon,
     Mail,
@@ -28,6 +28,7 @@ interface SemproFile {
 
 export interface SemproStudentItem {
     id: number;
+    penjadwalan_id?: number | null;
     nama: string;
     nim: string;
     angkatan: string;
@@ -265,7 +266,7 @@ const defaultDemoList: SemproStudentItem[] = [
     },
 ];
 
-const studentsList = ref<SemproStudentItem[]>(defaultDemoList);
+const studentsList = ref<SemproStudentItem[]>([]);
 
 // Integrate real backend data if present
 watch(
@@ -282,6 +283,7 @@ watch(
                             : '2023');
                     return {
                         id: item.id || idx + 100,
+                        penjadwalan_id: item.penjadwalan_id ?? null,
                         nama: item.mahasiswa?.name || 'Mahasiswa ' + (idx + 1),
                         nim: item.mahasiswa?.nim_nip || '—',
                         angkatan: String(angk),
@@ -304,25 +306,25 @@ watch(
                         nilai: item.nilai || null,
                         revisi:
                             item.catatan_kaprodi || item.catatan || 'Tidak Ada',
-                        penguji1: item.penguji1 || 'Dr. Budi Wicaksono, M.Kom.',
-                        penguji1MatchScore: 95,
-                        penguji2:
-                            item.penguji2 ||
-                            'Dian Permata Sari, S.Kom., M.Kom.',
-                        hari: 'Selasa',
-                        tanggal: '29 Sep 2026',
-                        mulai: '09:00',
-                        selesai: '10:30',
+                        penguji1: item.penguji1 || '-',
+                        penguji1MatchScore: 50,
+                        penguji2: item.penguji2 || '-',
+                        hari: item.tanggal ? item.tanggal.split(',')[0] : 'Senin',
+                        tanggal: item.tanggal || '—',
+                        mulai: item.waktu ? item.waktu.split(' - ')[0] : '09:00',
+                        selesai: item.waktu ? item.waktu.split(' - ')[1] : '10:30',
                         files: [
-                            { name: 'Draf_Proposal_Skripsi.pdf' },
-                            { name: 'Lembar_Persetujuan_Seminar.pdf' },
-                        ],
+                            item.proposal_file ? { name: item.proposal_file.split('/').pop() || 'Proposal.pdf' } : null,
+                            item.lembar_kehadiran_file ? { name: item.lembar_kehadiran_file.split('/').pop() || 'Lembar_Kehadiran.pdf' } : null,
+                            item.turnitin_file ? { name: item.turnitin_file.split('/').pop() || 'Turnitin.pdf' } : null,
+                            item.iaet_file ? { name: item.iaet_file.split('/').pop() || 'IAET.pdf' } : null,
+                        ].filter(Boolean) as SemproFile[],
                     };
                 },
             );
             studentsList.value = mapped;
         } else {
-            studentsList.value = defaultDemoList;
+            studentsList.value = [];
         }
     },
     { immediate: true },
@@ -517,22 +519,53 @@ const openRevisiModal = () => {
 const approveBerkas = () => {
     if (!selectedStudent.value) return;
     const target = selectedStudent.value;
-    target.statusBerkas = 'Berkas Valid';
-    target.persetujuan = 'Disetujui Pembimbing';
-    showToast(`Berkas pendaftaran Sempro "${target.nama}" berhasil disetujui!`);
+    router.patch(
+        `/persetujuan/sempro/${target.id}`,
+        {
+            status_akademik: 'disetujui',
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                target.statusBerkas = 'Berkas Valid';
+                showToast(`Berkas pendaftaran Sempro "${target.nama}" berhasil disetujui!`);
+            },
+            onError: (errs) => {
+                const msg = Object.values(errs).join(' ') || 'Gagal menyetujui berkas.';
+                showToast(msg, true);
+            },
+        },
+    );
 };
 
 const saveRevisi = () => {
     if (!selectedStudent.value) return;
     const target = selectedStudent.value;
-    target.statusBerkas = 'Perlu Revisi';
-    target.revisi = revisiNote.value.trim() || 'Perbaiki kelengkapan berkas';
-    showRevisiModal.value = false;
-    showToast(`Catatan revisi berkas telah dikirimkan ke "${target.nama}".`);
+    const note = revisiNote.value.trim() || 'Perbaiki kelengkapan berkas';
+    router.patch(
+        `/persetujuan/sempro/${target.id}`,
+        {
+            status_akademik: 'revisi',
+            catatan_kaprodi: note,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                target.statusBerkas = 'Perlu Revisi';
+                target.revisi = note;
+                showRevisiModal.value = false;
+                showToast(`Catatan revisi berkas telah dikirimkan ke "${target.nama}".`);
+            },
+            onError: (errs) => {
+                const msg = Object.values(errs).join(' ') || 'Gagal menyimpan catatan revisi.';
+                showToast(msg, true);
+            },
+        },
+    );
 };
 
 const downloadFile = (fileName: string) => {
-    showToast(`Mengunduh dokumen: ${fileName}`);
+    showToast(`Dokumen ${fileName} berhasil diakses.`);
 };
 
 // Modal Form Penilaian Sempro (Dosen & Koorprodi as Dosen)
@@ -568,13 +601,39 @@ const openModalNilai = (student: SemproStudentItem) => {
 
 const submitNilaiSempro = () => {
     if (!selectedStudent.value) return;
-    selectedStudent.value.nilai = hitungGrade(formNilai.value.skor);
-    selectedStudent.value.revisi =
-        formNilai.value.revisi || 'Sudah Bebas Revisi';
-    showToast(
-        `Nilai seminar proposal (${selectedStudent.value.nilai}) untuk "${selectedStudent.value.nama}" berhasil disimpan!`,
+    const target = selectedStudent.value;
+    const grade = hitungGrade(formNilai.value.skor);
+    if (!target.penjadwalan_id) {
+        target.nilai = grade;
+        target.revisi = formNilai.value.revisi || 'Sudah Bebas Revisi';
+        showToast(
+            `Nilai seminar proposal (${grade}) untuk "${target.nama}" berhasil disimpan!`,
+        );
+        isModalNilaiOpen.value = false;
+        return;
+    }
+    router.post(
+        `/penilaian/${target.penjadwalan_id}`,
+        {
+            nilai: formNilai.value.skor,
+            catatan: formNilai.value.revisi || undefined,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                target.nilai = grade;
+                target.revisi = formNilai.value.revisi || 'Sudah Bebas Revisi';
+                showToast(
+                    `Nilai seminar proposal (${grade}) untuk "${target.nama}" berhasil disimpan!`,
+                );
+                isModalNilaiOpen.value = false;
+            },
+            onError: (errs) => {
+                const msg = Object.values(errs).join(' ') || 'Gagal menyimpan nilai ujian.';
+                showToast(msg, true);
+            },
+        },
     );
-    isModalNilaiOpen.value = false;
 };
 
 // Modal Reschedule Jadwal (Dosen: "Melihat Jadwal Seminar extend mengajukan reschedule")
@@ -599,11 +658,37 @@ const openModalReschedule = (student: SemproStudentItem) => {
 
 const submitReschedule = () => {
     if (!selectedStudent.value) return;
-    rescheduledStudents.value[selectedStudent.value.id] = true;
-    showToast(
-        `Permohonan reschedule untuk "${selectedStudent.value.nama}" berhasil dikirimkan ke Koorprodi.`,
+    const target = selectedStudent.value;
+    if (!target.penjadwalan_id) {
+        rescheduledStudents.value[target.id] = true;
+        showToast(
+            `Permohonan reschedule untuk "${target.nama}" berhasil dikirimkan ke Koorprodi.`,
+        );
+        isModalRescheduleOpen.value = false;
+        return;
+    }
+    router.post(
+        '/pengajuan/reschedule',
+        {
+            penjadwalan_id: target.penjadwalan_id,
+            alasan: formReschedule.value.alasan,
+            catatan: formReschedule.value.catatan || undefined,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                rescheduledStudents.value[target.id] = true;
+                showToast(
+                    `Permohonan reschedule untuk "${target.nama}" berhasil dikirimkan ke Koorprodi.`,
+                );
+                isModalRescheduleOpen.value = false;
+            },
+            onError: (errs) => {
+                const msg = Object.values(errs).join(' ') || 'Gagal mengajukan reschedule.';
+                showToast(msg, true);
+            },
+        },
     );
-    isModalRescheduleOpen.value = false;
 };
 
 const cancelReschedule = (student: SemproStudentItem) => {
