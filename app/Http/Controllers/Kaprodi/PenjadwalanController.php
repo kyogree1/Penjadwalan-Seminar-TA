@@ -63,8 +63,8 @@ class PenjadwalanController extends Controller
             $schedules = $this->getSchedulesForPeriod($selectedPeriodId, 'sempro');
         }
 
-        $dosenListAll = User::where('role', 'dosen')->orderBy('name')->pluck('name')->values()->all();
-        $dosenOptions = User::where('role', 'dosen')->orderBy('name')->get(['id', 'name', 'nim_nip', 'prodi', 'jabatan']);
+        $dosenListAll = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->orderBy('name')->pluck('name')->values()->all();
+        $dosenOptions = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->orderBy('name')->get(['id', 'name', 'nim_nip', 'prodi', 'jabatan']);
 
         return Inertia::render('Kaprodi/PlottingSempro', [
             'periods' => $periods,
@@ -110,8 +110,8 @@ class PenjadwalanController extends Controller
             $schedules = $this->getSchedulesForPeriod($selectedPeriodId, 'sidang');
         }
 
-        $dosenListAll = User::where('role', 'dosen')->orderBy('name')->pluck('name')->values()->all();
-        $dosenOptions = User::where('role', 'dosen')->orderBy('name')->get(['id', 'name', 'nim_nip', 'prodi', 'jabatan']);
+        $dosenListAll = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->orderBy('name')->pluck('name')->values()->all();
+        $dosenOptions = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->orderBy('name')->get(['id', 'name', 'nim_nip', 'prodi', 'jabatan']);
 
         return Inertia::render('Kaprodi/PlottingTA', [
             'periods' => $periods,
@@ -338,7 +338,7 @@ class PenjadwalanController extends Controller
         $overflow = array_slice($candidates, $capacity);
         $candidates = array_slice($candidates, 0, $capacity);
         $periodBookings = array_filter($bookings, fn ($b) => (int) $b['period_id'] === $period->id);
-        $lecturers = User::where('role', 'dosen')->get(['id', 'name', 'prodi', 'jabatan']);
+        $lecturers = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->get(['id', 'name', 'prodi', 'jabatan']);
         $quota = (int) ceil(2 * (count($candidates) + $used) / max(1, $lecturers->count())) + 1;
         $lecturers = $lecturers->map(function ($lecturer) use ($periodBookings, $quota) {
             $row = $lecturer->toArray();
@@ -614,7 +614,14 @@ class PenjadwalanController extends Controller
     private function performResetSchedules(SchedulePeriod $period): void
     {
         DB::transaction(function () use ($period) {
-            $schedules = Penjadwalan::where('period_id', $period->id)->lockForUpdate()->get();
+            $schedules = Penjadwalan::where(function ($q) use ($period) {
+                $q->where('period_id', $period->id)
+                    ->orWhere(function ($q2) use ($period) {
+                        $q2->whereNull('period_id')
+                            ->where('tipe', $period->tipe)
+                            ->where('gelombang', $period->gelombang);
+                    });
+            })->lockForUpdate()->get();
 
             foreach ($schedules as $schedule) {
                 if ($schedule->status === 'selesai' || $schedule->penilaian()->exists()) {
@@ -631,7 +638,17 @@ class PenjadwalanController extends Controller
                 }
             }
 
-            Penjadwalan::where('period_id', $period->id)->delete();
+            // Reset any registrations in this wave that were marked 'terjadwal' back to 'verifikasi_tendik'
+            $class::where('gelombang', $period->gelombang)
+                ->where('status', 'terjadwal')
+                ->update(['status' => 'verifikasi_tendik']);
+
+            Penjadwalan::where('period_id', $period->id)
+                ->orWhere(function ($q2) use ($period) {
+                    $q2->whereNull('period_id')
+                        ->where('tipe', $period->tipe)
+                        ->where('gelombang', $period->gelombang);
+                })->delete();
 
             $period->is_published = false;
             $period->google_calendar_synced = false;
@@ -656,7 +673,7 @@ class PenjadwalanController extends Controller
     {
         DB::transaction(function () use ($periodId, $rows, $actor, $overrideId) {
             // Serialize publication globally through lecturer locks, then period/registration locks.
-            User::where('role', 'dosen')->orderBy('id')->lockForUpdate()->get(['id']);
+            User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->orderBy('id')->lockForUpdate()->get(['id']);
             $period = SchedulePeriod::lockForUpdate()->findOrFail($periodId);
             if ($period->is_open) {
                 throw ValidationException::withMessages(['schedules' => 'Tutup pendaftaran sebelum menyimpan jadwal.']);
@@ -682,7 +699,7 @@ class PenjadwalanController extends Controller
                     throw ValidationException::withMessages(['schedules' => 'Supervisor belum valid.']);
                 }
                 $row = array_merge($input, $candidate, ['period_id' => $periodId, 'status' => 'terpublikasi', 'gelombang' => $period->gelombang, 'dibuat_oleh' => $actor]);
-                if (User::whereIn('id', [$row['penguji_1_id'], $row['penguji_2_id']])->where('role', 'dosen')->count() !== 2) {
+                if ((int) $row['penguji_1_id'] === (int) $row['penguji_2_id'] || User::whereIn('id', [$row['penguji_1_id'], $row['penguji_2_id']])->whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->count() !== 2) {
                     throw ValidationException::withMessages(['schedules' => 'Dua penguji dosen berbeda wajib dipilih.']);
                 }
                 $slot = ['tanggal' => $row['tanggal'], 'jam_mulai' => $row['jam_mulai'], 'jam_selesai' => $row['jam_selesai']];

@@ -88,9 +88,10 @@ class AuthController extends Controller
         $password = $credentials['password'];
         $remember = (bool) $request->input('remember', false);
 
-        // Allow logging in via email or username (NIM / NIP)
+        // Allow logging in via email, username, or nim_nip
         $user = User::where('email', $loginInput)
             ->orWhere('username', $loginInput)
+            ->orWhere('nim_nip', $loginInput)
             ->first();
 
         if ($user && Hash::check($password, $user->password)) {
