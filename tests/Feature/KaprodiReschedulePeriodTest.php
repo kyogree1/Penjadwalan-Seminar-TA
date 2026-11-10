@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\PendaftaranSempro;
 use App\Models\PengajuanJudul;
-use App\Models\Penjadwalan;
 use App\Models\Penilaian;
+use App\Models\Penjadwalan;
 use App\Models\SchedulePeriod;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,15 +16,25 @@ class KaprodiReschedulePeriodTest extends TestCase
     use RefreshDatabase;
 
     private User $kaprodi;
+
     private User $dosen1;
+
     private User $dosen2;
+
     private User $dosen3;
+
     private User $dosen4;
+
     private User $dosen5;
+
     private User $student1;
+
     private User $student2;
+
     private SchedulePeriod $period;
+
     private PendaftaranSempro $reg1;
+
     private PendaftaranSempro $reg2;
 
     protected function setUp(): void

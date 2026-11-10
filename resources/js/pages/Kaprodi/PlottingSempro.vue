@@ -86,6 +86,15 @@ const activePeriodId = ref<number | null>(
         null,
 );
 
+watch(
+    () => props.selectedPeriodId,
+    (val) => {
+        if (val) {
+            activePeriodId.value = val;
+        }
+    },
+);
+
 const activePeriod = computed(() => {
     if (!activePeriodId.value) return null;
     return props.periods.find((p) => p.id === activePeriodId.value) ?? null;
@@ -97,7 +106,7 @@ const switchGelombang = (period: PeriodItem) => {
     router.get(
         '/kaprodi/penjadwalan/plotting-sempro',
         { period_id: period.id },
-        { preserveState: true, preserveScroll: true },
+        { preserveState: false, preserveScroll: true },
     );
 };
 
@@ -959,6 +968,50 @@ const downloadJadwal = () => {
                 </div>
 
                 <div class="max-h-[75vh] space-y-5 overflow-y-auto p-6">
+                    <!-- Target Gelombang / Periode Info -->
+                    <div
+                        class="rounded-2xl border border-blue-200 bg-blue-50/70 p-4 dark:border-blue-900/60 dark:bg-blue-950/30"
+                    >
+                        <div
+                            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                            <div>
+                                <span
+                                    class="text-[10px] font-bold tracking-wider text-blue-600 uppercase dark:text-blue-400"
+                                    >Target Gelombang Penjadwalan:</span
+                                >
+                                <div
+                                    class="mt-1 text-sm font-black text-slate-800 dark:text-slate-100"
+                                >
+                                    Gelombang {{ activePeriod?.gelombang }} ({{
+                                        activePeriod?.semester
+                                    }}
+                                    {{ activePeriod?.name }})
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label
+                                    for="ga-modal-period-select"
+                                    class="text-xs font-semibold text-slate-600 dark:text-slate-400"
+                                    >Pilih Gelombang:</label
+                                >
+                                <select
+                                    id="ga-modal-period-select"
+                                    v-model="activePeriodId"
+                                    class="cursor-pointer rounded-xl border border-slate-300 bg-white py-1.5 pr-8 pl-3 text-xs font-bold text-slate-800 shadow-xs dark:border-slate-700 dark:bg-[#0E1626] dark:text-slate-100"
+                                >
+                                    <option
+                                        v-for="p in periods"
+                                        :key="p.id"
+                                        :value="p.id"
+                                    >
+                                        Gelombang {{ p.gelombang }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Parameters -->
                     <div class="space-y-3">
                         <h4
