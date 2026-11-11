@@ -191,7 +191,7 @@ class PersetujuanController extends Controller
             'dbSempro' => $semproList,
             'dbSidang' => $sidangList,
             'dbReschedule' => $rescheduleList,
-            'dosenOptions' => User::where('role', 'dosen')->orderBy('name')->get(['id', 'name']),
+            'dosenOptions' => User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->orderBy('name')->get(['id', 'name']),
         ]);
     }
 

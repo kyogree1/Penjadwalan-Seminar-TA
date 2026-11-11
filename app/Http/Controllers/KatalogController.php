@@ -55,7 +55,7 @@ class KatalogController extends Controller
         })->values()->all();
 
         // 3. Ambil daftar dosen nyata untuk filter
-        $dosenList = User::where('role', 'dosen')
+        $dosenList = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])
             ->select('id', 'name', 'nim_nip')
             ->orderBy('name')
             ->get()

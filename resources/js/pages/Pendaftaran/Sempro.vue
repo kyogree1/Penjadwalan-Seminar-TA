@@ -386,7 +386,9 @@ const submitSempro = () => {
                                 >
                                     <option value="Skripsi">Skripsi</option>
                                     <option value="Proyek">Proyek Akhir</option>
-                                    <option value="Prototipe">Karya Desain / Rancang Bangun</option>
+                                    <option value="Prototipe">
+                                        Karya Desain / Rancang Bangun
+                                    </option>
                                 </select>
                             </div>
                         </div>
