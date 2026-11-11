@@ -758,6 +758,32 @@ class PenjadwalanController extends Controller
         ]);
 
         $schedule = Penjadwalan::find($id);
+        if (! $schedule && $id < 0) {
+            $pendaftaranId = abs($id);
+            $reg = PendaftaranSempro::find($pendaftaranId);
+            $tipe = 'sempro';
+            if (! $reg) {
+                $reg = PendaftaranSidang::find($pendaftaranId);
+                $tipe = 'sidang';
+            }
+            if ($reg) {
+                $period = SchedulePeriod::where('tipe', $tipe)->where('gelombang', $reg->gelombang)->first();
+                $title = PengajuanJudul::where('mahasiswa_id', $reg->mahasiswa_id)->where('status', 'disetujui')->latest('id')->first();
+                $schedule = new Penjadwalan([
+                    'period_id' => $period?->id,
+                    'pendaftaran_id' => $reg->id,
+                    'mahasiswa_id' => $reg->mahasiswa_id,
+                    'tipe' => $tipe,
+                    'gelombang' => $reg->gelombang,
+                    'pembimbing_1_id' => $title?->pembimbing_1_id,
+                    'pembimbing_2_id' => $title?->pembimbing_2_id,
+                    'catatan' => $reg->judul_ta ?? $title?->judul_ta,
+                    'status' => 'terpublikasi',
+                    'dibuat_oleh' => Auth::id() ?? 1,
+                ]);
+                $reg->update(['status' => 'terjadwal']);
+            }
+        }
         if ($schedule) {
             if (! empty($data['penguji1'])) {
                 $d1 = User::where('name', $data['penguji1'])->first();

@@ -98,11 +98,15 @@ class PendaftaranSemproController extends Controller
             'judul_ta' => ['required', 'string', 'max:255'],
             'bentuk_ta' => ['required', 'string', 'max:150'],
             'lokasi_mitra' => ['nullable', 'string', 'max:255'],
-            'skor_iaet' => ['nullable'],
+            'skor_iaet' => ['nullable', 'integer', 'min:0', 'max:677'],
             'lembar_kehadiran_file' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
             'proposal_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'turnitin_file' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
             'iaet_file' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
+        ], [
+            'skor_iaet.max' => 'Skor IAET tidak boleh melebihi 677 (skala standar TOEFL/IAET).',
+            'skor_iaet.min' => 'Skor IAET tidak boleh kurang dari 0.',
+            'skor_iaet.integer' => 'Skor IAET harus berupa angka bulat.',
         ]);
 
         $user = Auth::user();

@@ -97,10 +97,14 @@ class PendaftaranSidangController extends Controller
         $validated = $request->validate([
             'judul_ta' => ['required', 'string', 'max:255'],
             'lokasi_mitra' => ['nullable', 'string', 'max:255'],
-            'skor_iaet' => ['required', 'numeric', 'min:0'],
+            'skor_iaet' => ['required', 'integer', 'min:0', 'max:677'],
             'skor_iaet_file' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
             'draft_laporan_file' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'turnitin_file' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
+        ], [
+            'skor_iaet.max' => 'Skor IAET tidak boleh melebihi 677 (skala standar TOEFL/IAET).',
+            'skor_iaet.min' => 'Skor IAET tidak boleh kurang dari 0.',
+            'skor_iaet.integer' => 'Skor IAET harus berupa angka bulat.',
         ]);
 
         $user = Auth::user();

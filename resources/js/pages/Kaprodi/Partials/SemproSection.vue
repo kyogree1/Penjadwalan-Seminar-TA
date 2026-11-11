@@ -114,158 +114,6 @@ const showToast = (message: string, isError = false) => {
     }, 3500);
 };
 
-// 6 Realistic demo items matching Front-End pengajuan-sempro.html mock data
-const defaultDemoList: SemproStudentItem[] = [
-    {
-        id: 1,
-        nama: 'Anisa Rahmadani',
-        nim: '11231010',
-        angkatan: '2023',
-        roleTab: 'bimbingan',
-        judul: 'Analisis Perbandingan Kinerja dan Generalisasi Model Computer Vision pada Edge Device',
-        statusBerkas: 'Berkas Valid',
-        persetujuan: 'Disetujui Pembimbing',
-        bentukTa: 'Reguler',
-        nilai: null,
-        revisi: 'Tidak Ada',
-        penguji1: 'Dian Permata Sari, S.Kom., M.Kom.',
-        penguji1MatchScore: 92,
-        penguji2: 'Dr. Budi Wicaksono, M.Kom.',
-        hari: 'Selasa',
-        tanggal: '29 Sep 2026',
-        mulai: '09:00',
-        selesai: '10:30',
-        files: [
-            { name: 'Draf_Proposal_Skripsi_Bab1_3.pdf' },
-            { name: 'Lembar_Persetujuan_Seminar.pdf' },
-            { name: 'Bukti_Cek_Plagiasi_Turnitin_14%.pdf' },
-            { name: 'Kartu_Bimbingan_8x_Acc.pdf' },
-        ],
-    },
-    {
-        id: 2,
-        nama: 'Bayu Aditya Saputra',
-        nim: '11231089',
-        angkatan: '2023',
-        roleTab: 'bimbingan',
-        judul: 'RANCANG BANGUN SISTEM LOKALISASI INDOOR MENGGUNAKAN WIFI FINGERPRINTING',
-        statusBerkas: 'Menunggu Validasi',
-        persetujuan: 'Disetujui Pembimbing',
-        bentukTa: 'Reguler',
-        nilai: null,
-        revisi: 'Bab 3 Alur Kalibrasi',
-        penguji1: 'Rian Kurniawan, S.Kom., M.Eng.',
-        penguji1MatchScore: 94,
-        penguji2: 'Ahmad Faisal Ridwan, Ph.D.',
-        hari: 'Rabu',
-        tanggal: '30 Sep 2026',
-        mulai: '10:45',
-        selesai: '12:15',
-        files: [
-            { name: 'Draf_Proposal_WiFi_Fingerprint.pdf' },
-            { name: 'Lembar_Persetujuan_Dosen.pdf' },
-            { name: 'Turnitin_Check_19%.pdf' },
-        ],
-    },
-    {
-        id: 3,
-        nama: 'Nadia Putri Lestari',
-        nim: '11231033',
-        angkatan: '2023',
-        roleTab: 'bimbingan',
-        judul: 'Sistem Deteksi Anomali Jaringan IoT Berdasarkan Pola Traffic Menggunakan Isolation Forest',
-        statusBerkas: 'Menunggu Validasi',
-        persetujuan: 'Draf Pengajuan',
-        bentukTa: 'Reguler',
-        nilai: null,
-        revisi: 'Transkrip Nilai Kurang',
-        penguji1: 'Dr. Budi Wicaksono, M.Kom.',
-        penguji1MatchScore: 95,
-        penguji2: 'Dian Permata Sari, S.Kom., M.Kom.',
-        hari: 'Kamis',
-        tanggal: '1 Okt 2026',
-        mulai: '09:00',
-        selesai: '10:30',
-        files: [
-            { name: 'Proposal_Deteksi_Anomali_IoT.pdf' },
-            { name: 'Formulir_Bimbingan_Terbaru.pdf' },
-        ],
-    },
-    {
-        id: 4,
-        nama: 'Ahmad Fauzan Pratama',
-        nim: '11231065',
-        angkatan: '2023',
-        roleTab: 'uji',
-        judul: 'Analisis Ketahanan Model Countermeasure Terhadap Serangan Adversarial pada Citra Medis',
-        statusBerkas: 'Berkas Valid',
-        persetujuan: 'Disetujui Pembimbing',
-        bentukTa: 'Reguler',
-        nilai: null,
-        revisi: 'Tidak Ada',
-        penguji1: 'Nisa Rizqiya Fadhliana, S.Kom., M.T.',
-        penguji1MatchScore: 96,
-        penguji2: 'Rian Kurniawan, S.Kom., M.Eng.',
-        hari: 'Selasa',
-        tanggal: '29 Sep 2026',
-        mulai: '13:30',
-        selesai: '15:00',
-        files: [
-            { name: 'Adversarial_Medical_Image_Proposal.pdf' },
-            { name: 'Turnitin_Similarity_12%.pdf' },
-            { name: 'Kartu_Konsultasi_Lengkap.pdf' },
-        ],
-    },
-    {
-        id: 5,
-        nama: 'Siti Rahmawati',
-        nim: '11221068',
-        angkatan: '2022',
-        roleTab: 'uji',
-        judul: 'Peramalan Kuantitas Penjualan Harian Produk Retail Menggunakan Hybrid ARIMA-LSTM',
-        statusBerkas: 'Berkas Valid',
-        persetujuan: 'Disetujui Pembimbing',
-        bentukTa: 'Reguler',
-        nilai: null,
-        revisi: 'Tidak Ada',
-        penguji1: 'Dr. Budi Wicaksono, M.Kom.',
-        penguji1MatchScore: 98,
-        penguji2: 'Nisa Rizqiya Fadhliana, S.Kom., M.T.',
-        hari: 'Senin',
-        tanggal: '28 Sep 2026',
-        mulai: '10:45',
-        selesai: '12:15',
-        files: [
-            { name: 'Proposal_ARIMA_LSTM_Retail.pdf' },
-            { name: 'Turnitin_Report_21%.pdf' },
-        ],
-    },
-    {
-        id: 6,
-        nama: 'MUHAMMAD RAIHAN',
-        nim: '11211030',
-        angkatan: '2021',
-        roleTab: 'uji',
-        judul: 'ANALISIS KERENTANAN APLIKASI WEB PORTAL KAMPUS DENGAN METODE OWASP TOP 10',
-        statusBerkas: 'Berkas Valid',
-        persetujuan: 'Disetujui Pembimbing',
-        bentukTa: 'Reguler',
-        nilai: null,
-        revisi: 'Tidak Ada',
-        penguji1: 'Ahmad Faisal Ridwan, Ph.D.',
-        penguji1MatchScore: 95,
-        penguji2: 'Rizki Pratama Nugraha, M.Han.',
-        hari: 'Senin',
-        tanggal: '28 Sep 2026',
-        mulai: '09:00',
-        selesai: '10:30',
-        files: [
-            { name: 'OWASP_Campus_Security_Proposal.pdf' },
-            { name: 'Bukti_Turnitin_15%.pdf' },
-        ],
-    },
-];
-
 const studentsList = ref<SemproStudentItem[]>([]);
 
 // Integrate real backend data if present
@@ -287,7 +135,11 @@ watch(
                         nama: item.mahasiswa?.name || 'Mahasiswa ' + (idx + 1),
                         nim: item.mahasiswa?.nim_nip || '—',
                         angkatan: String(angk),
-                        roleTab: idx % 2 === 0 ? 'bimbingan' : 'uji',
+                        roleTab:
+                            item.penguji1 === authUser.value?.name ||
+                            item.penguji2 === authUser.value?.name
+                                ? 'uji'
+                                : 'bimbingan',
                         judul:
                             item.judul_ta ||
                             item.judul ||
@@ -400,15 +252,10 @@ const ujiCount = computed(
 );
 
 // Attendance confirmation per student ID (grounding the Dosen Penguji status)
-const confirmedAttendance = ref<Record<number, boolean>>({
-    1: true,
-    4: true,
-});
+const confirmedAttendance = ref<Record<number, boolean>>({});
 
 // Active reschedule requests per student ID
-const rescheduledStudents = ref<Record<number, boolean>>({
-    2: true,
-});
+const rescheduledStudents = ref<Record<number, boolean>>({});
 
 // 4 KPI Summary Counts (Harmonized with Sidang TA)
 const totalSemproCount = computed(() => displayStudentsList.value.length);

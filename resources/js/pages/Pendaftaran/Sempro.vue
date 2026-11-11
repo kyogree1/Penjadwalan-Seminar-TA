@@ -39,6 +39,7 @@ interface Props {
         judul_ta?: string;
         bentuk_ta?: string;
         lokasi_mitra?: string;
+        skor_iaet?: number | string | null;
         status?: string;
         lembar_kehadiran_file?: string;
         proposal_file?: string;
@@ -109,12 +110,12 @@ const fileErrors = ref<Partial<Record<FileField, string>>>({});
 
 const form = useForm({
     judul_ta: props.sempro?.judul_ta || props.defaultJudul || '',
-    bentuk_ta: props.sempro?.bentuk_ta || '',
+    bentuk_ta: props.sempro?.bentuk_ta || 'Skripsi',
     lembar_kehadiran_file: null as File | null,
     proposal_file: null as File | null,
     turnitin_file: null as File | null,
     lokasi_mitra: props.sempro?.lokasi_mitra || '',
-    skor_iaet: '' as number | '',
+    skor_iaet: (props.sempro?.skor_iaet ?? '') as number | '',
 });
 
 const riwayatPendaftaran = computed(() => {
@@ -166,8 +167,9 @@ watch(
     () => [props.sempro, props.defaultJudul] as const,
     ([record, title]) => {
         form.judul_ta = record?.judul_ta ?? title ?? '';
-        form.bentuk_ta = record?.bentuk_ta ?? '';
+        form.bentuk_ta = record?.bentuk_ta || 'Skripsi';
         form.lokasi_mitra = record?.lokasi_mitra ?? '';
+        form.skor_iaet = (record?.skor_iaet ?? '') as number | '';
     },
 );
 const statusLabel = computed(() => {
@@ -326,10 +328,6 @@ const submitSempro = () => {
         >
             {{ error }}
         </p>
-        <p class="text-sm text-slate-500">
-            Skor IAET numerik tidak disimpan oleh kontrak saat ini. Identitas
-            tim dosen belum tersedia pada halaman pendaftaran.
-        </p>
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
                 <DosenTeamSection
@@ -373,15 +371,23 @@ const submitSempro = () => {
                             <div
                                 class="border-t border-slate-200/60 pt-2 dark:border-slate-800/60"
                             >
-                                <span
-                                    class="font-bold text-slate-700 dark:text-slate-300"
-                                    >Bentuk TA:</span
+                                <label
+                                    for="bentuk_ta"
+                                    class="block font-bold text-slate-700 dark:text-slate-300"
                                 >
-                                <p
-                                    class="mt-0.5 text-slate-800 dark:text-slate-200"
+                                    Bentuk TA:
+                                    <span class="text-rose-500">*</span>
+                                </label>
+                                <select
+                                    id="bentuk_ta"
+                                    v-model="form.bentuk_ta"
+                                    :disabled="!canEdit"
+                                    class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                                 >
-                                    {{ form.bentuk_ta || 'Skripsi' }}
-                                </p>
+                                    <option value="Skripsi">Skripsi</option>
+                                    <option value="Proyek">Proyek Akhir</option>
+                                    <option value="Prototipe">Karya Desain / Rancang Bangun</option>
+                                </select>
                             </div>
                         </div>
 
@@ -538,14 +544,12 @@ const submitSempro = () => {
                             <input
                                 id="skor_iaet"
                                 v-model.number="form.skor_iaet"
-                                disabled
-                                title="Skor numerik belum memiliki kontrak penyimpanan"
                                 type="number"
                                 min="0"
                                 step="any"
                                 :readonly="!canEdit"
                                 placeholder="Masukkan skor IAET"
-                                class="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                             />
                             <p
                                 v-if="!isIaetValid"

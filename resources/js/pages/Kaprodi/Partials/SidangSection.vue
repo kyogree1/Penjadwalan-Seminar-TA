@@ -110,98 +110,6 @@ const activeSubtab = ref<'bimbingan' | 'uji'>('bimbingan');
 const filterAngkatan = ref<string>('all');
 const searchQuery = ref<string>('');
 
-// Default Demo Dataset for Sidang TA
-const defaultSidangStudents: SidangStudentItem[] = [
-    {
-        id: 1,
-        nama: 'Riyo Rizky Prayogi',
-        nim: '11201085',
-        angkatan: '2020',
-        subtab: 'bimbingan',
-        judul: 'Pembangunan RESTful API Penjadwalan Sidang dengan Rate Limiting dan Caching Redis Berperforma Tinggi',
-        statusBerkas: 'Selesai Validasi',
-        persetujuan: 'Disetujui Pembimbing',
-        nilai: 'A',
-        revisi: 'Perbaiki lampiran kueri Redis',
-        penguji1: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
-        penguji2: 'Dr. Budi Wicaksono, M.Kom.',
-        tanggal: 'Senin, 05 Okt 2026',
-        waktu: '09:00 - 10:30',
-        ruang: 'Lab. Komputasi Cerdas 2',
-        files: [
-            { name: 'Naskah_Lengkap_Skripsi_11201085.pdf' },
-            { name: 'Hasil_Cek_Plagiasi_Turnitin_14%.pdf' },
-            { name: 'Lembar_Persetujuan_Sidang_Pembimbing.pdf' },
-            { name: 'Transkrip_Nilai_IAET_520.pdf' },
-        ],
-    },
-    {
-        id: 2,
-        nama: 'Muhammad Azka Yunastio',
-        nim: '11231036',
-        angkatan: '2023',
-        subtab: 'bimbingan',
-        judul: 'Penerapan Algoritma Genetika dan Large Language Model pada Sistem Penjadwalan Seminar Tugas Akhir',
-        statusBerkas: 'Menunggu Validasi',
-        persetujuan: 'Menunggu Persetujuan',
-        nilai: '',
-        revisi: '',
-        penguji1: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
-        penguji2: 'Rian Kurniawan, S.Kom., M.Eng.',
-        tanggal: 'Rabu, 07 Okt 2026',
-        waktu: '10:30 - 12:00',
-        ruang: 'Ruang Sidang FSTI 1',
-        files: [
-            { name: 'Draf_Lengkap_Bab_1-5_11231036.pdf' },
-            { name: 'Sertifikat_Turnitin_11%.pdf' },
-            { name: 'Formulir_Bimbingan_8_Sesi.pdf' },
-        ],
-    },
-    {
-        id: 3,
-        nama: 'Ahmad Iqbal Fadhillah',
-        nim: '11191004',
-        angkatan: '2019',
-        subtab: 'uji',
-        judul: 'Rancang Bangun Sistem Informasi Geografis Pemetaan Fasilitas Kampus Berbasis Web 3D',
-        statusBerkas: 'Selesai Validasi',
-        persetujuan: 'Disetujui Pembimbing',
-        nilai: 'AB',
-        revisi: 'Lengkapi dokumentasi API',
-        penguji1: 'Nisa Rizqiya Fadhliana, S.Kom., M.T.',
-        penguji2: 'Dian Permata Sari, S.Kom., M.Kom.',
-        tanggal: 'Selasa, 06 Okt 2026',
-        waktu: '13:30 - 15:00',
-        ruang: 'Lab. Rekayasa Perangkat Lunak',
-        files: [
-            { name: 'Skripsi_Final_Ahmad_Iqbal.pdf' },
-            { name: 'Turnitin_Plagiasi_15%.pdf' },
-            { name: 'Logbook_Bimbingan.pdf' },
-        ],
-    },
-    {
-        id: 4,
-        nama: 'Andriani Fenny Maulidha',
-        nim: '11191009',
-        angkatan: '2019',
-        subtab: 'uji',
-        judul: 'Implementasi Algoritma Naive Bayes untuk Klasifikasi Sentimen Ulasan Pengguna Aplikasi E-Commerce',
-        statusBerkas: 'Selesai Validasi',
-        persetujuan: 'Disetujui Pembimbing',
-        nilai: 'A',
-        revisi: 'Sudah Bebas Revisi',
-        penguji1: 'Nisa Rizqiya Fadhliana, S.Kom., M.T.',
-        penguji2: 'Rian Kurniawan, S.Kom., M.Eng.',
-        tanggal: 'Kamis, 08 Okt 2026',
-        waktu: '09:00 - 10:30',
-        ruang: 'Ruang Sidang FSTI 2',
-        files: [
-            { name: 'Naskah_Skripsi_Fenny_11191009.pdf' },
-            { name: 'Turnitin_Similarity_12%.pdf' },
-        ],
-    },
-];
-
 const studentsList = ref<SidangStudentItem[]>([]);
 
 // Hydrate from DB props if present
@@ -221,7 +129,11 @@ watch(
                             `Mahasiswa Sidang ${idx + 1}`,
                         nim: item.nim || item.mahasiswa?.nim_nip || `—`,
                         angkatan: item.angkatan || '2023',
-                        subtab: idx % 2 === 0 ? 'bimbingan' : 'uji',
+                        subtab:
+                            item.penguji1 === currentUserName.value ||
+                            item.penguji2 === currentUserName.value
+                                ? 'uji'
+                                : 'bimbingan',
                         judul:
                             item.judul ||
                             item.judul_ta ||
@@ -319,15 +231,10 @@ const ujiCount = computed(
 );
 
 // Attendance confirmation per student ID (grounding the Dosen Penguji status)
-const confirmedAttendance = ref<Record<number, boolean>>({
-    1: true,
-    3: true,
-});
+const confirmedAttendance = ref<Record<number, boolean>>({});
 
 // Active reschedule requests per student ID
-const rescheduledStudents = ref<Record<number, boolean>>({
-    2: true,
-});
+const rescheduledStudents = ref<Record<number, boolean>>({});
 
 // KPI Summary counts
 const totalSidangCount = computed(() => displayStudentsList.value.length);

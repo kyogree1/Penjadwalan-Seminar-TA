@@ -37,246 +37,12 @@ const activeSection = ref<Section>('judul');
 const page = usePage();
 const currentUser = computed(() => (page.props as any).auth?.user);
 
-// Dynamic demo dataset strictly respecting the 3 conditions and user as supervisor
-const getDemoJudulListForUser = (user: any): JudulReview[] => {
-    const currentId = user?.id || 5;
-    const currentName = user?.name || 'Dra. Nurul Rahmania, M.T.';
-
-    return [
-        {
-            id: 100,
-            mahasiswa: {
-                id: 9,
-                name: 'Fajar Nugraha',
-                nim_nip: '11231045',
-                angkatan: '2023',
-            },
-            judul_ta:
-                'Implementasi Federative Learning pada Sistem Deteksi Penyakit Tanaman Padi',
-            bidang_penelitian: 'Artificial Intelligence & Machine Learning',
-            status: 'menunggu',
-            pembimbing_1_id: currentId,
-            pembimbing_2_id: 2,
-            pembimbing1: { id: currentId, name: currentName },
-            pembimbing2: {
-                id: 2,
-                name: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
-            },
-            catatan_kaprodi:
-                'Usulan judul baru, menunggu review calon pembimbing.',
-            abstrak:
-                'Penerapan federated learning untuk melatih model deteksi penyakit tanaman padi secara terdistribusi tanpa mengumpulkan data mentah ke server pusat.',
-            created_at: '2026-10-18T09:00:00Z',
-        },
-        {
-            id: 101,
-            mahasiswa: {
-                id: 1,
-                name: 'Akmal Falah Maulana',
-                nim_nip: '11231006',
-                angkatan: '2023',
-            },
-            judul_ta:
-                'Rancang Bangun Frontend Dashboard Monitoring Progres Bimbingan Tugas Akhir Menggunakan Progressive Web Apps',
-            bidang_penelitian: 'Human-Computer Interaction & Software Eng.',
-            status: 'menunggu',
-            pembimbing_1_id: currentId,
-            pembimbing_2_id: 2,
-            pembimbing1: { id: currentId, name: currentName },
-            pembimbing2: {
-                id: 2,
-                name: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
-            },
-            catatan_kaprodi:
-                'Menunggu telaah awal calon pembimbing tugas akhir.',
-            abstrak:
-                'Penerapan Progressive Web Apps (PWA) dan caching cerdas pada frontend dashboard monitoring tugas akhir mahasiswa untuk aksesibilitas tinggi di piranti bergerak.',
-            created_at: '2026-09-18T13:45:00Z',
-        },
-        {
-            id: 102,
-            mahasiswa: {
-                id: 2,
-                name: 'Bagus Setiawan',
-                nim_nip: '11211018',
-                angkatan: '2021',
-            },
-            judul_ta:
-                'Implementasi NLP dan Named Entity Recognition untuk Ekstraksi Otomatis Dokumen Skripsi',
-            bidang_penelitian: 'Artificial Intelligence & NLP',
-            status: 'menunggu',
-            pembimbing_1_id: 19,
-            pembimbing_2_id: currentId,
-            pembimbing1: {
-                id: 19,
-                name: 'Dian Permata Sari, S.Kom., M.Kom.',
-            },
-            pembimbing2: { id: currentId, name: currentName },
-            catatan_kaprodi: 'Dalam antrean telaah oleh calon pembimbing.',
-            abstrak:
-                'Penerapan IndoBERT untuk ekstraksi otomatis informasi metrik, pembimbing, dan luaran dari repositori skripsi mahasiswa.',
-            created_at: '2026-09-30T14:20:00Z',
-        },
-        {
-            id: 103,
-            mahasiswa: {
-                id: 3,
-                name: 'Kevin Julio Alexander',
-                nim_nip: '11221045',
-                angkatan: '2022',
-            },
-            judul_ta:
-                'Pengembangan Sistem Deteksi Intrusi Jaringan Berbasis Deep Learning dan Packet Inspection',
-            bidang_penelitian: 'Keamanan Siber & Jaringan',
-            status: 'menunggu',
-            pembimbing_1_id: currentId,
-            pembimbing_2_id: 20,
-            pembimbing1: { id: currentId, name: currentName },
-            pembimbing2: {
-                id: 20,
-                name: 'Rian Kurniawan, S.Kom., M.Eng.',
-            },
-            catatan_kaprodi:
-                'Pengajuan usulan judul baru dari mahasiswa, menunggu review kelayakan dan metodologi.',
-            abstrak:
-                'Deteksi intrusi jaringan skala kampus menggunakan algoritma deep learning CNN-LSTM pada header packet inspection secara real-time.',
-            created_at: '2026-10-01T08:15:00Z',
-        },
-        {
-            id: 104,
-            mahasiswa: {
-                id: 4,
-                name: 'Mochammad Reezqi Pratama',
-                nim_nip: '11231041',
-                angkatan: '2023',
-            },
-            judul_ta:
-                'Optimasi Alokasi Dosen Penguji Ujian Skripsi dengan Pendekatan Constraint Satisfaction Problem dan Algoritma Genetika',
-            bidang_penelitian: 'Computational Intelligence & Optimasi',
-            status: 'revisi',
-            pembimbing_1_id: 18,
-            pembimbing_2_id: currentId,
-            pembimbing1: {
-                id: 18,
-                name: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
-            },
-            pembimbing2: { id: currentId, name: currentName },
-            catatan_kaprodi:
-                'Perjelas batas waktu optimasi penjadwalan dan parameter mutasi pada bab metodologi.',
-            abstrak:
-                'Eksperimen tuning hyperparameter mutation rate dan crossover rate untuk mencari konvergensi fitness tercepat pada penjadwalan sidang.',
-            created_at: '2026-09-20T11:00:00Z',
-        },
-        {
-            id: 105,
-            mahasiswa: {
-                id: 5,
-                name: 'Junnior Marcellino Polla',
-                nim_nip: '11231034',
-                angkatan: '2023',
-            },
-            judul_ta:
-                'Rancang Bangun Arsitektur Microservices dan Keamanan Data pada Portal Layanan Ujian Tugas Akhir',
-            bidang_penelitian: 'Cloud Computing & Cyber Security',
-            status: 'revisi',
-            pembimbing_1_id: currentId,
-            pembimbing_2_id: 21,
-            pembimbing1: { id: currentId, name: currentName },
-            pembimbing2: {
-                id: 21,
-                name: 'Dr. Budi Wicaksono, M.Kom.',
-            },
-            catatan_kaprodi:
-                'Perjelas studi kasus pembanding dan batasan pengujian keamanan sistem pada bagian latar belakang.',
-            abstrak:
-                'Membahas perancangan backend REST API dengan autentikasi JWT dan enkripsi data sensitif dokumen tugas akhir mahasiswa.',
-            created_at: '2026-09-22T10:15:00Z',
-        },
-        {
-            id: 106,
-            mahasiswa: {
-                id: 6,
-                name: 'Muhammad Azka Yunastio',
-                nim_nip: '11231036',
-                angkatan: '2023',
-            },
-            judul_ta:
-                'Penerapan Algoritma Genetika dan Large Language Model pada Sistem Penjadwalan Seminar Tugas Akhir',
-            bidang_penelitian: 'Artificial Intelligence & NLP',
-            status: 'disetujui',
-            pembimbing_1_id: currentId,
-            pembimbing_2_id: 18,
-            pembimbing1: { id: currentId, name: currentName },
-            pembimbing2: {
-                id: 18,
-                name: 'Ahmad Faisal Ridwan, S.Kom., M.Kom., Ph.D.',
-            },
-            catatan_kaprodi:
-                'Topik penelitian sangat relevan dan metodologi sudah matang. Disetujui.',
-            abstrak:
-                'Rancang bangun sistem penjadwalan seminar tugas akhir otomatis dengan representasi kromosom GA dan asisten chatbot terintegrasi pedoman akademik.',
-            created_at: '2026-09-28T08:00:00Z',
-        },
-        {
-            id: 107,
-            mahasiswa: {
-                id: 7,
-                name: 'Hari Yatun Nasifa',
-                nim_nip: '11231030',
-                angkatan: '2023',
-            },
-            judul_ta:
-                'Pengembangan Antarmuka Sistem Informasi Akademik Tugas Akhir Berbasis Desain Komponen Reusable dan Responsif',
-            bidang_penelitian: 'Human-Computer Interaction & Software Eng.',
-            status: 'disetujui',
-            pembimbing_1_id: 2,
-            pembimbing_2_id: currentId,
-            pembimbing1: {
-                id: 2,
-                name: 'Dr. Ir. Tejo Wahyu Susanto, S.T., M.Kom.',
-            },
-            pembimbing2: { id: currentId, name: currentName },
-            catatan_kaprodi:
-                'Topik disetujui. Lanjutkan persiapan Bab 1-3 untuk Seminar Proposal.',
-            abstrak:
-                'Fokus pada rancang bangun UI/UX web modern berbasis Vue 3 dan Tailwind CSS untuk mempermudah pemantauan alur sidang TA mahasiswa secara real-time dan ramah pengguna.',
-            created_at: '2026-09-25T09:30:00Z',
-        },
-        {
-            id: 108,
-            mahasiswa: {
-                id: 8,
-                name: 'Putri Ayu Wandira',
-                nim_nip: '11211052',
-                angkatan: '2021',
-            },
-            judul_ta:
-                'Sistem Rekomendasi Pemilihan Topik Skripsi Menggunakan Content-Based Filtering dan Analisis Minat Bakat',
-            bidang_penelitian: 'Sistem Cerdas & Rekomendasi',
-            status: 'disetujui',
-            pembimbing_1_id: 19,
-            pembimbing_2_id: currentId,
-            pembimbing1: {
-                id: 19,
-                name: 'Dian Permata Sari, S.Kom., M.Kom.',
-            },
-            pembimbing2: { id: currentId, name: currentName },
-            catatan_kaprodi:
-                'Topik penelitian sangat bagus dan metodologi filtering sesuai. Disetujui.',
-            abstrak:
-                'Algoritma Cosine Similarity dan TF-IDF untuk mencocokkan riwayat mata kuliah peminatan mahasiswa dengan topik riset dosen.',
-            created_at: '2026-09-29T11:20:00Z',
-        },
-    ];
-};
-
-// Reactive judul dataset: jika props.dbJudul memiliki data, gunakan props.dbJudul;
-// jika kosong (misal akun login belum memiliki data bimbingan di DB), sediakan demo dataset otomatis
+// Reactive judul dataset: strictly use props.dbJudul from backend
 const resolveInitialJudulList = (): JudulReview[] => {
-    if (Array.isArray(props.dbJudul) && props.dbJudul.length > 0) {
+    if (Array.isArray(props.dbJudul)) {
         return JSON.parse(JSON.stringify(props.dbJudul));
     }
-    return getDemoJudulListForUser(currentUser.value);
+    return [];
 };
 
 const judulList = ref<JudulReview[]>(resolveInitialJudulList());
@@ -284,10 +50,10 @@ const judulList = ref<JudulReview[]>(resolveInitialJudulList());
 watch(
     () => props.dbJudul,
     (val) => {
-        if (Array.isArray(val) && val.length > 0) {
+        if (Array.isArray(val)) {
             judulList.value = JSON.parse(JSON.stringify(val));
         } else {
-            judulList.value = getDemoJudulListForUser(currentUser.value);
+            judulList.value = [];
         }
     },
     { deep: true },
@@ -628,8 +394,12 @@ const saveDecision = () => {
     const item = selectedJudul.value;
     if (!item || saving.value) return;
 
-    // Untuk item demo (id > 100), perbarui state lokal langsung tanpa perlu patch server
-    if (item.id > 100) {
+    const isRealDb =
+        Array.isArray(props.dbJudul) &&
+        props.dbJudul.some((d: any) => d.id === item.id);
+
+    // Untuk item demo statis (ketika tidak ada data di DB), perbarui state lokal langsung tanpa perlu patch server
+    if (!isRealDb && (!props.dbJudul || props.dbJudul.length === 0)) {
         const foundIndex = judulList.value.findIndex((j) => j.id === item.id);
         if (foundIndex !== -1) {
             judulList.value[foundIndex] = {
@@ -654,7 +424,7 @@ const saveDecision = () => {
         catatan_kaprodi: reviewNote.value.trim() || null,
     };
 
-    router.patch(`/kaprodi/persetujuan/judul/${item.id}`, payload, {
+    router.patch(`/persetujuan/judul/${item.id}`, payload, {
         preserveScroll: true,
         onSuccess: (page) => {
             const flash = page.props.flash as {
@@ -711,8 +481,12 @@ const executeDeleteJudul = () => {
     if (!item || saving.value) return;
     const studentName = getStudentName(item);
 
-    // Untuk item demo (id > 100), hapus dari list lokal langsung
-    if (item.id > 100) {
+    const isRealDb =
+        Array.isArray(props.dbJudul) &&
+        props.dbJudul.some((d: any) => d.id === item.id);
+
+    // Untuk item demo statis, hapus dari list lokal langsung
+    if (!isRealDb && (!props.dbJudul || props.dbJudul.length === 0)) {
         judulList.value = judulList.value.filter((j) => j.id !== item.id);
         if (selectedJudulId.value === item.id) {
             selectedJudulId.value = filteredJudulList.value[0]?.id ?? null;
@@ -724,7 +498,7 @@ const executeDeleteJudul = () => {
     }
 
     saving.value = true;
-    router.delete(`/kaprodi/persetujuan/judul/${item.id}`, {
+    router.delete(`/persetujuan/judul/${item.id}`, {
         preserveScroll: true,
         onSuccess: (page) => {
             showDeleteJudulModal.value = false;

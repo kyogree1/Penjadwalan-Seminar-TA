@@ -72,4 +72,18 @@ class MahasiswaBackendTest extends TestCase
             'status' => 'process',
         ]);
     }
+
+    public function test_skor_iaet_melebihi_batas_ditolak_validasi(): void
+    {
+        $mahasiswa = \App\Models\User::factory()->create(['role' => 'mahasiswa']);
+        \App\Models\SchedulePeriod::create(['name' => 'Open wave', 'tipe' => 'sempro', 'gelombang' => 99, 'capacity' => 10, 'start_date' => '2026-11-01', 'end_date' => '2026-11-02', 'slots' => [], 'is_open' => true]);
+
+        $response = $this->actingAs($mahasiswa)->post('/pendaftaran/sempro', [
+            'judul_ta' => 'Judul Uji Coba IAET',
+            'bentuk_ta' => 'Skripsi',
+            'skor_iaet' => 999999,
+        ]);
+
+        $response->assertSessionHasErrors('skor_iaet');
+    }
 }

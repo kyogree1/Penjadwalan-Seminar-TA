@@ -181,8 +181,9 @@ const validationErrors = computed(() => ({
         form.skor_iaet === '' || form.skor_iaet === null
             ? 'Skor IAET wajib diisi.'
             : !Number.isFinite(Number(form.skor_iaet)) ||
-                Number(form.skor_iaet) < 0
-              ? 'Skor IAET harus berupa angka nol atau lebih.'
+                Number(form.skor_iaet) < 0 ||
+                Number(form.skor_iaet) > 677
+              ? 'Skor IAET harus berupa angka antara 0 hingga 677.'
               : '',
 }));
 const isFormValid = computed(() =>
@@ -206,13 +207,14 @@ const submitSidang = () => {
         form.skor_iaet === '' ||
         form.skor_iaet === null ||
         !Number.isFinite(Number(form.skor_iaet)) ||
-        Number(form.skor_iaet) < 0
+        Number(form.skor_iaet) < 0 ||
+        Number(form.skor_iaet) > 677
     ) {
         form.setError(
             'skor_iaet',
             form.skor_iaet === '' || form.skor_iaet === null
                 ? 'Skor IAET wajib diisi.'
-                : 'Skor IAET harus berupa angka nol atau lebih.',
+                : 'Skor IAET harus berupa angka antara 0 hingga 677.',
         );
         return;
     }
@@ -270,10 +272,6 @@ const submitSidang = () => {
         >
             {{ error }}
         </p>
-        <p class="text-sm text-slate-500">
-            Skor IAET numerik tidak disimpan oleh kontrak saat ini. Identitas
-            tim dosen belum tersedia pada halaman pendaftaran.
-        </p>
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
                 <!-- Dosen Pembimbing & Penguji (Reusable Component) -->
@@ -329,7 +327,7 @@ const submitSidang = () => {
                                 type="text"
                                 inputmode="numeric"
                                 pattern="[0-9]*"
-                                placeholder="Masukkan skor IAET (contoh: 450)"
+                                placeholder="Masukkan skor IAET (contoh: 450, maks 677)"
                                 class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                                 :aria-invalid="
                                     !!form.errors.skor_iaet ||

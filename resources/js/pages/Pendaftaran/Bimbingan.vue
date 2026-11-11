@@ -70,7 +70,7 @@ interface BimbinganLog {
     dosen: string;
     rangkuman: string;
     keterangan: string;
-    metode: 'online' | 'offline' | 'unavailable';
+    metode: 'online' | 'offline';
     tindakLanjut?: string;
     status: 'draft' | 'diajukan' | 'disetujui' | 'revisi' | 'ditolak';
     createdAt: string;
@@ -92,13 +92,17 @@ const parseInitialLogs = (): BimbinganLog[] => {
             else if (item.status === 'process') mappedStatus = 'diajukan';
             else if (item.status === 'ditolak') mappedStatus = 'ditolak';
 
+            const isOnline =
+                item.keterangan?.toLowerCase().includes('daring') ||
+                item.keterangan?.toLowerCase().includes('online');
+
             return {
                 id: item.id,
                 tanggal: item.tanggal,
                 dosen: dosenName,
                 rangkuman: item.rangkuman,
                 keterangan: item.keterangan,
-                metode: 'unavailable',
+                metode: isOnline ? 'online' : 'offline',
                 tindakLanjut: item.catatan_dosen || undefined,
                 status: mappedStatus,
                 createdAt: item.created_at || item.tanggal,
@@ -175,7 +179,22 @@ const submitBimbingan = () => {
         return;
 
     requestError.value = '';
-    form.post('/pendaftaran/bimbingan', {
+    form.transform((data) => ({
+        ...data,
+        keterangan:
+            data.metode === 'online'
+                ? data.keterangan.toLowerCase().includes('daring') ||
+                  data.keterangan.toLowerCase().includes('online')
+                    ? data.keterangan
+                    : `[Daring] ${data.keterangan}`
+                : data.keterangan.toLowerCase().includes('tatap muka') ||
+                    data.keterangan.toLowerCase().includes('offline')
+                  ? data.keterangan
+                  : `[Tatap Muka] ${data.keterangan}`,
+        rangkuman: data.tindakLanjut?.trim()
+            ? `${data.rangkuman.trim()}\n\n[Target / Tindak Lanjut]: ${data.tindakLanjut.trim()}`
+            : data.rangkuman.trim(),
+    })).post('/pendaftaran/bimbingan', {
         preserveScroll: true,
         onSuccess: (response) => {
             const flash = response.props.flash as
@@ -441,10 +460,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                                     :class="[
                                         item.metode === 'online'
                                             ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
-                                            : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+                                            : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
                                     ]"
                                 >
-                                    {{ 'Metode belum tersedia' }}
+                                    {{
+                                        item.metode === 'online'
+                                            ? 'Daring'
+                                            : 'Tatap Muka'
+                                    }}
                                 </span>
                             </td>
                             <td class="px-3 py-3.5 text-center">
@@ -702,11 +725,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                             >
                             <div class="flex gap-3">
                                 <label
-                                    class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300"
+                                    class="flex cursor-pointer items-center gap-2 text-xs text-slate-700 dark:text-slate-300"
                                 >
                                     <input
                                         v-model="form.metode"
-                                        disabled
                                         type="radio"
                                         value="online"
                                         class="h-3 w-3 text-blue-600 focus:ring-blue-500"
@@ -714,11 +736,10 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                                     Daring
                                 </label>
                                 <label
-                                    class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300"
+                                    class="flex cursor-pointer items-center gap-2 text-xs text-slate-700 dark:text-slate-300"
                                 >
                                     <input
                                         v-model="form.metode"
-                                        disabled
                                         type="radio"
                                         value="offline"
                                         class="h-3 w-3 text-blue-600 focus:ring-blue-500"
@@ -741,7 +762,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                                 type="text"
                                 placeholder='Contoh: "Ruang Dosen Gedung A" atau "Google Meet"'
                                 required
-                                class="w-full rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-800 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                             />
                         </div>
 
@@ -754,10 +775,9 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                             <textarea
                                 id="logbook-tindakLanjut"
                                 v-model="form.tindakLanjut"
-                                disabled
                                 rows="2"
                                 placeholder="Langkah yang akan dilakukan sebelum bimbingan berikutnya (opsional)"
-                                class="w-full rounded-xl border border-slate-300 bg-slate-50/50 p-3 text-xs text-slate-800 focus:border-blue-500 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                                class="w-full rounded-xl border border-slate-300 bg-white p-3 text-xs text-slate-800 focus:border-blue-500 focus:outline-hidden dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                             />
                         </div>
 
@@ -863,7 +883,11 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                                 <p
                                     class="mt-1 text-sm text-slate-900 dark:text-white"
                                 >
-                                    {{ 'Metode belum tersedia' }}
+                                    {{
+                                        selectedLog.metode === 'online'
+                                            ? 'Daring'
+                                            : 'Tatap Muka'
+                                    }}
                                 </p>
                             </div>
                             <div>
