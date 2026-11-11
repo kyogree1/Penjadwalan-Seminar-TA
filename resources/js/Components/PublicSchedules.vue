@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import CompactCalendar from '@/Components/CompactCalendar.vue';
 import WeekSelector from '@/Components/WeekSelector.vue';
 import WeeklyAgendaList from '@/Components/WeeklyAgendaList.vue';
@@ -15,20 +15,20 @@ import {
     X,
 } from 'lucide-vue-next';
 
-interface ScheduleItem {
+export interface ScheduleItem {
     student_name: string | null;
     title: string | null;
     type: 'sempro' | 'sidang';
     date: string;
     start_time: string;
     end_time: string;
-    room: string | null;
+    room?: string | null;
     mode: 'offline' | 'online' | 'hybrid';
     supervisors: string[];
     examiners: string[];
 }
 
-interface PeriodItem {
+export interface PeriodItem {
     id: number | string;
     name: string;
     type: 'sempro' | 'sidang';
@@ -49,8 +49,38 @@ const props = withDefaults(
 );
 
 const today = new Date();
-const currentMonthDate = ref(
-    new Date(today.getFullYear(), today.getMonth(), 1),
+const getInitialMonth = () => {
+    if (props.schedules && props.schedules.length > 0) {
+        const first = props.schedules[0].date;
+        if (first && first.length >= 7) {
+            const parts = first.split('-');
+            const y = Number(parts[0]);
+            const m = Number(parts[1]);
+            if (!Number.isNaN(y) && !Number.isNaN(m)) {
+                return new Date(y, m - 1, 1);
+            }
+        }
+    }
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+};
+
+const currentMonthDate = ref(getInitialMonth());
+
+watch(
+    () => props.schedules,
+    (newSchedules) => {
+        if (newSchedules && newSchedules.length > 0) {
+            const first = newSchedules[0].date;
+            if (first && first.length >= 7) {
+                const parts = first.split('-');
+                const y = Number(parts[0]);
+                const m = Number(parts[1]);
+                if (!Number.isNaN(y) && !Number.isNaN(m)) {
+                    currentMonthDate.value = new Date(y, m - 1, 1);
+                }
+            }
+        }
+    },
 );
 
 // Modal state matching origin/main
@@ -221,9 +251,9 @@ function closeModal() {
                 <div>
                     <h2
                         id="public-schedules-heading"
-                        class="text-xl font-extrabold tracking-tight text-slate-900 uppercase dark:text-white"
+                        class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white"
                     >
-                        JADWAL SEMINAR &amp; SIDANG TERBIT (WITA)
+                        Jadwal Seminar dan Sidang TA
                     </h2>
                     <p
                         class="mt-0.5 text-xs text-slate-500 dark:text-slate-400"
@@ -704,17 +734,9 @@ function closeModal() {
                                         <MapPin
                                             class="h-3.5 w-3.5 shrink-0 text-rose-500"
                                         />
-                                        <span class="font-medium">
-                                            {{
-                                                session.room ??
-                                                (session.mode === 'online'
-                                                    ? 'Online'
-                                                    : 'TBA')
-                                            }}
+                                        <span class="font-medium capitalize">
+                                            {{ session.mode || 'Offline' }}
                                         </span>
-                                        <span class="text-slate-400 capitalize"
-                                            >({{ session.mode }})</span
-                                        >
                                     </div>
 
                                     <div
@@ -976,17 +998,14 @@ function closeModal() {
                                         <div>
                                             <span
                                                 class="block text-[11px] text-slate-400"
-                                                >Ruangan</span
+                                                >Mode Pelaksanaan</span
                                             >
                                             <span
-                                                class="font-semibold text-slate-800 dark:text-slate-200"
+                                                class="font-semibold text-slate-800 capitalize dark:text-slate-200"
                                             >
                                                 {{
-                                                    selectedSchedule.room ??
-                                                    (selectedSchedule.mode ===
-                                                    'online'
-                                                        ? 'Online'
-                                                        : 'TBA')
+                                                    selectedSchedule.mode ||
+                                                    'Offline'
                                                 }}
                                             </span>
                                         </div>

@@ -110,6 +110,7 @@ class ScheduleOptimizer
                     $fits = $fits && $this->available($lecturer, $row) && (! isset($lecturer['capacity']) || $loads[$id] < $lecturer['capacity']);
                 }
                 if ($fits) {
+                    $row['penguji1MatchScore'] = (int) round(($compatibility[$row['pendaftaran_id']][$row['penguji_1_id']] ?? self::NEUTRAL_SCORE) * 100);
                     $schedule[] = $row;
                     foreach ($examiners as $id) {
                         $loads[$id]++;

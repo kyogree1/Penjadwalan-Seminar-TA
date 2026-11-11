@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kaprodi;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\PublicScheduleController;
 use App\Models\Notification;
 use App\Models\PendaftaranSempro;
 use App\Models\PendaftaranSidang;
@@ -27,6 +28,14 @@ class PenjadwalanController extends Controller
         }
 
         return redirect()->route('kaprodi.penjadwalan.plotting-sempro', $request->query());
+    }
+
+    public function jadwalIndex()
+    {
+        return Inertia::render('Kaprodi/Jadwal', [
+            'publicSchedules' => PublicScheduleController::getPublicSchedules(),
+            'publicPeriods' => PublicScheduleController::getPublicPeriods(),
+        ]);
     }
 
     public function plottingSemproIndex(Request $request)
@@ -168,7 +177,7 @@ class PenjadwalanController extends Controller
                         'pembimbing_2' => $s->pembimbing2?->name ?? '-',
                         'penguji_1' => $s->penguji1?->name ?? '-',
                         'penguji_2' => $s->penguji2?->name ?? '-',
-                        'ruangan' => $s->link_online ?? 'Ruang Seminar',
+                        'ruangan' => $s->link_online ?? ($s->mode === 'online' ? 'Online' : 'Offline'),
                         'tanggal' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '-',
                         'jam_mulai' => $s->jam_mulai,
                         'jam_selesai' => $s->jam_selesai,
@@ -229,7 +238,7 @@ class PenjadwalanController extends Controller
                         'pembimbing_2' => $s->pembimbing2?->name ?? '-',
                         'penguji_1' => $s->penguji1?->name ?? '-',
                         'penguji_2' => $s->penguji2?->name ?? '-',
-                        'ruangan' => $s->link_online ?? 'Ruang Sidang',
+                        'ruangan' => $s->link_online ?? ($s->mode === 'online' ? 'Online' : 'Offline'),
                         'tanggal' => $s->tanggal ? $s->tanggal->format('Y-m-d') : '-',
                         'jam_mulai' => $s->jam_mulai,
                         'jam_selesai' => $s->jam_selesai,
@@ -347,7 +356,8 @@ class PenjadwalanController extends Controller
 
             return $row;
         })->all();
-        $result = (new ScheduleOptimizer($data['popSize'] ?? 50, $data['maxGenerations'] ?? 100, $data['crossoverRate'] ?? .8, $data['mutationRate'] ?? .03))->optimize($candidates, $lecturers, $period->slots, $bookings);
+        $compatibility = app(\App\Services\GeneticAlgorithm\RfCompatibilityService::class)->getCompatibility($candidates, $lecturers);
+        $result = (new ScheduleOptimizer($data['popSize'] ?? 50, $data['maxGenerations'] ?? 100, $data['crossoverRate'] ?? .8, $data['mutationRate'] ?? .03))->optimize($candidates, $lecturers, $period->slots, $bookings, $compatibility);
         $result['unscheduled'] = array_merge($result['unscheduled'], $overflow, $excluded);
         if ($result['unscheduled']) {
             $result['outcome'] = $result['schedule'] ? 'partial' : 'infeasible';
@@ -355,7 +365,9 @@ class PenjadwalanController extends Controller
         }
         $result['period_id'] = $period->id;
         $result['limitations'] = [
-            'Skor kecocokan penguji 1 (RF Compatibility Score) belum tersedia; semua pasangan memakai skor netral '.ScheduleOptimizer::NEUTRAL_SCORE.'.',
+            ! empty($compatibility)
+                ? 'Skor kecocokan penguji 1 dihitung dengan model Random Forest (scikit-learn).'
+                : 'Skor kecocokan penguji 1 (RF Compatibility Score) memakai skor netral '.ScheduleOptimizer::NEUTRAL_SCORE.'; model RF tidak aktif.',
             'Ketersediaan waktu dosen belum tersimpan; semua dosen dianggap tersedia di setiap slot.',
             "Kuota menguji dihitung otomatis: maksimal {$quota} kali per dosen pada periode ini.",
         ];
@@ -507,7 +519,7 @@ class PenjadwalanController extends Controller
         foreach ($period->penjadwalan as $jadwal) {
             $studentName = $jadwal->mahasiswa?->name ?? 'Mahasiswa';
             $nim = $jadwal->mahasiswa?->nim_nip ?? '-';
-            $ruangan = $jadwal->link_online ?? 'Ruang Seminar';
+            $ruangan = $jadwal->link_online ?? ($jadwal->mode === 'online' ? 'Online' : 'Offline');
 
             $startStr = $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_mulai;
             $endStr = $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_selesai;
@@ -818,7 +830,7 @@ class PenjadwalanController extends Controller
                 'pembimbing2' => $s->pembimbing2?->name ?? '',
                 'penguji1' => $s->penguji1?->name ?? '-',
                 'penguji1_id' => $s->penguji_1_id,
-                'penguji1MatchScore' => $s->penguji_1_id ? ScheduleOptimizer::NEUTRAL_SCORE : 0,
+                'penguji1MatchScore' => $s->penguji_1_id ? (int) round(ScheduleOptimizer::NEUTRAL_SCORE * 100) : 0,
                 'penguji2' => $s->penguji2?->name ?? '-',
                 'penguji2_id' => $s->penguji_2_id,
                 'hari' => $s->tanggal ? $this->getHariIndonesia((int) $s->tanggal->format('N')) : 'Senin',

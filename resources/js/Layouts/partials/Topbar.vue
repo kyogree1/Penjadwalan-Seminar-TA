@@ -83,6 +83,11 @@ const pageTitle = computed(() => {
     // Rute Kaprodi / Koordinator
     if (path === '/kaprodi/dashboard') return 'Dashboard Kaprodi';
     if (path.startsWith('/kaprodi/persetujuan')) return 'Persetujuan Pengajuan';
+    if (
+        path.startsWith('/kaprodi/jadwal') ||
+        path.startsWith('/koordinator/jadwal')
+    )
+        return 'Jadwal Seminar & Sidang';
     if (path.startsWith('/kaprodi/penjadwalan')) return 'Penjadwalan Ujian';
     if (path.startsWith('/kaprodi/dosen')) return 'Master Data Dosen';
     if (

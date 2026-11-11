@@ -638,7 +638,10 @@ const downloadJadwal = () => {
                     :disabled="isResetting"
                     title="Kosongkan plotting gelombang ini agar siap dioptimasi ulang"
                 >
-                    <RotateCcw class="h-4 w-4" :class="{ 'animate-spin': isResetting }" />
+                    <RotateCcw
+                        class="h-4 w-4"
+                        :class="{ 'animate-spin': isResetting }"
+                    />
                     <span>Reset Plotting</span>
                 </button>
                 <button
@@ -1086,15 +1089,19 @@ const downloadJadwal = () => {
                         />
                         <label
                             for="ga-reset-existing-checkbox"
-                            class="cursor-pointer select-none text-xs"
+                            class="cursor-pointer text-xs select-none"
                         >
                             <span
                                 class="block font-bold text-slate-800 dark:text-slate-100"
-                                >Mode Penjadwalan Ulang (Reset & Regenerasi Penuh)</span
+                                >Mode Penjadwalan Ulang (Reset & Regenerasi
+                                Penuh)</span
                             >
                             <span
                                 class="mt-0.5 block text-[11px] leading-relaxed text-slate-500 dark:text-slate-400"
-                                >Centang opsi ini untuk mengosongkan plotting lama di gelombang ini dan mengikutsertakan kembali seluruh mahasiswa pendaftar yang belum lulus ujian.</span
+                                >Centang opsi ini untuk mengosongkan plotting
+                                lama di gelombang ini dan mengikutsertakan
+                                kembali seluruh mahasiswa pendaftar yang belum
+                                lulus ujian.</span
                             >
                         </label>
                     </div>
@@ -1637,7 +1644,8 @@ const downloadJadwal = () => {
                         <h3
                             class="text-base font-bold text-slate-900 dark:text-white"
                         >
-                            Reset Jadwal Gelombang {{ activePeriod?.gelombang }}?
+                            Reset Jadwal Gelombang
+                            {{ activePeriod?.gelombang }}?
                         </h3>
                         <p
                             class="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400"
@@ -1645,8 +1653,7 @@ const downloadJadwal = () => {
                             Tindakan ini akan membatalkan dan menghapus seluruh
                             jadwal seminar proposal yang sudah ter-plot pada
                             periode
-                            <strong
-                                class="text-slate-700 dark:text-slate-200"
+                            <strong class="text-slate-700 dark:text-slate-200"
                                 >Gelombang {{ activePeriod?.gelombang }} ({{
                                     activePeriod?.semester
                                 }}

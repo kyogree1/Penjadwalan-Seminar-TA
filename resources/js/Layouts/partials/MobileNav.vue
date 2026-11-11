@@ -321,6 +321,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKey));
                             Penjadwalan &amp; Plotting
                         </p>
                         <Link
+                            href="/kaprodi/jadwal"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
+                            @click="emit('close')"
+                        >
+                            <Calendar class="h-4 w-4" /> Jadwal Seminar &amp;
+                            Sidang
+                        </Link>
+                        <Link
                             href="/kaprodi/penjadwalan/plotting-sempro"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:bg-slate-800"
                             @click="emit('close')"

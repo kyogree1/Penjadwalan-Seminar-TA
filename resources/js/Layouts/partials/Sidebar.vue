@@ -70,6 +70,8 @@ const isKaprodiPengajuanActive = computed(
 
 const isKaprodiJadwalActive = computed(
     () =>
+        currentUrl.value.startsWith('/kaprodi/jadwal') ||
+        currentUrl.value.startsWith('/koordinator/jadwal') ||
         currentUrl.value.startsWith('/kaprodi/penjadwalan/plotting') ||
         currentUrl.value.startsWith('/koordinator/penjadwalan/plotting') ||
         ((currentUrl.value.startsWith('/kaprodi/penjadwalan') ||
@@ -1248,6 +1250,18 @@ const handleAccordionClick = (
                             class="mt-1 space-y-1 pl-9"
                         >
                             <Link
+                                href="/kaprodi/jadwal"
+                                class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
+                                :class="[
+                                    currentUrl.startsWith('/kaprodi/jadwal') ||
+                                    currentUrl.startsWith('/koordinator/jadwal')
+                                        ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/40 dark:text-white'
+                                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-200',
+                                ]"
+                            >
+                                Jadwal Seminar &amp; Sidang
+                            </Link>
+                            <Link
                                 href="/kaprodi/penjadwalan/plotting-sempro"
                                 class="block rounded-lg px-2.5 py-1.5 text-xs transition-colors"
                                 :class="[
@@ -1297,6 +1311,25 @@ const handleAccordionClick = (
                                 </span>
                             </div>
                             <div class="space-y-0.5 pt-1.5">
+                                <Link
+                                    href="/kaprodi/jadwal"
+                                    class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"
+                                    :class="
+                                        currentUrl.startsWith(
+                                            '/kaprodi/jadwal',
+                                        ) ||
+                                        currentUrl.startsWith(
+                                            '/koordinator/jadwal',
+                                        )
+                                            ? 'bg-blue-50 font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400'
+                                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
+                                    "
+                                >
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                                    ></span>
+                                    <span>Jadwal Seminar &amp; Sidang</span>
+                                </Link>
                                 <Link
                                     href="/kaprodi/penjadwalan/plotting-sempro"
                                     class="flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-xs transition-colors"

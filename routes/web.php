@@ -22,6 +22,7 @@ use App\Http\Controllers\Mahasiswa\PendaftaranSidangController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PublicScheduleController;
 use App\Http\Controllers\RescheduleController;
 use App\Http\Controllers\Tendik\ArsipController as TendikArsipController;
 use App\Http\Controllers\Tendik\DashboardController as TendikDashboardController;
@@ -34,6 +35,7 @@ Route::get('/', [AuthController::class, 'showLogin'])->name('home');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/jadwal', [PublicScheduleController::class, 'index'])->name('jadwal.public');
 
 Route::middleware('guest')->group(function () {
     Route::get('/forgot-password', [PasswordResetController::class, 'request'])->name('password.request');
@@ -123,6 +125,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/bimbingan', [DosenBimbinganController::class, 'index'])->name('bimbingan');
 
         Route::get('/penjadwalan', [KaprodiPenjadwalanController::class, 'index'])->name('penjadwalan');
+        Route::get('/jadwal', [KaprodiPenjadwalanController::class, 'jadwalIndex'])->name('jadwal');
         Route::get('/penjadwalan/sempro', [KaprodiPenjadwalanController::class, 'semproIndex'])->name('penjadwalan.sempro');
         Route::get('/penjadwalan/ta', [KaprodiPenjadwalanController::class, 'taIndex'])->name('penjadwalan.ta');
         Route::get('/penjadwalan/plotting-sempro', [KaprodiPenjadwalanController::class, 'plottingSemproIndex'])->name('penjadwalan.plotting-sempro');
@@ -176,6 +179,7 @@ Route::middleware('auth')->group(function () {
     // Backward compatibility aliases for /koordinator routes
     Route::middleware('role:kaprodi,koordinator')->prefix('koordinator')->name('koordinator.')->group(function () {
         Route::get('/penjadwalan', fn () => redirect()->route('kaprodi.penjadwalan'))->name('penjadwalan');
+        Route::get('/jadwal', fn () => redirect()->route('kaprodi.jadwal'))->name('jadwal');
         Route::get('/penjadwalan/sempro', fn () => redirect()->route('kaprodi.penjadwalan.sempro'))->name('penjadwalan.sempro');
         Route::get('/penjadwalan/ta', fn () => redirect()->route('kaprodi.penjadwalan.ta'))->name('penjadwalan.ta');
         Route::get('/penjadwalan/plotting-sempro', fn () => redirect()->route('kaprodi.penjadwalan.plotting-sempro'))->name('penjadwalan.plotting-sempro');

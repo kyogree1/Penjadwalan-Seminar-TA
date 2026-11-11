@@ -53,6 +53,8 @@ class ScheduleOptimizerTest extends TestCase
         $this->assertTrue($result['success']);
         $this->assertGreaterThan(0.0, $result['fitness']);
         $this->assertCount(2, $result['schedule']);
+        $this->assertArrayHasKey('penguji1MatchScore', $result['schedule'][0]);
+        $this->assertSame(50, $result['schedule'][0]['penguji1MatchScore']);
         $this->assertNotEmpty($result['logs']);
     }
 

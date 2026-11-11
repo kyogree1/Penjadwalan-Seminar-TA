@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { Eye, EyeOff, GraduationCap, Moon, Sun } from 'lucide-vue-next';
+import {
+    Calendar as CalendarIcon,
+    Eye,
+    EyeOff,
+    GraduationCap,
+    Moon,
+    Sun,
+} from 'lucide-vue-next';
 
 import { useTheme } from '@/composables/useTheme';
 import PublicSchedules from '@/Components/PublicSchedules.vue';
@@ -62,10 +69,18 @@ const submitLogin = () => {
     >
         <Head title="Masuk - SIPTA IF" />
 
-        <!-- Top Header: Theme Toggle -->
+        <!-- Top Header: Jadwal Link & Theme Toggle -->
         <div
-            class="mx-auto flex max-w-7xl justify-end px-4 pt-6 sm:px-6 lg:px-8"
+            class="mx-auto flex max-w-7xl items-center justify-between px-4 pt-6 sm:px-6 lg:px-8"
         >
+            <Link
+                href="/jadwal"
+                class="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+                <CalendarIcon class="h-3.5 w-3.5" />
+                <span>Lihat Jadwal Seminar &amp; Sidang</span>
+            </Link>
+
             <button
                 type="button"
                 class="flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs backdrop-blur-xs transition-all hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-200 dark:hover:bg-slate-800"
@@ -260,6 +275,12 @@ const submitLogin = () => {
                 class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 sm:flex-row"
             >
                 <div class="flex items-center gap-4">
+                    <Link
+                        href="/jadwal"
+                        class="font-semibold hover:text-blue-600"
+                        >Jadwal Publik</Link
+                    >
+                    <span>|</span>
                     <Link href="/panduan" class="hover:text-blue-600"
                         >Panduan Layanan</Link
                     >

@@ -1,21 +1,22 @@
 # Penjadwalan Seminar TA
 
-Laravel 13 + Inertia + Vue 3 + Tailwind 4 + MySQL.
+Sistem Informasi Tugas Akhir & Penjadwalan Seminar / Sidang Informatika ITK.
+Stack: Laravel 13 + Inertia + Vue 3 + Tailwind 4 + MySQL + Python (GA & RF).
 
 ## Syarat
 
 - PHP ^8.3 + Composer + ekstensi `pdo_mysql`
 - Node 22 + npm ≥10
 - MySQL 8 berjalan lokal
+- Python ≥3.10 / [uv](https://docs.astral.sh/uv/) (opsional: inferensi bobot Random Forest untuk GA; fallback netral bila tidak ada)
 
 > Windows: pakai [Laragon](https://laragon.org) (sudah termasuk PHP + Composer + MySQL + HeidiSQL),
 > atau install terpisah: PHP + Composer + Node LTS + MySQL Installer.
 
 ## Setup pertama kali
 
-> Kalau database `seminar_ta` + `seminar_ta_test` dan user `seminar` sudah ada
-> (misal mesin ini dipakai sebelumnya), lewati bagian buat-DB di bawah —
-> langsung ke `composer setup`.
+> Kalau database `seminar_ta` + `seminar_ta_test` dan user `seminar` sudah ada,
+> lewati bagian buat-DB di bawah — langsung ke `composer setup`.
 
 ### Linux
 
@@ -55,26 +56,20 @@ DB_PASSWORD=
 > Catatan Windows: pastikan ekstensi `pdo_mysql` aktif di `php.ini` Laragon (Menu > PHP > Extensions >
 > centang `pdo_mysql`), lalu restart Apache/PHP.
 
-Lalu di terminal (CMD / PowerShell / Git Bash), dari folder proyek:
+Terminal dari folder proyek:
 
 ```bash
 composer setup
 php artisan migrate:fresh --seed
 ```
 
-`composer setup` = install deps + copy `.env` + key + migrate + build. `.env` sudah mengarah ke MySQL (`seminar_ta` / user `seminar` tanpa password, dev lokal saja).
-
-> Setelah setup pernah jalan, migrasi rutin bisa langsung: `php artisan migrate`.
-> Di clone baru `migrate` langsung gagal karena: `vendor/` belum ada, `.env` belum ada,
-> database belum dibuat, atau `pdo_mysql` belum aktif.
+`composer setup` = install deps + copy `.env` + key + migrate + build.
 
 Reset database (hapus semua isi + seed ulang akun demo):
 
 ```bash
 php artisan migrate:fresh --seed
 ```
-
-> Awas: akun yang dibuat manual ikut terhapus — buat ulang setelahnya.
 
 ## Jalan harian
 
@@ -91,26 +86,29 @@ npm install && php artisan migrate
 composer dev
 ```
 
-## Login
+## Akses & Fitur Utama
 
-Wajib pakai akun (tombol quick-login sudah dihapus, login dibatasi 5x/menit).
+- **Jadwal Publik (`/jadwal`)**: Kalender dan agenda terpublikasi tanpa perlu login. Filter Sempro / Sidang, pencarian mahasiswa & dosen, indikator mode Online/Offline.
+- **Portal Koorprodi / Kaprodi (`/kaprodi/jadwal`)**: Monitoring jadwal terpublikasi langsung dari sidebar koordinator, manajemen periode pendaftaran, dan plotting jadwal.
+- **Optimasi GA + Random Forest**: Penjadwalan otomatis via Genetic Algorithm dengan skoring kecocokan kepakaran penguji 1 berbasis model Random Forest (`scripts/rf_compatibility.py`).
 
-| Role      | Username/NIM         | Password   |
-| --------- | -------------------- | ---------- |
-| Mahasiswa | `11231006`           | `password` |
-| Dosen     | `198504122010121003` | `password` |
-| Dosen 2   | `198803152018012001` | `password` |
-| Kaprodi   | `198003152005011002` | `password` |
-| Koorprodi | `koorprodi`          | `password` |
-| Tendik    | `199208192018032001` | `password` |
+## Akun Demo
 
-`migrate:fresh --seed` juga mengisi paket demo alur penuh: judul disetujui →
-bimbingan delivered → sempro terjadwal → periode terbuka → jadwal terpublikasi
-(sebagai penguji: Tejo + Dewi). Jadi halaman Dosen/Penilaian langsung terisi.
+Login dibatasi 5x/menit.
 
-## Cek & test
+| Role      | Username/NIM         | Password   | Keterangan                    |
+| --------- | -------------------- | ---------- | ----------------------------- |
+| Mahasiswa | `11231006`           | `password` | Mahasiswa S1 Informatika      |
+| Dosen     | `198504122010121003` | `password` | Dosen Pembimbing & Penguji    |
+| Dosen 2   | `198803152018012001` | `password` | Dosen Penguji                 |
+| Kaprodi   | `198003152005011002` | `password` | Koordinator Program Studi     |
+| Koorprodi | `koorprodi`          | `password` | Akun alias koordinator        |
+| Tendik    | `199208192018032001` | `password` | Verifikasi berkas pendaftaran |
+
+## Cek & Test
 
 ```bash
-npm run check && npm run types:check
-php artisan test   # pakai DB seminar_ta_test
+npm run check          # Formatter & linter check (vp check)
+npm run types:check    # TypeScript verification (vue-tsc)
+php artisan test       # 219 Pest feature & unit tests (DB seminar_ta_test)
 ```

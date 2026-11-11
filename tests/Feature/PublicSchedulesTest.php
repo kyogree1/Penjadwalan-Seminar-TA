@@ -82,5 +82,8 @@ class PublicSchedulesTest extends TestCase
             $this->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page
                 ->component('Auth/Login')->where('publicSchedules', $expected));
         }
+
+        $this->get('/jadwal')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('Public/Jadwal')->where('publicSchedules', $expected));
     }
 }

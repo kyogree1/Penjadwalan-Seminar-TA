@@ -96,6 +96,11 @@ class PortalsBackendTest extends TestCase
             ->assertRedirect(route('kaprodi.penjadwalan.plotting-sempro'));
 
         $this->actingAs($kaprodi)
+            ->get('/kaprodi/jadwal')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Kaprodi/Jadwal'));
+
+        $this->actingAs($kaprodi)
             ->get('/kaprodi/penjadwalan/plotting-sempro')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('Kaprodi/PlottingSempro'));
@@ -113,6 +118,10 @@ class PortalsBackendTest extends TestCase
         $this->actingAs($koor)
             ->get('/koordinator/penjadwalan')
             ->assertRedirect(route('kaprodi.penjadwalan'));
+
+        $this->actingAs($koor)
+            ->get('/koordinator/jadwal')
+            ->assertRedirect(route('kaprodi.jadwal'));
 
         $this->actingAs($koor)
             ->get('/koordinator/monitoring')
