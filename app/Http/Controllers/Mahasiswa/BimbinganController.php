@@ -24,7 +24,7 @@ class BimbinganController extends Controller
             ->latest('tanggal')
             ->get();
 
-        $dosenList = User::where('role', 'dosen')
+        $dosenList = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])
             ->whereIn('id', $this->supervisorIds($user->id))
             ->select('id', 'name')
             ->get();
@@ -104,9 +104,9 @@ class BimbinganController extends Controller
         // Cari dosen
         $dosenId = is_numeric($validated['dosen'])
             ? (int) $validated['dosen']
-            : User::where('role', 'dosen')->where('name', $validated['dosen'])->value('id');
+            : User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->where('name', $validated['dosen'])->value('id');
 
-        if (! $dosenId || ! in_array($dosenId, $this->supervisorIds($user->id)) || ! User::where('role', 'dosen')->whereKey($dosenId)->exists()) {
+        if (! $dosenId || ! in_array($dosenId, $this->supervisorIds($user->id)) || ! User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->whereKey($dosenId)->exists()) {
             throw ValidationException::withMessages(['dosen' => 'Logbook hanya untuk pembimbing pada judul yang disetujui.']);
         }
 

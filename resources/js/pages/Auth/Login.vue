@@ -65,7 +65,7 @@ const submitLogin = () => {
 
 <template>
     <div
-        class="min-h-screen bg-[#F8FAFC] font-sans text-slate-800 antialiased dark:bg-[#080D1A] dark:text-slate-100"
+        class="min-h-screen bg-[#F8FAFC] font-sans text-slate-800 antialiased dark:bg-[#080D1A] dark:text-slate-100 dark:scheme-dark"
     >
         <Head title="Masuk - SIPTA IF" />
 
@@ -180,7 +180,7 @@ const submitLogin = () => {
                                         type="text"
                                         placeholder="Contoh: 11231006 atau 19850412..."
                                         required
-                                        class="w-full rounded-xl border border-transparent bg-white/90 px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:bg-white focus:outline-hidden dark:bg-slate-900 dark:text-white"
+                                        class="w-full rounded-xl border border-transparent bg-white/90 px-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-800/70 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-blue-500 dark:focus:bg-slate-800"
                                     />
                                 </div>
                             </div>
@@ -203,11 +203,11 @@ const submitLogin = () => {
                                         "
                                         placeholder="Masukkan password"
                                         required
-                                        class="w-full rounded-xl border border-transparent bg-white/90 py-2.5 pr-10 pl-3.5 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:bg-white focus:outline-hidden dark:bg-slate-900 dark:text-white"
+                                        class="w-full rounded-xl border border-transparent bg-white/90 py-2.5 pr-10 pl-3.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:bg-white focus:outline-hidden dark:border-slate-700 dark:bg-slate-800/70 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-blue-500 dark:focus:bg-slate-800"
                                     />
                                     <button
                                         type="button"
-                                        class="absolute top-2.5 right-3 text-slate-400 hover:text-slate-600"
+                                        class="absolute top-2.5 right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                                         :aria-label="
                                             showPassword
                                                 ? 'Sembunyikan password'
@@ -251,7 +251,7 @@ const submitLogin = () => {
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="w-full rounded-xl bg-[#0C1A40] py-3 text-xs font-bold text-white shadow-lg transition-all hover:bg-slate-900 active:scale-95 disabled:opacity-50"
+                                class="w-full rounded-xl bg-[#0C1A40] py-3 text-xs font-bold text-white shadow-lg transition-all hover:bg-slate-900 active:scale-95 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500"
                             >
                                 <span v-if="form.processing">Memproses...</span>
                                 <span v-else>Masuk ke Portal</span>

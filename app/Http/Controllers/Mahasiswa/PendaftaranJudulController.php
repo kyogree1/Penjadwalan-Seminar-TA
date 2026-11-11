@@ -23,7 +23,7 @@ class PendaftaranJudulController extends Controller
             ->first();
 
         // Ambil daftar dosen untuk dropdown
-        $dosenList = User::where('role', 'dosen')
+        $dosenList = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])
             ->select('id', 'name', 'username')
             ->get();
 
@@ -38,8 +38,8 @@ class PendaftaranJudulController extends Controller
         $validated = $request->validate([
             'judul_ta' => ['required', 'string', 'max:255'],
             'bidang_penelitian' => ['required', 'string', 'max:100'],
-            'pembimbing_1' => ['nullable', 'integer', Rule::exists('users', 'id')->where('role', 'dosen')],
-            'pembimbing_2' => ['nullable', 'integer', 'different:pembimbing_1', Rule::exists('users', 'id')->where('role', 'dosen')],
+            'pembimbing_1' => ['nullable', 'integer', Rule::exists('users', 'id')->whereIn('role', ['dosen', 'kaprodi', 'koordinator'])],
+            'pembimbing_2' => ['nullable', 'integer', 'different:pembimbing_1', Rule::exists('users', 'id')->whereIn('role', ['dosen', 'kaprodi', 'koordinator'])],
             'telah_konsultasi' => ['boolean'],
         ]);
 

@@ -217,6 +217,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Nisa Rizqiya Fadhliana, S.Kom., M.T.',
+                'role' => 'koordinator',
                 'username' => '198804102019032020',
                 'nim_nip' => '198804102019032020',
                 'prodi' => 'Informatika',
@@ -303,7 +304,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => $d['name'],
                     'username' => $d['username'],
-                    'role' => 'dosen',
+                    'role' => $d['role'] ?? 'dosen',
                     'nim_nip' => $d['nim_nip'],
                     'prodi' => $d['prodi'],
                     'jabatan' => $d['jabatan'],
@@ -364,6 +365,20 @@ class DatabaseSeeder extends Seeder
                 'username' => 'koorprodi',
                 'role' => 'koordinator',
                 'nim_nip' => '198801012015041001',
+                'prodi' => 'Informatika',
+                'jabatan' => 'Koordinator Tugas Akhir (Koorpro)',
+                'password' => bcrypt('password'),
+            ]
+        );
+
+        // 3c. Koorprodi tambahan: Nisa Rizqiya (juga tetap dosen)
+        User::updateOrCreate(
+            ['email' => 'nisafadhliana@lecturer.itk.ac.id'],
+            [
+                'name' => 'Nisa Rizqiya Fadhliana, S.Kom., M.T.',
+                'username' => '199009182019032002',
+                'role' => 'koordinator',
+                'nim_nip' => '199009182019032002',
                 'prodi' => 'Informatika',
                 'jabatan' => 'Koordinator Tugas Akhir (Koorpro)',
                 'password' => bcrypt('password'),

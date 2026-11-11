@@ -422,7 +422,7 @@ class PenjadwalanController extends Controller
             if ($id && Penjadwalan::where('period_id', $id)->exists() && $period->isDirty(['name', 'tipe', 'gelombang', 'capacity', 'start_date', 'end_date', 'slots'])) {
                 throw ValidationException::withMessages(['slots' => 'Definisi periode dengan jadwal tersimpan tidak dapat diubah.']);
             }
-            if ($period->is_open && Penjadwalan::where('period_id', $period->id)->whereIn('status', ['terpublikasi', 'selesai'])->exists()) {
+            if ($period->exists && $period->is_open && Penjadwalan::where('period_id', $period->id)->whereIn('status', ['terpublikasi', 'selesai'])->exists()) {
                 throw ValidationException::withMessages(['is_open' => 'Periode sudah memiliki jadwal terpublikasi.']);
             }
             if ($period->is_open && (! $period->exists || $period->isDirty('is_open')) && SchedulePeriod::where('tipe', $period->tipe)->where('is_open', true)->when($id, fn ($query) => $query->where('id', '!=', $id))->lockForUpdate()->exists()) {

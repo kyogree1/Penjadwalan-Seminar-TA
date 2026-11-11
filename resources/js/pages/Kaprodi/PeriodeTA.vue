@@ -377,11 +377,8 @@ const handleDelete = () => {
                 </Button>
 
                 <Link
-                    :href="
-                        activePeriodItem
-                            ? `/kaprodi/penjadwalan/plotting-ta?period_id=${activePeriodItem.id}`
-                            : '/kaprodi/penjadwalan/plotting-ta'
-                    "
+                    v-if="activePeriodItem"
+                    :href="`/kaprodi/penjadwalan/plotting-ta?period_id=${activePeriodItem.id}`"
                     class="flex items-center gap-2 rounded-xl bg-[#0b3084] px-4 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-[#082361] active:scale-95"
                 >
                     <span
@@ -389,6 +386,13 @@ const handleDelete = () => {
                         {{ activeGelombangNum }})</span
                     >
                 </Link>
+                <span
+                    v-else
+                    class="flex cursor-not-allowed items-center gap-2 rounded-xl bg-slate-200 px-4 py-2.5 text-xs font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                    title="Aktifkan salah satu gelombang terlebih dahulu"
+                >
+                    Belum Ada Gelombang Aktif
+                </span>
             </div>
         </div>
 
