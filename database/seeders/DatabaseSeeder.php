@@ -157,6 +157,17 @@ class DatabaseSeeder extends Seeder
                 'prodi' => 'Informatika',
                 'status_ta' => 'Aktif TA',
             ],
+            [
+                'name' => 'Daniel',
+                'username' => '11111',
+                'nim_nip' => '11111',
+                'email' => 'daniel@itk.ac.id',
+                'no_telpon' => '08218921836',
+                'angkatan' => '2023',
+                'jurusan' => 'Teknik Elektro, Informatika, dan Bisnis',
+                'prodi' => 'Informatika',
+                'status_ta' => 'Sempro',
+            ],
         ];
 
         foreach ($mahasiswaSeedData as $mhs) {
@@ -275,6 +286,14 @@ class DatabaseSeeder extends Seeder
                 'prodi' => 'Industri Energi & Migas',
                 'email' => 'hendra.gunawan@pertamina.com',
                 'jabatan' => 'Praktisi Ahli',
+            ],
+            [
+                'name' => 'Joko',
+                'username' => '12345',
+                'nim_nip' => '12345',
+                'prodi' => 'Informatika',
+                'email' => 'joko@itk.ac.id',
+                'jabatan' => 'Tenaga Pengajar',
             ],
         ];
 

@@ -47,6 +47,7 @@ class DummyTwentyStudentsSeeder extends Seeder
             ['name' => "Indah Wahyuni, S.Si., M.Kom.", 'email' => 'indah.wahyuni@lecturer.itk.ac.id', 'nip' => '199304192022032001', 'role' => 'dosen', 'jabatan' => 'Asisten Ahli', 'bidang' => 'Computational Intelligence & Optimasi'],
             ['name' => "Prof. Dr. Eng. Muhammad Ridwan, S.T., M.T.", 'email' => 'kaprodi.if@itk.ac.id', 'nip' => '198003152005011002', 'role' => 'kaprodi', 'jabatan' => 'Guru Besar', 'bidang' => 'AI & Data Science'],
             ['name' => "Dra. Nurul Rahmania, M.T.", 'email' => 'koorprodi.if@itk.ac.id', 'nip' => '197708222003042002', 'role' => 'koordinator', 'jabatan' => 'Lektor Kepala', 'bidang' => 'Rekayasa Perangkat Lunak'],
+            ['name' => "Joko", 'email' => 'joko@itk.ac.id', 'nip' => '12345', 'role' => 'dosen', 'jabatan' => 'Tenaga Pengajar', 'bidang' => 'Rekayasa Perangkat Lunak'],
         ];
 
         foreach ($dosenList as $d) {
@@ -256,6 +257,60 @@ class DummyTwentyStudentsSeeder extends Seeder
                 );
             }
         }
+
+        // -------------------------------------------------------------------------
+        // 3b. SEED MAHASISWA KHUSUS PENGUJIAN: DANIEL
+        // -------------------------------------------------------------------------
+        $danielUser = User::updateOrCreate(
+            ['username' => '11111'],
+            [
+                'name' => 'Daniel',
+                'email' => 'daniel@itk.ac.id',
+                'username' => '11111',
+                'role' => 'mahasiswa',
+                'nim_nip' => '11111',
+                'no_telpon' => '08218921836',
+                'angkatan' => '2023',
+                'jurusan' => 'Teknik Elektro, Informatika, dan Bisnis',
+                'prodi' => 'Informatika',
+                'status_ta' => 'Sempro',
+                'jabatan' => 'Mahasiswa Informatika',
+                'password' => $defaultPassword,
+            ]
+        );
+
+        $dosenDian = User::where('email', 'dian.permata@lecturer.itk.ac.id')->first() ?? $lecturers[0];
+        $dosenRosa = User::where('email', 'rosa.eliviani@lecturer.itk.ac.id')->first() ?? $lecturers[1];
+
+        PengajuanJudul::updateOrCreate(
+            ['mahasiswa_id' => $danielUser->id],
+            [
+                'judul_ta' => 'aku anak sehat',
+                'bidang_penelitian' => 'AI & Data Science',
+                'pembimbing_1_id' => $dosenDian->id,
+                'pembimbing_2_id' => $dosenRosa->id,
+                'telah_konsultasi' => true,
+                'status' => 'disetujui',
+                'catatan_kaprodi' => 'Judul disetujui untuk persiapan Seminar Proposal.',
+                'disetujui_oleh' => $kaprodi?->id ?? $dosenDian->id,
+                'disetujui_at' => now(),
+            ]
+        );
+
+        PendaftaranSempro::updateOrCreate(
+            ['mahasiswa_id' => $danielUser->id],
+            [
+                'judul_ta' => 'aku anak sehat',
+                'bentuk_ta' => 'Skripsi',
+                'lokasi_mitra' => 'Institut Teknologi Kalimantan',
+                'skor_iaet' => 500,
+                'gelombang' => 1,
+                'status' => 'verifikasi_tendik',
+                'status_akademik' => 'disetujui',
+                'catatan' => 'Berkas pendaftaran sempro tervalidasi tendik.',
+                'catatan_kaprodi' => 'Disetujui untuk penjadwalan sempro.',
+            ]
+        );
 
         // =========================================================================
         // 4. SEED MAHASISWA SIDANG TA (Gelombang 1, 2, 3 - Masing-masing 15 Peserta)
