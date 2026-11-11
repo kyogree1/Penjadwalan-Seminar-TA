@@ -73,22 +73,22 @@ Route::middleware('auth')->group(function () {
         Route::prefix('pendaftaran')->name('pendaftaran.')->group(function () {
             // 1. Pengajuan Judul
             Route::get('/judul', [PendaftaranJudulController::class, 'index'])->name('judul');
-            Route::post('/judul', [PendaftaranJudulController::class, 'store']);
+            Route::post('/judul', [PendaftaranJudulController::class, 'store'])->name('judul.store');
 
             // 2. Logbook Bimbingan
             Route::get('/bimbingan', [BimbinganController::class, 'index'])->name('bimbingan');
-            Route::post('/bimbingan', [BimbinganController::class, 'store']);
+            Route::post('/bimbingan', [BimbinganController::class, 'store'])->name('bimbingan.store');
 
             // 3. Pendaftaran & Jadwal
             Route::get('/jadwal', [PendaftaranJadwalController::class, 'index'])->name('jadwal');
 
             // 4. Seminar Proposal (Sempro)
             Route::get('/sempro', [PendaftaranSemproController::class, 'index'])->name('sempro');
-            Route::post('/sempro', [PendaftaranSemproController::class, 'store']);
+            Route::post('/sempro', [PendaftaranSemproController::class, 'store'])->name('sempro.store');
 
             // 5. Sidang Tugas Akhir
             Route::get('/sidang', [PendaftaranSidangController::class, 'index'])->name('sidang');
-            Route::post('/sidang', [PendaftaranSidangController::class, 'store']);
+            Route::post('/sidang', [PendaftaranSidangController::class, 'store'])->name('sidang.store');
         });
     });
 
@@ -107,13 +107,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/penilaian/{id}', [DosenPenilaianController::class, 'store'])->name('penilaian.store');
 
         Route::get('/persetujuan', [KaprodiPersetujuanController::class, 'index'])->name('persetujuan');
-        Route::get('/sempro', [KaprodiPersetujuanController::class, 'index'])->name('sempro');
-        Route::get('/sidang', [KaprodiPersetujuanController::class, 'index'])->name('sidang');
         Route::patch('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'updateJudul'])->name('persetujuan.judul');
         Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul'])->name('persetujuan.judul.destroy');
-        Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro'])->name('persetujuan.sempro');
-        Route::patch('/persetujuan/sidang/{id}', [KaprodiPersetujuanController::class, 'updateSidang'])->name('persetujuan.sidang');
-        Route::patch('/persetujuan/reschedule/{id}', [RescheduleController::class, 'update'])->name('persetujuan.reschedule');
     });
 
     // ==========================================
@@ -193,6 +188,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:dosen,kaprodi,koordinator')->group(function () {
         Route::patch('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'updateJudul']);
         Route::delete('/persetujuan/judul/{id}', [KaprodiPersetujuanController::class, 'destroyJudul']);
+    });
+    Route::middleware('role:kaprodi,koordinator')->group(function () {
         Route::patch('/persetujuan/sempro/{id}', [KaprodiPersetujuanController::class, 'updateSempro']);
         Route::patch('/persetujuan/sidang/{id}', [KaprodiPersetujuanController::class, 'updateSidang']);
         Route::patch('/persetujuan/reschedule/{id}', [RescheduleController::class, 'update']);

@@ -42,6 +42,7 @@ class ArsipController extends Controller
                 'prodi' => $row->mahasiswa?->prodi,
                 'judul' => $row->judul_ta,
                 'tanggal_selesai' => $row->updated_at?->format('d M Y'),
+                '_sort_ts' => $row->updated_at?->timestamp ?? 0,
             ]);
 
         // ── Riwayat sidang selesai (untuk tabel arsip) ───────────────
@@ -57,11 +58,17 @@ class ArsipController extends Controller
                 'prodi' => $row->mahasiswa?->prodi,
                 'judul' => $row->judul_ta,
                 'tanggal_selesai' => $row->updated_at?->format('d M Y'),
+                '_sort_ts' => $row->updated_at?->timestamp ?? 0,
             ]);
 
         // ── Gabungkan & urutkan berdasarkan tanggal terbaru ──────────
         $arsipList = $arsipSempro->concat($arsipSidang)
-            ->sortByDesc('tanggal_selesai')
+            ->sortByDesc('_sort_ts')
+            ->map(function (array $row) {
+                unset($row['_sort_ts']);
+
+                return $row;
+            })
             ->values();
 
         // ── Kapasitas fitur arsip ─────────────────────────────────────
@@ -103,9 +110,11 @@ class ArsipController extends Controller
             $handle = fopen('php://output', 'w');
             fputcsv($handle, ['No', 'Tipe Ujian', 'NIM', 'Nama Mahasiswa', 'Program Studi', 'Judul Tugas Akhir', 'Tanggal Selesai']);
 
+            $safeCell = fn ($val) => is_string($val) && preg_match('/^[\s]*[=+@-]/u', $val) ? "'".$val : $val;
+
             $no = 1;
             foreach ($arsipSempro as $row) {
-                fputcsv($handle, [
+                fputcsv($handle, array_map($safeCell, [
                     $no++,
                     'Seminar Proposal',
                     $row->mahasiswa?->nim_nip ?? $row->mahasiswa?->username ?? '-',
@@ -113,10 +122,10 @@ class ArsipController extends Controller
                     $row->mahasiswa?->prodi ?? 'Informatika',
                     $row->judul_ta,
                     $row->updated_at?->format('Y-m-d') ?? '-',
-                ]);
+                ]));
             }
             foreach ($arsipSidang as $row) {
-                fputcsv($handle, [
+                fputcsv($handle, array_map($safeCell, [
                     $no++,
                     'Sidang Tugas Akhir',
                     $row->mahasiswa?->nim_nip ?? $row->mahasiswa?->username ?? '-',
@@ -124,7 +133,7 @@ class ArsipController extends Controller
                     $row->mahasiswa?->prodi ?? 'Informatika',
                     $row->judul_ta,
                     $row->updated_at?->format('Y-m-d') ?? '-',
-                ]);
+                ]));
             }
             fclose($handle);
         }, 'arsip-kelulusan-ta-'.date('Ymd-His').'.csv', [

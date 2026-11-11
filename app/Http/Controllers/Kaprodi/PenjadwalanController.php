@@ -11,6 +11,7 @@ use App\Models\PengajuanJudul;
 use App\Models\Penjadwalan;
 use App\Models\SchedulePeriod;
 use App\Models\User;
+use App\Services\GeneticAlgorithm\RfCompatibilityService;
 use App\Services\GeneticAlgorithm\ScheduleOptimizer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -356,7 +357,7 @@ class PenjadwalanController extends Controller
 
             return $row;
         })->all();
-        $compatibility = app(\App\Services\GeneticAlgorithm\RfCompatibilityService::class)->getCompatibility($candidates, $lecturers);
+        $compatibility = app(RfCompatibilityService::class)->getCompatibility($candidates, $lecturers);
         $result = (new ScheduleOptimizer($data['popSize'] ?? 50, $data['maxGenerations'] ?? 100, $data['crossoverRate'] ?? .8, $data['mutationRate'] ?? .03))->optimize($candidates, $lecturers, $period->slots, $bookings, $compatibility);
         $result['unscheduled'] = array_merge($result['unscheduled'], $overflow, $excluded);
         if ($result['unscheduled']) {
@@ -470,7 +471,7 @@ class PenjadwalanController extends Controller
                     'title' => "Jadwal {$tipeLabel} Dipublikasikan",
                     'message' => "Jadwal {$tipeLabel} Anda telah resmi dipublikasikan untuk tanggal ".($exam->tanggal ? $exam->tanggal->format('d M Y') : 'sesuai jadwal').'.',
                     'type' => 'success',
-                    'link' => '/mahasiswa/'.($period->tipe === 'sempro' ? 'sempro' : 'sidang'),
+                    'link' => '/pendaftaran/'.($period->tipe === 'sempro' ? 'sempro' : 'sidang'),
                 ]);
 
                 // Notify examiners and supervisors
@@ -486,7 +487,7 @@ class PenjadwalanController extends Controller
                         'title' => "Jadwal Baru {$tipeLabel}",
                         'message' => "Jadwal {$tipeLabel} mahasiswa {$exam->mahasiswa?->name} telah dipublikasikan.",
                         'type' => 'info',
-                        'link' => '/dosen/jadwal',
+                        'link' => '/dosen/penilaian',
                     ]);
                 }
             }
@@ -749,54 +750,102 @@ class PenjadwalanController extends Controller
     public function updatePlotting(Request $request, int $id)
     {
         $data = $request->validate([
+            'tipe' => ['nullable', 'in:sempro,sidang'],
+            'period_id' => ['nullable', 'integer', 'exists:schedule_periods,id'],
             'penguji1' => ['nullable', 'string'],
             'penguji2' => ['nullable', 'string'],
             'tanggal' => ['nullable', 'string'],
             'mulai' => ['nullable', 'string'],
             'selesai' => ['nullable', 'string'],
-            'ruangan' => ['nullable', 'string'],
+            'ruangan' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $schedule = Penjadwalan::find($id);
-        if (! $schedule && $id < 0) {
-            $pendaftaranId = abs($id);
-            $reg = PendaftaranSempro::find($pendaftaranId);
-            $tipe = 'sempro';
-            if (! $reg) {
-                $reg = PendaftaranSidang::find($pendaftaranId);
-                $tipe = 'sidang';
+        DB::transaction(function () use ($data, $id, $request) {
+            User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->orderBy('id')->lockForUpdate()->get(['id']);
+
+            $reg = null;
+            if ($id === 0) {
+                abort(404);
             }
-            if ($reg) {
-                $period = SchedulePeriod::where('tipe', $tipe)->where('gelombang', $reg->gelombang)->first();
-                $title = PengajuanJudul::where('mahasiswa_id', $reg->mahasiswa_id)->where('status', 'disetujui')->latest('id')->first();
-                $schedule = new Penjadwalan([
-                    'period_id' => $period?->id,
-                    'pendaftaran_id' => $reg->id,
-                    'mahasiswa_id' => $reg->mahasiswa_id,
-                    'tipe' => $tipe,
-                    'gelombang' => $reg->gelombang,
-                    'pembimbing_1_id' => $title?->pembimbing_1_id,
-                    'pembimbing_2_id' => $title?->pembimbing_2_id,
-                    'catatan' => $reg->judul_ta ?? $title?->judul_ta,
-                    'status' => 'terpublikasi',
-                    'dibuat_oleh' => Auth::id() ?? 1,
-                ]);
-                $reg->update(['status' => 'terjadwal']);
-            }
-        }
-        if ($schedule) {
-            if (! empty($data['penguji1'])) {
-                $d1 = User::where('name', $data['penguji1'])->first();
-                if ($d1) {
-                    $schedule->penguji_1_id = $d1->id;
+            $schedule = $id > 0 ? Penjadwalan::lockForUpdate()->findOrFail($id) : null;
+
+            if (! $schedule && $id < 0) {
+                $pendaftaranId = abs($id);
+                $period = ! empty($data['period_id']) ? SchedulePeriod::find($data['period_id']) : null;
+                $tipe = $data['tipe'] ?? $period?->tipe;
+
+                if ($tipe === 'sidang') {
+                    $reg = PendaftaranSidang::lockForUpdate()->findOrFail($pendaftaranId);
+                } elseif ($tipe === 'sempro') {
+                    $reg = PendaftaranSempro::lockForUpdate()->findOrFail($pendaftaranId);
+                } else {
+                    $reg = PendaftaranSempro::lockForUpdate()->find($pendaftaranId);
+                    $tipe = 'sempro';
+                    if (! $reg) {
+                        $reg = PendaftaranSidang::lockForUpdate()->findOrFail($pendaftaranId);
+                        $tipe = 'sidang';
+                    }
                 }
+
+                $existing = Penjadwalan::where('tipe', $tipe)
+                    ->where('pendaftaran_id', $reg->id)
+                    ->where('status', '!=', 'dibatalkan')
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($existing) {
+                    $schedule = $existing;
+                } else {
+                    if ($reg->status_akademik !== 'disetujui' || ! in_array($reg->status, ['verifikasi_tendik', 'terjadwal'], true)) {
+                        throw ValidationException::withMessages(['schedules' => 'Pendaftaran mahasiswa belum terverifikasi dan disetujui.']);
+                    }
+
+                    $period = $period ?? SchedulePeriod::where('tipe', $tipe)->where('gelombang', $reg->gelombang)->first();
+                    $title = PengajuanJudul::where('mahasiswa_id', $reg->mahasiswa_id)->where('status', 'disetujui')->latest('id')->first();
+
+                    $schedule = new Penjadwalan([
+                        'period_id' => $period?->id,
+                        'pendaftaran_id' => $reg->id,
+                        'mahasiswa_id' => $reg->mahasiswa_id,
+                        'tipe' => $tipe,
+                        'gelombang' => $reg->gelombang,
+                        'pembimbing_1_id' => $title?->pembimbing_1_id,
+                        'pembimbing_2_id' => $title?->pembimbing_2_id,
+                        'catatan' => $reg->judul_ta ?? $title?->judul_ta,
+                        'status' => 'terpublikasi',
+                        'dibuat_oleh' => $request->user()?->id ?? Auth::id() ?? 1,
+                    ]);
+                }
+            }
+
+            if ($schedule->status === 'selesai' || $schedule->penilaian()->exists()) {
+                throw ValidationException::withMessages(['schedules' => 'Jadwal yang sudah selesai atau dinilai tidak dapat diubah.']);
+            }
+
+            if (! empty($data['penguji1'])) {
+                $d1 = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->where('name', $data['penguji1'])->first();
+                if (! $d1) {
+                    throw ValidationException::withMessages(['penguji1' => 'Dosen Penguji 1 tidak ditemukan.']);
+                }
+                $schedule->penguji_1_id = $d1->id;
             }
             if (! empty($data['penguji2'])) {
-                $d2 = User::where('name', $data['penguji2'])->first();
-                if ($d2) {
-                    $schedule->penguji_2_id = $d2->id;
+                $d2 = User::whereIn('role', ['dosen', 'kaprodi', 'koordinator'])->where('name', $data['penguji2'])->first();
+                if (! $d2) {
+                    throw ValidationException::withMessages(['penguji2' => 'Dosen Penguji 2 tidak ditemukan.']);
                 }
+                $schedule->penguji_2_id = $d2->id;
             }
+
+            if (! $schedule->penguji_1_id || ! $schedule->penguji_2_id || (int) $schedule->penguji_1_id === (int) $schedule->penguji_2_id) {
+                throw ValidationException::withMessages(['penguji2' => 'Dua dosen penguji yang berbeda wajib dipilih.']);
+            }
+
+            $supervisors = array_filter([$schedule->pembimbing_1_id, $schedule->pembimbing_2_id]);
+            if (in_array($schedule->penguji_1_id, $supervisors, true) || in_array($schedule->penguji_2_id, $supervisors, true)) {
+                throw ValidationException::withMessages(['penguji1' => 'Dosen pembimbing tidak boleh merangkap sebagai penguji.']);
+            }
+
             if (! empty($data['mulai'])) {
                 $schedule->jam_mulai = strlen($data['mulai']) === 5 ? $data['mulai'].':00' : $data['mulai'];
             }
@@ -807,14 +856,46 @@ class PenjadwalanController extends Controller
                 try {
                     $schedule->tanggal = Carbon::parse($data['tanggal'])->format('Y-m-d');
                 } catch (\Exception $e) {
-                    // keep existing date
+                    throw ValidationException::withMessages(['tanggal' => 'Format tanggal tidak valid.']);
                 }
             }
-            if (isset($data['ruangan'])) {
+
+            if (! $schedule->tanggal || ! $schedule->jam_mulai || ! $schedule->jam_selesai || $schedule->jam_mulai >= $schedule->jam_selesai) {
+                throw ValidationException::withMessages(['tanggal' => 'Tanggal serta jam mulai dan selesai yang valid wajib diisi.']);
+            }
+
+            if (array_key_exists('ruangan', $data)) {
                 $schedule->link_online = $data['ruangan'];
             }
+
+            $otherBookings = array_values(array_filter(
+                $this->bookings(),
+                fn ($b) => ! $schedule->exists || (int) $b['id'] !== (int) $schedule->id
+            ));
+
+            $candidateRow = [
+                'mahasiswa_id' => $schedule->mahasiswa_id,
+                'pembimbing_1_id' => $schedule->pembimbing_1_id,
+                'pembimbing_2_id' => $schedule->pembimbing_2_id,
+                'penguji_1_id' => $schedule->penguji_1_id,
+                'penguji_2_id' => $schedule->penguji_2_id,
+                'tanggal' => $schedule->tanggal instanceof \DateTimeInterface
+                    ? $schedule->tanggal->format('Y-m-d')
+                    : Carbon::parse((string) $schedule->tanggal)->format('Y-m-d'),
+                'jam_mulai' => $schedule->jam_mulai,
+                'jam_selesai' => $schedule->jam_selesai,
+            ];
+
+            if ((new ScheduleOptimizer)->conflicts($candidateRow, $otherBookings)) {
+                throw ValidationException::withMessages(['schedules' => 'Konflik jadwal: penguji, pembimbing, atau mahasiswa sudah terjadwal pada waktu tersebut.']);
+            }
+
             $schedule->save();
-        }
+
+            if ($reg) {
+                $reg->update(['status' => 'terjadwal']);
+            }
+        });
 
         return back()->with('success', 'Jadwal dan plotting berhasil diperbarui.');
     }
@@ -829,11 +910,18 @@ class PenjadwalanController extends Controller
             ->orderBy('jam_mulai')
             ->get();
 
-        $scheduledStudentIds = $schedules->pluck('mahasiswa_id')->filter()->all();
+        $scheduledStudentIds = $schedules->pluck('mahasiswa_id')->filter()->unique()->all();
 
-        $rows = $schedules->map(function ($s) {
-            $judul = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('judul_ta') ?? $s->catatan;
-            $kbk = PengajuanJudul::where('mahasiswa_id', $s->mahasiswa_id)->value('bidang_penelitian') ?? ($s->mode === 'offline' ? 'AI & Data Science' : $s->mode);
+        // Pre-load latest judul & kbk for all scheduled students to avoid N+1 queries
+        $judulMap = PengajuanJudul::whereIn('mahasiswa_id', $scheduledStudentIds)
+            ->orderBy('id')
+            ->get(['mahasiswa_id', 'judul_ta', 'bidang_penelitian'])
+            ->keyBy('mahasiswa_id');
+
+        $rows = $schedules->map(function ($s) use ($judulMap) {
+            $judulRecord = $judulMap->get($s->mahasiswa_id);
+            $judul = $judulRecord?->judul_ta ?? $s->catatan;
+            $kbk = $judulRecord?->bidang_penelitian ?? ($s->mode === 'offline' ? 'AI & Data Science' : $s->mode);
 
             $nilaiHuruf = null;
             if ($s->penilaian && $s->penilaian->isNotEmpty()) {
@@ -887,12 +975,15 @@ class PenjadwalanController extends Controller
                 ->orderBy('id')
                 ->get();
 
+            $unregisteredJudulMap = PengajuanJudul::with(['pembimbing1', 'pembimbing2'])
+                ->whereIn('mahasiswa_id', $unregistered->pluck('mahasiswa_id')->filter()->unique()->all())
+                ->where('status', 'disetujui')
+                ->orderBy('id')
+                ->get()
+                ->keyBy('mahasiswa_id');
+
             foreach ($unregistered as $reg) {
-                $title = PengajuanJudul::with(['pembimbing1', 'pembimbing2'])
-                    ->where('mahasiswa_id', $reg->mahasiswa_id)
-                    ->where('status', 'disetujui')
-                    ->latest('id')
-                    ->first();
+                $title = $unregisteredJudulMap->get($reg->mahasiswa_id);
 
                 $rows[] = [
                     'id' => -$reg->id,

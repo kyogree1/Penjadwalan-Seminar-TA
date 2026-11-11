@@ -73,7 +73,7 @@ class VerifikasiController extends Controller
             'title' => 'Verifikasi Berkas Seminar Proposal',
             'message' => "Berkas pendaftaran Seminar Proposal Anda {$statusLabel}.".(! empty($validated['catatan']) ? " Catatan: {$validated['catatan']}" : ''),
             'type' => $validated['status'] === 'ditolak' ? 'warning' : 'info',
-            'link' => '/mahasiswa/sempro',
+            'link' => '/pendaftaran/sempro',
         ]);
 
         return redirect()->back()->with('success', 'Verifikasi berkas Seminar Proposal berhasil disimpan!');
@@ -102,7 +102,7 @@ class VerifikasiController extends Controller
             'title' => 'Verifikasi Berkas Sidang TA',
             'message' => "Berkas pendaftaran Sidang TA Anda {$statusLabel}.".(! empty($validated['catatan']) ? " Catatan: {$validated['catatan']}" : ''),
             'type' => $validated['status'] === 'ditolak' ? 'warning' : 'info',
-            'link' => '/mahasiswa/sidang',
+            'link' => '/pendaftaran/sidang',
         ]);
 
         return redirect()->back()->with('success', 'Verifikasi berkas Sidang TA berhasil disimpan!');

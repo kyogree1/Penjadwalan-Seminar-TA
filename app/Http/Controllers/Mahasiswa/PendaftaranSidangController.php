@@ -28,6 +28,7 @@ class PendaftaranSidangController extends Controller
         $pengajuanJudul = PengajuanJudul::with(['pembimbing1:id,name', 'pembimbing2:id,name'])
             ->where('mahasiswa_id', $user->id)
             ->where('status', 'disetujui')
+            ->latest('id')
             ->first();
 
         $pembimbingList = [];
@@ -49,7 +50,8 @@ class PendaftaranSidangController extends Controller
         $jadwal = Penjadwalan::with(['penguji1:id,name', 'penguji2:id,name'])
             ->where('tipe', 'sidang')
             ->where('mahasiswa_id', $user->id)
-            ->where('status', 'terpublikasi')
+            ->whereIn('status', ['terpublikasi', 'selesai'])
+            ->latest('id')
             ->first();
 
         $pengujiList = [];

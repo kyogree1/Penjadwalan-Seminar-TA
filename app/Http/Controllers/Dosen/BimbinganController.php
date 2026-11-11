@@ -81,7 +81,7 @@ class BimbinganController extends Controller
             'title' => 'Logbook Bimbingan Diparaf',
             'message' => "Dosen pembimbing telah memparaf logbook bimbingan tanggal {$bimbingan->tanggal->format('d M Y')} (Status: {$dbStatus}).".(! empty($validated['catatan_dosen']) ? " Catatan: {$validated['catatan_dosen']}" : ''),
             'type' => $dbStatus === 'delivered' ? 'success' : 'info',
-            'link' => '/mahasiswa/bimbingan',
+            'link' => '/pendaftaran/bimbingan',
         ]);
 
         return redirect()->back()->with('success', 'Catatan pembimbing dan paraf berhasil disimpan!');

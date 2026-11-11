@@ -255,7 +255,7 @@ class PersetujuanController extends Controller
             'title' => 'Status Pengajuan Judul TA',
             'message' => "Pengajuan judul TA Anda '{$judul->judul_ta}' telah {$statusIndo} oleh Koordinator TA.".(! empty($validated['catatan_kaprodi']) ? " Catatan: {$validated['catatan_kaprodi']}" : ''),
             'type' => $validated['status'] === 'disetujui' ? 'success' : 'warning',
-            'link' => '/mahasiswa/pengajuan-judul',
+            'link' => '/pendaftaran/judul',
         ]);
 
         if (! empty($updateData['pembimbing_1_id'])) {
@@ -308,6 +308,24 @@ class PersetujuanController extends Controller
         }
         $row->update(array_intersect_key($validated, array_flip(['status_akademik', 'catatan_kaprodi'])));
 
+        // Notify mahasiswa about academic review result
+        if (isset($validated['status_akademik'])) {
+            $statusIndo = match ($validated['status_akademik']) {
+                'disetujui' => 'disetujui',
+                'revisi' => 'diminta revisi',
+                'ditolak' => 'ditolak',
+                default => $validated['status_akademik'],
+            };
+            Notification::create([
+                'user_id' => $row->mahasiswa_id,
+                'title' => 'Tinjauan Akademik Seminar Proposal',
+                'message' => "Status akademik pendaftaran Seminar Proposal Anda telah {$statusIndo} oleh Koordinator TA."
+                    .(! empty($validated['catatan_kaprodi']) ? " Catatan: {$validated['catatan_kaprodi']}" : ''),
+                'type' => $validated['status_akademik'] === 'disetujui' ? 'success' : 'warning',
+                'link' => '/pendaftaran/sempro',
+            ]);
+        }
+
         return redirect()->back()->with('success', 'Tinjauan akademik berhasil disimpan!');
     }
 
@@ -330,6 +348,24 @@ class PersetujuanController extends Controller
             $validated['catatan_kaprodi'] = $validated['catatan'];
         }
         $row->update(array_intersect_key($validated, array_flip(['status_akademik', 'catatan_kaprodi'])));
+
+        // Notify mahasiswa about academic review result
+        if (isset($validated['status_akademik'])) {
+            $statusIndo = match ($validated['status_akademik']) {
+                'disetujui' => 'disetujui',
+                'revisi' => 'diminta revisi',
+                'ditolak' => 'ditolak',
+                default => $validated['status_akademik'],
+            };
+            Notification::create([
+                'user_id' => $row->mahasiswa_id,
+                'title' => 'Tinjauan Akademik Sidang TA',
+                'message' => "Status akademik pendaftaran Sidang TA Anda telah {$statusIndo} oleh Koordinator TA."
+                    .(! empty($validated['catatan_kaprodi']) ? " Catatan: {$validated['catatan_kaprodi']}" : ''),
+                'type' => $validated['status_akademik'] === 'disetujui' ? 'success' : 'warning',
+                'link' => '/pendaftaran/sidang',
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Tinjauan akademik berhasil disimpan!');
     }

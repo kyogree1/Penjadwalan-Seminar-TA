@@ -71,11 +71,33 @@ class RfCompatibilityService
 
     protected function resolveUvBinary(): ?string
     {
-        if (env('UV_PATH') && is_executable(env('UV_PATH'))) {
-            return env('UV_PATH');
+        $configured = getenv('UV_PATH') ?: ($_ENV['UV_PATH'] ?? null);
+        if ($configured && is_file($configured)) {
+            return $configured;
         }
 
-        $which = trim(shell_exec('which uv 2>/dev/null') ?? '');
+        if (PHP_OS_FAMILY === 'Windows') {
+            $where = trim((string) shell_exec('where uv 2>NUL'));
+            if ($where) {
+                $firstLine = trim(strtok($where, "\r\n"));
+                if ($firstLine && is_file($firstLine)) {
+                    return $firstLine;
+                }
+            }
+
+            $profile = getenv('USERPROFILE') ?: getenv('HOME');
+            if ($profile) {
+                foreach (["{$profile}\\.local\\bin\\uv.exe", "{$profile}\\.cargo\\bin\\uv.exe"] as $candidate) {
+                    if (is_file($candidate)) {
+                        return $candidate;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        $which = trim((string) shell_exec('which uv 2>/dev/null'));
         if ($which && is_executable($which)) {
             return $which;
         }
